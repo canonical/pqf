@@ -17,7 +17,6 @@ def _make_github_session(github_token: str) -> requests.Session:
     return session
 
 
-
 def _search_code(query: str, github_token: str) -> int:
     """Return total_count from GitHub code search."""
     session = _make_github_session(github_token)
@@ -31,7 +30,6 @@ def _search_code(query: str, github_token: str) -> int:
     return resp.json().get("total_count", 0)
 
 
-
 def _uses_ops_testing(repos: list[str], github_token: str) -> bool:
     """True if NO repo uses the deprecated Harness class."""
     for repo in repos:
@@ -39,7 +37,6 @@ def _uses_ops_testing(repos: list[str], github_token: str) -> bool:
         if count > 0:
             return False
     return True
-
 
 
 def _uses_jubilant(repos: list[str], github_token: str) -> bool:
@@ -51,7 +48,6 @@ def _uses_jubilant(repos: list[str], github_token: str) -> bool:
     return False
 
 
-
 def _all_repos(product: dict[str, Any]) -> list[str]:
     components = product.get("components", {})
     repos = []
@@ -61,7 +57,6 @@ def _all_repos(product: dict[str, Any]) -> list[str]:
             if repo:
                 repos.append(repo)
     return repos
-
 
 
 def compute_metrics(product: dict[str, Any], github_token: str | None = None) -> dict[str, Any]:
