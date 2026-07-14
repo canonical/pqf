@@ -1,11 +1,11 @@
 # PQF — Product Quality Framework
 
-[![CI](https://github.com/srbouffard/pqf/actions/workflows/ci.yml/badge.svg)](https://github.com/srbouffard/pqf/actions/workflows/ci.yml)
-[![Deploy](https://github.com/srbouffard/pqf/actions/workflows/deploy-pages.yml/badge.svg)](https://github.com/srbouffard/pqf/actions/workflows/deploy-pages.yml)
+[![CI](https://github.com/canonical/pqf/actions/workflows/ci.yml/badge.svg)](https://github.com/canonical/pqf/actions/workflows/ci.yml)
+[![Deploy](https://github.com/canonical/pqf/actions/workflows/deploy-pages.yml/badge.svg)](https://github.com/canonical/pqf/actions/workflows/deploy-pages.yml)
 
 PQF tracks the quality and compliance state of Canonical Platform Engineering's product portfolio. Products are scored automatically across five quality dimensions (test coverage, documentation, security, substrate compatibility, support engagement) and awarded a **bronze / silver / gold** medal based on configurable criteria.
 
-**[Live dashboard →](https://srbouffard.github.io/pqf/)**
+**[Live dashboard →](https://canonical.github.io/pqf/)**
 
 ![Portfolio Overview](docs/screenshots/overview.png)
 
@@ -15,7 +15,7 @@ PQF tracks the quality and compliance state of Canonical Platform Engineering's 
 
 | | |
 |-|-|
-| 📊 [Live dashboard](https://srbouffard.github.io/pqf/) | The deployed UI |
+| 📊 [Live dashboard](https://canonical.github.io/pqf/) | The deployed UI |
 | 🏗 [Architecture](docs/architecture.md) | How the system works |
 | ➕ [Add a product](docs/adding-a-product.md) | Onboard a new product |
 | 🔧 [Add a dimension](docs/adding-a-dimension.md) | Create a new scorer |

@@ -70,7 +70,7 @@ export default function About() {
         <ul className="p-list">
           <li className="p-list__item">
             <a
-              href="https://github.com/srbouffard/pqf/blob/main/docs/superpowers/specs/2026-06-29-pqf-tool-design.md"
+              href="https://github.com/canonical/pqf/blob/main/docs/superpowers/specs/2026-06-29-pqf-tool-design.md"
               target="_blank"
               rel="noreferrer"
             >
