@@ -62,4 +62,12 @@ describe('About', () => {
     wrap()
     expect(screen.getByRole('link', { name: /portfolio overview/i })).toBeInTheDocument()
   })
+
+  it('links framework specification to the canonical repo', () => {
+    wrap()
+    expect(screen.getByRole('link', { name: /full framework specification on github/i })).toHaveAttribute(
+      'href',
+      'https://github.com/canonical/pqf/blob/main/docs/superpowers/specs/2026-06-29-pqf-tool-design.md',
+    )
+  })
 })

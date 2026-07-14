@@ -56,7 +56,7 @@ export default function GlobalNav() {
             <li className="p-navigation__item">
               <a
                 className="p-navigation__link"
-                href="https://github.com/srbouffard/pqf/tree/main/docs"
+                href="https://github.com/canonical/pqf/tree/main/docs"
                 target="_blank"
                 rel="noopener noreferrer"
               >
