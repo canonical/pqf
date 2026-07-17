@@ -1,4 +1,6 @@
 from engine.aggregation import aggregate_root_dimension, compute_leaf_applicability
+from engine.graph import build_graph
+from engine.medal_engine import compute_leaf_product, compute_root_product
 from engine.models import ApplicabilityOutcome, LeafDimensionResult, Medal
 
 DIM_CHARM_ONLY = {
@@ -9,6 +11,11 @@ DIM_CHARM_ONLY = {
 
 DIM_ROOT_EXCLUDED = {
     "applies_to": {"product_types": ["charm"]},
+    "aggregation": "worst_in_scope",
+    "medals": {"bronze": ["some_metric == true"]},
+}
+
+DIM_NO_APPLIES_TO = {
     "aggregation": "worst_in_scope",
     "medals": {"bronze": ["some_metric == true"]},
 }
@@ -74,3 +81,87 @@ def test_leaf_applicability_insufficient_data_when_no_metrics():
 def test_leaf_applicability_scored_when_applicable_with_metrics():
     outcome = compute_leaf_applicability("charm", {"some_metric": True}, DIM_ROOT_EXCLUDED)
     assert outcome == ApplicabilityOutcome.SCORED
+
+
+def test_leaf_applicability_no_applies_to_defaults_to_applicable():
+    outcome = compute_leaf_applicability("charm", {"some_metric": True}, DIM_NO_APPLIES_TO)
+    assert outcome == ApplicabilityOutcome.SCORED
+
+
+ROOT_GRAPH_DICT = {
+    "id": "matrix",
+    "product_type": "root",
+    "name": "Matrix",
+    "lifecycle": "stable",
+    "target_medal": "gold",
+    "ownership": {"squad": "americas"},
+    "composed_of": [
+        {
+            "id": "synapse",
+            "product_type": "charm",
+            "source": {"repo": "canonical/synapse-operator"},
+            "target_medal": "gold",
+        }
+    ],
+}
+
+LEAF_METRICS = {
+    "test_verification": {"coverage_pct": 75}
+}
+
+DIMS_WITH_APPLICABILITY = {
+    "dimensions": {
+        "test_verification": {
+            "applies_to": {"product_types": ["charm", "snap"]},
+            "aggregation": "worst_in_scope",
+            "medals": {
+                "silver": ["coverage_pct >= 80"],
+                "bronze": ["coverage_pct >= 70"],
+            },
+        }
+    }
+}
+
+
+def test_compute_root_product_aggregates_leaf():
+    graph = build_graph([ROOT_GRAPH_DICT])
+    leaf_result = compute_leaf_product(
+        "synapse", "charm", LEAF_METRICS, DIMS_WITH_APPLICABILITY, {}, "gold"
+    )
+    result = compute_root_product(
+        "matrix", graph, {"synapse": leaf_result},
+        DIMS_WITH_APPLICABILITY, {}, "gold"
+    )
+    assert result.product_id == "matrix"
+    assert result.dimensions["test_verification"].medal.value == "bronze"
+    assert result.dimensions["test_verification"].composition is not None
+    assert len(result.dimensions["test_verification"].composition) == 1
+
+
+def test_compute_root_product_missing_leaf_skipped():
+    graph = build_graph([ROOT_GRAPH_DICT])
+    result = compute_root_product(
+        "matrix", graph, {}, DIMS_WITH_APPLICABILITY, {}, "gold"
+    )
+    assert result.dimensions["test_verification"].medal.value == "unrated"
+
+
+def test_compute_root_product_excluded_leaf_not_counted():
+    excluded_dict = {
+        **ROOT_GRAPH_DICT,
+        "composed_of": [
+            {
+                **ROOT_GRAPH_DICT["composed_of"][0],
+                "excluded_from_parent_medal": True,
+            }
+        ],
+    }
+    graph = build_graph([excluded_dict])
+    leaf_result = compute_leaf_product(
+        "synapse", "charm", LEAF_METRICS, DIMS_WITH_APPLICABILITY, {}, "gold"
+    )
+    result = compute_root_product(
+        "matrix", graph, {"synapse": leaf_result},
+        DIMS_WITH_APPLICABILITY, {}, "gold"
+    )
+    assert result.dimensions["test_verification"].medal.value == "unrated"

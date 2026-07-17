@@ -4,7 +4,6 @@ from __future__ import annotations
 from datetime import datetime
 from typing import Any
 
-from engine.drift_tracker import compute_dimension_drift
 from engine.models import (
     MEDAL_RANK,
     ApplicabilityOutcome,
@@ -20,9 +19,11 @@ def compute_leaf_applicability(
     dim_config: dict[str, Any],
 ) -> ApplicabilityOutcome:
     """Determine if this dimension applies to this product type and has data."""
-    applies_to = dim_config.get("applies_to", {}).get("product_types", [])
-    if product_type not in applies_to:
-        return ApplicabilityOutcome.NOT_APPLICABLE
+    applies_to_cfg = dim_config.get("applies_to")
+    if applies_to_cfg is not None:
+        applies_to = applies_to_cfg.get("product_types", [])
+        if product_type not in applies_to:
+            return ApplicabilityOutcome.NOT_APPLICABLE
     if not metrics:
         return ApplicabilityOutcome.INSUFFICIENT_DATA
     return ApplicabilityOutcome.SCORED
@@ -67,17 +68,12 @@ def aggregate_root_dimension(
         )
 
     worst = min(in_scope, key=lambda r: MEDAL_RANK[r.medal])
-    drift = (
-        compute_dimension_drift(product_id, "", worst.medal, target, drift_history)
-        if now is not None
-        else None
-    )
 
     return DimensionResult(
         medal=worst.medal,
         target=target,
         applicability=ApplicabilityOutcome.SCORED,
         metrics={},
-        drift=drift,
+        drift=None,  # root drift tracked by assemble.py after full assembly
         composition=list(leaf_results),
     )
