@@ -22,7 +22,7 @@
   "definitions": {
     "Dimension": {
       "type": "object",
-      "required": ["label", "description", "scorer", "outputs", "medals"],
+      "required": ["label", "description", "scorer", "outputs", "medals", "applies_to", "aggregation"],
       "additionalProperties": false,
       "properties": {
         "label": {
@@ -53,6 +53,25 @@
         },
         "medals": {
           "$ref": "#/definitions/MedalRubric"
+        },
+        "applies_to": {
+          "type": "object",
+          "required": ["product_types"],
+          "additionalProperties": false,
+          "description": "Declares which product types this dimension scores. Products of other types return not_applicable.",
+          "properties": {
+            "product_types": {
+              "type": "array",
+              "minItems": 1,
+              "items": {"type": "string", "enum": ["root", "charm", "snap"]},
+              "description": "List of product_type values this dimension applies to."
+            }
+          }
+        },
+        "aggregation": {
+          "type": "string",
+          "enum": ["worst_in_scope"],
+          "description": "How leaf results are aggregated into the root product medal. worst_in_scope: minimum medal among in-scope leaves."
         }
       }
     },

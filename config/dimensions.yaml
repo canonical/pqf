@@ -8,6 +8,9 @@ dimensions:
     label: "Test Verification"
     description: "Measures the breadth and reliability of automated test coverage across the product's component repositories."
     scorer: scorers/test_verification/scorer.py
+    applies_to:
+      product_types: [charm, snap]
+    aggregation: worst_in_scope
     outputs:
       coverage_pct:
         type: number
@@ -46,6 +49,9 @@ dimensions:
     label: "Documentation"
     description: "Evaluates the completeness and quality of product documentation against the Diátaxis framework and Canonical style guide."
     scorer: scorers/documentation/scorer.py
+    applies_to:
+      product_types: [charm, snap]
+    aggregation: worst_in_scope
     outputs:
       has_readme:
         type: boolean
@@ -90,6 +96,9 @@ dimensions:
     label: "Substrate Compatibility"
     description: "Checks that the product supports current and next-generation Juju and Charmed Kubernetes versions."
     scorer: scorers/substrate_compat/scorer.py
+    applies_to:
+      product_types: [charm]
+    aggregation: worst_in_scope
     outputs:
       supports_juju_3:
         type: boolean
@@ -114,6 +123,9 @@ dimensions:
     label: "Security / SSDLC"
     description: "Verifies that the product follows the Secure Software Development Lifecycle practices mandated by Canonical's PSQF security baseline."
     scorer: scorers/security_ssdlc/scorer.py
+    applies_to:
+      product_types: [charm, snap]
+    aggregation: worst_in_scope
     outputs:
       dependabot_enabled:
         type: boolean
@@ -138,6 +150,9 @@ dimensions:
     label: "Support Engagement"
     description: "Measures how responsive the product team is to community and customer issues and pull requests."
     scorer: scorers/support_engagement/scorer.py
+    applies_to:
+      product_types: [charm, snap]
+    aggregation: worst_in_scope
     outputs:
       avg_triage_days:
         type: number

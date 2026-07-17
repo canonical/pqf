@@ -2,112 +2,146 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "https://github.com/srbouffard/pqf/config/schemas/product.schema.json",
   "title": "PQF Product Definition",
-  "description": "Schema for products/{id}.yaml — defines a product tracked by the Product Quality Framework.",
   "type": "object",
-  "required": ["id", "name", "lifecycle", "target_medal", "ownership"],
+  "required": ["id", "product_type", "name", "lifecycle", "target_medal", "ownership"],
   "additionalProperties": false,
   "properties": {
     "id": {
       "type": "string",
       "pattern": "^[a-z][a-z0-9-]*$",
-      "description": "Unique product identifier. Must be kebab-case and match the YAML filename (without .yaml)."
+      "description": "Unique product identifier. Kebab-case. Must match filename (without .yaml)."
     },
-    "name": {
+    "product_type": {
       "type": "string",
-      "minLength": 1,
-      "description": "Human-readable product name shown in the UI."
+      "enum": ["root", "charm", "snap"],
+      "description": "root: composed of other products. charm/snap: scored directly against source repo."
     },
-    "description": {
-      "type": "string",
-      "minLength": 1,
-      "description": "One-sentence description of what the product is."
-    },
+    "name": {"type": "string", "minLength": 1},
+    "description": {"type": "string", "minLength": 1},
     "lifecycle": {
       "type": "string",
-      "enum": ["experimental", "beta", "stable", "legacy"],
-      "description": "Current maturity stage of the product."
+      "enum": ["experimental", "beta", "stable", "legacy"]
     },
     "target_medal": {
       "type": "string",
-      "enum": ["bronze", "silver", "gold"],
-      "description": "The medal tier this product is working toward achieving."
+      "enum": ["bronze", "silver", "gold"]
     },
     "ownership": {
       "type": "object",
       "required": ["squad"],
       "additionalProperties": false,
-      "description": "Ownership and stakeholder information for the product.",
       "properties": {
-        "squad": {
-          "type": "string",
-          "minLength": 1,
-          "description": "The engineering squad responsible for this product."
-        },
-        "stakeholders": {
-          "type": "array",
-          "description": "Teams or groups with a stake in this product's quality.",
-          "items": { "type": "string", "minLength": 1 }
-        },
-        "users": {
-          "type": "array",
-          "description": "Known user groups or audiences for this product.",
-          "items": { "type": "string", "minLength": 1 }
-        }
+        "squad": {"type": "string", "minLength": 1},
+        "stakeholders": {"type": "array", "items": {"type": "string"}},
+        "users": {"type": "array", "items": {"type": "string"}}
       }
     },
-    "documentation_url": {
-      "type": "string",
-      "format": "uri",
-      "description": "URL to the product's public documentation (e.g. Charmhub page)."
+    "documentation_url": {"type": "string", "format": "uri"},
+    "source": {"$ref": "#/definitions/Source"},
+    "composed_of": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"$ref": "#/definitions/ComposedEntry"}
     },
-    "allure_report_url": {
-      "type": "string",
-      "format": "uri",
-      "description": "Base URL of the Allure test report, e.g. https://canonical.github.io/{repo}/_latest. Used by the test_verification scorer."
-    },
-    "components": {
-      "type": "object",
-      "additionalProperties": false,
-      "description": "Component repositories grouped by role. The first foundational component is the primary repo used by most scorers.",
-      "properties": {
-        "foundational": {
-          "type": "array",
-          "description": "Core components that implement the product's main functionality.",
-          "items": { "$ref": "#/definitions/Component" }
-        },
-        "feature": {
-          "type": "array",
-          "description": "Optional feature components that extend the product.",
-          "items": { "$ref": "#/definitions/Component" }
-        },
-        "auxiliary": {
-          "type": "array",
-          "description": "Supporting components (e.g. databases, operators) the product depends on.",
-          "items": { "$ref": "#/definitions/Component" }
-        }
-      }
+    "context_refs": {
+      "type": "array",
+      "items": {"$ref": "#/definitions/ContextRef"}
     }
   },
+  "if": {
+    "properties": {"product_type": {"const": "root"}}
+  },
+  "then": {
+    "required": ["composed_of"],
+    "not": {"required": ["source"]}
+  },
+  "else": {
+    "required": ["source"]
+  },
   "definitions": {
-    "Component": {
+    "Source": {
       "type": "object",
-      "required": ["id", "type", "github_repo"],
+      "required": ["repo"],
       "additionalProperties": false,
       "properties": {
-        "id": {
-          "type": "string",
-          "pattern": "^[a-z][a-z0-9-]*$",
-          "description": "Short identifier for this component (kebab-case)."
-        },
-        "type": {
-          "type": "string",
-          "enum": ["charm", "snap", "rock", "library", "other"],
-          "description": "Component packaging type."
-        },
-        "github_repo": {
+        "repo": {
           "type": "string",
           "pattern": "^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$",
-          "description": "GitHub repository in 'owner/repo' format."
+          "description": "GitHub owner/repo slug."
+        },
+        "subpath": {
+          "type": "string",
+          "description": "Optional path within the repo for mono-repo components, e.g. charms/synapse."
+        }
+      }
+    },
+    "ComposedEntry": {
+      "oneOf": [
+        {
+          "description": "Reference to a standalone leaf product defined in products/<id>.yaml.",
+          "type": "object",
+          "required": ["ref"],
+          "additionalProperties": false,
+          "properties": {
+            "ref": {
+              "type": "string",
+              "pattern": "^[a-z][a-z0-9-]*$",
+              "description": "product_id of the standalone leaf product YAML."
+            },
+            "excluded_from_parent_medal": {
+              "type": "boolean",
+              "description": "If true, this product's dimension scores do not roll up into the parent medal."
+            }
+          }
+        },
+        {
+          "description": "Inline leaf product — owned by this team, belongs to this root only.",
+          "type": "object",
+          "required": ["id", "product_type", "source", "target_medal"],
+          "additionalProperties": false,
+          "properties": {
+            "id": {
+              "type": "string",
+              "pattern": "^[a-z][a-z0-9-]*$",
+              "description": "Stable identifier for this leaf. Must be globally unique."
+            },
+            "product_type": {
+              "type": "string",
+              "enum": ["charm", "snap"]
+            },
+            "source": {"$ref": "#/definitions/Source"},
+            "target_medal": {
+              "type": "string",
+              "enum": ["bronze", "silver", "gold"]
+            },
+            "allure_report_url": {
+              "type": "string",
+              "format": "uri",
+              "description": "Allure report base URL for test_verification scoring."
+            },
+            "documentation_url": {
+              "type": "string",
+              "format": "uri"
+            },
+            "excluded_from_parent_medal": {"type": "boolean"}
+          }
+        }
+      ]
+    },
+    "ContextRef": {
+      "type": "object",
+      "required": ["label"],
+      "additionalProperties": false,
+      "properties": {
+        "label": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Display name for this dependency."
+        },
+        "repo": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$",
+          "description": "Optional GitHub owner/repo for linking. Not scored."
         }
       }
     }
