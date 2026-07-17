@@ -315,3 +315,8 @@ def test_root_must_have_composed_of(prod_schema):
 def test_leaf_must_have_source(prod_schema):
     errors = _validate_dict(LEAF_MISSING_SOURCE, prod_schema)
     assert any("source" in e for e in errors)
+
+
+def test_root_must_not_have_source(prod_schema):
+    errors = _validate_dict(ROOT_WITH_SOURCE, prod_schema)
+    assert any("source" in e for e in errors)
