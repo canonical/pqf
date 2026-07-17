@@ -123,3 +123,13 @@ def test_standalone_leaf_included_in_units():
     graph = build_graph([STANDALONE_LEAF])
     units = resolve_leaf_units(graph)
     assert any(u.product_id == "postgresql-k8s" for u in units)
+
+
+def test_inline_missing_source_raises():
+    bad_root = {
+        **ROOT_WITH_INLINE,
+        "composed_of": [{"id": "bad-charm", "product_type": "charm", "target_medal": "bronze"}],
+    }
+    with pytest.raises(ValueError, match="missing required 'source'"):
+        build_graph([bad_root])
+

@@ -64,6 +64,8 @@ def _node_from_product_dict(d: dict[str, Any]) -> ProductNode:
 
 
 def _node_from_inline(entry: dict[str, Any], parent_id: str) -> ProductNode:
+    if "source" not in entry:
+        raise ValueError(f"Inline product {entry.get('id')!r} is missing required 'source' field.")
     source = entry["source"]
     return ProductNode(
         id=entry["id"],
