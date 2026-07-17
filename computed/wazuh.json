@@ -1,22 +1,22 @@
 {
   "product_id": "wazuh",
-  "computed_at": "2026-07-01T01:59:06.390329+00:00",
+  "computed_at": "2026-07-17T12:58:03.026773+00:00",
   "leaf_metrics": {
     "wazuh-server": {
       "test_verification": {
         "coverage_pct": 100,
         "stability_pct": 100,
         "latest_build_passing": true,
-        "uses_ops_testing": true,
+        "uses_ops_testing": false,
         "uses_jubilant": false
       },
       "documentation": {
         "has_readme": true,
         "has_contributing": true,
         "has_security": true,
-        "diataxis_coverage": 2,
-        "style_linter_passing": true,
-        "links_passing": true
+        "diataxis_coverage": 0,
+        "style_linter_passing": false,
+        "links_passing": false
       },
       "substrate_compat": {
         "supports_juju_3": false,
@@ -26,11 +26,77 @@
       "security_ssdlc": {
         "dependabot_enabled": false,
         "codeql_enabled": false,
-        "branch_protection_required_checks": false
+        "branch_protection_required_checks": true
       },
       "support_engagement": {
         "avg_triage_days": 392.8,
-        "avg_pr_review_days": 1.4,
+        "avg_pr_review_days": 1.5,
+        "has_squad_topic": true,
+        "has_jira_sync": true
+      }
+    },
+    "wazuh-indexer": {
+      "test_verification": {
+        "coverage_pct": 0,
+        "stability_pct": 0,
+        "latest_build_passing": false,
+        "uses_ops_testing": true,
+        "uses_jubilant": false
+      },
+      "documentation": {
+        "has_readme": true,
+        "has_contributing": true,
+        "has_security": false,
+        "diataxis_coverage": 0,
+        "style_linter_passing": false,
+        "links_passing": false
+      },
+      "substrate_compat": {
+        "supports_juju_3": false,
+        "supports_juju_4": false,
+        "supports_ck8s": false
+      },
+      "security_ssdlc": {
+        "dependabot_enabled": false,
+        "codeql_enabled": false,
+        "branch_protection_required_checks": true
+      },
+      "support_engagement": {
+        "avg_triage_days": 0.0,
+        "avg_pr_review_days": 0.0,
+        "has_squad_topic": true,
+        "has_jira_sync": true
+      }
+    },
+    "wazuh-dashboard": {
+      "test_verification": {
+        "coverage_pct": 0,
+        "stability_pct": 0,
+        "latest_build_passing": false,
+        "uses_ops_testing": true,
+        "uses_jubilant": false
+      },
+      "documentation": {
+        "has_readme": true,
+        "has_contributing": false,
+        "has_security": false,
+        "diataxis_coverage": 0,
+        "style_linter_passing": false,
+        "links_passing": false
+      },
+      "substrate_compat": {
+        "supports_juju_3": false,
+        "supports_juju_4": false,
+        "supports_ck8s": false
+      },
+      "security_ssdlc": {
+        "dependabot_enabled": false,
+        "codeql_enabled": false,
+        "branch_protection_required_checks": true
+      },
+      "support_engagement": {
+        "avg_triage_days": 0.0,
+        "avg_pr_review_days": 0.0,
         "has_squad_topic": true,
         "has_jira_sync": true
       }

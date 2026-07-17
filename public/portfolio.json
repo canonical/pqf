@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-17T01:30:28.449119+00:00",
+  "generated_at": "2026-07-17T12:58:16.586804+00:00",
   "products": [
     {
       "id": "discourse",
@@ -8,7 +8,7 @@
       "description": "An open-source, community- and customer-friendly discussion platform.",
       "lifecycle": "stable",
       "target_medal": "silver",
-      "current_medal": "bronze",
+      "current_medal": "unrated",
       "squad": "americas",
       "is_portfolio_entry": true,
       "documentation_url": "https://charmhub.io/discourse-k8s",
@@ -59,7 +59,7 @@
           ]
         },
         "documentation": {
-          "medal": "bronze",
+          "medal": "unrated",
           "target": "silver",
           "applicability": "scored",
           "metrics": {},
@@ -68,15 +68,15 @@
             {
               "product_id": "discourse-k8s",
               "repo": "canonical/discourse-k8s-operator",
-              "medal": "bronze",
+              "medal": "unrated",
               "applicability": "scored",
               "metrics": {
                 "has_readme": true,
                 "has_contributing": true,
                 "has_security": true,
-                "diataxis_coverage": 2,
-                "style_linter_passing": true,
-                "links_passing": true
+                "diataxis_coverage": 0,
+                "style_linter_passing": false,
+                "links_passing": false
               },
               "excluded_from_parent_medal": false
             }
@@ -118,7 +118,7 @@
               "metrics": {
                 "dependabot_enabled": false,
                 "codeql_enabled": false,
-                "branch_protection_required_checks": false
+                "branch_protection_required_checks": true
               },
               "excluded_from_parent_medal": false
             }
@@ -137,8 +137,8 @@
               "medal": "bronze",
               "applicability": "scored",
               "metrics": {
-                "avg_triage_days": 216.0,
-                "avg_pr_review_days": 1.9,
+                "avg_triage_days": 292.8,
+                "avg_pr_review_days": 2.2,
                 "has_squad_topic": true,
                 "has_jira_sync": true
               },
@@ -217,9 +217,9 @@
                 "has_readme": true,
                 "has_contributing": false,
                 "has_security": true,
-                "diataxis_coverage": 3,
-                "style_linter_passing": true,
-                "links_passing": true
+                "diataxis_coverage": 0,
+                "style_linter_passing": false,
+                "links_passing": false
               },
               "excluded_from_parent_medal": false
             }
@@ -261,7 +261,7 @@
               "metrics": {
                 "dependabot_enabled": false,
                 "codeql_enabled": false,
-                "branch_protection_required_checks": false
+                "branch_protection_required_checks": true
               },
               "excluded_from_parent_medal": false
             }
@@ -281,7 +281,7 @@
               "applicability": "scored",
               "metrics": {
                 "avg_triage_days": 731.1,
-                "avg_pr_review_days": 0.6,
+                "avg_pr_review_days": 1.3,
                 "has_squad_topic": true,
                 "has_jira_sync": true
               },
@@ -337,15 +337,15 @@
                 "coverage_pct": 0,
                 "stability_pct": 100,
                 "latest_build_passing": true,
-                "uses_ops_testing": true,
-                "uses_jubilant": false
+                "uses_ops_testing": false,
+                "uses_jubilant": true
               },
               "excluded_from_parent_medal": false
             }
           ]
         },
         "documentation": {
-          "medal": "bronze",
+          "medal": "unrated",
           "target": "bronze",
           "applicability": "scored",
           "metrics": {},
@@ -354,15 +354,15 @@
             {
               "product_id": "jenkins-k8s",
               "repo": "canonical/jenkins-k8s-operator",
-              "medal": "bronze",
+              "medal": "unrated",
               "applicability": "scored",
               "metrics": {
                 "has_readme": true,
                 "has_contributing": true,
                 "has_security": true,
-                "diataxis_coverage": 3,
-                "style_linter_passing": true,
-                "links_passing": true
+                "diataxis_coverage": 0,
+                "style_linter_passing": false,
+                "links_passing": false
               },
               "excluded_from_parent_medal": false
             }
@@ -404,7 +404,7 @@
               "metrics": {
                 "dependabot_enabled": false,
                 "codeql_enabled": false,
-                "branch_protection_required_checks": false
+                "branch_protection_required_checks": true
               },
               "excluded_from_parent_medal": false
             }
@@ -424,7 +424,7 @@
               "applicability": "scored",
               "metrics": {
                 "avg_triage_days": 147.8,
-                "avg_pr_review_days": 1.1,
+                "avg_pr_review_days": 1.2,
                 "has_squad_topic": true,
                 "has_jira_sync": true
               },
@@ -484,7 +484,7 @@
                 "coverage_pct": 0,
                 "stability_pct": 100,
                 "latest_build_passing": true,
-                "uses_ops_testing": true,
+                "uses_ops_testing": false,
                 "uses_jubilant": false
               },
               "excluded_from_parent_medal": false
@@ -493,8 +493,14 @@
               "product_id": "saml-integrator",
               "repo": "canonical/saml-integrator-operator",
               "medal": "unrated",
-              "applicability": "insufficient_data",
-              "metrics": {},
+              "applicability": "scored",
+              "metrics": {
+                "coverage_pct": 0,
+                "stability_pct": 0,
+                "latest_build_passing": false,
+                "uses_ops_testing": false,
+                "uses_jubilant": false
+              },
               "excluded_from_parent_medal": false
             }
           ]
@@ -515,9 +521,9 @@
                 "has_readme": true,
                 "has_contributing": true,
                 "has_security": false,
-                "diataxis_coverage": 3,
-                "style_linter_passing": true,
-                "links_passing": true
+                "diataxis_coverage": 0,
+                "style_linter_passing": false,
+                "links_passing": false
               },
               "excluded_from_parent_medal": false
             },
@@ -525,8 +531,15 @@
               "product_id": "saml-integrator",
               "repo": "canonical/saml-integrator-operator",
               "medal": "unrated",
-              "applicability": "insufficient_data",
-              "metrics": {},
+              "applicability": "scored",
+              "metrics": {
+                "has_readme": true,
+                "has_contributing": true,
+                "has_security": true,
+                "diataxis_coverage": 0,
+                "style_linter_passing": false,
+                "links_passing": false
+              },
               "excluded_from_parent_medal": false
             }
           ]
@@ -553,9 +566,13 @@
             {
               "product_id": "saml-integrator",
               "repo": "canonical/saml-integrator-operator",
-              "medal": "unrated",
-              "applicability": "insufficient_data",
-              "metrics": {},
+              "medal": "bronze",
+              "applicability": "scored",
+              "metrics": {
+                "supports_juju_3": false,
+                "supports_juju_4": false,
+                "supports_ck8s": false
+              },
               "excluded_from_parent_medal": false
             }
           ]
@@ -575,16 +592,20 @@
               "metrics": {
                 "dependabot_enabled": false,
                 "codeql_enabled": false,
-                "branch_protection_required_checks": false
+                "branch_protection_required_checks": true
               },
               "excluded_from_parent_medal": false
             },
             {
               "product_id": "saml-integrator",
               "repo": "canonical/saml-integrator-operator",
-              "medal": "unrated",
-              "applicability": "insufficient_data",
-              "metrics": {},
+              "medal": "bronze",
+              "applicability": "scored",
+              "metrics": {
+                "dependabot_enabled": false,
+                "codeql_enabled": false,
+                "branch_protection_required_checks": true
+              },
               "excluded_from_parent_medal": false
             }
           ]
@@ -602,8 +623,8 @@
               "medal": "bronze",
               "applicability": "scored",
               "metrics": {
-                "avg_triage_days": 364.6,
-                "avg_pr_review_days": 0.4,
+                "avg_triage_days": 729.2,
+                "avg_pr_review_days": 0.7,
                 "has_squad_topic": true,
                 "has_jira_sync": false
               },
@@ -612,9 +633,14 @@
             {
               "product_id": "saml-integrator",
               "repo": "canonical/saml-integrator-operator",
-              "medal": "unrated",
-              "applicability": "insufficient_data",
-              "metrics": {},
+              "medal": "bronze",
+              "applicability": "scored",
+              "metrics": {
+                "avg_triage_days": 381.4,
+                "avg_pr_review_days": 1.3,
+                "has_squad_topic": true,
+                "has_jira_sync": true
+              },
               "excluded_from_parent_medal": false
             }
           ]
@@ -664,14 +690,14 @@
                 "stability_pct": 0,
                 "latest_build_passing": false,
                 "uses_ops_testing": true,
-                "uses_jubilant": false
+                "uses_jubilant": true
               },
               "excluded_from_parent_medal": false
             }
           ]
         },
         "documentation": {
-          "medal": "bronze",
+          "medal": "unrated",
           "target": "gold",
           "applicability": "scored",
           "metrics": {},
@@ -680,15 +706,15 @@
             {
               "product_id": "mattermost-k8s",
               "repo": "canonical/mattermost-k8s-operator",
-              "medal": "bronze",
+              "medal": "unrated",
               "applicability": "scored",
               "metrics": {
                 "has_readme": true,
                 "has_contributing": true,
                 "has_security": true,
-                "diataxis_coverage": 1,
-                "style_linter_passing": true,
-                "links_passing": true
+                "diataxis_coverage": 0,
+                "style_linter_passing": false,
+                "links_passing": false
               },
               "excluded_from_parent_medal": false
             }
@@ -730,7 +756,7 @@
               "metrics": {
                 "dependabot_enabled": false,
                 "codeql_enabled": false,
-                "branch_protection_required_checks": false
+                "branch_protection_required_checks": true
               },
               "excluded_from_parent_medal": false
             }
@@ -749,8 +775,8 @@
               "medal": "bronze",
               "applicability": "scored",
               "metrics": {
-                "avg_triage_days": 315.1,
-                "avg_pr_review_days": 2.6,
+                "avg_triage_days": 406.1,
+                "avg_pr_review_days": 6.3,
                 "has_squad_topic": true,
                 "has_jira_sync": true
               },
@@ -798,7 +824,7 @@
                 "stability_pct": 100,
                 "latest_build_passing": true,
                 "uses_ops_testing": true,
-                "uses_jubilant": false
+                "uses_jubilant": true
               },
               "excluded_from_parent_medal": false
             }
@@ -820,9 +846,9 @@
                 "has_readme": true,
                 "has_contributing": true,
                 "has_security": false,
-                "diataxis_coverage": 2,
-                "style_linter_passing": true,
-                "links_passing": true
+                "diataxis_coverage": 0,
+                "style_linter_passing": false,
+                "links_passing": false
               },
               "excluded_from_parent_medal": false
             }
@@ -864,7 +890,7 @@
               "metrics": {
                 "dependabot_enabled": false,
                 "codeql_enabled": false,
-                "branch_protection_required_checks": false
+                "branch_protection_required_checks": true
               },
               "excluded_from_parent_medal": false
             }
@@ -884,7 +910,7 @@
               "applicability": "scored",
               "metrics": {
                 "avg_triage_days": 0.0,
-                "avg_pr_review_days": 4.6,
+                "avg_pr_review_days": 4.2,
                 "has_squad_topic": true,
                 "has_jira_sync": true
               },
@@ -901,7 +927,7 @@
       "description": "A platform that unifies XDR and SIEM protection for endpoints and cloud workloads.",
       "lifecycle": "stable",
       "target_medal": "silver",
-      "current_medal": "bronze",
+      "current_medal": "unrated",
       "squad": "emea",
       "is_portfolio_entry": true,
       "documentation_url": "https://wazuh.com/",
@@ -929,7 +955,7 @@
       "parent_product_ids": [],
       "dimensions": {
         "test_verification": {
-          "medal": "gold",
+          "medal": "unrated",
           "target": "silver",
           "applicability": "scored",
           "metrics": {},
@@ -944,7 +970,7 @@
                 "coverage_pct": 100,
                 "stability_pct": 100,
                 "latest_build_passing": true,
-                "uses_ops_testing": true,
+                "uses_ops_testing": false,
                 "uses_jubilant": false
               },
               "excluded_from_parent_medal": false
@@ -953,22 +979,34 @@
               "product_id": "wazuh-indexer",
               "repo": "canonical/wazuh-indexer-operator",
               "medal": "unrated",
-              "applicability": "insufficient_data",
-              "metrics": {},
+              "applicability": "scored",
+              "metrics": {
+                "coverage_pct": 0,
+                "stability_pct": 0,
+                "latest_build_passing": false,
+                "uses_ops_testing": true,
+                "uses_jubilant": false
+              },
               "excluded_from_parent_medal": false
             },
             {
               "product_id": "wazuh-dashboard",
               "repo": "canonical/wazuh-dashboard-operator",
               "medal": "unrated",
-              "applicability": "insufficient_data",
-              "metrics": {},
+              "applicability": "scored",
+              "metrics": {
+                "coverage_pct": 0,
+                "stability_pct": 0,
+                "latest_build_passing": false,
+                "uses_ops_testing": true,
+                "uses_jubilant": false
+              },
               "excluded_from_parent_medal": false
             }
           ]
         },
         "documentation": {
-          "medal": "bronze",
+          "medal": "unrated",
           "target": "silver",
           "applicability": "scored",
           "metrics": {},
@@ -977,15 +1015,15 @@
             {
               "product_id": "wazuh-server",
               "repo": "canonical/wazuh-server-operator",
-              "medal": "bronze",
+              "medal": "unrated",
               "applicability": "scored",
               "metrics": {
                 "has_readme": true,
                 "has_contributing": true,
                 "has_security": true,
-                "diataxis_coverage": 2,
-                "style_linter_passing": true,
-                "links_passing": true
+                "diataxis_coverage": 0,
+                "style_linter_passing": false,
+                "links_passing": false
               },
               "excluded_from_parent_medal": false
             },
@@ -993,16 +1031,30 @@
               "product_id": "wazuh-indexer",
               "repo": "canonical/wazuh-indexer-operator",
               "medal": "unrated",
-              "applicability": "insufficient_data",
-              "metrics": {},
+              "applicability": "scored",
+              "metrics": {
+                "has_readme": true,
+                "has_contributing": true,
+                "has_security": false,
+                "diataxis_coverage": 0,
+                "style_linter_passing": false,
+                "links_passing": false
+              },
               "excluded_from_parent_medal": false
             },
             {
               "product_id": "wazuh-dashboard",
               "repo": "canonical/wazuh-dashboard-operator",
               "medal": "unrated",
-              "applicability": "insufficient_data",
-              "metrics": {},
+              "applicability": "scored",
+              "metrics": {
+                "has_readme": true,
+                "has_contributing": false,
+                "has_security": false,
+                "diataxis_coverage": 0,
+                "style_linter_passing": false,
+                "links_passing": false
+              },
               "excluded_from_parent_medal": false
             }
           ]
@@ -1029,17 +1081,25 @@
             {
               "product_id": "wazuh-indexer",
               "repo": "canonical/wazuh-indexer-operator",
-              "medal": "unrated",
-              "applicability": "insufficient_data",
-              "metrics": {},
+              "medal": "bronze",
+              "applicability": "scored",
+              "metrics": {
+                "supports_juju_3": false,
+                "supports_juju_4": false,
+                "supports_ck8s": false
+              },
               "excluded_from_parent_medal": false
             },
             {
               "product_id": "wazuh-dashboard",
               "repo": "canonical/wazuh-dashboard-operator",
-              "medal": "unrated",
-              "applicability": "insufficient_data",
-              "metrics": {},
+              "medal": "bronze",
+              "applicability": "scored",
+              "metrics": {
+                "supports_juju_3": false,
+                "supports_juju_4": false,
+                "supports_ck8s": false
+              },
               "excluded_from_parent_medal": false
             }
           ]
@@ -1059,24 +1119,32 @@
               "metrics": {
                 "dependabot_enabled": false,
                 "codeql_enabled": false,
-                "branch_protection_required_checks": false
+                "branch_protection_required_checks": true
               },
               "excluded_from_parent_medal": false
             },
             {
               "product_id": "wazuh-indexer",
               "repo": "canonical/wazuh-indexer-operator",
-              "medal": "unrated",
-              "applicability": "insufficient_data",
-              "metrics": {},
+              "medal": "bronze",
+              "applicability": "scored",
+              "metrics": {
+                "dependabot_enabled": false,
+                "codeql_enabled": false,
+                "branch_protection_required_checks": true
+              },
               "excluded_from_parent_medal": false
             },
             {
               "product_id": "wazuh-dashboard",
               "repo": "canonical/wazuh-dashboard-operator",
-              "medal": "unrated",
-              "applicability": "insufficient_data",
-              "metrics": {},
+              "medal": "bronze",
+              "applicability": "scored",
+              "metrics": {
+                "dependabot_enabled": false,
+                "codeql_enabled": false,
+                "branch_protection_required_checks": true
+              },
               "excluded_from_parent_medal": false
             }
           ]
@@ -1095,7 +1163,7 @@
               "applicability": "scored",
               "metrics": {
                 "avg_triage_days": 392.8,
-                "avg_pr_review_days": 1.4,
+                "avg_pr_review_days": 1.5,
                 "has_squad_topic": true,
                 "has_jira_sync": true
               },
@@ -1104,17 +1172,27 @@
             {
               "product_id": "wazuh-indexer",
               "repo": "canonical/wazuh-indexer-operator",
-              "medal": "unrated",
-              "applicability": "insufficient_data",
-              "metrics": {},
+              "medal": "gold",
+              "applicability": "scored",
+              "metrics": {
+                "avg_triage_days": 0.0,
+                "avg_pr_review_days": 0.0,
+                "has_squad_topic": true,
+                "has_jira_sync": true
+              },
               "excluded_from_parent_medal": false
             },
             {
               "product_id": "wazuh-dashboard",
               "repo": "canonical/wazuh-dashboard-operator",
-              "medal": "unrated",
-              "applicability": "insufficient_data",
-              "metrics": {},
+              "medal": "gold",
+              "applicability": "scored",
+              "metrics": {
+                "avg_triage_days": 0.0,
+                "avg_pr_review_days": 0.0,
+                "has_squad_topic": true,
+                "has_jira_sync": true
+              },
               "excluded_from_parent_medal": false
             }
           ]
@@ -1167,7 +1245,7 @@
                 "coverage_pct": 0,
                 "stability_pct": 100,
                 "latest_build_passing": true,
-                "uses_ops_testing": true,
+                "uses_ops_testing": false,
                 "uses_jubilant": false
               },
               "excluded_from_parent_medal": false
@@ -1175,7 +1253,7 @@
           ]
         },
         "documentation": {
-          "medal": "bronze",
+          "medal": "unrated",
           "target": "bronze",
           "applicability": "scored",
           "metrics": {},
@@ -1184,15 +1262,15 @@
             {
               "product_id": "wordpress-k8s",
               "repo": "canonical/wordpress-k8s-operator",
-              "medal": "bronze",
+              "medal": "unrated",
               "applicability": "scored",
               "metrics": {
                 "has_readme": true,
                 "has_contributing": true,
                 "has_security": true,
-                "diataxis_coverage": 3,
-                "style_linter_passing": true,
-                "links_passing": true
+                "diataxis_coverage": 0,
+                "style_linter_passing": false,
+                "links_passing": false
               },
               "excluded_from_parent_medal": false
             }
@@ -1234,7 +1312,7 @@
               "metrics": {
                 "dependabot_enabled": false,
                 "codeql_enabled": false,
-                "branch_protection_required_checks": false
+                "branch_protection_required_checks": true
               },
               "excluded_from_parent_medal": false
             }
@@ -1254,7 +1332,7 @@
               "applicability": "scored",
               "metrics": {
                 "avg_triage_days": 735.1,
-                "avg_pr_review_days": 4.9,
+                "avg_pr_review_days": 6.6,
                 "has_squad_topic": true,
                 "has_jira_sync": true
               },
@@ -1271,7 +1349,7 @@
       "description": "",
       "lifecycle": "stable",
       "target_medal": "silver",
-      "current_medal": "bronze",
+      "current_medal": "unrated",
       "squad": "",
       "is_portfolio_entry": false,
       "documentation_url": "",
@@ -1300,16 +1378,16 @@
           "composition": null
         },
         "documentation": {
-          "medal": "bronze",
+          "medal": "unrated",
           "target": "silver",
           "applicability": "scored",
           "metrics": {
             "has_readme": true,
             "has_contributing": true,
             "has_security": true,
-            "diataxis_coverage": 2,
-            "style_linter_passing": true,
-            "links_passing": true
+            "diataxis_coverage": 0,
+            "style_linter_passing": false,
+            "links_passing": false
           },
           "drift": null,
           "composition": null
@@ -1333,7 +1411,7 @@
           "metrics": {
             "dependabot_enabled": false,
             "codeql_enabled": false,
-            "branch_protection_required_checks": false
+            "branch_protection_required_checks": true
           },
           "drift": null,
           "composition": null
@@ -1343,8 +1421,8 @@
           "target": "silver",
           "applicability": "scored",
           "metrics": {
-            "avg_triage_days": 216.0,
-            "avg_pr_review_days": 1.9,
+            "avg_triage_days": 292.8,
+            "avg_pr_review_days": 2.2,
             "has_squad_topic": true,
             "has_jira_sync": true
           },
@@ -1396,9 +1474,9 @@
             "has_readme": true,
             "has_contributing": false,
             "has_security": true,
-            "diataxis_coverage": 3,
-            "style_linter_passing": true,
-            "links_passing": true
+            "diataxis_coverage": 0,
+            "style_linter_passing": false,
+            "links_passing": false
           },
           "drift": null,
           "composition": null
@@ -1422,7 +1500,7 @@
           "metrics": {
             "dependabot_enabled": false,
             "codeql_enabled": false,
-            "branch_protection_required_checks": false
+            "branch_protection_required_checks": true
           },
           "drift": null,
           "composition": null
@@ -1433,7 +1511,7 @@
           "applicability": "scored",
           "metrics": {
             "avg_triage_days": 731.1,
-            "avg_pr_review_days": 0.6,
+            "avg_pr_review_days": 1.3,
             "has_squad_topic": true,
             "has_jira_sync": true
           },
@@ -1471,23 +1549,23 @@
             "coverage_pct": 0,
             "stability_pct": 100,
             "latest_build_passing": true,
-            "uses_ops_testing": true,
-            "uses_jubilant": false
+            "uses_ops_testing": false,
+            "uses_jubilant": true
           },
           "drift": null,
           "composition": null
         },
         "documentation": {
-          "medal": "bronze",
+          "medal": "unrated",
           "target": "bronze",
           "applicability": "scored",
           "metrics": {
             "has_readme": true,
             "has_contributing": true,
             "has_security": true,
-            "diataxis_coverage": 3,
-            "style_linter_passing": true,
-            "links_passing": true
+            "diataxis_coverage": 0,
+            "style_linter_passing": false,
+            "links_passing": false
           },
           "drift": null,
           "composition": null
@@ -1511,7 +1589,7 @@
           "metrics": {
             "dependabot_enabled": false,
             "codeql_enabled": false,
-            "branch_protection_required_checks": false
+            "branch_protection_required_checks": true
           },
           "drift": null,
           "composition": null
@@ -1522,7 +1600,7 @@
           "applicability": "scored",
           "metrics": {
             "avg_triage_days": 147.8,
-            "avg_pr_review_days": 1.1,
+            "avg_pr_review_days": 1.2,
             "has_squad_topic": true,
             "has_jira_sync": true
           },
@@ -1560,7 +1638,7 @@
             "coverage_pct": 0,
             "stability_pct": 100,
             "latest_build_passing": true,
-            "uses_ops_testing": true,
+            "uses_ops_testing": false,
             "uses_jubilant": false
           },
           "drift": null,
@@ -1574,9 +1652,9 @@
             "has_readme": true,
             "has_contributing": true,
             "has_security": false,
-            "diataxis_coverage": 3,
-            "style_linter_passing": true,
-            "links_passing": true
+            "diataxis_coverage": 0,
+            "style_linter_passing": false,
+            "links_passing": false
           },
           "drift": null,
           "composition": null
@@ -1600,7 +1678,7 @@
           "metrics": {
             "dependabot_enabled": false,
             "codeql_enabled": false,
-            "branch_protection_required_checks": false
+            "branch_protection_required_checks": true
           },
           "drift": null,
           "composition": null
@@ -1610,8 +1688,8 @@
           "target": "gold",
           "applicability": "scored",
           "metrics": {
-            "avg_triage_days": 364.6,
-            "avg_pr_review_days": 0.4,
+            "avg_triage_days": 729.2,
+            "avg_pr_review_days": 0.7,
             "has_squad_topic": true,
             "has_jira_sync": false
           },
@@ -1644,40 +1722,66 @@
         "test_verification": {
           "medal": "unrated",
           "target": "gold",
-          "applicability": "insufficient_data",
-          "metrics": {},
+          "applicability": "scored",
+          "metrics": {
+            "coverage_pct": 0,
+            "stability_pct": 0,
+            "latest_build_passing": false,
+            "uses_ops_testing": false,
+            "uses_jubilant": false
+          },
           "drift": null,
           "composition": null
         },
         "documentation": {
           "medal": "unrated",
           "target": "gold",
-          "applicability": "insufficient_data",
-          "metrics": {},
+          "applicability": "scored",
+          "metrics": {
+            "has_readme": true,
+            "has_contributing": true,
+            "has_security": true,
+            "diataxis_coverage": 0,
+            "style_linter_passing": false,
+            "links_passing": false
+          },
           "drift": null,
           "composition": null
         },
         "substrate_compat": {
-          "medal": "unrated",
+          "medal": "bronze",
           "target": "gold",
-          "applicability": "insufficient_data",
-          "metrics": {},
+          "applicability": "scored",
+          "metrics": {
+            "supports_juju_3": false,
+            "supports_juju_4": false,
+            "supports_ck8s": false
+          },
           "drift": null,
           "composition": null
         },
         "security_ssdlc": {
-          "medal": "unrated",
+          "medal": "bronze",
           "target": "gold",
-          "applicability": "insufficient_data",
-          "metrics": {},
+          "applicability": "scored",
+          "metrics": {
+            "dependabot_enabled": false,
+            "codeql_enabled": false,
+            "branch_protection_required_checks": true
+          },
           "drift": null,
           "composition": null
         },
         "support_engagement": {
-          "medal": "unrated",
+          "medal": "bronze",
           "target": "gold",
-          "applicability": "insufficient_data",
-          "metrics": {},
+          "applicability": "scored",
+          "metrics": {
+            "avg_triage_days": 381.4,
+            "avg_pr_review_days": 1.3,
+            "has_squad_topic": true,
+            "has_jira_sync": true
+          },
           "drift": null,
           "composition": null
         }
@@ -1713,22 +1817,22 @@
             "stability_pct": 0,
             "latest_build_passing": false,
             "uses_ops_testing": true,
-            "uses_jubilant": false
+            "uses_jubilant": true
           },
           "drift": null,
           "composition": null
         },
         "documentation": {
-          "medal": "bronze",
+          "medal": "unrated",
           "target": "gold",
           "applicability": "scored",
           "metrics": {
             "has_readme": true,
             "has_contributing": true,
             "has_security": true,
-            "diataxis_coverage": 1,
-            "style_linter_passing": true,
-            "links_passing": true
+            "diataxis_coverage": 0,
+            "style_linter_passing": false,
+            "links_passing": false
           },
           "drift": null,
           "composition": null
@@ -1752,7 +1856,7 @@
           "metrics": {
             "dependabot_enabled": false,
             "codeql_enabled": false,
-            "branch_protection_required_checks": false
+            "branch_protection_required_checks": true
           },
           "drift": null,
           "composition": null
@@ -1762,8 +1866,8 @@
           "target": "gold",
           "applicability": "scored",
           "metrics": {
-            "avg_triage_days": 315.1,
-            "avg_pr_review_days": 2.6,
+            "avg_triage_days": 406.1,
+            "avg_pr_review_days": 6.3,
             "has_squad_topic": true,
             "has_jira_sync": true
           },
@@ -1802,7 +1906,7 @@
             "stability_pct": 100,
             "latest_build_passing": true,
             "uses_ops_testing": true,
-            "uses_jubilant": false
+            "uses_jubilant": true
           },
           "drift": null,
           "composition": null
@@ -1815,9 +1919,9 @@
             "has_readme": true,
             "has_contributing": true,
             "has_security": false,
-            "diataxis_coverage": 2,
-            "style_linter_passing": true,
-            "links_passing": true
+            "diataxis_coverage": 0,
+            "style_linter_passing": false,
+            "links_passing": false
           },
           "drift": null,
           "composition": null
@@ -1841,7 +1945,7 @@
           "metrics": {
             "dependabot_enabled": false,
             "codeql_enabled": false,
-            "branch_protection_required_checks": false
+            "branch_protection_required_checks": true
           },
           "drift": null,
           "composition": null
@@ -1852,7 +1956,7 @@
           "applicability": "scored",
           "metrics": {
             "avg_triage_days": 0.0,
-            "avg_pr_review_days": 4.6,
+            "avg_pr_review_days": 4.2,
             "has_squad_topic": true,
             "has_jira_sync": true
           },
@@ -1868,7 +1972,7 @@
       "description": "",
       "lifecycle": "stable",
       "target_medal": "silver",
-      "current_medal": "bronze",
+      "current_medal": "unrated",
       "squad": "",
       "is_portfolio_entry": false,
       "documentation_url": "",
@@ -1890,23 +1994,23 @@
             "coverage_pct": 100,
             "stability_pct": 100,
             "latest_build_passing": true,
-            "uses_ops_testing": true,
+            "uses_ops_testing": false,
             "uses_jubilant": false
           },
           "drift": null,
           "composition": null
         },
         "documentation": {
-          "medal": "bronze",
+          "medal": "unrated",
           "target": "silver",
           "applicability": "scored",
           "metrics": {
             "has_readme": true,
             "has_contributing": true,
             "has_security": true,
-            "diataxis_coverage": 2,
-            "style_linter_passing": true,
-            "links_passing": true
+            "diataxis_coverage": 0,
+            "style_linter_passing": false,
+            "links_passing": false
           },
           "drift": null,
           "composition": null
@@ -1930,7 +2034,7 @@
           "metrics": {
             "dependabot_enabled": false,
             "codeql_enabled": false,
-            "branch_protection_required_checks": false
+            "branch_protection_required_checks": true
           },
           "drift": null,
           "composition": null
@@ -1941,7 +2045,7 @@
           "applicability": "scored",
           "metrics": {
             "avg_triage_days": 392.8,
-            "avg_pr_review_days": 1.4,
+            "avg_pr_review_days": 1.5,
             "has_squad_topic": true,
             "has_jira_sync": true
           },
@@ -1974,40 +2078,66 @@
         "test_verification": {
           "medal": "unrated",
           "target": "silver",
-          "applicability": "insufficient_data",
-          "metrics": {},
+          "applicability": "scored",
+          "metrics": {
+            "coverage_pct": 0,
+            "stability_pct": 0,
+            "latest_build_passing": false,
+            "uses_ops_testing": true,
+            "uses_jubilant": false
+          },
           "drift": null,
           "composition": null
         },
         "documentation": {
           "medal": "unrated",
           "target": "silver",
-          "applicability": "insufficient_data",
-          "metrics": {},
+          "applicability": "scored",
+          "metrics": {
+            "has_readme": true,
+            "has_contributing": true,
+            "has_security": false,
+            "diataxis_coverage": 0,
+            "style_linter_passing": false,
+            "links_passing": false
+          },
           "drift": null,
           "composition": null
         },
         "substrate_compat": {
-          "medal": "unrated",
+          "medal": "bronze",
           "target": "silver",
-          "applicability": "insufficient_data",
-          "metrics": {},
+          "applicability": "scored",
+          "metrics": {
+            "supports_juju_3": false,
+            "supports_juju_4": false,
+            "supports_ck8s": false
+          },
           "drift": null,
           "composition": null
         },
         "security_ssdlc": {
-          "medal": "unrated",
+          "medal": "bronze",
           "target": "silver",
-          "applicability": "insufficient_data",
-          "metrics": {},
+          "applicability": "scored",
+          "metrics": {
+            "dependabot_enabled": false,
+            "codeql_enabled": false,
+            "branch_protection_required_checks": true
+          },
           "drift": null,
           "composition": null
         },
         "support_engagement": {
-          "medal": "unrated",
+          "medal": "gold",
           "target": "silver",
-          "applicability": "insufficient_data",
-          "metrics": {},
+          "applicability": "scored",
+          "metrics": {
+            "avg_triage_days": 0.0,
+            "avg_pr_review_days": 0.0,
+            "has_squad_topic": true,
+            "has_jira_sync": true
+          },
           "drift": null,
           "composition": null
         }
@@ -2037,40 +2167,66 @@
         "test_verification": {
           "medal": "unrated",
           "target": "silver",
-          "applicability": "insufficient_data",
-          "metrics": {},
+          "applicability": "scored",
+          "metrics": {
+            "coverage_pct": 0,
+            "stability_pct": 0,
+            "latest_build_passing": false,
+            "uses_ops_testing": true,
+            "uses_jubilant": false
+          },
           "drift": null,
           "composition": null
         },
         "documentation": {
           "medal": "unrated",
           "target": "silver",
-          "applicability": "insufficient_data",
-          "metrics": {},
+          "applicability": "scored",
+          "metrics": {
+            "has_readme": true,
+            "has_contributing": false,
+            "has_security": false,
+            "diataxis_coverage": 0,
+            "style_linter_passing": false,
+            "links_passing": false
+          },
           "drift": null,
           "composition": null
         },
         "substrate_compat": {
-          "medal": "unrated",
+          "medal": "bronze",
           "target": "silver",
-          "applicability": "insufficient_data",
-          "metrics": {},
+          "applicability": "scored",
+          "metrics": {
+            "supports_juju_3": false,
+            "supports_juju_4": false,
+            "supports_ck8s": false
+          },
           "drift": null,
           "composition": null
         },
         "security_ssdlc": {
-          "medal": "unrated",
+          "medal": "bronze",
           "target": "silver",
-          "applicability": "insufficient_data",
-          "metrics": {},
+          "applicability": "scored",
+          "metrics": {
+            "dependabot_enabled": false,
+            "codeql_enabled": false,
+            "branch_protection_required_checks": true
+          },
           "drift": null,
           "composition": null
         },
         "support_engagement": {
-          "medal": "unrated",
+          "medal": "gold",
           "target": "silver",
-          "applicability": "insufficient_data",
-          "metrics": {},
+          "applicability": "scored",
+          "metrics": {
+            "avg_triage_days": 0.0,
+            "avg_pr_review_days": 0.0,
+            "has_squad_topic": true,
+            "has_jira_sync": true
+          },
           "drift": null,
           "composition": null
         }
@@ -2105,23 +2261,23 @@
             "coverage_pct": 0,
             "stability_pct": 100,
             "latest_build_passing": true,
-            "uses_ops_testing": true,
+            "uses_ops_testing": false,
             "uses_jubilant": false
           },
           "drift": null,
           "composition": null
         },
         "documentation": {
-          "medal": "bronze",
+          "medal": "unrated",
           "target": "bronze",
           "applicability": "scored",
           "metrics": {
             "has_readme": true,
             "has_contributing": true,
             "has_security": true,
-            "diataxis_coverage": 3,
-            "style_linter_passing": true,
-            "links_passing": true
+            "diataxis_coverage": 0,
+            "style_linter_passing": false,
+            "links_passing": false
           },
           "drift": null,
           "composition": null
@@ -2145,7 +2301,7 @@
           "metrics": {
             "dependabot_enabled": false,
             "codeql_enabled": false,
-            "branch_protection_required_checks": false
+            "branch_protection_required_checks": true
           },
           "drift": null,
           "composition": null
@@ -2156,7 +2312,7 @@
           "applicability": "scored",
           "metrics": {
             "avg_triage_days": 735.1,
-            "avg_pr_review_days": 4.9,
+            "avg_pr_review_days": 6.6,
             "has_squad_topic": true,
             "has_jira_sync": true
           },

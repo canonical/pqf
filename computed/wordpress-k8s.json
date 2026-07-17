@@ -1,22 +1,22 @@
 {
   "product_id": "wordpress-k8s",
-  "computed_at": "2026-07-01T01:58:54.642768+00:00",
+  "computed_at": "2026-07-17T12:58:16.495153+00:00",
   "leaf_metrics": {
     "wordpress-k8s": {
       "test_verification": {
         "coverage_pct": 0,
         "stability_pct": 100,
         "latest_build_passing": true,
-        "uses_ops_testing": true,
+        "uses_ops_testing": false,
         "uses_jubilant": false
       },
       "documentation": {
         "has_readme": true,
         "has_contributing": true,
         "has_security": true,
-        "diataxis_coverage": 3,
-        "style_linter_passing": true,
-        "links_passing": true
+        "diataxis_coverage": 0,
+        "style_linter_passing": false,
+        "links_passing": false
       },
       "substrate_compat": {
         "supports_juju_3": true,
@@ -26,11 +26,11 @@
       "security_ssdlc": {
         "dependabot_enabled": false,
         "codeql_enabled": false,
-        "branch_protection_required_checks": false
+        "branch_protection_required_checks": true
       },
       "support_engagement": {
         "avg_triage_days": 735.1,
-        "avg_pr_review_days": 4.9,
+        "avg_pr_review_days": 6.6,
         "has_squad_topic": true,
         "has_jira_sync": true
       }
