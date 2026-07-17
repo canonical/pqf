@@ -23,7 +23,7 @@ def main() -> int:
     args = parser.parse_args()
 
     github_token = os.environ["GITHUB_TOKEN"]
-    openrouter_api_key = os.environ["OPENROUTER_API_KEY"]
+    openrouter_api_key = os.environ.get("OPENROUTER_API_KEY", "")
     model = args.model or os.environ.get("OPENROUTER_MODEL", "anthropic/claude-sonnet-4.5")
 
     product = yaml.safe_load(Path(args.product_yaml).read_text())

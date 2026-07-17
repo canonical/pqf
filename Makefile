@@ -10,13 +10,20 @@
 	test test-ui test-all \
 	build dev \
 	audit audit-python audit-ui \
-	score score-docs \
+	score score-docs score-no-llm \
+	score-all score-all-no-llm _merge _assemble \
 	e2e _require-github-token _require-openrouter-key
 
 PYTHON := python3
 PIP    := pip
 NPM    := npm
 SCORE_DIR := .pqf-score
+
+# Auto-populate GITHUB_TOKEN from `gh auth token` when not already set.
+# In CI (GitHub Actions) the token is injected directly; locally this means
+# you just need `gh` installed and authenticated — no export needed.
+GITHUB_TOKEN ?= $(shell gh auth token 2>/dev/null)
+export GITHUB_TOKEN
 
 # ── Help ──────────────────────────────────────────────────────────────────────
 help:
@@ -49,9 +56,12 @@ help:
 	@echo "    make audit-python   Run pip-audit only"
 	@echo "    make audit-ui       Run npm audit only"
 	@echo ""
-	@echo "  Scoring (requires GITHUB_TOKEN + OPENROUTER_API_KEY)"
-	@echo "    make score PRODUCT=<id>   Score a single product (all dimensions)"
-	@echo "    make score-docs PRODUCT=<id>   Run only the documentation scorer"
+	@echo "  Scoring (requires GITHUB_TOKEN; OPENROUTER_API_KEY optional)"
+	@echo "    make score PRODUCT=<id>              Score one product (all dimensions, with LLM)"
+	@echo "    make score-no-llm PRODUCT=<id>       Score one product (skip AI doc checks)"
+	@echo "    make score-docs PRODUCT=<id>         Run only the documentation scorer"
+	@echo "    make score-all                       Score all products + rebuild portfolio.json (with LLM)"
+	@echo "    make score-all-no-llm                Score all products + rebuild portfolio.json (no LLM)"
 	@echo ""
 
 # ── Setup ─────────────────────────────────────────────────────────────────────
@@ -127,8 +137,78 @@ score: _require-github-token _require-openrouter-key
 	@echo "Results in $(SCORE_DIR)/$(PRODUCT)/"
 	@for f in $(SCORE_DIR)/$(PRODUCT)/*.json; do echo "  $$f:"; cat $$f | $(PYTHON) -m json.tool --indent 2; echo ""; done
 
+score-no-llm: _require-github-token
+	@echo "Scoring product: $(PRODUCT) (LLM checks skipped — diataxis/style will be 0/false)"
+	@mkdir -p $(SCORE_DIR)/$(PRODUCT)
+	$(PYTHON) scorers/test_verification/scorer.py --product-yaml products/$(PRODUCT).yaml \
+		> $(SCORE_DIR)/$(PRODUCT)/test_verification.json
+	OPENROUTER_API_KEY= $(PYTHON) scorers/documentation/scorer.py --product-yaml products/$(PRODUCT).yaml \
+		> $(SCORE_DIR)/$(PRODUCT)/documentation.json
+	$(PYTHON) scorers/substrate_compat/scorer.py --product-yaml products/$(PRODUCT).yaml \
+		> $(SCORE_DIR)/$(PRODUCT)/substrate_compat.json
+	$(PYTHON) scorers/security_ssdlc/scorer.py --product-yaml products/$(PRODUCT).yaml \
+		> $(SCORE_DIR)/$(PRODUCT)/security_ssdlc.json
+	$(PYTHON) scorers/support_engagement/scorer.py --product-yaml products/$(PRODUCT).yaml \
+		> $(SCORE_DIR)/$(PRODUCT)/support_engagement.json
+	@echo ""
+	@echo "Results in $(SCORE_DIR)/$(PRODUCT)/"
+	@for f in $(SCORE_DIR)/$(PRODUCT)/*.json; do echo "  $$f:"; cat $$f | $(PYTHON) -m json.tool --indent 2; echo ""; done
+
 score-docs: _require-github-token _require-openrouter-key
 	$(PYTHON) scorers/documentation/scorer.py --product-yaml products/$(PRODUCT).yaml
+
+# ── Score all products and rebuild portfolio.json ─────────────────────────────
+# Discovers all product YAMLs in products/, scores each one, merges the raw
+# scorer outputs into computed/<id>.json, then runs assemble.py to regenerate
+# public/portfolio.json — ready for `make dev`.
+#
+# score-all         — full run including LLM-powered doc checks (needs OPENROUTER_API_KEY)
+# score-all-no-llm  — skips AI checks; useful locally without an OpenRouter key
+
+_PRODUCTS := $(patsubst products/%.yaml,%,$(wildcard products/*.yaml))
+
+score-all: _require-github-token _require-openrouter-key
+	@echo "Scoring all products: $(_PRODUCTS)"
+	@for p in $(_PRODUCTS); do \
+		echo ""; \
+		echo "── $$p ──────────────────────────────────────────────"; \
+		$(MAKE) --no-print-directory score PRODUCT=$$p; \
+		$(MAKE) --no-print-directory _merge PRODUCT=$$p; \
+	done
+	@$(MAKE) --no-print-directory _assemble
+	@echo ""
+	@echo "Done. public/portfolio.json updated — run 'make dev' to view."
+
+score-all-no-llm: _require-github-token
+	@echo "Scoring all products (no LLM): $(_PRODUCTS)"
+	@for p in $(_PRODUCTS); do \
+		echo ""; \
+		echo "── $$p ──────────────────────────────────────────────"; \
+		$(MAKE) --no-print-directory score-no-llm PRODUCT=$$p; \
+		$(MAKE) --no-print-directory _merge PRODUCT=$$p; \
+	done
+	@$(MAKE) --no-print-directory _assemble
+	@echo ""
+	@echo "Done. public/portfolio.json updated — run 'make dev' to view."
+
+# Merge raw scorer output for one product into computed/<id>.json
+_merge:
+	$(PYTHON) engine/merge_computed.py \
+		--product-id $(PRODUCT) \
+		--scorers-output-dir $(SCORE_DIR)/$(PRODUCT) \
+		--dimensions config/dimensions.yaml \
+		--output computed/$(PRODUCT).json
+	@echo "  → computed/$(PRODUCT).json updated"
+
+# Rebuild public/portfolio.json from all computed/*.json
+_assemble:
+	$(PYTHON) engine/assemble.py \
+		--products-dir products/ \
+		--computed-dir computed/ \
+		--dimensions config/dimensions.yaml \
+		--drift-history drift-history.json \
+		--output public/portfolio.json
+	@echo "  → public/portfolio.json updated"
 
 _require-github-token:
 	@test -n "$(GITHUB_TOKEN)" || (echo "Error: GITHUB_TOKEN is not set" && exit 1)

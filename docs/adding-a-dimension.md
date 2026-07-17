@@ -225,23 +225,42 @@ if __name__ == "__main__":
 
 ## Step 6: Register the scorer in `Makefile`
 
-Add the new scorer to the `score` target in `Makefile`:
+Add the new scorer to the `score` and `score-no-llm` targets in `Makefile`:
 
 ```makefile
 	$(PYTHON) scorers/my_dimension/scorer.py --product-yaml products/$(PRODUCT).yaml \
 		> $(SCORE_DIR)/$(PRODUCT)/my_dimension.json
 ```
 
+Add it to both targets so `make score-all-no-llm` still runs your scorer.
+
 ---
 
-## Step 7: Checklist before opening a PR
+## Step 7: Verify locally
+
+Run the full pipeline to see your new dimension appear in the dashboard:
+
+```bash
+make score-no-llm PRODUCT=<any-product>
+make _merge PRODUCT=<any-product>
+make _assemble
+make dev   # → http://localhost:5173
+```
+
+See [Running scorers locally](local-scoring.md) for the full workflow.
+
+---
+
+## Step 8: Checklist before opening a PR
 
 - [ ] `config/dimensions.yaml` has the new dimension with `label`, `description`, `applies_to`, `aggregation`, `outputs`, and `medals`
 - [ ] `scorers/my_dimension/logic.py` accepts `EvaluationUnit` and returns exactly the keys declared in `outputs`
 - [ ] `scorers/my_dimension/__tests__/test_logic.py` tests all main code paths (token missing, API ok, API failing)
 - [ ] `make test` passes (all Python tests)
 - [ ] `make lint` passes
-- [ ] `make score PRODUCT=<any-product>` runs without error (needs real `GITHUB_TOKEN`)
+- [ ] `make score-no-llm PRODUCT=<any-product>` runs without error
+- [ ] `make _merge PRODUCT=<any-product> && make _assemble` updates `public/portfolio.json`
+- [ ] New dimension appears correctly in the dashboard (`make dev`)
 
 ---
 
