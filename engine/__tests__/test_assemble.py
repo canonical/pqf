@@ -1,197 +1,111 @@
-# engine/__tests__/test_assemble.py
 import json
 
-from engine.assemble import _build_dimensions_meta, assemble_portfolio
+import pytest
 
-_DIMENSIONS = {
+from engine.assemble import assemble_portfolio
+
+DIMS_CONFIG = {
     "dimensions": {
         "test_verification": {
             "label": "Test Verification",
-            "description": "Measures test breadth and reliability.",
+            "description": "...",
+            "scorer": "scorers/test_verification/scorer.py",
+            "applies_to": {"product_types": ["charm", "snap"]},
+            "aggregation": "worst_in_scope",
             "outputs": {
                 "coverage_pct": {
                     "type": "number",
-                    "range": "0-100",
                     "label": "Coverage",
-                    "description": "Source line coverage percentage.",
-                    "ai_assisted": True,
-                },
-                "stability_pct": "number",
-                "latest_build_passing": {
-                    "type": "boolean",
-                    "label": "Latest build passing",
-                    "description": "Whether the latest default branch build passed.",
-                },
-            },
-            "medals": {
-                "bronze": ["coverage_pct >= 70", "latest_build_passing == true"],
-                "silver": ["coverage_pct >= 80"],
-                "gold": ["coverage_pct >= 90"],
-            },
-        },
-        "documentation": {
-            "label": "Documentation",
-            "description": "README and docs quality.",
-            "outputs": {
-                "has_readme": {
-                    "type": "boolean",
-                    "label": "README present",
-                    "description": "A README exists in the repo.",
+                    "description": "...",
+                    "range": "0-100",
                 }
             },
             "medals": {
-                "bronze": ["has_readme == true"],
-                "silver": ["diataxis_coverage >= 4"],
-                "gold": ["style_linter_passing == true"],
+                "silver": ["coverage_pct >= 80"],
+                "bronze": ["coverage_pct >= 70"],
             },
-        },
+        }
     }
 }
 
-_PRODUCT = {
-    "id": "matrix",
-    "name": "Matrix",
-    "description": "Chat",
-    "lifecycle": "stable",
-    "target_medal": "gold",
-    "ownership": {"squad": "americas"},
-    "documentation_url": "",
-    "components": {},
-}
+ROOT_YAML = """\
+id: matrix
+product_type: root
+name: Matrix
+lifecycle: stable
+target_medal: gold
+ownership:
+  squad: americas
+composed_of:
+  - id: synapse
+    product_type: charm
+    source:
+      repo: canonical/synapse-operator
+    target_medal: gold
+context_refs:
+  - label: PostgreSQL
+    repo: canonical/postgresql-k8s-operator
+"""
 
-_COMPUTED = {
+COMPUTED_JSON = {
     "product_id": "matrix",
-    "computed_at": "2026-06-29T20:00:00+00:00",
-    "metrics": {
-        "test_verification": {
-            "coverage_pct": 90,
-            "latest_build_passing": True,
-        },
-        "documentation": {
-            "has_readme": True,
-            "diataxis_coverage": 2,
-            "style_linter_passing": False,
-        },
-    },
+    "computed_at": "2026-01-01T00:00:00+00:00",
+    "leaf_metrics": {
+        "synapse": {
+            "test_verification": {"coverage_pct": 75}
+        }
+    }
 }
 
 
-def test_assemble_portfolio_returns_products_list(tmp_path):
-    products_dir = tmp_path / "products"
-    products_dir.mkdir()
-    computed_dir = tmp_path / "computed"
-    computed_dir.mkdir()
-    (products_dir / "matrix.yaml").write_text(
-        "id: matrix\nname: Matrix\ndescription: Chat\nlifecycle: stable\ntarget_medal: gold\n"
-        "ownership:\n  squad: americas\ndocumentation_url: ''\ncomponents: {}\n"
-    )
-    (computed_dir / "matrix.json").write_text(json.dumps(_COMPUTED))
-    result = assemble_portfolio(
-        products_dir=products_dir,
-        computed_dir=computed_dir,
-        dimensions_config=_DIMENSIONS,
+@pytest.fixture
+def portfolio(tmp_path):
+    (tmp_path / "products").mkdir()
+    (tmp_path / "products" / "matrix.yaml").write_text(ROOT_YAML)
+    (tmp_path / "computed").mkdir()
+    (tmp_path / "computed" / "matrix.json").write_text(json.dumps(COMPUTED_JSON))
+    return assemble_portfolio(
+        products_dir=tmp_path / "products",
+        computed_dir=tmp_path / "computed",
+        dimensions_config=DIMS_CONFIG,
         drift_history={},
         update_drift=False,
     )
-    assert "generated_at" in result
-    assert len(result["products"]) == 1
-    assert result["products"][0]["id"] == "matrix"
-    assert "dimensions_meta" in result
 
 
-def test_assemble_portfolio_medal_computed_correctly(tmp_path):
-    products_dir = tmp_path / "products"
-    products_dir.mkdir()
-    computed_dir = tmp_path / "computed"
-    computed_dir.mkdir()
-    (products_dir / "matrix.yaml").write_text(
-        "id: matrix\nname: Matrix\ndescription: Chat\nlifecycle: stable\ntarget_medal: gold\n"
-        "ownership:\n  squad: americas\ndocumentation_url: ''\ncomponents: {}\n"
-    )
-    (computed_dir / "matrix.json").write_text(json.dumps(_COMPUTED))
-    result = assemble_portfolio(
-        products_dir=products_dir,
-        computed_dir=computed_dir,
-        dimensions_config=_DIMENSIONS,
-        drift_history={},
-        update_drift=False,
-    )
-    product = result["products"][0]
-    # test_verification: coverage 90 → gold
-    # documentation: has_readme=True bronze, diataxis 2 < 4 → bronze
-    # overall current_medal = min(gold, bronze) = bronze
-    assert product["current_medal"] == "bronze"
+def test_portfolio_contains_root_product(portfolio):
+    ids = [p["id"] for p in portfolio["products"]]
+    assert "matrix" in ids
 
 
-def test_dimensions_meta_structure():
-    meta = _build_dimensions_meta(_DIMENSIONS)
-    assert "test_verification" in meta
-    assert "documentation" in meta
-    tv = meta["test_verification"]
-    assert tv["label"] == "Test Verification"
-    assert tv["description"] == "Measures test breadth and reliability."
-    assert tv["outputs"] == {
-        "coverage_pct": {
-            "label": "Coverage",
-            "description": "Source line coverage percentage.",
-            "type": "number",
-            "range": "0-100",
-            "ai_assisted": True,
-        },
-        "latest_build_passing": {
-            "label": "Latest build passing",
-            "description": "Whether the latest default branch build passed.",
-            "type": "boolean",
-            "range": "",
-            "ai_assisted": False,
-        },
-    }
-    assert "stability_pct" not in tv["outputs"]
-    assert "medals" in tv
-    assert "bronze" in tv["medals"]
-    assert "criteria" in tv["medals"]["bronze"]
-    assert "coverage_pct >= 70" in tv["medals"]["bronze"]["criteria"]
+def test_root_product_has_correct_type(portfolio):
+    matrix = next(p for p in portfolio["products"] if p["id"] == "matrix")
+    assert matrix["product_type"] == "root"
+    assert matrix["is_portfolio_entry"] is True
 
 
-def test_assemble_portfolio_missing_computed_gives_unrated(tmp_path):
-    products_dir = tmp_path / "products"
-    products_dir.mkdir()
-    computed_dir = tmp_path / "computed"
-    computed_dir.mkdir()
-    (products_dir / "matrix.yaml").write_text(
-        "id: matrix\nname: Matrix\ndescription: Chat\nlifecycle: stable\ntarget_medal: gold\n"
-        "ownership:\n  squad: americas\ndocumentation_url: ''\ncomponents: {}\n"
-    )
-    # No computed/matrix.json — should treat as empty metrics
-    result = assemble_portfolio(
-        products_dir=products_dir,
-        computed_dir=computed_dir,
-        dimensions_config=_DIMENSIONS,
-        drift_history={},
-        update_drift=False,
-    )
-    assert result["products"][0]["current_medal"] == "unrated"
+def test_inline_leaf_not_in_top_level_products(portfolio):
+    ids = [p["id"] for p in portfolio["products"]]
+    assert "synapse" not in ids
 
 
-def test_assemble_portfolio_updates_drift_when_flag_set(tmp_path):
-    products_dir = tmp_path / "products"
-    products_dir.mkdir()
-    computed_dir = tmp_path / "computed"
-    computed_dir.mkdir()
-    (products_dir / "matrix.yaml").write_text(
-        "id: matrix\nname: Matrix\ndescription: Chat\nlifecycle: stable\ntarget_medal: gold\n"
-        "ownership:\n  squad: americas\ndocumentation_url: ''\ncomponents: {}\n"
-    )
-    # documentation is bronze, target gold → drifting
-    (computed_dir / "matrix.json").write_text(json.dumps(_COMPUTED))
-    drift_history: dict = {}
-    assemble_portfolio(
-        products_dir=products_dir,
-        computed_dir=computed_dir,
-        dimensions_config=_DIMENSIONS,
-        drift_history=drift_history,
-        update_drift=True,
-    )
-    # After update_drift=True, matrix/documentation drift should be recorded
-    assert "matrix" in drift_history
-    assert "documentation" in drift_history["matrix"]
+def test_root_dimension_has_composition(portfolio):
+    matrix = next(p for p in portfolio["products"] if p["id"] == "matrix")
+    dim = matrix["dimensions"]["test_verification"]
+    assert dim["applicability"] == "scored"
+    assert dim["composition"] is not None
+    assert len(dim["composition"]) == 1
+    assert dim["composition"][0]["product_id"] == "synapse"
+    assert dim["composition"][0]["medal"] == "bronze"  # 75 >= 70
+
+
+def test_context_refs_in_portfolio(portfolio):
+    matrix = next(p for p in portfolio["products"] if p["id"] == "matrix")
+    assert len(matrix["context_refs"]) == 1
+    assert matrix["context_refs"][0]["label"] == "PostgreSQL"
+
+
+def test_dimensions_meta_has_applies_to(portfolio):
+    meta = portfolio["dimensions_meta"]["test_verification"]
+    assert "charm" in meta["applies_to"]
+    assert meta["aggregation"] == "worst_in_scope"

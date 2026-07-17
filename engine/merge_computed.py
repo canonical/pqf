@@ -35,23 +35,27 @@ def main() -> int:
 
     dims_config = yaml.safe_load(Path(args.dimensions).read_text())
     scorer_dir = Path(args.scorers_output_dir)
-    metrics: dict = {}
+    leaf_metrics: dict = {}
 
     for dim_name in dims_config.get("dimensions", {}):
         path = scorer_dir / f"{dim_name}.json"
-        if path.exists():
-            try:
-                metrics[dim_name] = json.loads(path.read_text())
-            except json.JSONDecodeError as e:
-                print(f"Warning: skipping {dim_name} — JSON decode error: {e}", file=sys.stderr)
-                metrics[dim_name] = {}
-        else:
-            metrics[dim_name] = {}
+        if not path.exists():
+            continue
+        try:
+            dim_data = json.loads(path.read_text())
+        except json.JSONDecodeError as e:
+            print(f"Warning: skipping {dim_name} — {e}", file=sys.stderr)
+            continue
+        # dim_data is now {"leaf-id": {"metric": value, ...}, ...}
+        if isinstance(dim_data, dict):
+            for leaf_id, metrics in dim_data.items():
+                if isinstance(metrics, dict):
+                    leaf_metrics.setdefault(leaf_id, {})[dim_name] = metrics
 
     output = {
         "product_id": args.product_id,
         "computed_at": datetime.now(UTC).isoformat(),
-        "metrics": metrics,
+        "leaf_metrics": leaf_metrics,
     }
     Path(args.output).parent.mkdir(parents=True, exist_ok=True)
     Path(args.output).write_text(json.dumps(output, indent=2) + "\n")
