@@ -1,4 +1,4 @@
-import { render, screen, within } from '@testing-library/react'
+import { render, screen, within, fireEvent } from '@testing-library/react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { MemoryRouter, Routes, Route } from 'react-router'
 import { describe, it, expect, vi, beforeEach } from 'vitest'
@@ -13,22 +13,50 @@ const mockPortfolio: Portfolio = {
   products: [
     {
       id: 'matrix',
+      product_type: 'root',
       name: 'Matrix (Synapse)',
       description: 'Chat platform',
       lifecycle: 'stable',
       target_medal: 'gold',
       current_medal: 'bronze',
       squad: 'americas',
+      is_portfolio_entry: true,
       documentation_url: 'https://charmhub.io/synapse',
-      components: {
-        foundational: [{ id: 'synapse', type: 'charm', github_repo: 'canonical/synapse-operator' }],
-      },
+      context_refs: [{ label: 'Synapse Operator', repo: 'canonical/synapse-operator' }],
+      parent_product_ids: [],
+      composed_of: [{ product_id: 'synapse', excluded_from_parent_medal: false }],
       dimensions: {
         test_verification: {
           medal: 'silver',
           target: 'gold',
+          applicability: 'scored',
           drift: null,
           metrics: { coverage_pct: 87, stability_pct: 94, latest_build_passing: true },
+          composition: null,
+        },
+      },
+    },
+    {
+      id: 'synapse',
+      product_type: 'charm',
+      name: 'Synapse Charm',
+      lifecycle: 'stable',
+      target_medal: 'gold',
+      current_medal: 'bronze',
+      squad: '',
+      is_portfolio_entry: false,
+      context_refs: [],
+      parent_product_ids: ['matrix'],
+      composed_of: null,
+      source: { repo: 'canonical/synapse-operator', subpath: null },
+      dimensions: {
+        test_verification: {
+          medal: 'bronze',
+          target: 'gold',
+          applicability: 'scored',
+          drift: null,
+          metrics: { coverage_pct: 65, latest_build_passing: true },
+          composition: null,
         },
       },
     },
@@ -48,6 +76,46 @@ const mockPortfolio: Portfolio = {
   },
 }
 
+function mockWith(portfolio: Portfolio) {
+  vi.mocked(usePortfolio).mockReturnValue({
+    data: portfolio,
+    isLoading: false,
+    isError: false,
+    error: null,
+  } as ReturnType<typeof usePortfolio>)
+}
+
+function portfolioWithComposition(): Portfolio {
+  return {
+    ...mockPortfolio,
+    products: [
+      {
+        ...mockPortfolio.products[0],
+        dimensions: {
+          test_verification: {
+            medal: 'silver',
+            target: 'gold',
+            applicability: 'scored',
+            drift: null,
+            metrics: { coverage_pct: 87, stability_pct: 94, latest_build_passing: true },
+            composition: [
+              {
+                product_id: 'synapse',
+                repo: 'canonical/synapse-operator',
+                medal: 'bronze',
+                applicability: 'scored',
+                metrics: { coverage_pct: 65, latest_build_passing: true },
+                excluded_from_parent_medal: false,
+              },
+            ],
+          },
+        },
+      },
+      mockPortfolio.products[1],
+    ],
+  }
+}
+
 function wrap(id: string) {
   const qc = new QueryClient()
   return render(
@@ -63,12 +131,7 @@ function wrap(id: string) {
 
 describe('ProductDetail', () => {
   beforeEach(() => {
-    vi.mocked(usePortfolio).mockReturnValue({
-      data: mockPortfolio,
-      isLoading: false,
-      isError: false,
-      error: null,
-    } as ReturnType<typeof usePortfolio>)
+    mockWith(mockPortfolio)
   })
 
   it('renders product name as heading', () => {
@@ -109,7 +172,7 @@ describe('ProductDetail', () => {
     expect(row).toHaveTextContent('Build passing')
   })
 
-  it('renders GitHub repo link for foundational component', () => {
+  it('renders GitHub repo link for context ref', () => {
     wrap('matrix')
     expect(screen.getByRole('link', { name: /synapse-operator/i })).toBeInTheDocument()
   })
@@ -117,5 +180,43 @@ describe('ProductDetail', () => {
   it('shows 404 message for unknown product', () => {
     wrap('unknown')
     expect(screen.getByText(/not found/i)).toBeInTheDocument()
+  })
+
+  it('root product shows composition count in header', () => {
+    wrap('matrix')
+    expect(screen.getByText('COMPOSED OF')).toBeInTheDocument()
+    expect(screen.getByText('1 product')).toBeInTheDocument()
+  })
+
+  it('root product shows context refs card', () => {
+    wrap('matrix')
+    expect(screen.getByText('Dependencies (context only)')).toBeInTheDocument()
+    expect(screen.getByText('Synapse Operator')).toBeInTheDocument()
+  })
+
+  it('root product dimension row shows composition expand button', () => {
+    mockWith(portfolioWithComposition())
+    wrap('matrix')
+    expect(screen.getByRole('button', { name: /component in scope/i })).toBeInTheDocument()
+  })
+
+  it('clicking composition expands to show leaf breakdown', () => {
+    mockWith(portfolioWithComposition())
+    wrap('matrix')
+    const expandButton = screen.getByRole('button', { name: /component in scope/i })
+    fireEvent.click(expandButton)
+    expect(screen.getByText('synapse')).toBeInTheDocument()
+  })
+
+  it('leaf product shows Part of chip', () => {
+    wrap('synapse')
+    expect(screen.getByText('Part of:')).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: 'Matrix (Synapse)' })).toBeInTheDocument()
+  })
+
+  it('leaf product shows direct metrics without composition layer', () => {
+    wrap('synapse')
+    expect(screen.queryByRole('button', { name: /component in scope/i })).not.toBeInTheDocument()
+    expect(screen.getByText('Coverage')).toBeInTheDocument()
   })
 })

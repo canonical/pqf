@@ -1,9 +1,68 @@
+import React from 'react'
 import { useParams, Link } from 'react-router'
 import { usePortfolio } from '../hooks/usePortfolio'
 import MedalBadge from '../components/MedalBadge'
 import DriftChip from '../components/DriftChip'
 import MetricsList from '../components/MetricsList'
 import LoadingSpinner from '../components/LoadingSpinner'
+import type { Medal, LeafDimensionResult } from '../types'
+
+const MEDAL_ORDER: Record<Medal, number> = { gold: 3, silver: 2, bronze: 1, unrated: 0 }
+
+function CompositionImpact({ composition }: { composition: LeafDimensionResult[] }) {
+  const [expanded, setExpanded] = React.useState(false)
+  const inScope = composition.filter(
+    c => !c.excluded_from_parent_medal && c.applicability === 'scored'
+  )
+  const worst = inScope.length > 0
+    ? inScope.reduce((a, b) => MEDAL_ORDER[a.medal] <= MEDAL_ORDER[b.medal] ? a : b)
+    : null
+
+  return (
+    <div>
+      <button
+        onClick={() => setExpanded(e => !e)}
+        aria-expanded={expanded}
+        style={{
+          fontSize: '0.75rem', background: 'none', border: 'none',
+          cursor: 'pointer', color: '#06c', padding: 0, textDecoration: 'underline',
+        }}
+      >
+        {expanded ? '▾' : '▸'} {composition.length} component{composition.length !== 1 ? 's' : ''} in scope
+      </button>
+      {expanded && (
+        <div style={{ marginTop: '0.5rem', paddingLeft: '1rem', borderLeft: '2px solid #e5e5e5' }}>
+          {composition.map(c => (
+            <div
+              key={c.product_id}
+              style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.25rem 0', fontSize: '0.875rem' }}
+            >
+              <MedalBadge medal={c.medal} size="small" />
+              <span style={{ fontWeight: c.product_id === worst?.product_id ? 600 : 400 }}>
+                {c.product_id}
+              </span>
+              {c.product_id === worst?.product_id && (
+                <span style={{ fontSize: '0.6875rem', color: '#C7162B' }}>← worst</span>
+              )}
+              {c.excluded_from_parent_medal && (
+                <span style={{ fontSize: '0.6875rem', color: '#666' }}>excluded</span>
+              )}
+              {c.applicability === 'not_applicable' && (
+                <span style={{ fontSize: '0.6875rem', color: '#666' }}>N/A</span>
+              )}
+              {c.repo && (
+                <a href={`https://github.com/${c.repo}`} target="_blank" rel="noreferrer"
+                   style={{ fontSize: '0.75rem', color: '#666' }}>
+                  {c.repo} ↗
+                </a>
+              )}
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  )
+}
 
 const SQUAD_TEAMS: Record<string, { label: string; url: string }> = {
   americas: { label: 'AMER', url: 'https://github.com/orgs/canonical/teams/platform-engineering-amer' },
@@ -49,15 +108,6 @@ export default function ProductDetail() {
       </div>
     )
   }
-
-  const componentGroups: Array<{ label: string; key: 'foundational' | 'feature' | 'auxiliary' }> = [
-    { label: 'Foundational', key: 'foundational' },
-    { label: 'Feature', key: 'feature' },
-    { label: 'Auxiliary', key: 'auxiliary' },
-  ]
-
-  const hasComponents = product.components &&
-    (product.components.foundational?.length || product.components.feature?.length || product.components.auxiliary?.length)
 
   return (
     <div className="row" style={{ paddingTop: '1.5rem' }}>
@@ -107,6 +157,34 @@ export default function ProductDetail() {
               })()}
             </div>
           </div>
+          {product.parent_product_ids.length > 0 && (
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap', marginTop: '1rem' }}>
+              <span className="u-text--muted" style={{ fontSize: '0.75rem' }}>Part of:</span>
+              {product.parent_product_ids.map(parentId => {
+                const parent = portfolio.products.find(p => p.id === parentId)
+                return parent ? (
+                  <Link key={parentId} to={`/products/${parentId}`}
+                        className="p-chip" style={{ fontSize: '0.75rem', textDecoration: 'none', padding: '0.15rem 0.5rem' }}>
+                    {parent.name}
+                  </Link>
+                ) : null
+              })}
+            </div>
+          )}
+          {product.product_type === 'root' && product.composed_of && (
+            <div style={{ display: 'flex', gap: '1.5rem', flexWrap: 'wrap', marginTop: '1rem' }}>
+              <div>
+                <span className="u-text--muted" style={{ fontSize: '0.75rem', display: 'block', marginBottom: '0.25rem' }}>COMPOSED OF</span>
+                <span>{product.composed_of.length} product{product.composed_of.length !== 1 ? 's' : ''}</span>
+              </div>
+              {product.context_refs.length > 0 && (
+                <div>
+                  <span className="u-text--muted" style={{ fontSize: '0.75rem', display: 'block', marginBottom: '0.25rem' }}>CONTEXT DEPS</span>
+                  <span>{product.context_refs.length}</span>
+                </div>
+              )}
+            </div>
+          )}
         </div>
 
         {/* Dimensions card */}
@@ -149,7 +227,11 @@ export default function ProductDetail() {
                         <DriftChip drift={entry.drift} />
                       </td>
                       <td style={{ padding: '0.75rem', verticalAlign: 'top' }}>
-                        <MetricsList metrics={entry.metrics} thresholds={targetThresholds} metaOutputs={dimMeta?.outputs} />
+                        {entry.composition && entry.composition.length > 0 ? (
+                          <CompositionImpact composition={entry.composition} />
+                        ) : (
+                          <MetricsList metrics={entry.metrics} thresholds={targetThresholds} metaOutputs={dimMeta?.outputs} />
+                        )}
                       </td>
                     </tr>
                   )
@@ -159,31 +241,27 @@ export default function ProductDetail() {
           </div>
         </div>
 
-        {/* Components card */}
-        {hasComponents && (
+        {/* Dependencies (context only) card */}
+        {product.context_refs.length > 0 && (
           <div className="p-card u-sv3">
-            <h2 className="p-heading--4" style={{ marginBottom: '1rem' }}>Components</h2>
-            {componentGroups.map(({ label, key }, groupIdx) => {
-              const items = product.components?.[key]
-              if (!items || items.length === 0) return null
-              return (
-                <div key={key}>
-                  {groupIdx > 0 && <hr style={{ margin: '1rem 0', borderColor: '#e5e5e5' }} />}
-                  <h3 className="p-heading--6" style={{ textTransform: 'uppercase', color: '#666', letterSpacing: '0.05em', marginBottom: '0.5rem' }}>{label}</h3>
-                  <ul className="p-list" style={{ marginBottom: 0 }}>
-                    {items.map(c => (
-                      <li key={c.id} className="p-list__item" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.4rem 0' }}>
-                        <strong>{c.id}</strong>
-                        <span className="p-label" style={{ fontSize: '0.6875rem' }}>{c.type}</span>
-                        <a href={`https://github.com/${c.github_repo}`} target="_blank" rel="noreferrer" style={{ fontSize: '0.875rem' }}>
-                          {c.github_repo}
-                        </a>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              )
-            })}
+            <h2 className="p-heading--4" style={{ marginBottom: '0.5rem' }}>Dependencies (context only)</h2>
+            <p className="u-text--muted" style={{ fontSize: '0.875rem', marginBottom: '0.75rem' }}>
+              These dependencies are shown for context. They are not owned by this squad and do not affect the medal score.
+            </p>
+            <ul className="p-list" style={{ marginBottom: 0 }}>
+              {product.context_refs.map((cr, i) => (
+                <li key={i} className="p-list__item"
+                    style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.4rem 0' }}>
+                  <span>{cr.label}</span>
+                  {cr.repo && (
+                    <a href={`https://github.com/${cr.repo}`} target="_blank" rel="noreferrer"
+                       style={{ fontSize: '0.875rem', color: '#666' }}>
+                      {cr.repo} ↗
+                    </a>
+                  )}
+                </li>
+              ))}
+            </ul>
           </div>
         )}
 
