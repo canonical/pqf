@@ -162,12 +162,13 @@ def assemble_portfolio(
                     pid, dim_name, dim_result.medal, result.target_medal, drift_history, now
                 )
 
-    # Only emit portfolio entries (root products and standalone leaf products)
+    # Emit all computed products: portfolio entries (root/standalone) AND inline leaves.
+    # The UI overview filters by is_portfolio_entry; leaf detail pages need inline products too.
     all_results = {**root_results, **leaf_results}
     products_out = [
         _result_to_dict(all_results[node.id], node)
         for node in graph.nodes.values()
-        if node.id in all_results and node.is_portfolio_entry
+        if node.id in all_results
     ]
 
     return {

@@ -18,8 +18,6 @@ composed_of:
       repo: canonical/mattermost-k8s-operator
     target_medal: gold
     allure_report_url: "https://canonical.github.io/mattermost-k8s-operator/_latest"
-  - id: postgresql-k8s
-    product_type: charm
-    source:
-      repo: canonical/postgresql-k8s-operator
-    target_medal: gold
+context_refs:
+  - label: "PostgreSQL K8s"
+    repo: canonical/postgresql-k8s-operator

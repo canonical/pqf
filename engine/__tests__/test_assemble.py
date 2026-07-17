@@ -84,9 +84,12 @@ def test_root_product_has_correct_type(portfolio):
     assert matrix["is_portfolio_entry"] is True
 
 
-def test_inline_leaf_not_in_top_level_products(portfolio):
+def test_inline_leaf_included_in_products_but_not_portfolio_entry(portfolio):
+    """Inline leaves are included so their detail page is accessible, but not portfolio entries."""
     ids = [p["id"] for p in portfolio["products"]]
-    assert "synapse" not in ids
+    assert "synapse" in ids
+    synapse = next(p for p in portfolio["products"] if p["id"] == "synapse")
+    assert synapse["is_portfolio_entry"] is False
 
 
 def test_root_dimension_has_composition(portfolio):

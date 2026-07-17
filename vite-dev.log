@@ -1,0 +1,153 @@
+
+> pqf-ui@0.1.0 dev
+> vite
+
+[vite:react-swc] We recommend switching to `@vitejs/plugin-react` for improved performance as no swc plugins are used. More information at https://vite.dev/rolldown
+
+  VITE v8.1.1  ready in 201 ms
+
+  ➜  Local:   http://localhost:5173/
+  ➜  Network: use --host to expose
+DEPRECATION WARNING [import]: Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.
+
+More info and automated migrator: https://sass-lang.com/d/import
+
+  ╷
+2 │ @import 'vanilla';
+  │         ^^^^^^^^^
+  ╵
+    node_modules/vanilla-framework/scss/build.scss 2:9  root stylesheet
+
+DEPRECATION WARNING [import]: Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.
+
+More info and automated migrator: https://sass-lang.com/d/import
+
+  ╷
+1 │ @import 'settings';
+  │         ^^^^^^^^^^
+  ╵
+    node_modules/vanilla-framework/scss/_vanilla.scss 1:9  @import
+    node_modules/vanilla-framework/scss/build.scss 2:9     root stylesheet
+
+DEPRECATION WARNING [import]: Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.
+
+More info and automated migrator: https://sass-lang.com/d/import
+
+  ╷
+2 │ @import 'base';
+  │         ^^^^^^
+  ╵
+    node_modules/vanilla-framework/scss/_vanilla.scss 2:9  @import
+    node_modules/vanilla-framework/scss/build.scss 2:9     root stylesheet
+
+DEPRECATION WARNING [import]: Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.
+
+More info and automated migrator: https://sass-lang.com/d/import
+
+  ╷
+5 │ @import 'patterns_accordion';
+  │         ^^^^^^^^^^^^^^^^^^^^
+  ╵
+    node_modules/vanilla-framework/scss/_vanilla.scss 5:9  @import
+    node_modules/vanilla-framework/scss/build.scss 2:9     root stylesheet
+
+DEPRECATION WARNING [import]: Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.
+
+More info and automated migrator: https://sass-lang.com/d/import
+
+  ╷
+6 │ @import 'patterns_article-block';
+  │         ^^^^^^^^^^^^^^^^^^^^^^^^
+  ╵
+    node_modules/vanilla-framework/scss/_vanilla.scss 6:9  @import
+    node_modules/vanilla-framework/scss/build.scss 2:9     root stylesheet
+
+DEPRECATION WARNING [if-function]: The Sass if() syntax is deprecated in favor of the modern CSS syntax.
+
+Suggestion: if(sass($message): "\aREASON:  #{$message}"; else: "")
+
+More info: https://sass-lang.com/d/if-function
+
+    ╷
+160 │         $message: if($message, '\AREASON:  #{$message}', '');
+    │                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ╵
+    node_modules/vanilla-framework/scss/deprecate/_index.scss 160:19   @import
+    node_modules/vanilla-framework/scss/_utilities_deprecate.scss 4:9  @import
+    node_modules/vanilla-framework/scss/_settings.scss 4:9             @import
+    node_modules/vanilla-framework/scss/_vanilla.scss 1:9              @import
+    node_modules/vanilla-framework/scss/build.scss 2:9                 root stylesheet
+
+DEPRECATION WARNING [global-builtin]: Global built-in functions are deprecated and will be removed in Dart Sass 3.0.0.
+Use map.get instead.
+
+More info and automated migrator: https://sass-lang.com/d/import
+
+    ╷
+231 │   display: map-get($settings-text-display, font-size),
+    │            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ╵
+    node_modules/vanilla-framework/scss/_settings_spacing.scss 231:12  @import
+    node_modules/vanilla-framework/scss/_settings.scss 10:9            @import
+    node_modules/vanilla-framework/scss/_vanilla.scss 1:9              @import
+    node_modules/vanilla-framework/scss/build.scss 2:9                 root stylesheet
+
+DEPRECATION WARNING [global-builtin]: Global built-in functions are deprecated and will be removed in Dart Sass 3.0.0.
+Use map.get instead.
+
+More info and automated migrator: https://sass-lang.com/d/import
+
+    ╷
+232 │   display-mobile: map-get($settings-text-display-mobile, font-size),
+    │                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ╵
+    node_modules/vanilla-framework/scss/_settings_spacing.scss 232:19  @import
+    node_modules/vanilla-framework/scss/_settings.scss 10:9            @import
+    node_modules/vanilla-framework/scss/_vanilla.scss 1:9              @import
+    node_modules/vanilla-framework/scss/build.scss 2:9                 root stylesheet
+
+DEPRECATION WARNING [global-builtin]: Global built-in functions are deprecated and will be removed in Dart Sass 3.0.0.
+Use map.get instead.
+
+More info and automated migrator: https://sass-lang.com/d/import
+
+    ╷
+233 │   h1: map-get($settings-text-h1, font-size),
+    │       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ╵
+    node_modules/vanilla-framework/scss/_settings_spacing.scss 233:7  @import
+    node_modules/vanilla-framework/scss/_settings.scss 10:9           @import
+    node_modules/vanilla-framework/scss/_vanilla.scss 1:9             @import
+    node_modules/vanilla-framework/scss/build.scss 2:9                root stylesheet
+
+DEPRECATION WARNING [global-builtin]: Global built-in functions are deprecated and will be removed in Dart Sass 3.0.0.
+Use map.get instead.
+
+More info and automated migrator: https://sass-lang.com/d/import
+
+    ╷
+234 │   h1-large: map-get($settings-text-h1-large, font-size),
+    │             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ╵
+    node_modules/vanilla-framework/scss/_settings_spacing.scss 234:13  @import
+    node_modules/vanilla-framework/scss/_settings.scss 10:9            @import
+    node_modules/vanilla-framework/scss/_vanilla.scss 1:9              @import
+    node_modules/vanilla-framework/scss/build.scss 2:9                 root stylesheet
+
+DEPRECATION WARNING [global-builtin]: Global built-in functions are deprecated and will be removed in Dart Sass 3.0.0.
+Use map.get instead.
+
+More info and automated migrator: https://sass-lang.com/d/import
+
+    ╷
+235 │   h1-mobile: map-get($settings-text-h1-mobile, font-size),
+    │              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ╵
+    node_modules/vanilla-framework/scss/_settings_spacing.scss 235:14  @import
+    node_modules/vanilla-framework/scss/_settings.scss 10:9            @import
+    node_modules/vanilla-framework/scss/_vanilla.scss 1:9              @import
+    node_modules/vanilla-framework/scss/build.scss 2:9                 root stylesheet
+
+WARNING: 725 repetitive deprecation warnings omitted.
+Run in verbose mode to see all warnings.
+

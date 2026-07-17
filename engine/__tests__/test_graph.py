@@ -132,4 +132,3 @@ def test_inline_missing_source_raises():
     }
     with pytest.raises(ValueError, match="missing required 'source'"):
         build_graph([bad_root])
-
