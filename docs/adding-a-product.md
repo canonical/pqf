@@ -7,7 +7,7 @@ This guide explains how to onboard a new product into PQF.
 ## When to add a product
 
 Add a product when a Canonical Platform Engineering team wants to start tracking quality compliance for a product that:
-- Has at least one charm repository on GitHub under the `canonical/` organisation
+- Has at least one charm or snap repository on GitHub under the `canonical/` organisation
 - Has an owning squad (AMER, EMEA, or APAC)
 - Has a target medal grade the team is committing to
 
@@ -17,52 +17,86 @@ Add a product when a Canonical Platform Engineering team wants to start tracking
 
 Create `products/<product-id>.yaml`. Use lowercase hyphenated IDs (e.g., `discourse`, `matrix`, `wordpress-k8s`).
 
-### Full schema
+Every product YAML has a root node (`product_type: root`) that owns one or more leaf products (`product_type: charm` or `snap`) declared in `composed_of`.
+
+### Example 1: Single-charm product
 
 ```yaml
-id: discourse                                # Required. Lowercase, hyphenated. Must match filename.
-name: "Discourse"                            # Required. Display name.
-description: "..."                           # Required. One-sentence description.
-lifecycle: stable                            # Required. One of: alpha, beta, stable, deprecated
-target_medal: silver                         # Required. One of: bronze, silver, gold
+id: netbox
+product_type: root
+name: "NetBox"
+description: "IP address management and network infrastructure management tool."
+lifecycle: stable
+target_medal: bronze
 ownership:
-  squad: americas                            # Required. One of: americas, emea, apac
-  stakeholders:                              # Optional. List of stakeholder team names.
-    - "IS"
-  users:                                     # Optional. List of user groups.
-    - "Internal Canonical"
-documentation_url: "https://charmhub.io/discourse-k8s"   # Optional. Docs link.
-allure_report_url: "https://canonical.github.io/discourse-k8s-operator/_latest"  # Optional. See below.
-components:
-  foundational:                              # Required. Primary charm(s).
-    - id: discourse-k8s                      # Unique component ID within this product.
-      type: charm                            # One of: charm, snap, docker
-      github_repo: canonical/discourse-k8s-operator  # Full "owner/repo" slug.
-  feature:                                   # Optional. Feature-adding charms.
-    - id: some-feature-charm
-      type: charm
-      github_repo: canonical/some-feature-operator
-  auxiliary:                                 # Optional. Infrastructure dependencies.
-    - id: postgresql-k8s
-      type: charm
-      github_repo: canonical/postgresql-k8s-operator
+  squad: emea
+documentation_url: "https://netboxlabs.com/"
+composed_of:
+  - id: netbox-k8s
+    product_type: charm
+    source:
+      repo: canonical/netbox-k8s-operator
+    target_medal: bronze
+    allure_report_url: "https://canonical.github.io/netbox-k8s-operator/_latest"
 ```
 
-### Component categories
+### Example 2: Multi-charm product with context refs
 
-| Category | Purpose |
-|----------|---------|
-| `foundational` | The core charm(s) that deliver the product. Scorers run primarily against these. |
-| `feature` | Optional charms that add features to the product (e.g., HA, monitoring). |
-| `auxiliary` | Infrastructure dependencies (database, ingress, etc.) — used for context only. |
+```yaml
+id: wazuh
+product_type: root
+name: "Wazuh"
+description: "Open-source security platform for threat detection and response."
+lifecycle: stable
+target_medal: silver
+ownership:
+  squad: emea
+documentation_url: "https://wazuh.com/"
+composed_of:
+  - id: wazuh-server
+    product_type: charm
+    source:
+      repo: canonical/wazuh-server-operator
+    target_medal: silver
+    allure_report_url: "https://canonical.github.io/wazuh-server-operator/_latest"
+  - id: wazuh-indexer
+    product_type: charm
+    source:
+      repo: canonical/wazuh-indexer-operator
+    target_medal: silver
+context_refs:
+  - label: "Traefik K8s"
+    repo: canonical/traefik-k8s-operator
+```
 
-### Finding the `github_repo` slug
+### When to use `composed_of` vs `context_refs`
 
-The slug is `owner/repo` from the GitHub URL. For `https://github.com/canonical/discourse-k8s-operator`, the slug is `canonical/discourse-k8s-operator`.
+> **Use `composed_of` (inline leaf) when:**
+> - Your squad owns the quality of this charm/snap
+> - It belongs to exactly this one root product
+>
+> **Use `composed_of` with `ref:` (standalone leaf) when:**
+> - It is a standalone product that also gets tracked independently (it has its own `products/<id>.yaml`)
+>
+> **Use `context_refs` when:**
+> - It is owned by another squad
+> - You only want it visible for context, not affecting your medal
+
+`context_refs` entries are shown in the UI but are **never** included in medal computation.
+
+### Optional root-level fields
+
+```yaml
+ownership:
+  stakeholders:           # Optional. List of stakeholder team names.
+    - "IS"
+  users:                  # Optional. List of user groups.
+    - "Internal Canonical"
+```
 
 ### Allure report URL
 
-If the product's foundational charm publishes an Allure test report to GitHub Pages, set:
+If a leaf charm publishes an Allure test report to GitHub Pages, set `allure_report_url` on that leaf:
 
 ```yaml
 allure_report_url: "https://canonical.github.io/{repo-name}/_latest"
@@ -75,14 +109,14 @@ curl -I https://canonical.github.io/<repo-name>/_latest/widgets/summary.json
 # Expected: HTTP/2 200
 ```
 
-If the product doesn't publish Allure reports yet, leave the field empty (`allure_report_url: ""`). The `test_verification` scorer will return unrated for coverage/stability but won't error.
+If the charm doesn't publish Allure reports yet, omit the field or set it to `""`. The `test_verification` scorer will return unrated for coverage/stability but won't error.
 
 ---
 
 ## Step 2: Open a pull request
 
 Commit your new `products/<id>.yaml` and open a PR. CI will lint the YAML and run the test suite. A reviewer will check that:
-- The `github_repo` slugs are correct
+- The `source.repo` slugs are correct
 - The `squad` matches the team's actual ownership
 - The `target_medal` is realistic
 
@@ -91,8 +125,8 @@ Commit your new `products/<id>.yaml` and open a PR. CI will lint the YAML and ru
 ## Step 3: After merging
 
 Once merged, the nightly `compute-metrics` workflow will:
-1. Run all scorers against the new product
-2. Write `computed/<id>.json`
+1. Run all scorers against the new product's leaf units
+2. Write `computed/<id>.json` (a `leaf_metrics` envelope keyed by leaf product ID)
 3. Regenerate `public/portfolio.json` (including the new product)
 4. Deploy the updated dashboard
 
