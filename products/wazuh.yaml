@@ -1,4 +1,5 @@
 id: wazuh
+product_type: root
 name: "Wazuh"
 description: "A platform that unifies XDR and SIEM protection for endpoints and cloud workloads."
 lifecycle: stable
@@ -10,19 +11,23 @@ ownership:
   users:
     - "Security Operations Team"
 documentation_url: "https://wazuh.com/"
-allure_report_url: "https://canonical.github.io/wazuh-server-operator/_latest"
-components:
-  foundational:
-    - id: wazuh-server
-      type: charm
-      github_repo: canonical/wazuh-server-operator
-    - id: wazuh-indexer
-      type: charm
-      github_repo: canonical/wazuh-indexer-operator
-    - id: wazuh-dashboard
-      type: charm
-      github_repo: canonical/wazuh-dashboard-operator
-  feature:
-    - id: traefik-k8s
-      type: charm
-      github_repo: canonical/traefik-k8s-operator
+composed_of:
+  - id: wazuh-server
+    product_type: charm
+    source:
+      repo: canonical/wazuh-server-operator
+    target_medal: silver
+    allure_report_url: "https://canonical.github.io/wazuh-server-operator/_latest"
+  - id: wazuh-indexer
+    product_type: charm
+    source:
+      repo: canonical/wazuh-indexer-operator
+    target_medal: silver
+  - id: wazuh-dashboard
+    product_type: charm
+    source:
+      repo: canonical/wazuh-dashboard-operator
+    target_medal: silver
+context_refs:
+  - label: "Traefik K8s"
+    repo: canonical/traefik-k8s-operator

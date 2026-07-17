@@ -1,37 +1,39 @@
 {
   "product_id": "jenkins",
   "computed_at": "2026-07-01T01:58:50.056675+00:00",
-  "metrics": {
-    "test_verification": {
-      "coverage_pct": 0,
-      "stability_pct": 100,
-      "latest_build_passing": true,
-      "uses_ops_testing": true,
-      "uses_jubilant": false
-    },
-    "documentation": {
-      "has_readme": true,
-      "has_contributing": true,
-      "has_security": true,
-      "diataxis_coverage": 3,
-      "style_linter_passing": true,
-      "links_passing": true
-    },
-    "substrate_compat": {
-      "supports_juju_3": true,
-      "supports_juju_4": false,
-      "supports_ck8s": false
-    },
-    "security_ssdlc": {
-      "dependabot_enabled": false,
-      "codeql_enabled": false,
-      "branch_protection_required_checks": false
-    },
-    "support_engagement": {
-      "avg_triage_days": 147.8,
-      "avg_pr_review_days": 1.1,
-      "has_squad_topic": true,
-      "has_jira_sync": true
+  "leaf_metrics": {
+    "jenkins-k8s": {
+      "test_verification": {
+        "coverage_pct": 0,
+        "stability_pct": 100,
+        "latest_build_passing": true,
+        "uses_ops_testing": true,
+        "uses_jubilant": false
+      },
+      "documentation": {
+        "has_readme": true,
+        "has_contributing": true,
+        "has_security": true,
+        "diataxis_coverage": 3,
+        "style_linter_passing": true,
+        "links_passing": true
+      },
+      "substrate_compat": {
+        "supports_juju_3": true,
+        "supports_juju_4": false,
+        "supports_ck8s": false
+      },
+      "security_ssdlc": {
+        "dependabot_enabled": false,
+        "codeql_enabled": false,
+        "branch_protection_required_checks": false
+      },
+      "support_engagement": {
+        "avg_triage_days": 147.8,
+        "avg_pr_review_days": 1.1,
+        "has_squad_topic": true,
+        "has_jira_sync": true
+      }
     }
   }
 }

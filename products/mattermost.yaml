@@ -1,4 +1,5 @@
 id: mattermost
+product_type: root
 name: "Mattermost"
 description: "Open source messaging platform for team collaboration"
 lifecycle: stable
@@ -10,12 +11,15 @@ ownership:
   users:
     - "All Canonical staff"
 documentation_url: "https://charmhub.io/mattermost-k8s"
-allure_report_url: "https://canonical.github.io/mattermost-k8s-operator/_latest"
-components:
-  foundational:
-    - id: mattermost-k8s
-      type: charm
-      github_repo: canonical/mattermost-k8s-operator
-    - id: postgresql-k8s
-      type: charm
-      github_repo: canonical/postgresql-k8s-operator
+composed_of:
+  - id: mattermost-k8s
+    product_type: charm
+    source:
+      repo: canonical/mattermost-k8s-operator
+    target_medal: gold
+    allure_report_url: "https://canonical.github.io/mattermost-k8s-operator/_latest"
+  - id: postgresql-k8s
+    product_type: charm
+    source:
+      repo: canonical/postgresql-k8s-operator
+    target_medal: gold

@@ -1,4 +1,5 @@
 id: jenkins
+product_type: root
 name: "Jenkins"
 description: "An open source automation server for building, deploying and automating projects."
 lifecycle: stable
@@ -10,16 +11,15 @@ ownership:
   users:
     - "Development teams"
 documentation_url: "https://charmhub.io/jenkins-k8s/docs"
-allure_report_url: "https://canonical.github.io/jenkins-k8s-operator/_latest"
-components:
-  foundational:
-    - id: jenkins-k8s
-      type: charm
-      github_repo: canonical/jenkins-k8s-operator
-  feature:
-    - id: jenkins-agent-k8s
-      type: charm
-      github_repo: canonical/jenkins-agent-k8s-operator
-    - id: jenkins-agent
-      type: charm
-      github_repo: canonical/jenkins-agent-operator
+composed_of:
+  - id: jenkins-k8s
+    product_type: charm
+    source:
+      repo: canonical/jenkins-k8s-operator
+    target_medal: bronze
+    allure_report_url: "https://canonical.github.io/jenkins-k8s-operator/_latest"
+context_refs:
+  - label: "Jenkins Agent K8s"
+    repo: canonical/jenkins-agent-k8s-operator
+  - label: "Jenkins Agent"
+    repo: canonical/jenkins-agent-operator
