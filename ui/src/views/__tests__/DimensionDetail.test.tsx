@@ -13,26 +13,34 @@ const mockPortfolio: Portfolio = {
   products: [
     {
       id: 'matrix',
+      product_type: 'root',
       name: 'Matrix (Synapse)',
       description: 'Chat',
       lifecycle: 'stable',
       target_medal: 'gold',
       current_medal: 'bronze',
       squad: 'americas',
-      components: {},
+      is_portfolio_entry: true,
+      composed_of: [],
+      context_refs: [],
+      parent_product_ids: [],
       dimensions: {
         documentation: { medal: 'bronze', target: 'gold', drift: null, metrics: {}, applicability: 'scored', composition: [] },
       },
     },
     {
       id: 'landscape',
+      product_type: 'root',
       name: 'Landscape',
       description: 'Management',
       lifecycle: 'stable',
       target_medal: 'gold',
       current_medal: 'silver',
       squad: 'emea',
-      components: {},
+      is_portfolio_entry: true,
+      composed_of: [],
+      context_refs: [],
+      parent_product_ids: [],
       dimensions: {
         documentation: {
           medal: 'silver',
@@ -46,13 +54,17 @@ const mockPortfolio: Portfolio = {
     },
     {
       id: 'anbox',
+      product_type: 'root',
       name: 'Anbox Cloud',
       description: 'Streaming',
       lifecycle: 'stable',
       target_medal: 'gold',
       current_medal: 'unrated',
       squad: 'apac',
-      components: {},
+      is_portfolio_entry: true,
+      composed_of: [],
+      context_refs: [],
+      parent_product_ids: [],
       dimensions: {
         documentation: {
           medal: 'unrated',
