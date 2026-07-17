@@ -3,7 +3,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { MemoryRouter, Routes, Route } from 'react-router'
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import ProductDetail from '../ProductDetail'
-import type { Portfolio } from '../../types'
+import type { Portfolio, LeafDimensionResult } from '../../types'
 
 vi.mock('../../hooks/usePortfolio')
 import { usePortfolio } from '../../hooks/usePortfolio'
@@ -85,7 +85,7 @@ function mockWith(portfolio: Portfolio) {
   } as ReturnType<typeof usePortfolio>)
 }
 
-function portfolioWithComposition(): Portfolio {
+function portfolioWithComposition(overrides?: { composition: LeafDimensionResult[] }): Portfolio {
   return {
     ...mockPortfolio,
     products: [
@@ -98,7 +98,7 @@ function portfolioWithComposition(): Portfolio {
             applicability: 'scored',
             drift: null,
             metrics: { coverage_pct: 87, stability_pct: 94, latest_build_passing: true },
-            composition: [
+            composition: overrides?.composition ?? [
               {
                 product_id: 'synapse',
                 repo: 'canonical/synapse-operator',
@@ -218,5 +218,32 @@ describe('ProductDetail', () => {
     wrap('synapse')
     expect(screen.queryByRole('button', { name: /component in scope/i })).not.toBeInTheDocument()
     expect(screen.getByText('Coverage')).toBeInTheDocument()
+  })
+
+  it('shows in-scope count excluding excluded leaves in button label', () => {
+    const portfolioWithExcluded = portfolioWithComposition({
+      composition: [
+        {
+          product_id: 'synapse',
+          repo: 'canonical/synapse-operator',
+          medal: 'bronze',
+          applicability: 'scored',
+          metrics: { coverage_pct: 65 },
+          excluded_from_parent_medal: false,
+        },
+        {
+          product_id: 'saml',
+          repo: 'canonical/saml-operator',
+          medal: 'gold',
+          applicability: 'scored',
+          metrics: {},
+          excluded_from_parent_medal: true,
+        },
+      ] as LeafDimensionResult[],
+    })
+    mockWith(portfolioWithExcluded)
+    wrap('matrix')
+    // 2 total leaves, 1 excluded → only 1 in scope
+    expect(screen.getByText(/1 component in scope/i)).toBeInTheDocument()
   })
 })

@@ -28,7 +28,7 @@ function CompositionImpact({ composition }: { composition: LeafDimensionResult[]
           cursor: 'pointer', color: '#06c', padding: 0, textDecoration: 'underline',
         }}
       >
-        {expanded ? '▾' : '▸'} {composition.length} component{composition.length !== 1 ? 's' : ''} in scope
+        {expanded ? '▾' : '▸'} {inScope.length} component{inScope.length !== 1 ? 's' : ''} in scope
       </button>
       {expanded && (
         <div style={{ marginTop: '0.5rem', paddingLeft: '1rem', borderLeft: '2px solid #e5e5e5' }}>
