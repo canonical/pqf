@@ -174,7 +174,9 @@ describe('ProductDetail', () => {
 
   it('renders GitHub repo link for context ref', () => {
     wrap('matrix')
-    expect(screen.getByRole('link', { name: /synapse-operator/i })).toBeInTheDocument()
+    const links = screen.getAllByRole('link', { name: /synapse-operator/i })
+    expect(links.length).toBeGreaterThan(0)
+    expect(links[0]).toBeInTheDocument()
   })
 
   it('shows 404 message for unknown product', () => {
@@ -182,30 +184,104 @@ describe('ProductDetail', () => {
     expect(screen.getByText(/not found/i)).toBeInTheDocument()
   })
 
-  it('root product shows composition count in header', () => {
+  it('root product shows linked chips for components in header', () => {
     wrap('matrix')
-    expect(screen.getByText('COMPOSED OF')).toBeInTheDocument()
-    expect(screen.getByText('1 product')).toBeInTheDocument()
+    expect(screen.getByText('COMPONENTS')).toBeInTheDocument()
+    // chip links to /products/synapse and shows the leaf's name - there may be multiple, so get the first one in the COMPONENTS section
+    const chips = screen.getAllByRole('link', { name: 'Synapse Charm' })
+    const componentChip = chips.find(chip => 
+      chip.className.includes('p-chip') && 
+      chip.getAttribute('href')?.includes('synapse')
+    )
+    expect(componentChip).toBeDefined()
+    expect(componentChip?.getAttribute('href')).toContain('synapse')
   })
 
-  it('root product shows context refs card', () => {
+  it('root product shows unified Dependencies card with sub-products and context refs', () => {
     wrap('matrix')
-    expect(screen.getByText('Dependencies (context only)')).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'Dependencies' })).toBeInTheDocument()
+    // sub-products section present
+    expect(screen.getByText(/Sub-products/i)).toBeInTheDocument()
+    // context refs present
     expect(screen.getByText('Synapse Operator')).toBeInTheDocument()
+    expect(screen.getByText(/Context only/i)).toBeInTheDocument()
   })
 
-  it('root product dimension row shows composition expand button', () => {
-    mockWith(portfolioWithComposition())
+  it('root product evidence shows metric values from composition', () => {
+    mockWith(
+      portfolioWithComposition({
+        composition: [
+          {
+            product_id: 'synapse',
+            repo: 'canonical/synapse-operator',
+            medal: 'bronze',
+            applicability: 'scored',
+            metrics: { coverage_pct: 65, latest_build_passing: true },
+            excluded_from_parent_medal: false,
+          },
+        ],
+      }),
+    )
     wrap('matrix')
-    expect(screen.getByRole('button', { name: /component in scope/i })).toBeInTheDocument()
+    const row = screen.getByRole('link', { name: 'test verification' }).closest('tr')!
+    // RootMetricsList should show coverage_pct 65 against gold threshold 90
+    expect(row).toHaveTextContent('65')
+    expect(row).toHaveTextContent('/ 90')
   })
 
-  it('clicking composition expands to show leaf breakdown', () => {
-    mockWith(portfolioWithComposition())
+  it('root product evidence shows per-leaf expand when leaves disagree', () => {
+    mockWith(
+      portfolioWithComposition({
+        composition: [
+          {
+            product_id: 'synapse',
+            repo: 'canonical/synapse-operator',
+            medal: 'bronze',
+            applicability: 'scored',
+            metrics: { coverage_pct: 65, latest_build_passing: true },
+            excluded_from_parent_medal: false,
+          },
+          {
+            product_id: 'saml',
+            repo: 'canonical/saml-operator',
+            medal: 'gold',
+            applicability: 'scored',
+            metrics: { coverage_pct: 90, latest_build_passing: false },
+            excluded_from_parent_medal: false,
+          },
+        ],
+      }),
+    )
     wrap('matrix')
-    const expandButton = screen.getByRole('button', { name: /component in scope/i })
-    fireEvent.click(expandButton)
-    expect(screen.getByText('synapse')).toBeInTheDocument()
+    expect(screen.getAllByRole('button', { name: /2 leaves/i }).length).toBeGreaterThan(0)
+  })
+
+  it('excludes leaves with excluded_from_parent_medal=true from leaf count in evidence', () => {
+    mockWith(
+      portfolioWithComposition({
+        composition: [
+          {
+            product_id: 'synapse',
+            repo: 'canonical/synapse-operator',
+            medal: 'bronze',
+            applicability: 'scored',
+            metrics: { coverage_pct: 65 },
+            excluded_from_parent_medal: false,
+          },
+          {
+            product_id: 'saml',
+            repo: 'canonical/saml-operator',
+            medal: 'gold',
+            applicability: 'scored',
+            metrics: {},
+            excluded_from_parent_medal: true,
+          },
+        ] as LeafDimensionResult[],
+      }),
+    )
+    wrap('matrix')
+    // 1 in-scope leaf → no expand button needed (no disagreement possible)
+    expect(screen.queryByRole('button', { name: /leaves/i })).not.toBeInTheDocument()
   })
 
   it('leaf product shows Part of chip', () => {
@@ -218,32 +294,5 @@ describe('ProductDetail', () => {
     wrap('synapse')
     expect(screen.queryByRole('button', { name: /component in scope/i })).not.toBeInTheDocument()
     expect(screen.getByText('Coverage')).toBeInTheDocument()
-  })
-
-  it('shows in-scope count excluding excluded leaves in button label', () => {
-    const portfolioWithExcluded = portfolioWithComposition({
-      composition: [
-        {
-          product_id: 'synapse',
-          repo: 'canonical/synapse-operator',
-          medal: 'bronze',
-          applicability: 'scored',
-          metrics: { coverage_pct: 65 },
-          excluded_from_parent_medal: false,
-        },
-        {
-          product_id: 'saml',
-          repo: 'canonical/saml-operator',
-          medal: 'gold',
-          applicability: 'scored',
-          metrics: {},
-          excluded_from_parent_medal: true,
-        },
-      ] as LeafDimensionResult[],
-    })
-    mockWith(portfolioWithExcluded)
-    wrap('matrix')
-    // 2 total leaves, 1 excluded → only 1 in scope
-    expect(screen.getByText(/1 component in scope/i)).toBeInTheDocument()
   })
 })
