@@ -4,7 +4,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { MemoryRouter } from 'react-router'
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import Overview from '../Overview'
-import type { Portfolio } from '../../types'
+import type { Portfolio, Product } from '../../types'
 
 vi.mock('../../hooks/usePortfolio')
 import { usePortfolio } from '../../hooks/usePortfolio'
@@ -17,17 +17,23 @@ const mockPortfolio: Portfolio = {
       name: 'Matrix (Synapse)',
       description: 'Chat',
       lifecycle: 'stable',
+      product_type: 'root',
       target_medal: 'gold',
       current_medal: 'bronze',
       squad: 'americas',
-      components: {},
+      is_portfolio_entry: true,
+      composed_of: null,
+      context_refs: [],
+      parent_product_ids: [],
       dimensions: {
-        test_verification: { medal: 'silver', target: 'gold', drift: null, metrics: {} },
+        test_verification: { medal: 'silver', target: 'gold', applicability: 'scored', drift: null, metrics: {}, composition: null },
         documentation: {
           medal: 'bronze',
           target: 'gold',
+          applicability: 'scored',
           drift: { status: 'remediating', first_seen_at: '2026-01-01T00:00:00Z', deadline: '2026-07-01T00:00:00Z' },
           metrics: {},
+          composition: null,
         },
       },
     },
@@ -36,6 +42,22 @@ const mockPortfolio: Portfolio = {
     test_verification: { medals: { bronze: { criteria: [] } } },
     documentation: { medals: { bronze: { criteria: [] } } },
   },
+}
+
+const rootProduct: Product = {
+  id: 'matrix', product_type: 'root', name: 'Matrix', lifecycle: 'stable',
+  target_medal: 'gold', current_medal: 'bronze', squad: 'americas',
+  is_portfolio_entry: true, context_refs: [], parent_product_ids: [],
+  composed_of: [{ product_id: 'synapse', excluded_from_parent_medal: false }],
+  dimensions: {},
+}
+
+const inlineLeaf: Product = {
+  id: 'synapse', product_type: 'charm', name: 'Synapse', lifecycle: 'stable',
+  target_medal: 'gold', current_medal: 'gold', squad: '',
+  is_portfolio_entry: false, context_refs: [], parent_product_ids: ['matrix'],
+  composed_of: null, source: { repo: 'canonical/synapse-operator', subpath: null },
+  dimensions: {},
 }
 
 function wrap(ui: React.ReactElement) {
@@ -131,5 +153,40 @@ describe('Overview', () => {
     productLinks = within(productsTable).getAllByRole('link', { name: /Alpha|Zeta/ })
     expect(productLinks.map(link => link.textContent)).toEqual(['Zeta', 'Alpha'])
     expect(screen.getByRole('columnheader', { name: 'Target' })).toHaveAttribute('aria-sort', 'ascending')
+  })
+
+  it('shows only portfolio entry products in table', () => {
+    vi.mocked(usePortfolio).mockReturnValue({
+      data: {
+        ...mockPortfolio,
+        products: [rootProduct, inlineLeaf],
+      },
+      isLoading: false,
+      isError: false,
+      error: null,
+    } as ReturnType<typeof usePortfolio>)
+
+    wrap(<Overview />)
+    expect(screen.getAllByRole('link', { name: 'Matrix' }).length).toBeGreaterThan(0)
+    expect(screen.queryByRole('link', { name: 'Synapse' })).not.toBeInTheDocument()
+  })
+
+  it('excludes inline leaf products from stats counts', () => {
+    // rootProduct: is_portfolio_entry=true, bronze vs gold (not at target)
+    // inlineLeaf: is_portfolio_entry=false, gold vs gold (at target)
+    // With filter: 0% at target (0/1 portfolio entry)
+    // Without filter: 50% (1/2 total) — confirms the filter is applied
+    vi.mocked(usePortfolio).mockReturnValue({
+      data: {
+        ...mockPortfolio,
+        products: [rootProduct, inlineLeaf],
+      },
+      isLoading: false,
+      isError: false,
+      error: null,
+    } as ReturnType<typeof usePortfolio>)
+
+    wrap(<Overview />)
+    expect(screen.getByText(/0%/)).toBeInTheDocument()
   })
 })

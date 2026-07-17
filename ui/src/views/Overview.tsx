@@ -46,10 +46,12 @@ export default function Overview() {
 
   const products = useMemo(() => {
     if (!portfolio) return []
-    const filtered = portfolio.products.filter(p =>
-      p.name.toLowerCase().includes(search.toLowerCase()) ||
-      p.squad.toLowerCase().includes(search.toLowerCase())
-    )
+    const filtered = portfolio.products
+      .filter(p => p.is_portfolio_entry)
+      .filter(p =>
+        p.name.toLowerCase().includes(search.toLowerCase()) ||
+        p.squad.toLowerCase().includes(search.toLowerCase())
+      )
     return [...filtered].sort((a, b) => {
       let cmp = 0
       if (sortField === 'name') cmp = a.name.localeCompare(b.name)
@@ -63,14 +65,15 @@ export default function Overview() {
 
   const stats = useMemo(() => {
     if (!portfolio) return { atTarget: 0, overdue: 0, remediating: 0 }
-    const total = portfolio.products.length
-    const atTarget = portfolio.products.filter(
+    const portfolioProducts = portfolio.products.filter(p => p.is_portfolio_entry)
+    const total = portfolioProducts.length
+    const atTarget = portfolioProducts.filter(
       p => MEDAL_ORDER[p.current_medal] >= MEDAL_ORDER[p.target_medal]
     ).length
-    const overdue = portfolio.products.filter(p =>
+    const overdue = portfolioProducts.filter(p =>
       Object.values(p.dimensions).some(d => d.drift?.status === 'overdue')
     ).length
-    const remediating = portfolio.products.filter(p =>
+    const remediating = portfolioProducts.filter(p =>
       Object.values(p.dimensions).some(d => d.drift?.status === 'remediating')
     ).length
     return {
