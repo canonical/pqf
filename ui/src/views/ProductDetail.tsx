@@ -1,4 +1,3 @@
-import React from 'react'
 import { useParams, Link } from 'react-router'
 import { usePortfolio } from '../hooks/usePortfolio'
 import MedalBadge from '../components/MedalBadge'

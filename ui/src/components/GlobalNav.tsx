@@ -1,4 +1,4 @@
-import { useLocation } from 'react-router'
+import { useLocation, Link } from 'react-router'
 
 export default function GlobalNav() {
   const location = useLocation()
@@ -13,7 +13,7 @@ export default function GlobalNav() {
       <div className="p-navigation__row">
         <div className="p-navigation__banner">
           <div className="p-navigation__tagged-logo">
-            <a className="p-navigation__link" href="#/">
+            <Link className="p-navigation__link" to="/">
               <div className="p-navigation__logo-tag" style={{ background: '#E95420' }}>
                 <img
                   className="p-navigation__logo-icon"
@@ -24,42 +24,42 @@ export default function GlobalNav() {
                 />
               </div>
               <span className="p-navigation__logo-title">PQF</span>
-            </a>
+            </Link>
           </div>
         </div>
         <nav className="p-navigation__nav">
           <ul className="p-navigation__items">
             <li className="p-navigation__item">
-              <a 
+              <Link 
                 className={`p-navigation__link ${isActive('/') ? 'is-selected' : ''}`}
-                href="#/"
+                to="/"
               >
                 Portfolio
-              </a>
+              </Link>
             </li>
             <li className="p-navigation__item">
-              <a 
+              <Link 
                 className={`p-navigation__link ${isActive('/products') ? 'is-selected' : ''}`}
-                href="#/products"
+                to="/products"
               >
                 Products
-              </a>
+              </Link>
             </li>
             <li className="p-navigation__item">
-              <a 
+              <Link 
                 className={`p-navigation__link ${isActive('/dimensions') ? 'is-selected' : ''}`}
-                href="#/dimensions"
+                to="/dimensions"
               >
                 Dimensions
-              </a>
+              </Link>
             </li>
             <li className="p-navigation__item">
-              <a 
+              <Link 
                 className={`p-navigation__link ${isActive('/about') ? 'is-selected' : ''}`}
-                href="#/about"
+                to="/about"
               >
                 About
-              </a>
+              </Link>
             </li>
             <li className="p-navigation__item">
               <a

@@ -1,4 +1,4 @@
-import { render, screen, within, fireEvent } from '@testing-library/react'
+import { render, screen, within } from '@testing-library/react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { MemoryRouter, Routes, Route } from 'react-router'
 import { describe, it, expect, vi, beforeEach } from 'vitest'
