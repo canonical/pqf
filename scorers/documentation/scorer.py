@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+"""documentation scorer — iterates leaf products and outputs per-leaf metrics."""
 import argparse
 import json
 import os
@@ -6,12 +8,12 @@ from pathlib import Path
 
 import yaml
 
-sys.path.insert(0, str(Path(__file__).parent.parent.parent))
+from engine.graph import build_graph, resolve_leaf_units
 from scorers.documentation.logic import compute_metrics
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="PQF documentation scorer")
+    parser = argparse.ArgumentParser()
     parser.add_argument("--product-yaml", required=True)
     parser.add_argument(
         "--model",
@@ -25,8 +27,16 @@ def main() -> int:
     model = args.model or os.environ.get("OPENROUTER_MODEL", "anthropic/claude-sonnet-4.5")
 
     product = yaml.safe_load(Path(args.product_yaml).read_text())
-    result = compute_metrics(product, github_token, openrouter_api_key, model=model)
-    print(json.dumps(result))
+    graph = build_graph([product])
+    units = resolve_leaf_units(graph)
+
+    results = {}
+    for unit in units:
+        results[unit.product_id] = compute_metrics(
+            unit, github_token, openrouter_api_key, model=model
+        )
+
+    print(json.dumps(results, indent=2))
     return 0
 
 

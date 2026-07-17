@@ -2,37 +2,28 @@ from unittest.mock import MagicMock
 
 import responses
 
+from engine.models import EvaluationUnit, ProductType
 from scorers.documentation.logic import (
     _check_file_exists,
     _check_url_alive,
-    _primary_repo,
     compute_metrics,
 )
 
-_PRODUCT = {
-    "id": "matrix",
-    "documentation_url": "https://charmhub.io/synapse",
-    "components": {
-        "foundational": [
-            {"id": "synapse", "type": "charm", "github_repo": "canonical/synapse-operator"}
-        ]
-    },
-}
+UNIT = EvaluationUnit(
+    product_id="matrix",
+    product_type=ProductType.CHARM,
+    repo="canonical/synapse-operator",
+    documentation_url="https://charmhub.io/synapse",
+)
+
+UNIT_NO_REPO = EvaluationUnit(
+    product_id="matrix",
+    product_type=ProductType.CHARM,
+    repo="",
+    documentation_url="",
+)
 
 _README = "# Synapse\n\n## Getting started\n\nThis tutorial shows you how to deploy...\n"
-
-
-def test_primary_repo_returns_first_foundational():
-    assert _primary_repo(_PRODUCT) == "canonical/synapse-operator"
-
-
-def test_primary_repo_falls_back_to_feature():
-    product = {"components": {"feature": [{"github_repo": "canonical/foo"}]}}
-    assert _primary_repo(product) == "canonical/foo"
-
-
-def test_primary_repo_returns_none_when_no_components():
-    assert _primary_repo({}) is None
 
 
 @responses.activate
@@ -97,7 +88,7 @@ def test_compute_metrics_happy_path(mocker):
         ),
     ]
 
-    result = compute_metrics(_PRODUCT, "gh-token", "or-key", model="openrouter/test-model")
+    result = compute_metrics(UNIT, "gh-token", "or-key", model="openrouter/test-model")
     assert result["has_readme"] is True
     assert result["has_contributing"] is True
     assert result["has_security"] is True
@@ -120,7 +111,7 @@ def test_compute_metrics_skips_llm_when_no_api_key(mocker):
     mocker.patch("scorers.documentation.logic._check_url_alive", return_value=False)
     mock_llm = mocker.patch("scorers.documentation.logic._make_openrouter_client")
 
-    result = compute_metrics(_PRODUCT, "gh-token", "")
+    result = compute_metrics(UNIT, "gh-token", "")
     assert result["has_readme"] is True
     assert result["diataxis_coverage"] == 0
     assert result["style_linter_passing"] is False

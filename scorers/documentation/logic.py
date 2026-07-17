@@ -6,18 +6,10 @@ from typing import Any
 import requests
 from openai import OpenAI
 
+from engine.models import EvaluationUnit
+
 _GITHUB_API = "https://api.github.com"
 _PROMPTS_DIR = Path(__file__).parent / "prompts"
-
-
-def _primary_repo(product: dict[str, Any]) -> str | None:
-    """Return '{owner}/{repo}' for the primary component, or None."""
-    components = product.get("components", {})
-    for category in ("foundational", "feature", "auxiliary"):
-        items = components.get(category, [])
-        if items:
-            return items[0].get("github_repo")
-    return None
 
 
 def _make_github_session(github_token: str) -> requests.Session:
@@ -97,26 +89,26 @@ def _evaluate_docs(
 
 
 def compute_metrics(
-    product: dict[str, Any],
+    unit: EvaluationUnit,
     github_token: str,
     openrouter_api_key: str,
     model: str = "anthropic/claude-sonnet-4.5",
 ) -> dict[str, Any]:
     """
-    Evaluate documentation quality for a product's primary component.
+    Evaluate documentation quality for the evaluation unit's repo.
 
     File checks (has_readme, has_contributing, has_security) use the GitHub API.
     links_passing checks that the documentation_url returns a 200 response.
     diataxis_coverage and style_linter_passing are evaluated by an OpenRouter model.
     """
-    primary = _primary_repo(product)
+    primary = unit.repo or None
     has_readme = _check_file_exists(primary, "README.md", github_token) if primary else False
     has_contributing = (
         _check_file_exists(primary, "CONTRIBUTING.md", github_token) if primary else False
     )
     has_security = _check_file_exists(primary, "SECURITY.md", github_token) if primary else False
 
-    doc_url = product.get("documentation_url", "").strip()
+    doc_url = unit.documentation_url.strip()
     links_passing = _check_url_alive(doc_url) if doc_url else False
 
     if openrouter_api_key:

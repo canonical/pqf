@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+"""test_verification scorer — iterates leaf products and outputs per-leaf metrics."""
 import argparse
 import json
 import os
@@ -6,19 +8,25 @@ from pathlib import Path
 
 import yaml
 
-sys.path.insert(0, str(Path(__file__).parent.parent.parent))
+from engine.graph import build_graph, resolve_leaf_units
 from scorers.test_verification.logic import compute_metrics
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="PQF test_verification scorer")
-    parser.add_argument("--product-yaml", required=True, help="Path to products/{id}.yaml")
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--product-yaml", required=True)
     args = parser.parse_args()
 
     product = yaml.safe_load(Path(args.product_yaml).read_text())
+    graph = build_graph([product])
+    units = resolve_leaf_units(graph)
     github_token = os.environ.get("GITHUB_TOKEN")
-    result = compute_metrics(product, github_token=github_token)
-    print(json.dumps(result))
+
+    results = {}
+    for unit in units:
+        results[unit.product_id] = compute_metrics(unit, github_token=github_token)
+
+    print(json.dumps(results, indent=2))
     return 0
 
 

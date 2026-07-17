@@ -5,6 +5,8 @@ from typing import Any
 
 import requests
 
+from engine.models import EvaluationUnit
+
 _GITHUB_API = "https://api.github.com"
 
 
@@ -44,23 +46,20 @@ def _fetch_workflow_contents(owner_repo: str, github_token: str) -> list[str]:
     return contents
 
 
-def compute_metrics(product: dict[str, Any], github_token: str) -> dict[str, Any]:
+def compute_metrics(unit: EvaluationUnit, github_token: str) -> dict[str, Any]:
     """
     Determine substrate compatibility by scanning GitHub workflow files.
 
-    supports_juju_3: any foundational component workflow matches juju-channel:.*3/stable
-    supports_juju_4: any foundational component workflow matches juju-channel:.*4/stable
-    supports_ck8s:   any foundational component workflow contains use-canonical-k8s: true
+    supports_juju_3: any workflow matches juju-channel:.*3/stable
+    supports_juju_4: any workflow matches juju-channel:.*4/stable
+    supports_ck8s:   any workflow contains use-canonical-k8s: true
     """
-    foundational = product.get("components", {}).get("foundational", [])
-    repos = [c["github_repo"] for c in foundational if "github_repo" in c]
-
     supports_juju_3 = False
     supports_juju_4 = False
     supports_ck8s = False
 
-    for repo in repos:
-        for content in _fetch_workflow_contents(repo, github_token):
+    if unit.repo:
+        for content in _fetch_workflow_contents(unit.repo, github_token):
             if re.search(r"juju-channel:.*3/stable", content):
                 supports_juju_3 = True
             if re.search(r"juju-channel:.*4/stable", content):

@@ -4,6 +4,8 @@ from typing import Any
 
 import requests
 
+from engine.models import EvaluationUnit
+
 _GITHUB_API = "https://api.github.com"
 _LOOKBACK_DAYS = 90
 
@@ -22,15 +24,6 @@ def _make_github_session(github_token: str) -> requests.Session:
 
 def _parse_dt(iso_str: str) -> datetime:
     return datetime.fromisoformat(iso_str.replace("Z", "+00:00"))
-
-
-def _primary_repo(product: dict[str, Any]) -> str | None:
-    components = product.get("components", {})
-    for cat in ("foundational", "feature", "auxiliary"):
-        items = components.get(cat, [])
-        if items:
-            return items[0].get("github_repo")
-    return None
 
 
 def _has_squad_topic(owner_repo: str, session: requests.Session) -> bool:
@@ -111,13 +104,13 @@ def _compute_avg_pr_review_days(
     return round(sum(review_times) / len(review_times), 1)
 
 
-def compute_metrics(product: dict[str, Any], github_token: str) -> dict[str, Any]:
+def compute_metrics(unit: EvaluationUnit, github_token: str) -> dict[str, Any]:
     """
     Compute support engagement metrics from GitHub issues and PRs
-    across all foundational components, looking back 90 days.
+    for the evaluation unit's repo, looking back 90 days.
     """
-    foundational = product.get("components", {}).get("foundational", [])
-    if not foundational:
+    repo = unit.repo
+    if not repo:
         return {
             "avg_triage_days": 0.0,
             "avg_pr_review_days": 0.0,
@@ -125,49 +118,43 @@ def compute_metrics(product: dict[str, Any], github_token: str) -> dict[str, Any
             "has_jira_sync": False,
         }
 
-    primary = _primary_repo(product)
     session = _make_github_session(github_token)
     since = (datetime.now(UTC) - timedelta(days=_LOOKBACK_DAYS)).isoformat()
 
     all_issue_times: list[float] = []
     all_pr_times: list[float] = []
 
-    for component in foundational:
-        repo = component.get("github_repo", "")
-        if not repo:
-            continue
+    issues_url = f"{_GITHUB_API}/repos/{repo}/issues"
+    issues_resp = session.get(
+        issues_url,
+        params={"state": "all", "since": since, "per_page": 100},
+        timeout=30,
+    )
+    if issues_resp.ok:
+        triage_avg = _compute_avg_triage_days(issues_resp.json(), session, repo)
+        if triage_avg > 0:
+            all_issue_times.append(triage_avg)
 
-        issues_url = f"{_GITHUB_API}/repos/{repo}/issues"
-        issues_resp = session.get(
-            issues_url,
-            params={"state": "all", "since": since, "per_page": 100},
-            timeout=30,
-        )
-        if issues_resp.ok:
-            triage_avg = _compute_avg_triage_days(issues_resp.json(), session, repo)
-            if triage_avg > 0:
-                all_issue_times.append(triage_avg)
-
-        pulls_url = f"{_GITHUB_API}/repos/{repo}/pulls"
-        pulls_resp = session.get(
-            pulls_url,
-            params={"state": "all", "per_page": 100},
-            timeout=30,
-        )
-        if pulls_resp.ok:
-            # Filter PRs by 90-day window (since param not supported on /pulls endpoint)
-            since_dt = _parse_dt(since)
-            filtered_pulls = [
-                p for p in pulls_resp.json() if _parse_dt(p["created_at"]) >= since_dt
-            ]
-            pr_avg = _compute_avg_pr_review_days(filtered_pulls, session, repo)
-            if pr_avg > 0:
-                all_pr_times.append(pr_avg)
+    pulls_url = f"{_GITHUB_API}/repos/{repo}/pulls"
+    pulls_resp = session.get(
+        pulls_url,
+        params={"state": "all", "per_page": 100},
+        timeout=30,
+    )
+    if pulls_resp.ok:
+        # Filter PRs by 90-day window (since param not supported on /pulls endpoint)
+        since_dt = _parse_dt(since)
+        filtered_pulls = [
+            p for p in pulls_resp.json() if _parse_dt(p["created_at"]) >= since_dt
+        ]
+        pr_avg = _compute_avg_pr_review_days(filtered_pulls, session, repo)
+        if pr_avg > 0:
+            all_pr_times.append(pr_avg)
 
     avg_triage = round(sum(all_issue_times) / len(all_issue_times), 1) if all_issue_times else 0.0
     avg_pr = round(sum(all_pr_times) / len(all_pr_times), 1) if all_pr_times else 0.0
-    squad_topic = _has_squad_topic(primary, session) if primary else False
-    jira_sync = _has_jira_sync(primary, session) if primary else False
+    squad_topic = _has_squad_topic(repo, session)
+    jira_sync = _has_jira_sync(repo, session)
 
     return {
         "avg_triage_days": avg_triage,

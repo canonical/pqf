@@ -3,6 +3,8 @@ from typing import Any
 
 import requests
 
+from engine.models import EvaluationUnit
+
 _GITHUB_API = "https://api.github.com"
 
 
@@ -16,16 +18,6 @@ def _make_github_session(github_token: str) -> requests.Session:
         }
     )
     return session
-
-
-def _primary_repo(product: dict[str, Any]) -> str | None:
-    """Return '{owner}/{repo}' for the primary component, or None."""
-    components = product.get("components", {})
-    for category in ("foundational", "feature", "auxiliary"):
-        items = components.get(category, [])
-        if items:
-            return items[0].get("github_repo")
-    return None
 
 
 def _fetch_workflow_contents(owner_repo: str, github_token: str) -> list[str]:
@@ -72,34 +64,30 @@ def _has_branch_protection_required_checks(owner_repo: str, github_token: str) -
     return len(contexts) > 0 or len(strict_checks) > 0
 
 
-def compute_metrics(product: dict[str, Any], github_token: str) -> dict[str, Any]:
+def compute_metrics(unit: EvaluationUnit, github_token: str) -> dict[str, Any]:
     """
-    Check GitHub Security features for all foundational component repos.
+    Check GitHub Security features for the evaluation unit's repo.
 
-    dependabot_enabled: .github/dependabot.yml exists in any foundational repo
-    codeql_enabled:     any workflow in any foundational repo references github/codeql-action
+    dependabot_enabled: .github/dependabot.yml exists in the repo
+    codeql_enabled:     any workflow references github/codeql-action
     """
-    foundational = product.get("components", {}).get("foundational", [])
-    repos = [c["github_repo"] for c in foundational if "github_repo" in c]
-    primary = _primary_repo(product)
-
     dependabot_enabled = False
     codeql_enabled = False
 
-    for repo in repos:
+    if unit.repo:
         session = _make_github_session(github_token)
         dependabot_resp = session.get(
-            f"{_GITHUB_API}/repos/{repo}/contents/.github/dependabot.yml",
+            f"{_GITHUB_API}/repos/{unit.repo}/contents/.github/dependabot.yml",
             timeout=15,
         )
         if dependabot_resp.status_code == 200:
             dependabot_enabled = True
-        for content in _fetch_workflow_contents(repo, github_token):
+        for content in _fetch_workflow_contents(unit.repo, github_token):
             if "github/codeql-action" in content:
                 codeql_enabled = True
 
     branch_protection = (
-        _has_branch_protection_required_checks(primary, github_token) if primary else False
+        _has_branch_protection_required_checks(unit.repo, github_token) if unit.repo else False
     )
 
     return {

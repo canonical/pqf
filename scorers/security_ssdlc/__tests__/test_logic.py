@@ -2,6 +2,7 @@ import base64
 
 import responses
 
+from engine.models import EvaluationUnit, ProductType
 from scorers.security_ssdlc.logic import (
     _has_branch_protection_required_checks,
     compute_metrics,
@@ -90,16 +91,17 @@ def _mock_branch_protection(
     )
 
 
-_PRODUCT = {"components": {"foundational": [{"github_repo": "canonical/synapse-operator"}]}}
+UNIT = EvaluationUnit(
+    product_id="synapse",
+    product_type=ProductType.CHARM,
+    repo="canonical/synapse-operator",
+)
 
-_PRODUCT_TWO_REPOS = {
-    "components": {
-        "foundational": [
-            {"github_repo": "canonical/synapse-operator"},
-            {"github_repo": "canonical/postgresql-k8s-operator"},
-        ]
-    }
-}
+UNIT_EMPTY = EvaluationUnit(
+    product_id="synapse",
+    product_type=ProductType.CHARM,
+    repo="",
+)
 
 
 @responses.activate
@@ -109,7 +111,7 @@ def test_dependabot_enabled_when_file_exists():
     _mock_workflow_file("canonical/synapse-operator", "ci.yaml", _NO_CODEQL_WORKFLOW)
     _mock_repo("canonical/synapse-operator")
     _mock_branch_protection("canonical/synapse-operator")
-    result = compute_metrics(_PRODUCT, "token")
+    result = compute_metrics(UNIT, "token")
     assert result["dependabot_enabled"] is True
     assert result["branch_protection_required_checks"] is False
 
@@ -121,7 +123,7 @@ def test_dependabot_disabled_on_404():
     _mock_workflow_file("canonical/synapse-operator", "ci.yaml", _NO_CODEQL_WORKFLOW)
     _mock_repo("canonical/synapse-operator")
     _mock_branch_protection("canonical/synapse-operator")
-    result = compute_metrics(_PRODUCT, "token")
+    result = compute_metrics(UNIT, "token")
     assert result["dependabot_enabled"] is False
     assert result["branch_protection_required_checks"] is False
 
@@ -133,7 +135,7 @@ def test_codeql_enabled_when_workflow_contains_action():
     _mock_workflow_file("canonical/synapse-operator", "codeql.yaml", _CODEQL_WORKFLOW)
     _mock_repo("canonical/synapse-operator")
     _mock_branch_protection("canonical/synapse-operator")
-    result = compute_metrics(_PRODUCT, "token")
+    result = compute_metrics(UNIT, "token")
     assert result["codeql_enabled"] is True
     assert result["branch_protection_required_checks"] is False
 
@@ -145,24 +147,8 @@ def test_codeql_disabled_when_action_absent():
     _mock_workflow_file("canonical/synapse-operator", "ci.yaml", _NO_CODEQL_WORKFLOW)
     _mock_repo("canonical/synapse-operator")
     _mock_branch_protection("canonical/synapse-operator")
-    result = compute_metrics(_PRODUCT, "token")
+    result = compute_metrics(UNIT, "token")
     assert result["codeql_enabled"] is False
-    assert result["branch_protection_required_checks"] is False
-
-
-@responses.activate
-def test_scans_all_foundational_repos():
-    _mock_dependabot("canonical/synapse-operator", exists=True)
-    _mock_workflows_dir("canonical/synapse-operator", ["ci.yaml"])
-    _mock_workflow_file("canonical/synapse-operator", "ci.yaml", _NO_CODEQL_WORKFLOW)
-    _mock_repo("canonical/synapse-operator")
-    _mock_branch_protection("canonical/synapse-operator")
-    _mock_dependabot("canonical/postgresql-k8s-operator", exists=False)
-    _mock_workflows_dir("canonical/postgresql-k8s-operator", ["codeql.yaml"])
-    _mock_workflow_file("canonical/postgresql-k8s-operator", "codeql.yaml", _CODEQL_WORKFLOW)
-    result = compute_metrics(_PRODUCT_TWO_REPOS, "token")
-    assert result["dependabot_enabled"] is True
-    assert result["codeql_enabled"] is True
     assert result["branch_protection_required_checks"] is False
 
 
@@ -177,8 +163,8 @@ def test_branch_protection_required_checks_true():
     assert result is True
 
 
-def test_no_foundational_components_returns_false():
-    result = compute_metrics({}, "token")
+def test_returns_defaults_when_repo_empty():
+    result = compute_metrics(UNIT_EMPTY, "token")
     assert result == {
         "dependabot_enabled": False,
         "codeql_enabled": False,

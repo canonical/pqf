@@ -2,6 +2,8 @@ from typing import Any
 
 import requests
 
+from engine.models import EvaluationUnit
+
 _GITHUB_API = "https://api.github.com"
 
 
@@ -48,35 +50,20 @@ def _uses_jubilant(repos: list[str], github_token: str) -> bool:
     return False
 
 
-def _all_repos(product: dict[str, Any]) -> list[str]:
-    components = product.get("components", {})
-    repos = []
-    for cat in ("foundational", "feature", "auxiliary"):
-        for c in components.get(cat, []):
-            repo = c.get("github_repo", "")
-            if repo:
-                repos.append(repo)
-    return repos
-
-
-def compute_metrics(product: dict[str, Any], github_token: str | None = None) -> dict[str, Any]:
+def compute_metrics(unit: EvaluationUnit, github_token: str | None = None) -> dict[str, Any]:
     """
-    Fetch test metrics from the product's Allure report.
-
-    Reads allure_report_url from the product dict. Appends /widgets/summary.json
-    to fetch the summary. Returns zeros if the URL is empty or missing.
-    Raises requests.HTTPError on non-2xx responses.
+    Fetch test metrics from the evaluation unit's Allure report URL.
+    Checks uses_ops_testing and uses_jubilant against unit.repo.
     """
     coverage_pct = 0
     stability_pct = 0
     latest_build_passing = False
 
-    url = product.get("allure_report_url", "").strip()
+    url = unit.allure_report_url.strip()
     if url:
         summary_url = url.rstrip("/") + "/widgets/summary.json"
         resp = requests.get(summary_url, timeout=30)
         resp.raise_for_status()
-
         stat = resp.json().get("statistic", {})
         total = stat.get("total", 0)
         if total > 0:
@@ -87,13 +74,11 @@ def compute_metrics(product: dict[str, Any], github_token: str | None = None) ->
             stability_pct = round((total - failed - broken) / total * 100)
             latest_build_passing = failed == 0 and broken == 0
 
-    repos = _all_repos(product)
-    if github_token and repos:
-        uses_ops = _uses_ops_testing(repos, github_token)
-        uses_jub = _uses_jubilant(repos, github_token)
-    else:
-        uses_ops = False
-        uses_jub = False
+    uses_ops = False
+    uses_jub = False
+    if github_token and unit.repo:
+        uses_ops = _uses_ops_testing([unit.repo], github_token)
+        uses_jub = _uses_jubilant([unit.repo], github_token)
 
     return {
         "coverage_pct": coverage_pct,
