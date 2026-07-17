@@ -135,10 +135,6 @@ class TestDimensionsSchema:
 
 
 class TestProductSchema:
-    @pytest.mark.xfail(
-        reason="Products not yet migrated to new product_type/source schema (Task 5)",
-        strict=False,
-    )
     def test_all_product_yamls_are_valid(self, tmp_path):
         products_dir = Path(__file__).parent.parent.parent / "products"
         failures = []
