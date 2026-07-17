@@ -64,7 +64,9 @@ def _dim_to_dict(dim_result) -> dict:
             "status": dim_result.drift.status,
             "first_seen_at": dim_result.drift.first_seen_at,
             "deadline": dim_result.drift.deadline,
-        } if dim_result.drift else None,
+        }
+        if dim_result.drift
+        else None,
         "composition": composition,
     }
 
@@ -82,21 +84,17 @@ def _result_to_dict(result, node) -> dict:
         "is_portfolio_entry": node.is_portfolio_entry,
         "documentation_url": node.documentation_url,
         "source": (
-            {"repo": node.source_repo, "subpath": node.source_subpath}
-            if node.source_repo
-            else None
+            {"repo": node.source_repo, "subpath": node.source_subpath} if node.source_repo else None
         ),
         "composed_of": [
             {"product_id": e.product_id, "excluded_from_parent_medal": e.excluded_from_parent_medal}
             for e in node.composed_of
-        ] if node.product_type == ProductType.ROOT else None,
-        "context_refs": [
-            {"label": cr.label, "repo": cr.repo} for cr in node.context_refs
-        ],
+        ]
+        if node.product_type == ProductType.ROOT
+        else None,
+        "context_refs": [{"label": cr.label, "repo": cr.repo} for cr in node.context_refs],
         "parent_product_ids": node.parent_ids,
-        "dimensions": {
-            name: _dim_to_dict(dim) for name, dim in result.dimensions.items()
-        },
+        "dimensions": {name: _dim_to_dict(dim) for name, dim in result.dimensions.items()},
     }
 
 
@@ -151,8 +149,13 @@ def assemble_portfolio(
     for node in graph.nodes.values():
         if node.product_type == ProductType.ROOT:
             root_results[node.id] = compute_root_product(
-                node.id, graph, leaf_results,
-                dimensions_config, drift_history, node.target_medal, now,
+                node.id,
+                graph,
+                leaf_results,
+                dimensions_config,
+                drift_history,
+                node.target_medal,
+                now,
             )
 
     if update_drift:

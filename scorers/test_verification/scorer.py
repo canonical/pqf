@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """test_verification scorer — iterates leaf products and outputs per-leaf metrics."""
+
 import argparse
 import json
 import os

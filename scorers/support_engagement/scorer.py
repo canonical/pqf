@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """support_engagement scorer — iterates leaf products and outputs per-leaf metrics."""
+
 import argparse
 import json
 import os

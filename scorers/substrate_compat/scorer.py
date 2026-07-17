@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """substrate_compat scorer — iterates leaf products and outputs per-leaf metrics."""
+
 import argparse
 import json
 import os

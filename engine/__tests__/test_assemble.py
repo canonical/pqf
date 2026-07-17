@@ -50,11 +50,7 @@ context_refs:
 COMPUTED_JSON = {
     "product_id": "matrix",
     "computed_at": "2026-01-01T00:00:00+00:00",
-    "leaf_metrics": {
-        "synapse": {
-            "test_verification": {"coverage_pct": 75}
-        }
-    }
+    "leaf_metrics": {"synapse": {"test_verification": {"coverage_pct": 75}}},
 }
 
 

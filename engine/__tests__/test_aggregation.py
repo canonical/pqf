@@ -105,9 +105,7 @@ ROOT_GRAPH_DICT = {
     ],
 }
 
-LEAF_METRICS = {
-    "test_verification": {"coverage_pct": 75}
-}
+LEAF_METRICS = {"test_verification": {"coverage_pct": 75}}
 
 DIMS_WITH_APPLICABILITY = {
     "dimensions": {
@@ -129,8 +127,7 @@ def test_compute_root_product_aggregates_leaf():
         "synapse", "charm", LEAF_METRICS, DIMS_WITH_APPLICABILITY, {}, "gold"
     )
     result = compute_root_product(
-        "matrix", graph, {"synapse": leaf_result},
-        DIMS_WITH_APPLICABILITY, {}, "gold"
+        "matrix", graph, {"synapse": leaf_result}, DIMS_WITH_APPLICABILITY, {}, "gold"
     )
     assert result.product_id == "matrix"
     assert result.dimensions["test_verification"].medal.value == "bronze"
@@ -140,9 +137,7 @@ def test_compute_root_product_aggregates_leaf():
 
 def test_compute_root_product_missing_leaf_skipped():
     graph = build_graph([ROOT_GRAPH_DICT])
-    result = compute_root_product(
-        "matrix", graph, {}, DIMS_WITH_APPLICABILITY, {}, "gold"
-    )
+    result = compute_root_product("matrix", graph, {}, DIMS_WITH_APPLICABILITY, {}, "gold")
     assert result.dimensions["test_verification"].medal.value == "unrated"
 
 
@@ -161,7 +156,6 @@ def test_compute_root_product_excluded_leaf_not_counted():
         "synapse", "charm", LEAF_METRICS, DIMS_WITH_APPLICABILITY, {}, "gold"
     )
     result = compute_root_product(
-        "matrix", graph, {"synapse": leaf_result},
-        DIMS_WITH_APPLICABILITY, {}, "gold"
+        "matrix", graph, {"synapse": leaf_result}, DIMS_WITH_APPLICABILITY, {}, "gold"
     )
     assert result.dimensions["test_verification"].medal.value == "unrated"

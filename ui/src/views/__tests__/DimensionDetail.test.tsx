@@ -21,7 +21,7 @@ const mockPortfolio: Portfolio = {
       squad: 'americas',
       components: {},
       dimensions: {
-        documentation: { medal: 'bronze', target: 'gold', drift: null, metrics: {} },
+        documentation: { medal: 'bronze', target: 'gold', drift: null, metrics: {}, applicability: 'scored', composition: [] },
       },
     },
     {
@@ -39,6 +39,8 @@ const mockPortfolio: Portfolio = {
           target: 'gold',
           drift: { status: 'remediating', first_seen_at: '2026-06-01T00:00:00Z', deadline: '2027-06-30T00:00:00Z' },
           metrics: {},
+          applicability: 'scored',
+          composition: [],
         },
       },
     },
@@ -57,6 +59,8 @@ const mockPortfolio: Portfolio = {
           target: 'gold',
           drift: { status: 'overdue', first_seen_at: '2025-06-01T00:00:00Z', deadline: '2026-06-30T00:00:00Z' },
           metrics: {},
+          applicability: 'scored',
+          composition: [],
         },
       },
     },
