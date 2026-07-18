@@ -79,13 +79,13 @@ dimensions:
       links_passing:
         type: boolean
         label: "Links passing"
-        description: "All hyperlinks in documentation resolve without HTTP errors."
+        description: "All hyperlinks in documentation resolve without HTTP errors. Informational only — link checks are enforced separately by CI."
+        informational: true
     medals:
       bronze:
         - has_readme == true
         - has_contributing == true
         - has_security == true
-        - links_passing == true
       silver:
         - diataxis_coverage >= 4
       gold:

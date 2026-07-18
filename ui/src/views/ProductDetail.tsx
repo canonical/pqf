@@ -57,7 +57,20 @@ export default function ProductDetail() {
       <div className="col-12">
 
         {/* Back nav */}
-        <p style={{ marginBottom: '1rem' }}><Link to="/">← Portfolio</Link></p>
+        {product.parent_product_ids.length > 0 ? (
+          <p style={{ marginBottom: '1rem' }}>
+            {product.parent_product_ids.map(parentId => {
+              const parent = portfolio.products.find(p => p.id === parentId)
+              return parent ? (
+                <Link key={parentId} to={`/products/${parentId}`}>
+                  ← {parent.name}
+                </Link>
+              ) : null
+            })}
+          </p>
+        ) : (
+          <p style={{ marginBottom: '1rem' }}><Link to="/">← Portfolio</Link></p>
+        )}
 
         {/* Header card */}
         <div className="p-card u-sv3">
@@ -80,7 +93,7 @@ export default function ProductDetail() {
           <div style={{ display: 'flex', gap: '2rem', flexWrap: 'wrap' }}>
             <div>
               <span className="u-text--muted" style={{ fontSize: '0.75rem', display: 'block', marginBottom: '0.25rem' }}>
-                {isRoot ? 'CURRENT' : 'COMPUTED MEDAL'}
+                {isRoot ? 'CURRENT' : 'MEDAL'}
               </span>
               <MedalBadge medal={product.current_medal} />
             </div>
@@ -94,23 +107,23 @@ export default function ProductDetail() {
               <span className="u-text--muted" style={{ fontSize: '0.75rem', display: 'block', marginBottom: '0.25rem' }}>LIFECYCLE</span>
               <span className="p-label">{product.lifecycle}</span>
             </div>
-            <div>
-              <span className="u-text--muted" style={{ fontSize: '0.75rem', display: 'block', marginBottom: '0.25rem' }}>SQUAD</span>
-              {(() => {
-                const team = SQUAD_TEAMS[product.squad?.toLowerCase()]
-                if (!team) return <span>{product.squad || '—'}</span>
-                return (
+            {product.squad && (() => {
+              const team = SQUAD_TEAMS[product.squad?.toLowerCase()]
+              if (team) return (
+                <div>
+                  <span className="u-text--muted" style={{ fontSize: '0.75rem', display: 'block', marginBottom: '0.25rem' }}>SQUAD</span>
                   <a href={team.url} target="_blank" rel="noreferrer"
                     className="p-chip"
                     style={{ textDecoration: 'none', fontSize: '0.875rem', padding: '0.2rem 0.6rem' }}>
                     {team.label}
                   </a>
-                )
-              })()}
-            </div>
+                </div>
+              )
+              return null
+            })()}
           </div>
 
-          {/* Part of: (leaf pages) */}
+          {/* Part of: (leaf pages) — shown inline with Components for consistency */}
           {product.parent_product_ids.length > 0 && (
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap', marginTop: '1rem' }}>
               <span className="u-text--muted" style={{ fontSize: '0.75rem' }}>Part of:</span>
@@ -120,7 +133,7 @@ export default function ProductDetail() {
                   <Link key={parentId} to={`/products/${parentId}`}
                     className="p-chip"
                     style={{ fontSize: '0.75rem', textDecoration: 'none', padding: '0.15rem 0.5rem' }}>
-                    {parent.name}
+                    {parent.name} →
                   </Link>
                 ) : null
               })}
@@ -136,9 +149,18 @@ export default function ProductDetail() {
                   const leafProduct = portfolio.products.find(p => p.id === c.product_id)
                   return (
                     <Link key={c.product_id} to={`/products/${c.product_id}`}
-                      className="p-chip"
-                      style={{ fontSize: '0.75rem', textDecoration: 'none', padding: '0.15rem 0.5rem' }}>
-                      {leafProduct?.name ?? c.product_id}
+                      style={{
+                        fontSize: '0.8125rem',
+                        textDecoration: 'none',
+                        padding: '0.2rem 0.6rem',
+                        borderRadius: '2rem',
+                        border: '1px solid #06c',
+                        color: '#06c',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '0.25rem',
+                      }}>
+                      {leafProduct?.name ?? c.product_id} ↗
                     </Link>
                   )
                 })}

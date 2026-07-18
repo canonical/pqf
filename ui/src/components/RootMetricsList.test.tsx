@@ -1,5 +1,6 @@
 import { render, screen, fireEvent } from '@testing-library/react'
 import { describe, it, expect } from 'vitest'
+import { MemoryRouter } from 'react-router'
 import RootMetricsList from './RootMetricsList'
 import type { LeafDimensionResult, OutputMeta } from '../types'
 
@@ -54,7 +55,7 @@ describe('RootMetricsList', () => {
     render(
       <RootMetricsList composition={[LOW_LEAF, HIGH_LEAF]} thresholds={THRESHOLDS} metaOutputs={OUTPUTS} />,
     )
-    const expandBtns = screen.getAllByRole('button', { name: /2 leaves/i })
+    const expandBtns = screen.getAllByRole('button', { name: /2 components/i })
     expect(expandBtns.length).toBeGreaterThan(0)
   })
 
@@ -66,14 +67,16 @@ describe('RootMetricsList', () => {
     render(
       <RootMetricsList composition={agreed} thresholds={THRESHOLDS} metaOutputs={OUTPUTS} />,
     )
-    expect(screen.queryByRole('button', { name: /leaves/i })).not.toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: /components/i })).not.toBeInTheDocument()
   })
 
   it('expands to show per-leaf values on button click', () => {
     render(
-      <RootMetricsList composition={[LOW_LEAF, HIGH_LEAF]} thresholds={THRESHOLDS} metaOutputs={OUTPUTS} />,
+      <MemoryRouter>
+        <RootMetricsList composition={[LOW_LEAF, HIGH_LEAF]} thresholds={THRESHOLDS} metaOutputs={OUTPUTS} />
+      </MemoryRouter>,
     )
-    const btn = screen.getAllByRole('button', { name: /2 leaves/i })[0]
+    const btn = screen.getAllByRole('button', { name: /2 components/i })[0]
     fireEvent.click(btn)
     expect(screen.getByText('synapse')).toBeInTheDocument()
     expect(screen.getByText('saml')).toBeInTheDocument()
@@ -85,7 +88,7 @@ describe('RootMetricsList', () => {
       <RootMetricsList composition={[LOW_LEAF, excluded]} thresholds={THRESHOLDS} metaOutputs={OUTPUTS} />,
     )
     // only 1 leaf in scope → no expand button (all agree trivially)
-    expect(screen.queryByRole('button', { name: /leaves/i })).not.toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: /components/i })).not.toBeInTheDocument()
   })
 
   it('renders nothing when no in-scope leaves', () => {

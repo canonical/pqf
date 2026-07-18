@@ -102,6 +102,10 @@
         "ai_assisted": {
           "type": "boolean",
           "description": "If true, the metric is evaluated by an LLM via OpenRouter rather than deterministic code. Shown with a ✦ AI badge in the UI."
+        },
+        "informational": {
+          "type": "boolean",
+          "description": "If true, the metric is tracked and displayed but does not contribute to medal gating. Use for metrics enforced by other means (e.g. CI)."
         }
       }
     },

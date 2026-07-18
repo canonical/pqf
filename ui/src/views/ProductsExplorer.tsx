@@ -81,7 +81,9 @@ export default function ProductsExplorer() {
                   <th style={TH_STYLE}>Product</th>
                   <th style={TH_STYLE}>Type</th>
                   <th style={TH_STYLE}>Medal</th>
-                  <th style={TH_STYLE}>Squad / Repo</th>
+                  <th style={TH_STYLE}>Target</th>
+                  <th style={TH_STYLE}>Squad</th>
+                  <th style={TH_STYLE}>Repo</th>
                 </tr>
               </thead>
               <tbody>
@@ -106,14 +108,18 @@ export default function ProductsExplorer() {
                         <td style={{ padding: '0.75rem' }}>
                           <MedalBadge medal={root.current_medal} size="small" />
                         </td>
-                        <td style={{ padding: '0.75rem', fontSize: '0.875rem' }}>
+                        <td style={{ padding: '0.75rem' }}>
+                          <MedalBadge medal={root.target_medal} size="small" />
+                        </td>
+                        <td style={{ padding: '0.75rem', fontSize: '0.875rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.04em', color: '#666' }}>
                           {SQUAD_LABELS[root.squad?.toLowerCase()] ?? root.squad}
                         </td>
+                        <td style={{ padding: '0.75rem', fontSize: '0.875rem', color: '#aaa' }}>—</td>
                       </tr>
                       {leafProducts.map(leaf => (
                         <tr key={leaf.id} style={{ borderBottom: '1px solid #e5e5e5', background: '#fff' }}>
                           <td style={{ padding: '0.5rem 0.75rem 0.5rem 2rem' }}>
-                            <Link to={`/products/${leaf.id}`} style={{ color: '#555' }}>
+                            <Link to={`/products/${leaf.id}`}>
                               {leaf.name}
                             </Link>
                           </td>
@@ -125,6 +131,8 @@ export default function ProductsExplorer() {
                           <td style={{ padding: '0.5rem 0.75rem' }}>
                             <MedalBadge medal={leaf.current_medal} size="small" />
                           </td>
+                          <td style={{ padding: '0.5rem 0.75rem', color: '#aaa', fontSize: '0.875rem' }}>—</td>
+                          <td style={{ padding: '0.5rem 0.75rem', color: '#aaa', fontSize: '0.875rem' }}>—</td>
                           <td style={{ padding: '0.5rem 0.75rem' }}>
                             {leaf.source?.repo && (
                               <a

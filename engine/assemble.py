@@ -29,6 +29,7 @@ def _build_dimensions_meta(dimensions_config: dict) -> dict:
                 "type": metric_cfg.get("type", "unknown"),
                 "range": metric_cfg.get("range", ""),
                 "ai_assisted": metric_cfg.get("ai_assisted", False),
+                "informational": metric_cfg.get("informational", False),
             }
         meta[dim_name] = {
             "label": dim_config.get("label", dim_name.replace("_", " ").title()),

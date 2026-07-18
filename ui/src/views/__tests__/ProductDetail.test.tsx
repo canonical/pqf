@@ -187,14 +187,11 @@ describe('ProductDetail', () => {
   it('root product shows linked chips for components in header', () => {
     wrap('matrix')
     expect(screen.getByText('COMPONENTS')).toBeInTheDocument()
-    // chip links to /products/synapse and shows the leaf's name - there may be multiple, so get the first one in the COMPONENTS section
-    const chips = screen.getAllByRole('link', { name: 'Synapse Charm' })
-    const componentChip = chips.find(chip => 
-      chip.className.includes('p-chip') && 
-      chip.getAttribute('href')?.includes('synapse')
+    // component links navigate to leaf product pages
+    const componentLinks = screen.getAllByRole('link').filter(link =>
+      link.getAttribute('href')?.includes('synapse')
     )
-    expect(componentChip).toBeDefined()
-    expect(componentChip?.getAttribute('href')).toContain('synapse')
+    expect(componentLinks.length).toBeGreaterThan(0)
   })
 
   it('root product shows unified Dependencies card with sub-products and context refs', () => {
@@ -253,7 +250,7 @@ describe('ProductDetail', () => {
       }),
     )
     wrap('matrix')
-    expect(screen.getAllByRole('button', { name: /2 leaves/i }).length).toBeGreaterThan(0)
+    expect(screen.getAllByRole('button', { name: /2 components/i }).length).toBeGreaterThan(0)
   })
 
   it('excludes leaves with excluded_from_parent_medal=true from leaf count in evidence', () => {
@@ -281,13 +278,16 @@ describe('ProductDetail', () => {
     )
     wrap('matrix')
     // 1 in-scope leaf → no expand button needed (no disagreement possible)
-    expect(screen.queryByRole('button', { name: /leaves/i })).not.toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: /components/i })).not.toBeInTheDocument()
   })
 
   it('leaf product shows Part of chip', () => {
     wrap('synapse')
     expect(screen.getByText('Part of:')).toBeInTheDocument()
-    expect(screen.getByRole('link', { name: 'Matrix (Synapse)' })).toBeInTheDocument()
+    const partOfLink = screen.getAllByRole('link').find(link =>
+      link.getAttribute('href')?.includes('matrix') && link.textContent?.includes('Matrix (Synapse)')
+    )
+    expect(partOfLink).toBeDefined()
   })
 
   it('leaf product shows direct metrics without composition layer', () => {

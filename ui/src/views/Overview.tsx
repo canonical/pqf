@@ -101,6 +101,10 @@ export default function Overview() {
   if (isError) return <div className="p-notification--negative"><p>{error?.message}</p></div>
   if (!portfolio) return null
 
+  const hasDriftData = products.some(p =>
+    Object.values(p.dimensions).some(d => d.drift !== null)
+  )
+
   return (
     <div className="row" style={{ paddingTop: '1.5rem' }}>
       <div className="col-12">
@@ -110,20 +114,29 @@ export default function Overview() {
         <div className="row u-sv3">
           <div className="col-4">
             <div className="p-card">
-              <p className="p-card__title">{stats.atTarget}%</p>
-              <p className="p-card__content u-text--muted">At or above target</p>
+              <p style={{ fontSize: '2.5rem', fontWeight: 700, margin: '0 0 0.25rem', lineHeight: 1,
+                color: stats.atTarget === 100 ? '#2d9e46' : stats.atTarget === 0 ? '#c7162b' : '#1d7a1d' }}>
+                {stats.atTarget}%
+              </p>
+              <p className="u-text--muted" style={{ margin: 0 }}>At or above target</p>
             </div>
           </div>
           <div className="col-4">
             <div className="p-card">
-              <p className="p-card__title">{stats.overdue}</p>
-              <p className="p-card__content u-text--muted">Overdue</p>
+              <p style={{ fontSize: '2.5rem', fontWeight: 700, margin: '0 0 0.25rem', lineHeight: 1,
+                color: stats.overdue > 0 ? '#c7162b' : '#333' }}>
+                {stats.overdue}
+              </p>
+              <p className="u-text--muted" style={{ margin: 0 }}>Overdue</p>
             </div>
           </div>
           <div className="col-4">
             <div className="p-card">
-              <p className="p-card__title">{stats.remediating}</p>
-              <p className="p-card__content u-text--muted">Remediating</p>
+              <p style={{ fontSize: '2.5rem', fontWeight: 700, margin: '0 0 0.25rem', lineHeight: 1,
+                color: stats.remediating > 0 ? '#E98B06' : '#333' }}>
+                {stats.remediating}
+              </p>
+              <p className="u-text--muted" style={{ margin: 0 }}>Remediating</p>
             </div>
           </div>
         </div>
@@ -168,8 +181,7 @@ export default function Overview() {
                 >
                   Current
                 </th>
-                <th style={{ width: '20%' }}>Drift</th>
-                <th style={{ width: '10%' }}>Actions</th>
+                {hasDriftData && <th style={{ width: '20%' }}>Drift</th>}
               </tr>
             </thead>
             <tbody>
@@ -198,10 +210,7 @@ export default function Overview() {
                     </td>
                     <td><MedalBadge medal={product.target_medal} size="small" /></td>
                     <td><MedalBadge medal={product.current_medal} size="small" /></td>
-                    <td><DriftIndicator drift={worstDrift} /></td>
-                    <td>
-                      <Link to={`/products/${product.id}`} className="p-button is-small">View</Link>
-                    </td>
+                    {hasDriftData && <td><DriftIndicator drift={worstDrift} /></td>}
                   </tr>
                 )
               })}
@@ -219,7 +228,9 @@ export default function Overview() {
                   <th style={{ width: '20%' }}>Product</th>
                   {dimensions.map(dim => (
                     <th key={dim} style={{ width: `${80 / dimensions.length}%` }}>
-                      <Link to={`/dimensions/${dim}`}>{dim.replace(/_/g, ' ')}</Link>
+                      <Link to={`/dimensions/${dim}`}>
+                        {portfolio.dimensions_meta[dim]?.label ?? dim.replace(/_/g, ' ')}
+                      </Link>
                     </th>
                   ))}
                 </tr>
