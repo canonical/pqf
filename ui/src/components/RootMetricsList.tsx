@@ -111,16 +111,8 @@ export default function RootMetricsList({ composition, thresholds, metaOutputs }
   if (metricKeys.length === 0 || inScope.length === 0) return null
 
   return (
-    <dl
-      className="u-no-margin"
-      style={{
-        display: 'grid',
-        gridTemplateColumns: '1fr auto',
-        gap: '0.1rem 0.75rem',
-        fontSize: '0.8125rem',
-      }}
-    >
-      {metricKeys.map(key => {
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
+      {metricKeys.map((key, idx) => {
         const meta = metaOutputs![key]
         const label = meta.label
         const desc = meta.description
@@ -134,94 +126,142 @@ export default function RootMetricsList({ composition, thresholds, metaOutputs }
           l => l.metrics[key] !== undefined && String(l.metrics[key]) === String(worst.value),
         )
         const isExpanded = expanded[key] ?? false
+        const isExpandable = !allAgree
 
         return (
-          <React.Fragment key={key}>
-            <dt
-              style={{ color: '#666', margin: 0, display: 'flex', alignItems: 'center', gap: '0.35rem' }}
-              title={desc}
+          <div
+            key={key}
+            style={{
+              borderTop: idx > 0 ? '1px solid #f0f0f0' : 'none',
+              background: isExpanded ? '#f7f9ff' : 'transparent',
+            }}
+          >
+            {/* Metric row: label | value | chevron */}
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                gap: '0.5rem',
+                padding: '0.3rem 0',
+                fontSize: '0.8125rem',
+                cursor: isExpandable ? 'pointer' : 'default',
+              }}
+              onClick={isExpandable ? () => setExpanded(prev => ({ ...prev, [key]: !prev[key] })) : undefined}
+              role={isExpandable ? 'button' : undefined}
+              aria-expanded={isExpandable ? isExpanded : undefined}
+              aria-label={isExpandable ? `${isExpanded ? 'Collapse' : 'Expand'} ${label}: ${inScope.length} components` : undefined}
+              tabIndex={isExpandable ? 0 : undefined}
+              onKeyDown={isExpandable ? (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setExpanded(prev => ({ ...prev, [key]: !prev[key] })) } } : undefined}
             >
-              {label}
-              {isInformational && (
-                <span style={{
-                  fontSize: '0.625rem',
-                  fontWeight: 600,
-                  textTransform: 'uppercase',
-                  letterSpacing: '0.04em',
-                  color: '#888',
-                  border: '1px solid #ccc',
-                  borderRadius: '2px',
-                  padding: '0 3px',
-                  lineHeight: 1.4,
-                }}>
-                  info
-                </span>
-              )}
-            </dt>
-            <dd style={{ margin: 0, textAlign: 'right' }}>
-              <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.375rem' }}>
-                {formatValue(worst.value, threshold, unit)}
-                {!allAgree && (
-                  <button
-                    onClick={() => setExpanded(prev => ({ ...prev, [key]: !prev[key] }))}
-                    aria-expanded={isExpanded}
-                    aria-label={`${isExpanded ? 'Collapse' : 'Expand'} ${label}: ${inScope.length} components`}
-                    style={{
-                      fontSize: '0.6875rem',
-                      background: 'none',
-                      border: 'none',
-                      cursor: 'pointer',
-                      color: '#06c',
-                      padding: 0,
-                    }}
-                  >
-                    {isExpanded ? '▾' : '▸'} {inScope.length} components
-                  </button>
+              {/* Left: label + info badge */}
+              <span
+                style={{ color: '#555', display: 'flex', alignItems: 'center', gap: '0.35rem', flexShrink: 0 }}
+                title={desc}
+              >
+                {label}
+                {isInformational && (
+                  <span style={{
+                    fontSize: '0.625rem',
+                    fontWeight: 600,
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.04em',
+                    color: '#888',
+                    border: '1px solid #ccc',
+                    borderRadius: '2px',
+                    padding: '0 3px',
+                    lineHeight: 1.4,
+                  }}>
+                    info
+                  </span>
                 )}
               </span>
-              {isExpanded && (
-                <div
-                  style={{
-                    marginTop: '0.25rem',
-                    paddingLeft: '0.5rem',
-                    borderLeft: '2px solid #e5e5e5',
-                  }}
-                >
-                  {inScope.map(leaf => (
+
+              {/* Right: value + expand chevron */}
+              <span style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexShrink: 0 }}>
+                {formatValue(worst.value, threshold, unit)}
+                {isExpandable && (
+                  <span
+                    style={{
+                      fontSize: '0.625rem',
+                      color: '#06c',
+                      width: '1rem',
+                      textAlign: 'center',
+                      userSelect: 'none',
+                    }}
+                    aria-hidden="true"
+                  >
+                    {isExpanded ? '▾' : '▸'}
+                  </span>
+                )}
+              </span>
+            </div>
+
+            {/* Expanded breakdown panel — full width of the cell */}
+            {isExpandable && isExpanded && (
+              <div
+                style={{
+                  margin: '0 0 0.35rem 0',
+                  borderRadius: '4px',
+                  border: '1px solid #e0e7ff',
+                  overflow: 'hidden',
+                  fontSize: '0.75rem',
+                }}
+              >
+                <div style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  padding: '0.2rem 0.5rem',
+                  background: '#e8eeff',
+                  color: '#555',
+                  fontWeight: 600,
+                  fontSize: '0.6875rem',
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.04em',
+                }}>
+                  <span>Component</span>
+                  <span>{label}</span>
+                </div>
+                {inScope.map((leaf, leafIdx) => {
+                  const val = leaf.metrics[key]
+                  const isWorst = leaf.product_id === worst.leafId
+                  return (
                     <div
                       key={leaf.product_id}
                       style={{
                         display: 'flex',
                         justifyContent: 'space-between',
-                        gap: '0.5rem',
-                        padding: '0.1rem 0',
-                        fontSize: '0.75rem',
+                        alignItems: 'center',
+                        padding: '0.25rem 0.5rem',
+                        background: leafIdx % 2 === 0 ? '#fff' : '#fafbff',
+                        borderTop: '1px solid #eef0f8',
                       }}
                     >
                       <Link
                         to={`/products/${leaf.product_id}`}
                         style={{
-                          color: leaf.product_id === worst.leafId ? '#c7162b' : '#555',
-                          fontWeight: leaf.product_id === worst.leafId ? 600 : 400,
+                          color: isWorst ? '#c7162b' : '#06c',
+                          fontWeight: isWorst ? 600 : 400,
                           textDecoration: 'none',
                         }}
                       >
                         {leaf.product_id}
                       </Link>
-                      <span>
-                        {leaf.metrics[key] !== undefined
-                          ? formatValue(leaf.metrics[key], undefined, unit)
+                      <span style={{ fontVariantNumeric: 'tabular-nums' }}>
+                        {val !== undefined
+                          ? formatValue(val, threshold, unit)
                           : <span style={{ color: '#999' }}>—</span>
                         }
                       </span>
                     </div>
-                  ))}
-                </div>
-              )}
-            </dd>
-          </React.Fragment>
+                  )
+                })}
+              </div>
+            )}
+          </div>
         )
       })}
-    </dl>
+    </div>
   )
 }
+

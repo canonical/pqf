@@ -46,9 +46,9 @@ describe('RootMetricsList', () => {
       <RootMetricsList composition={[LOW_LEAF, HIGH_LEAF]} thresholds={THRESHOLDS} metaOutputs={OUTPUTS} />,
     )
     // worst coverage = 0 (synapse); threshold >=70 → shown as "0 / 70"
-    const dl = screen.getByText('Coverage').closest('dl')!
-    expect(dl).toHaveTextContent('0')
-    expect(dl).toHaveTextContent('/ 70')
+    const container = screen.getByText('Coverage').closest('div[style]')!.parentElement!
+    expect(container).toHaveTextContent('0')
+    expect(container).toHaveTextContent('/ 70')
   })
 
   it('shows expand button when leaves disagree on a metric', () => {
