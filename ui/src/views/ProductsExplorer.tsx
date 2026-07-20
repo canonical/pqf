@@ -11,51 +11,148 @@ const SQUAD_LABELS: Record<string, string> = {
   apac: 'APAC',
 }
 
+const MEDAL_OPTIONS = ['all', 'bronze', 'silver', 'gold', 'unrated', 'remediating', 'overdue']
+const MEDAL_LABELS: Record<string, string> = {
+  all: 'All medals',
+  bronze: 'Bronze',
+  silver: 'Silver',
+  gold: 'Gold',
+  unrated: 'Unrated',
+  remediating: 'Remediating',
+  overdue: 'Overdue',
+}
+
 export default function ProductsExplorer() {
   const { data: portfolio, isLoading, isError, error } = usePortfolio()
-  const [squadFilter, setSquadFilter] = useState('all')
 
-  const { rootProducts, standaloneLeaves, squads } = useMemo(() => {
-    if (!portfolio) return { rootProducts: [], standaloneLeaves: [], squads: [] as string[] }
+  const [search, setSearch] = useState('')
+  const [squadFilter, setSquadFilter] = useState('all')
+  const [medalFilter, setMedalFilter] = useState('all')
+  const [typeFilter, setTypeFilter] = useState('all')
+  const [groupByParent, setGroupByParent] = useState(true)
+
+  const { rootProducts, allProducts, squads, productTypes } = useMemo(() => {
+    if (!portfolio) return { rootProducts: [], allProducts: [], squads: [] as string[], productTypes: [] as string[] }
 
     const roots = portfolio.products.filter(p => p.product_type === 'root')
-    const leafIds = new Set(
-      roots.flatMap(r => (r.composed_of ?? []).map(c => c.product_id)),
-    )
-    const standalone = portfolio.products.filter(
-      p => p.product_type !== 'root' && !leafIds.has(p.id),
-    )
     const squads = [...new Set(roots.map(p => p.squad).filter(Boolean))]
+    const productTypes = [...new Set(portfolio.products.map(p => p.product_type).filter(Boolean))]
 
-    return { rootProducts: roots, standaloneLeaves: standalone, squads }
+    return { rootProducts: roots, allProducts: portfolio.products, squads, productTypes }
   }, [portfolio])
 
-  const filteredRoots = useMemo(
-    () =>
-      rootProducts.filter(p => squadFilter === 'all' || p.squad === squadFilter),
-    [rootProducts, squadFilter],
-  )
+  const filteredData = useMemo(() => {
+    if (!portfolio) return { type: 'grouped' as const, groups: [] }
+
+    const q = search.trim().toLowerCase()
+    const matchesSearch = (p: Product) =>
+      !q || p.name.toLowerCase().includes(q) || p.id.toLowerCase().includes(q)
+    const matchesMedal = (p: Product) =>
+      medalFilter === 'all' || p.current_medal === medalFilter
+    const matchesType = (p: Product) =>
+      typeFilter === 'all' || p.product_type === typeFilter
+    const matchesSquad = (p: Product) =>
+      squadFilter === 'all' || p.squad === squadFilter
+
+    if (!groupByParent) {
+      const flat = allProducts
+        .filter(p => matchesSearch(p) && matchesMedal(p) && matchesType(p))
+        .sort((a, b) => a.name.localeCompare(b.name))
+      return { type: 'flat' as const, products: flat }
+    }
+
+    const groups = rootProducts
+      .filter(root => matchesSquad(root))
+      .flatMap(root => {
+        const leafProducts = (root.composed_of ?? [])
+          .map(c => portfolio.products.find(p => p.id === c.product_id))
+          .filter((p): p is Product => p !== undefined)
+
+        const rootMatches = matchesSearch(root) && matchesMedal(root) && matchesType(root)
+        const matchingLeaves = leafProducts.filter(
+          l => matchesSearch(l) && matchesMedal(l) && matchesType(l),
+        )
+
+        if (rootMatches) return [{ root, leaves: leafProducts }]
+        if (matchingLeaves.length > 0) return [{ root, leaves: matchingLeaves }]
+        return []
+      })
+
+    return { type: 'grouped' as const, groups }
+  }, [search, squadFilter, medalFilter, typeFilter, groupByParent, rootProducts, allProducts, portfolio])
 
   if (isLoading) return <LoadingSpinner />
   if (isError) return <div className="p-notification--negative"><p>{error?.message}</p></div>
   if (!portfolio) return null
 
-  const TH_STYLE: React.CSSProperties = {
+  const TH: React.CSSProperties = {
     padding: '0.5rem 0.75rem',
     textAlign: 'left',
     fontSize: '0.75rem',
     fontWeight: 600,
     textTransform: 'uppercase',
     color: '#666',
+    borderBottom: '2px solid #d9d9d9',
   }
+
+  const hasActiveFilter = search || squadFilter !== 'all' || medalFilter !== 'all' || typeFilter !== 'all'
+  const resultCount = filteredData.type === 'flat'
+    ? filteredData.products.length
+    : filteredData.groups.reduce((n, g) => n + 1 + g.leaves.length, 0)
 
   return (
     <div className="row" style={{ paddingTop: '1.5rem' }}>
       <div className="col-12">
         <h1 className="p-heading--3" style={{ marginBottom: '1rem' }}>Products</h1>
 
-        {/* Squad filter */}
-        <div style={{ display: 'flex', gap: '1rem', marginBottom: '1.5rem', alignItems: 'center' }}>
+        {/* Filter bar */}
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.75rem', marginBottom: '1rem', alignItems: 'center' }}>
+          {/* Search */}
+          <div style={{ position: 'relative', flexGrow: 1, minWidth: '200px', maxWidth: '360px' }}>
+            <span style={{ position: 'absolute', left: '0.65rem', top: '50%', transform: 'translateY(-50%)', color: '#999', pointerEvents: 'none', fontSize: '0.875rem' }}>
+              🔍
+            </span>
+            <input
+              type="search"
+              value={search}
+              onChange={e => setSearch(e.target.value)}
+              placeholder="Search products…"
+              aria-label="Search products"
+              className="p-form__control"
+              style={{ paddingLeft: '2rem', width: '100%' }}
+            />
+          </div>
+
+          {/* Medal filter */}
+          <select
+            value={medalFilter}
+            onChange={e => setMedalFilter(e.target.value)}
+            className="p-form__control"
+            style={{ width: 'auto' }}
+            aria-label="Filter by medal"
+          >
+            {MEDAL_OPTIONS.map(m => (
+              <option key={m} value={m}>{MEDAL_LABELS[m]}</option>
+            ))}
+          </select>
+
+          {/* Type filter */}
+          {productTypes.length > 1 && (
+            <select
+              value={typeFilter}
+              onChange={e => setTypeFilter(e.target.value)}
+              className="p-form__control"
+              style={{ width: 'auto' }}
+              aria-label="Filter by type"
+            >
+              <option value="all">All types</option>
+              {productTypes.map(t => (
+                <option key={t} value={t}>{t}</option>
+              ))}
+            </select>
+          )}
+
+          {/* Squad filter */}
           <select
             value={squadFilter}
             onChange={e => setSquadFilter(e.target.value)}
@@ -70,109 +167,199 @@ export default function ProductsExplorer() {
               </option>
             ))}
           </select>
+
+          {/* Group by parent toggle */}
+          <label style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', cursor: 'pointer', fontSize: '0.875rem', color: '#555', userSelect: 'none', marginLeft: '0.25rem' }}>
+            <input
+              type="checkbox"
+              checked={groupByParent}
+              onChange={e => setGroupByParent(e.target.checked)}
+              style={{ cursor: 'pointer' }}
+            />
+            Group by parent
+          </label>
+
+          {/* Result count hint when filtered */}
+          {hasActiveFilter && (
+            <span style={{ fontSize: '0.8125rem', color: '#888', marginLeft: 'auto' }}>
+              {resultCount} result{resultCount !== 1 ? 's' : ''}
+            </span>
+          )}
         </div>
 
         {/* Products table */}
-        <div className="p-card u-sv3">
+        <div className="p-card u-sv3" style={{ padding: 0, overflow: 'hidden' }}>
           <div style={{ overflowX: 'auto' }}>
             <table style={{ width: '100%', borderCollapse: 'collapse' }}>
               <thead>
-                <tr style={{ borderBottom: '1px solid #d9d9d9' }}>
-                  <th style={TH_STYLE}>Product</th>
-                  <th style={TH_STYLE}>Type</th>
-                  <th style={TH_STYLE}>Medal</th>
-                  <th style={TH_STYLE}>Target</th>
-                  <th style={TH_STYLE}>Squad</th>
-                  <th style={TH_STYLE}>Repo</th>
+                <tr style={{ background: '#f5f5f5' }}>
+                  <th style={TH}>Product</th>
+                  <th style={TH}>Type</th>
+                  <th style={TH}>Medal</th>
+                  <th style={TH}>Target</th>
+                  <th style={TH}>Squad</th>
+                  <th style={TH}>Repo</th>
                 </tr>
               </thead>
               <tbody>
-                {filteredRoots.map(root => {
-                  const leafProducts = (root.composed_of ?? [])
-                    .map(c => portfolio.products.find(p => p.id === c.product_id))
-                    .filter((p): p is Product => p !== undefined)
-
+                {filteredData.type === 'grouped' && filteredData.groups.map((group, groupIdx) => {
+                  const { root, leaves } = group
+                  const isLastGroup = groupIdx === filteredData.groups.length - 1
                   return (
                     <Fragment key={root.id}>
-                      <tr style={{ borderBottom: '1px solid #e5e5e5', background: '#fafafa' }}>
-                        <td style={{ padding: '0.75rem' }}>
+                      {/* Root row */}
+                      <tr style={{
+                        borderTop: groupIdx > 0 ? '2px solid #e5e5e5' : undefined,
+                        borderBottom: leaves.length === 0 ? '1px solid #e5e5e5' : 'none',
+                        background: '#fafafa',
+                      }}>
+                        <td style={{ padding: '0.65rem 0.75rem' }}>
                           <Link to={`/products/${root.id}`} style={{ fontWeight: 600 }}>
                             {root.name}
                           </Link>
                         </td>
-                        <td style={{ padding: '0.75rem' }}>
+                        <td style={{ padding: '0.65rem 0.75rem' }}>
                           <span className="p-label" style={{ fontSize: '0.75rem' }}>
                             {root.product_type}
                           </span>
                         </td>
-                        <td style={{ padding: '0.75rem' }}>
+                        <td style={{ padding: '0.65rem 0.75rem' }}>
                           <MedalBadge medal={root.current_medal} size="small" />
                         </td>
-                        <td style={{ padding: '0.75rem' }}>
+                        <td style={{ padding: '0.65rem 0.75rem' }}>
                           <MedalBadge medal={root.target_medal} size="small" />
                         </td>
-                        <td style={{ padding: '0.75rem', fontSize: '0.875rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.04em', color: '#666' }}>
+                        <td style={{ padding: '0.65rem 0.75rem', fontSize: '0.875rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.04em', color: '#555' }}>
                           {SQUAD_LABELS[root.squad?.toLowerCase()] ?? root.squad}
                         </td>
-                        <td style={{ padding: '0.75rem', fontSize: '0.875rem', color: '#aaa' }}>—</td>
+                        <td style={{ padding: '0.65rem 0.75rem', fontSize: '0.875rem', color: '#aaa' }}>—</td>
                       </tr>
-                      {leafProducts.map(leaf => (
-                        <tr key={leaf.id} style={{ borderBottom: '1px solid #e5e5e5', background: '#fff' }}>
-                          <td style={{ padding: '0.5rem 0.75rem 0.5rem 2rem' }}>
-                            <Link to={`/products/${leaf.id}`}>
-                              {leaf.name}
-                            </Link>
-                          </td>
-                          <td style={{ padding: '0.5rem 0.75rem' }}>
-                            <span className="p-label--information" style={{ fontSize: '0.75rem' }}>
-                              {leaf.product_type}
-                            </span>
-                          </td>
-                          <td style={{ padding: '0.5rem 0.75rem' }}>
-                            <MedalBadge medal={leaf.current_medal} size="small" />
-                          </td>
-                          <td style={{ padding: '0.5rem 0.75rem', color: '#aaa', fontSize: '0.875rem' }}>—</td>
-                          <td style={{ padding: '0.5rem 0.75rem', color: '#aaa', fontSize: '0.875rem' }}>—</td>
-                          <td style={{ padding: '0.5rem 0.75rem' }}>
-                            {leaf.source?.repo && (
-                              <a
-                                href={`https://github.com/${leaf.source.repo}`}
-                                target="_blank"
-                                rel="noreferrer"
-                                style={{ fontSize: '0.875rem', color: '#666' }}
+
+                      {/* Leaf rows with tree connector */}
+                      {leaves.map((leaf, leafIdx) => {
+                        const isLast = leafIdx === leaves.length - 1
+                        return (
+                          <tr
+                            key={leaf.id}
+                            style={{
+                              borderBottom: isLast && !isLastGroup ? '1px solid #e5e5e5' : '1px solid #f0f0f0',
+                              background: '#fff',
+                            }}
+                          >
+                            {/* Product name cell with tree connector lines */}
+                            <td style={{ padding: '0.45rem 0.75rem', position: 'relative' }}>
+                              {/* Vertical line: full height for non-last, half for last */}
+                              <span style={{
+                                position: 'absolute',
+                                left: '1.35rem',
+                                top: 0,
+                                bottom: isLast ? '50%' : 0,
+                                width: '1px',
+                                background: '#c8d3e0',
+                                pointerEvents: 'none',
+                              }} />
+                              {/* Horizontal tick */}
+                              <span style={{
+                                position: 'absolute',
+                                left: '1.35rem',
+                                top: '50%',
+                                width: '0.6rem',
+                                height: '1px',
+                                background: '#c8d3e0',
+                                pointerEvents: 'none',
+                              }} />
+                              <Link
+                                to={`/products/${leaf.id}`}
+                                style={{ paddingLeft: '2.25rem', display: 'inline-block', fontSize: '0.875rem' }}
                               >
-                                {leaf.source.repo} ↗
-                              </a>
-                            )}
-                          </td>
-                        </tr>
-                      ))}
+                                {leaf.name}
+                              </Link>
+                            </td>
+                            <td style={{ padding: '0.45rem 0.75rem' }}>
+                              <span className="p-label--information" style={{ fontSize: '0.75rem' }}>
+                                {leaf.product_type}
+                              </span>
+                            </td>
+                            <td style={{ padding: '0.45rem 0.75rem' }}>
+                              <MedalBadge medal={leaf.current_medal} size="small" />
+                            </td>
+                            <td style={{ padding: '0.45rem 0.75rem', color: '#ccc', fontSize: '0.875rem' }}>—</td>
+                            <td style={{ padding: '0.45rem 0.75rem', color: '#ccc', fontSize: '0.875rem' }}>—</td>
+                            <td style={{ padding: '0.45rem 0.75rem' }}>
+                              {leaf.source?.repo ? (
+                                <a
+                                  href={`https://github.com/${leaf.source.repo}`}
+                                  target="_blank"
+                                  rel="noreferrer"
+                                  style={{ fontSize: '0.8125rem', color: '#555' }}
+                                >
+                                  {leaf.source.repo} ↗
+                                </a>
+                              ) : (
+                                <span style={{ color: '#ccc', fontSize: '0.875rem' }}>—</span>
+                              )}
+                            </td>
+                          </tr>
+                        )
+                      })}
                     </Fragment>
                   )
                 })}
+
+                {filteredData.type === 'flat' && filteredData.products.map(p => (
+                  <tr key={p.id} style={{ borderBottom: '1px solid #e5e5e5' }}>
+                    <td style={{ padding: '0.6rem 0.75rem' }}>
+                      <Link to={`/products/${p.id}`} style={{ fontWeight: p.product_type === 'root' ? 600 : 400 }}>
+                        {p.name}
+                      </Link>
+                    </td>
+                    <td style={{ padding: '0.6rem 0.75rem' }}>
+                      <span
+                        className={p.product_type === 'root' ? 'p-label' : 'p-label--information'}
+                        style={{ fontSize: '0.75rem' }}
+                      >
+                        {p.product_type}
+                      </span>
+                    </td>
+                    <td style={{ padding: '0.6rem 0.75rem' }}>
+                      <MedalBadge medal={p.current_medal} size="small" />
+                    </td>
+                    <td style={{ padding: '0.6rem 0.75rem' }}>
+                      {p.target_medal ? <MedalBadge medal={p.target_medal} size="small" /> : <span style={{ color: '#ccc' }}>—</span>}
+                    </td>
+                    <td style={{ padding: '0.6rem 0.75rem', fontSize: '0.875rem', fontWeight: p.squad ? 600 : 400, textTransform: p.squad ? 'uppercase' : undefined, letterSpacing: p.squad ? '0.04em' : undefined, color: p.squad ? '#555' : '#ccc' }}>
+                      {p.squad ? (SQUAD_LABELS[p.squad.toLowerCase()] ?? p.squad) : '—'}
+                    </td>
+                    <td style={{ padding: '0.6rem 0.75rem' }}>
+                      {p.source?.repo ? (
+                        <a
+                          href={`https://github.com/${p.source.repo}`}
+                          target="_blank"
+                          rel="noreferrer"
+                          style={{ fontSize: '0.8125rem', color: '#555' }}
+                        >
+                          {p.source.repo} ↗
+                        </a>
+                      ) : (
+                        <span style={{ color: '#ccc', fontSize: '0.875rem' }}>—</span>
+                      )}
+                    </td>
+                  </tr>
+                ))}
+
+                {/* Empty state */}
+                {((filteredData.type === 'grouped' && filteredData.groups.length === 0) ||
+                  (filteredData.type === 'flat' && filteredData.products.length === 0)) && (
+                  <tr>
+                    <td colSpan={6} style={{ padding: '2rem', textAlign: 'center', color: '#888', fontSize: '0.875rem' }}>
+                      No products match your filters.
+                    </td>
+                  </tr>
+                )}
               </tbody>
             </table>
           </div>
         </div>
-
-        {/* Standalone products section */}
-        {standaloneLeaves.length > 0 && (
-          <div className="p-card u-sv3">
-            <h2 className="p-heading--4" style={{ marginBottom: '1rem' }}>Standalone Products</h2>
-            <ul className="p-list" style={{ marginBottom: 0 }}>
-              {standaloneLeaves.map(p => (
-                <li key={p.id} className="p-list__item"
-                  style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', padding: '0.4rem 0' }}>
-                  <Link to={`/products/${p.id}`}>{p.name}</Link>
-                  <span className="p-label--information" style={{ fontSize: '0.75rem' }}>
-                    {p.product_type}
-                  </span>
-                  <MedalBadge medal={p.current_medal} size="small" />
-                </li>
-              ))}
-            </ul>
-          </div>
-        )}
       </div>
     </div>
   )

@@ -89,7 +89,7 @@ describe('ProductsExplorer', () => {
     expect(screen.getByRole('link', { name: 'Matrix (Synapse)' })).toBeInTheDocument()
   })
 
-  it('shows leaf product indented under its root', () => {
+  it('shows leaf product under its root', () => {
     wrap()
     expect(screen.getByRole('link', { name: 'Synapse Charm' })).toBeInTheDocument()
   })
@@ -109,7 +109,61 @@ describe('ProductsExplorer', () => {
 
   it('shows medal for root product', () => {
     wrap()
-    // At least one Bronze badge should be visible
     expect(screen.getAllByText('Bronze').length).toBeGreaterThan(0)
+  })
+
+  it('shows search input', () => {
+    wrap()
+    expect(screen.getByRole('searchbox', { name: /search products/i })).toBeInTheDocument()
+  })
+
+  it('search filters products by name', () => {
+    wrap()
+    const searchInput = screen.getByRole('searchbox', { name: /search products/i })
+    fireEvent.change(searchInput, { target: { value: 'synapse' } })
+    // Synapse Charm (leaf) matches → Matrix (Synapse) root should still be shown as context
+    expect(screen.getByRole('link', { name: 'Synapse Charm' })).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: 'Matrix (Synapse)' })).toBeInTheDocument()
+    // Wazuh has no match → hidden
+    expect(screen.queryByRole('link', { name: 'Wazuh Indexer' })).not.toBeInTheDocument()
+  })
+
+  it('shows root as context when only a child matches search', () => {
+    wrap()
+    const searchInput = screen.getByRole('searchbox', { name: /search products/i })
+    fireEvent.change(searchInput, { target: { value: 'synapse charm' } })
+    // leaf matches exactly, root shown as context header
+    expect(screen.getByRole('link', { name: 'Synapse Charm' })).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: 'Matrix (Synapse)' })).toBeInTheDocument()
+  })
+
+  it('shows "Group by parent" checkbox checked by default', () => {
+    wrap()
+    const cb = screen.getByRole('checkbox', { name: /group by.*parent/i })
+    expect(cb).toBeChecked()
+  })
+
+  it('uncheck group by parent shows flat list', () => {
+    wrap()
+    const cb = screen.getByRole('checkbox', { name: /group by.*parent/i })
+    fireEvent.click(cb)
+    // All products still visible in flat list
+    expect(screen.getByRole('link', { name: 'Matrix (Synapse)' })).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: 'Synapse Charm' })).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: 'Wazuh Indexer' })).toBeInTheDocument()
+  })
+
+  it('shows empty state message when no results match', () => {
+    wrap()
+    const searchInput = screen.getByRole('searchbox', { name: /search products/i })
+    fireEvent.change(searchInput, { target: { value: 'zzznomatch' } })
+    expect(screen.getByText(/no products match/i)).toBeInTheDocument()
+  })
+
+  it('shows result count when filters are active', () => {
+    wrap()
+    const searchInput = screen.getByRole('searchbox', { name: /search products/i })
+    fireEvent.change(searchInput, { target: { value: 'wazuh' } })
+    expect(screen.getByText(/result/i)).toBeInTheDocument()
   })
 })
