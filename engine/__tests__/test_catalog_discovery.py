@@ -1,3 +1,8 @@
+import json
+import subprocess
+import sys
+from pathlib import Path
+
 from engine.catalog_discovery import (
     build_field_mapping_report,
     build_gap_report,
@@ -240,3 +245,72 @@ def test_parse_ui_types_fields_from_ui_file():
     assert "id" in fields
     assert "squad" in fields
     assert "dimensions" in fields
+
+
+def test_catalog_discovery_cli_writes_artifact(tmp_path):
+    docs_dir = tmp_path / "docs-products"
+    pqf_dir = tmp_path / "pqf-products"
+    docs_dir.mkdir()
+    pqf_dir.mkdir()
+
+    docs_yaml = """\
+schema_version: 1.1
+product:
+  id: discourse
+  name: Discourse
+  service_level: silver
+  summary: test summary
+  description: test description
+ownership:
+  squad: Americas
+components: []
+deployments: []
+communication: []
+links: []
+"""
+    pqf_yaml = """\
+id: discourse
+product_type: root
+name: Discourse
+lifecycle: stable
+target_medal: silver
+ownership:
+  squad: americas
+composed_of:
+  - id: discourse-k8s
+    product_type: charm
+    source:
+      repo: canonical/discourse-k8s-operator
+    target_medal: silver
+"""
+    (docs_dir / "discourse.yaml").write_text(docs_yaml, encoding="utf-8")
+    (pqf_dir / "discourse.yaml").write_text(pqf_yaml, encoding="utf-8")
+
+    out_file = tmp_path / "discovery.json"
+    repo_root = Path(__file__).resolve().parents[2]
+    script_path = repo_root / "tools" / "generate_catalog_discovery.py"
+
+    completed = subprocess.run(
+        [
+            sys.executable,
+            str(script_path),
+            "--docs-products-dir",
+            str(docs_dir),
+            "--pqf-products-dir",
+            str(pqf_dir),
+            "--pqf-schema-path",
+            str(repo_root / "config" / "schemas" / "product.schema.json"),
+            "--ui-types-path",
+            str(repo_root / "ui" / "src" / "types.ts"),
+            "--output",
+            str(out_file),
+        ],
+        check=False,
+        capture_output=True,
+        text=True,
+    )
+
+    assert completed.returncode == 0, completed.stderr
+    assert out_file.exists()
+    report = json.loads(out_file.read_text(encoding="utf-8"))
+    assert report["inventory"]["docs_count"] == 1

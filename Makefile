@@ -12,7 +12,8 @@
 	audit audit-python audit-ui \
 	score score-docs score-no-llm \
 	score-all score-all-no-llm _merge _assemble \
-	e2e _require-github-token _require-openrouter-key
+	e2e _require-github-token _require-openrouter-key \
+	catalog-discovery
 
 PYTHON := python3
 PIP    := pip
@@ -62,6 +63,7 @@ help:
 	@echo "    make score-docs PRODUCT=<id>         Run only the documentation scorer"
 	@echo "    make score-all                       Score all products + rebuild portfolio.json (with LLM)"
 	@echo "    make score-all-no-llm                Score all products + rebuild portfolio.json (no LLM)"
+	@echo "    make catalog-discovery               Generate docs-vs-PQF catalog discovery artifact"
 	@echo ""
 
 # ── Setup ─────────────────────────────────────────────────────────────────────
