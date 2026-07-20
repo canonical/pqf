@@ -1,0 +1,27 @@
+id: 12-factor
+product_type: root
+name: 12-Factor app support
+description: 12-Factor app support includes several Charmcraft and Rockcraft extensions
+  and the paas-charm library to make the crafting of 12-factor applications easier.
+lifecycle: stable
+target_medal: gold
+ownership:
+  squad: emea
+  stakeholders:
+  - Starcraft
+  - Rockcrafters
+composed_of:
+- id: 12-factor-rockcraft
+  product_type: snap
+  source:
+    repo: canonical/rockcraft
+  target_medal: gold
+- id: 12-factor-charmcraft
+  product_type: snap
+  source:
+    repo: canonical/charmcraft
+  target_medal: gold
+documentation_url: https://canonical.com/juju/docs/12-factor/latest/
+context_refs:
+- label: Paas Charm
+  repo: canonical/paas-charm

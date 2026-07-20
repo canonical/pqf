@@ -1,29 +1,32 @@
 id: discourse
 product_type: root
-name: "Discourse"
-description: "An open-source, community- and customer-friendly discussion platform."
+name: Discourse
+description: '| Discourse is a modern forum software that is used to build communities,
+  provide customer support and facilitate conversations. The platform is built with
+  a focus on simplicity, user-friendliness, and responsiveness, making it accessible
+  from both desktops and mobile devices.'
 lifecycle: stable
 target_medal: silver
 ownership:
   squad: americas
   stakeholders:
-    - "IS"
-    - "Community Team"
-  users:
-    - "Internal Canonical"
-    - "Ubuntu community"
-documentation_url: "https://charmhub.io/discourse-k8s"
+  - IS
+  - Mauro Gaspari
+  - Aaron Prisk
 composed_of:
-  - id: discourse-k8s
-    product_type: charm
-    source:
-      repo: canonical/discourse-k8s-operator
-    target_medal: silver
-    allure_report_url: "https://canonical.github.io/discourse-k8s-operator/_latest"
-context_refs:
-  - label: "PostgreSQL K8s"
-    repo: canonical/postgresql-k8s-operator
-  - label: "Redis K8s"
-    repo: canonical/redis-k8s-operator
-  - label: "NGINX Ingress Integrator"
+- id: discourse-discourse-k8s
+  product_type: charm
+  source:
+    repo: canonical/discourse-k8s-operator
+  target_medal: silver
+- id: discourse-nginx-ingress-integrator
+  product_type: charm
+  source:
     repo: canonical/nginx-ingress-integrator-operator
+  target_medal: silver
+documentation_url: https://charmhub.io/discourse-k8s
+context_refs:
+- label: Postgresql K8S
+  repo: canonical/postgresql-k8s-operator
+- label: Redis K8S
+  repo: canonical/redis-k8s-operator

@@ -1,23 +1,20 @@
 id: mattermost
 product_type: root
-name: "Mattermost"
-description: "Open source messaging platform for team collaboration"
+name: Mattermost
+description: Mattermost is an open-source chat platform designed for secure, real-time
+  communication within teams.
 lifecycle: stable
 target_medal: gold
 ownership:
   squad: americas
   stakeholders:
-    - "IS Operations"
-  users:
-    - "All Canonical staff"
-documentation_url: "https://charmhub.io/mattermost-k8s"
+  - IS
 composed_of:
-  - id: mattermost-k8s
-    product_type: charm
-    source:
-      repo: canonical/mattermost-k8s-operator
-    target_medal: gold
-    allure_report_url: "https://canonical.github.io/mattermost-k8s-operator/_latest"
+- id: mattermost-mattermost
+  product_type: charm
+  source:
+    repo: canonical/mattermost-k8s-operator
+  target_medal: gold
+documentation_url: https://charmhub.io/mattermost-k8s
 context_refs:
-  - label: "PostgreSQL K8s"
-    repo: canonical/postgresql-k8s-operator
+- label: Postgresql K8S

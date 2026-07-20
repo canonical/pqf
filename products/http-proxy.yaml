@@ -1,0 +1,45 @@
+id: http-proxy
+product_type: root
+name: HTTP Proxy
+description: 'HTTP Proxy is a collection of operators providing HTTP forward proxy
+  capabilities.
+
+  The Squid forward proxy charm deploys and manages a Squid proxy instance as a forward
+  proxy server.
+
+  The HTTP proxy policy charm adds a policy layer to filter and manage proxy access
+  requests,
+
+  exposing a web interface for administrators to approve or reject HTTP proxy requests.'
+lifecycle: stable
+target_medal: silver
+ownership:
+  squad: apac
+  stakeholders:
+  - IS
+composed_of:
+- id: http-proxy-squid-forward-proxy
+  product_type: charm
+  source:
+    repo: canonical/http-proxy-operators
+    subpath: squid-forward-proxy-operator
+  target_medal: silver
+- id: http-proxy-http-proxy-policy
+  product_type: charm
+  source:
+    repo: canonical/http-proxy-operators
+    subpath: http-proxy-policy-operator
+  target_medal: silver
+- id: http-proxy-http-proxy-configurator
+  product_type: charm
+  source:
+    repo: canonical/http-proxy-operators
+    subpath: http-proxy-configurator-operator
+  target_medal: silver
+- id: http-proxy-charmed-http-proxy-policy
+  product_type: snap
+  source:
+    repo: canonical/http-proxy-operators
+    subpath: http-proxy-policy
+  target_medal: silver
+documentation_url: https://charmhub.io/squid-forward-proxy

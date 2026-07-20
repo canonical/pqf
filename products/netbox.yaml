@@ -1,20 +1,18 @@
 id: netbox
 product_type: root
-name: "NetBox"
-description: "The world's most popular ecosystem for operating, automating, and securing networks and infrastructure."
+name: NetBox
+description: "From their website: NetBox is the world\u2019s most popular ecosystem\
+  \ for operating, \nautomating, and securing networks and infrastructure."
 lifecycle: stable
 target_medal: bronze
 ownership:
   squad: emea
   stakeholders:
-    - "IS"
-  users:
-    - "IS Network team"
-documentation_url: "https://netboxlabs.com/"
+  - IS
 composed_of:
-  - id: netbox-k8s
-    product_type: charm
-    source:
-      repo: canonical/netbox-k8s-operator
-    target_medal: bronze
-    allure_report_url: "https://canonical.github.io/netbox-k8s-operator/_latest"
+- id: netbox-netbox-k8s
+  product_type: charm
+  source:
+    repo: canonical/netbox-k8s-operator
+  target_medal: bronze
+documentation_url: https://netboxlabs.com/

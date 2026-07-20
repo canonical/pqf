@@ -1,0 +1,29 @@
+id: content-cache
+product_type: root
+name: Content cache operators
+description: 'The Content Cache Operators provide a static web content cache backed
+  by nginx.
+
+  The ``content-cache`` machine charm manages the nginx instance, while the
+
+  ``content-cache-backends-config`` subordinate charm provides configuration for
+
+  the backend services to expose behind the cache.'
+lifecycle: stable
+target_medal: silver
+ownership:
+  squad: apac
+  stakeholders:
+  - IS
+composed_of:
+- id: content-cache-content-cache
+  product_type: charm
+  source:
+    repo: canonical/content-cache-operator
+  target_medal: silver
+- id: content-cache-content-cache-backends-config
+  product_type: charm
+  source:
+    repo: canonical/content-cache-operator
+  target_medal: silver
+documentation_url: https://charmhub.io/content-cache

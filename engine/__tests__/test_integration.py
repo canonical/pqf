@@ -12,7 +12,7 @@ Fixture metric values and expected medals:
   support_engagement: silver (triage 3 <= 5; pr_review 6 <= 7; both > gold threshold)
 
 Overall current_medal: bronze (documentation pulls it down)
-Target: gold → all dimensions drifting, but no history entries yet → drift=None
+Target: bronze (aligned with imported docs catalog)
 """
 
 import json
@@ -90,7 +90,7 @@ def test_cli_computes_expected_medals_for_matrix():
 
     assert output["id"] == "matrix"
     assert output["current_medal"] == "bronze"
-    assert output["target_medal"] == "gold"
+    assert output["target_medal"] == "bronze"
 
     dims = output["dimensions"]
     assert dims["test_verification"]["medal"] == "silver"

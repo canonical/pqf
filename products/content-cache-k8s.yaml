@@ -1,0 +1,22 @@
+id: content-cache-k8s
+product_type: root
+name: Content Cache K8s
+description: 'A Juju charm deploying and managing a content caching service in Kubernetes
+  built on top of Nginx.
+
+  It is configurable to cache any HTTP or HTTPS web site and is useful for building
+
+  content delivery networks (CDN).'
+lifecycle: stable
+target_medal: bronze
+ownership:
+  squad: apac
+  stakeholders:
+  - IS
+composed_of:
+- id: content-cache-k8s-content-cache-k8s
+  product_type: charm
+  source:
+    repo: canonical/content-cache-k8s-operator
+  target_medal: bronze
+documentation_url: https://charmhub.io/content-cache-k8s

@@ -1,0 +1,15 @@
+id: smtp-integrator
+product_type: root
+name: SMTP Integrator
+description: SMTP Integrator is an integrator that provides SMTP connection information
+  to other charms requiring SMTP integration.
+lifecycle: stable
+target_medal: silver
+ownership:
+  squad: emea
+composed_of:
+- id: smtp-integrator-smtp-integrator
+  product_type: charm
+  source:
+    repo: canonical/smtp-integrator-operator
+  target_medal: silver

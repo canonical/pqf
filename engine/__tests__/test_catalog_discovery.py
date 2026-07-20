@@ -102,6 +102,17 @@ def test_default_root_classification_without_override():
     assert role == "root"
 
 
+def test_referenced_product_is_leaf_without_override():
+    from engine.catalog_discovery import classify_product_role
+
+    product = {
+        "id": "saml-integrator",
+        "components": [{"name": "saml-integrator", "role": "primary", "type": "k8s-charm"}],
+    }
+    role = classify_product_role(product, used_by={"matrix"})
+    assert role == "leaf"
+
+
 def test_override_lookup_respects_canonical_id():
     from engine.catalog_discovery import classify_product_role
 
@@ -253,6 +264,29 @@ def test_parse_ui_types_fields_from_ui_file():
     assert "id" in fields
     assert "squad" in fields
     assert "dimensions" in fields
+
+
+def test_parse_ui_types_fields_ignores_nested_object_properties(tmp_path):
+    from engine.catalog_discovery import parse_ui_types_fields
+
+    ui_file = tmp_path / "types.ts"
+    ui_file.write_text(
+        """\
+export interface Product {
+  id: string
+  nested: {
+    inner: string
+  }
+  squad?: string
+}
+""",
+        encoding="utf-8",
+    )
+
+    fields = parse_ui_types_fields(str(ui_file))
+    assert "id" in fields
+    assert "squad" in fields
+    assert "inner" not in fields
 
 
 def test_catalog_discovery_cli_writes_artifact(tmp_path):

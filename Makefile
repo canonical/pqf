@@ -13,7 +13,8 @@
 	score score-docs score-no-llm \
 	score-all score-all-no-llm _merge _assemble \
 	e2e _require-github-token _require-openrouter-key \
-	catalog-discovery
+	catalog-discovery catalog-discovery-fetch catalog-discovery-report \
+	catalog-import-products
 
 PYTHON := python3
 PIP    := pip
@@ -64,6 +65,7 @@ help:
 	@echo "    make score-all                       Score all products + rebuild portfolio.json (with LLM)"
 	@echo "    make score-all-no-llm                Score all products + rebuild portfolio.json (no LLM)"
 	@echo "    make catalog-discovery               Generate docs-vs-PQF catalog discovery artifact"
+	@echo "    make catalog-import-products         Import all docs products into products/ (temporary migration)"
 	@echo ""
 
 # ── Setup ─────────────────────────────────────────────────────────────────────
@@ -218,11 +220,24 @@ _require-github-token:
 _require-openrouter-key:
 	@test -n "$(OPENROUTER_API_KEY)" || (echo "Error: OPENROUTER_API_KEY is not set" && exit 1)
 
-# Generate a discovery artifact describing differences between docs and PQF catalog
+# Temporary migration workflow:
+# - fetch docs products into a local cache
+# - generate a discovery artifact from cached docs + repo PQF products
+# Remove the fetch step once the catalog migration no longer needs external docs.
 DOCS_PRODUCTS_DIR ?= .pqf-cache/platform-engineering-docs/data/products
+DOCS_PRODUCTS_REPO ?= canonical/platform-engineering-docs
+DOCS_PRODUCTS_REF ?= main
 CATALOG_OVERRIDES_FILE ?=
 
-catalog-discovery:
+catalog-discovery: catalog-discovery-fetch catalog-discovery-report
+
+catalog-discovery-fetch:
+	$(PYTHON) tools/fetch_platform_engineering_docs_products.py \
+		--repo $(DOCS_PRODUCTS_REPO) \
+		--ref $(DOCS_PRODUCTS_REF) \
+		--output-dir $(DOCS_PRODUCTS_DIR)
+
+catalog-discovery-report:
 	$(PYTHON) tools/generate_catalog_discovery.py \
 		--docs-products-dir $(DOCS_PRODUCTS_DIR) \
 		--pqf-products-dir products \
@@ -230,3 +245,9 @@ catalog-discovery:
 		--ui-types-path ui/src/types.ts \
 		$(if $(CATALOG_OVERRIDES_FILE),--overrides $(CATALOG_OVERRIDES_FILE),) \
 		--output docs/superpowers/artifacts/2026-07-20-product-catalog-discovery.json
+
+catalog-import-products: catalog-discovery-fetch
+	$(PYTHON) tools/import_platform_engineering_docs_products.py \
+		--docs-products-dir $(DOCS_PRODUCTS_DIR) \
+		--output-dir products \
+		--clean

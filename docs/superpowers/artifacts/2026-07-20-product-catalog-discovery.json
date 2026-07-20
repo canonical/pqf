@@ -1,8 +1,9 @@
 {
   "inventory": {
     "docs_count": 34,
-    "pqf_count": 8,
-    "missing_in_pqf": [
+    "pqf_count": 34,
+    "missing_in_pqf": [],
+    "overlap": [
       "12-factor",
       "aproxy",
       "backup",
@@ -11,6 +12,7 @@
       "content-cache",
       "content-cache-k8s",
       "digest-squid-auth-helper",
+      "discourse",
       "dns",
       "falco",
       "gateway-api-integrator",
@@ -18,7 +20,12 @@
       "hockeypuck-k8s",
       "http-proxy",
       "httprequest-lego-provider",
+      "indico",
+      "jenkins",
       "mailserver-operators",
+      "matrix",
+      "mattermost",
+      "netbox",
       "nginx-ingress-integrator",
       "opencti",
       "penpot",
@@ -28,24 +35,11 @@
       "smtp-integrator",
       "traefik-k8s",
       "ubuntu-motd",
+      "wazuh",
       "wireguard",
       "wordpress-k8s"
     ],
-    "overlap": [
-      "discourse",
-      "indico",
-      "jenkins",
-      "matrix",
-      "mattermost",
-      "netbox",
-      "wazuh"
-    ],
-    "id_mismatches": [
-      {
-        "pqf_id": "wordpress",
-        "docs_id": "wordpress-k8s"
-      }
-    ]
+    "id_mismatches": []
   },
   "classification": {
     "12-factor": "leaf",
@@ -70,18 +64,236 @@
     "matrix": "root",
     "mattermost": "root",
     "netbox": "root",
-    "nginx-ingress-integrator": "root",
+    "nginx-ingress-integrator": "leaf",
     "opencti": "root",
     "penpot": "root",
     "pollen": "root",
-    "saml-integrator": "root",
+    "saml-integrator": "leaf",
     "self-hosted-github-runner": "root",
-    "smtp-integrator": "root",
-    "traefik-k8s": "root",
+    "smtp-integrator": "leaf",
+    "traefik-k8s": "leaf",
     "ubuntu-motd": "root",
     "wazuh": "root",
     "wireguard": "root",
     "wordpress-k8s": "root"
+  },
+  "classification_details": {
+    "12-factor": {
+      "role": "leaf",
+      "used_by": [],
+      "overridden": false,
+      "reason": "not referenced by other products"
+    },
+    "aproxy": {
+      "role": "root",
+      "used_by": [],
+      "overridden": false,
+      "reason": "not referenced by other products"
+    },
+    "backup": {
+      "role": "root",
+      "used_by": [],
+      "overridden": false,
+      "reason": "not referenced by other products"
+    },
+    "chrony": {
+      "role": "root",
+      "used_by": [],
+      "overridden": false,
+      "reason": "not referenced by other products"
+    },
+    "cloudflared": {
+      "role": "root",
+      "used_by": [],
+      "overridden": false,
+      "reason": "not referenced by other products"
+    },
+    "content-cache-k8s": {
+      "role": "root",
+      "used_by": [],
+      "overridden": false,
+      "reason": "not referenced by other products"
+    },
+    "content-cache": {
+      "role": "root",
+      "used_by": [],
+      "overridden": false,
+      "reason": "not referenced by other products"
+    },
+    "digest-squid-auth-helper": {
+      "role": "root",
+      "used_by": [],
+      "overridden": false,
+      "reason": "not referenced by other products"
+    },
+    "discourse": {
+      "role": "root",
+      "used_by": [],
+      "overridden": false,
+      "reason": "not referenced by other products"
+    },
+    "dns": {
+      "role": "root",
+      "used_by": [],
+      "overridden": false,
+      "reason": "not referenced by other products"
+    },
+    "falco": {
+      "role": "root",
+      "used_by": [],
+      "overridden": false,
+      "reason": "not referenced by other products"
+    },
+    "gateway-api-integrator": {
+      "role": "root",
+      "used_by": [],
+      "overridden": false,
+      "reason": "not referenced by other products"
+    },
+    "haproxy": {
+      "role": "root",
+      "used_by": [],
+      "overridden": false,
+      "reason": "not referenced by other products"
+    },
+    "hockeypuck-k8s": {
+      "role": "root",
+      "used_by": [],
+      "overridden": false,
+      "reason": "not referenced by other products"
+    },
+    "http-proxy": {
+      "role": "root",
+      "used_by": [],
+      "overridden": false,
+      "reason": "not referenced by other products"
+    },
+    "httprequest-lego-provider": {
+      "role": "root",
+      "used_by": [],
+      "overridden": false,
+      "reason": "not referenced by other products"
+    },
+    "indico": {
+      "role": "root",
+      "used_by": [],
+      "overridden": false,
+      "reason": "not referenced by other products"
+    },
+    "jenkins": {
+      "role": "root",
+      "used_by": [],
+      "overridden": false,
+      "reason": "not referenced by other products"
+    },
+    "mailserver-operators": {
+      "role": "root",
+      "used_by": [],
+      "overridden": false,
+      "reason": "not referenced by other products"
+    },
+    "matrix": {
+      "role": "root",
+      "used_by": [],
+      "overridden": false,
+      "reason": "not referenced by other products"
+    },
+    "mattermost": {
+      "role": "root",
+      "used_by": [],
+      "overridden": false,
+      "reason": "not referenced by other products"
+    },
+    "netbox": {
+      "role": "root",
+      "used_by": [],
+      "overridden": false,
+      "reason": "not referenced by other products"
+    },
+    "nginx-ingress-integrator": {
+      "role": "leaf",
+      "used_by": [
+        "discourse",
+        "httprequest-lego-provider",
+        "wordpress-k8s"
+      ],
+      "overridden": false,
+      "reason": "referenced by other products"
+    },
+    "opencti": {
+      "role": "root",
+      "used_by": [],
+      "overridden": false,
+      "reason": "not referenced by other products"
+    },
+    "penpot": {
+      "role": "root",
+      "used_by": [],
+      "overridden": false,
+      "reason": "not referenced by other products"
+    },
+    "pollen": {
+      "role": "root",
+      "used_by": [],
+      "overridden": false,
+      "reason": "not referenced by other products"
+    },
+    "saml-integrator": {
+      "role": "leaf",
+      "used_by": [
+        "indico",
+        "matrix"
+      ],
+      "overridden": false,
+      "reason": "referenced by other products"
+    },
+    "self-hosted-github-runner": {
+      "role": "root",
+      "used_by": [],
+      "overridden": false,
+      "reason": "not referenced by other products"
+    },
+    "smtp-integrator": {
+      "role": "leaf",
+      "used_by": [
+        "indico",
+        "matrix"
+      ],
+      "overridden": false,
+      "reason": "referenced by other products"
+    },
+    "traefik-k8s": {
+      "role": "leaf",
+      "used_by": [
+        "wazuh"
+      ],
+      "overridden": false,
+      "reason": "referenced by other products"
+    },
+    "ubuntu-motd": {
+      "role": "root",
+      "used_by": [],
+      "overridden": false,
+      "reason": "not referenced by other products"
+    },
+    "wazuh": {
+      "role": "root",
+      "used_by": [],
+      "overridden": false,
+      "reason": "not referenced by other products"
+    },
+    "wireguard": {
+      "role": "root",
+      "used_by": [],
+      "overridden": false,
+      "reason": "not referenced by other products"
+    },
+    "wordpress-k8s": {
+      "role": "root",
+      "used_by": [],
+      "overridden": false,
+      "reason": "not referenced by other products"
+    }
   },
   "field_mapping": [
     {

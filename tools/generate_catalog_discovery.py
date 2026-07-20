@@ -29,6 +29,7 @@ from engine.catalog_discovery import (
     build_field_mapping_report,
     build_gap_report,
     build_inventory_report,
+    build_reverse_usage_graph,
     classify_product_role,
     load_pqf_schema_fields,
     normalize_docs_product,
@@ -144,9 +145,24 @@ def generate_discovery_report(
                 raise RuntimeError("PyYAML is required for non-JSON overrides files")
             overrides = yaml.safe_load(text) or {}
 
+    reverse_usage = build_reverse_usage_graph(docs_norm)
+
     classification: dict[str, str] = {}
+    classification_details: dict[str, dict[str, Any]] = {}
     for p in docs_norm:
-        classification[p["id"]] = classify_product_role(p, overrides=overrides)
+        used_by = sorted(reverse_usage.get(p["id"], set()))
+        role = classify_product_role(p, overrides=overrides, used_by=set(used_by))
+        overridden = p["id"] in overrides
+        reason = "referenced by other products" if used_by else "not referenced by other products"
+        if overridden:
+            reason = "classification override applied"
+        classification[p["id"]] = role
+        classification_details[p["id"]] = {
+            "role": role,
+            "used_by": used_by,
+            "overridden": overridden,
+            "reason": reason,
+        }
 
     docs_fields = infer_docs_fields(docs_raw)
 
@@ -187,6 +203,7 @@ def generate_discovery_report(
     return {
         "inventory": inventory,
         "classification": classification,
+        "classification_details": classification_details,
         "field_mapping": field_mapping,
         "gaps": gaps,
     }

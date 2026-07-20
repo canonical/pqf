@@ -1,0 +1,24 @@
+id: aproxy
+product_type: root
+name: Aproxy
+description: 'Aproxy forwards TCP proxy requests with the hostname.
+
+  It achieves compliance with proxies requiring destination hostname for access control.'
+lifecycle: stable
+target_medal: silver
+ownership:
+  squad: apac
+  stakeholders:
+  - IS
+composed_of:
+- id: aproxy-aproxy
+  product_type: charm
+  source:
+    repo: canonical/aproxy-operator
+  target_medal: silver
+- id: aproxy-aproxy-snap
+  product_type: snap
+  source:
+    repo: canonical/aproxy
+  target_medal: silver
+documentation_url: https://charmhub.io/aproxy

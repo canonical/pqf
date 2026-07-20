@@ -1,0 +1,21 @@
+id: pollen
+product_type: root
+name: Pollen
+description: 'Pollen is a scalable, high performance, free software (AGPL) web server,
+
+  that provides small strings of entropy, over TLS-encrypted HTTPS or clear
+
+  text HTTP connections.  You might think of this as ''Entropy-as-a-Service''.'
+lifecycle: stable
+target_medal: bronze
+ownership:
+  squad: apac
+  stakeholders:
+  - IS
+composed_of:
+- id: pollen-pollen
+  product_type: charm
+  source:
+    repo: canonical/pollen-operator
+  target_medal: bronze
+documentation_url: https://charmhub.io/pollen

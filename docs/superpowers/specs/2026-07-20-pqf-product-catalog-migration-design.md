@@ -45,6 +45,11 @@ PQF currently centers on:
 ### Transition
 
 - Use temporary migration tooling for copy/reconciliation during cutover.
+- Isolate the temporary docs fetch/import step outside the engine (Makefile
+  targets `catalog-discovery-fetch` / `catalog-import-products` +
+  `tools/fetch_platform_engineering_docs_products.py` +
+  `tools/import_platform_engineering_docs_products.py`) so it can be removed
+  cleanly after cutover.
 - Do **not** keep a permanent docs->PQF import pipeline.
 - Optional temporary drift-check between repos is acceptable until cutover is complete.
 

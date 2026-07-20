@@ -123,7 +123,31 @@ def build_inventory_report(docs_products: list[dict], pqf_products: list[dict]) 
     }
 
 
-def classify_product_role(product: dict, overrides: dict[str, str] | None = None) -> str:
+def build_reverse_usage_graph(products: list[dict]) -> dict[str, set[str]]:
+    """Return product_id -> set of product_ids that reference it as a component."""
+    product_ids = {p["id"] for p in products if p.get("id")}
+    reverse: dict[str, set[str]] = {pid: set() for pid in product_ids}
+    for product in products:
+        parent_id = product.get("id")
+        if not parent_id:
+            continue
+        for component in product.get("components", []) or []:
+            if not isinstance(component, dict):
+                continue
+            name = component.get("name")
+            if not name:
+                continue
+            child_id = RENAME_MAP.get(name, name)
+            if child_id in product_ids and child_id != parent_id:
+                reverse.setdefault(child_id, set()).add(parent_id)
+    return reverse
+
+
+def classify_product_role(
+    product: dict,
+    overrides: dict[str, str] | None = None,
+    used_by: set[str] | None = None,
+) -> str:
     """Classify a product as 'root' or 'leaf'.
 
     Deterministic override lookup precedence (highest -> lowest):
@@ -135,11 +159,14 @@ def classify_product_role(product: dict, overrides: dict[str, str] | None = None
     - If an override exists for any of the lookup ids above, the first match
       in the precedence order is used. Only 'root' and 'leaf' (case-insensitive)
       are accepted. Unknown values raise ValueError.
+    - Otherwise, products referenced by other products' component lists are
+      classified as 'leaf'.
     - Otherwise, if the product has any component with role == 'primary' and
       type in the supported charm/snap types, classify as 'root'.
     - Otherwise classify as 'leaf'.
     """
     overrides = overrides or {}
+    used_by = used_by or set()
     pid = product.get("id")
     if not pid:
         raise ValueError("product id is required for classification")
@@ -168,6 +195,9 @@ def classify_product_role(product: dict, overrides: dict[str, str] | None = None
             raise ValueError(
                 f"invalid override value for {lookup!r}: {raw_val!r}; expected 'root' or 'leaf'"
             )
+
+    if used_by:
+        return "leaf"
 
     primary_types = {"k8s-charm", "machine-charm", "subordinate-charm", "snap"}
     components = product.get("components", []) or []
@@ -254,40 +284,17 @@ def parse_ui_types_fields(path: str) -> set[str]:
     if not m:
         raise ValueError("Product interface not found in UI types file")
     start = m.end()
-    # Scan forward collecting lines until matching closing brace at same depth
-    depth = 1
     fields: set[str] = set()
-    i = start
-    # iterate character by character to respect nested braces
-    while i < len(text) and depth > 0:
-        ch = text[i]
-        if ch == "{":
-            depth += 1
-            i += 1
-            continue
-        if ch == "}":
-            depth -= 1
-            i += 1
-            if depth == 0:
-                break
-            continue
-        # For property parsing, extract per-line tokens until next newline
-        # Find end of line
-        nl = text.find("\n", i)
-        if nl == -1:
-            line = text[i:].strip()
-            i = len(text)
-        else:
-            line = text[i:nl].strip()
-            i = nl + 1
-        # Remove trailing comments
-        line = re.sub(r"//.*$", "", line).strip()
-        if not line:
-            continue
-        # Match a property: identifier, optional '?', then ':'
-        mprop = re.match(r"^([A-Za-z_][A-Za-z0-9_]*)\s*\??\s*:\s*", line)
-        if mprop:
-            fields.add(mprop.group(1))
+    depth = 1
+    for raw_line in text[start:].splitlines():
+        line = re.sub(r"//.*$", "", raw_line).strip()
+        if line and depth == 1:
+            mprop = re.match(r"^([A-Za-z_][A-Za-z0-9_]*)\s*\??\s*:\s*", line)
+            if mprop:
+                fields.add(mprop.group(1))
+        depth += line.count("{") - line.count("}")
+        if depth <= 0:
+            break
     return fields
 
 

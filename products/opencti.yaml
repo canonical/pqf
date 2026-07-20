@@ -1,0 +1,20 @@
+id: opencti
+product_type: root
+name: OpenCTI
+description: OpenCTI is an open source platform allowing organizations to manage their
+  cyber threat intelligence knowledge and observables.
+lifecycle: stable
+target_medal: silver
+ownership:
+  squad: emea
+  stakeholders:
+  - SecOps
+composed_of:
+- id: opencti-opencti
+  product_type: charm
+  source:
+    repo: canonical/opencti-operator
+  target_medal: silver
+documentation_url: https://charmhub.io/opencti
+context_refs:
+- label: Opensearch
