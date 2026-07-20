@@ -110,3 +110,27 @@ def build_inventory_report(docs_products: list[dict], pqf_products: list[dict]) 
         "overlap": overlap,
         "id_mismatches": id_mismatches,
     }
+
+
+def classify_product_role(product: dict, overrides: dict[str, str] | None = None) -> str:
+    """Classify a product as 'root' or 'leaf'.
+
+    Rules:
+    - If an override exists for product['id'], return it.
+    - Otherwise, if the product has any component with role == 'primary' and
+      type in the supported charm/snap types, classify as 'root'.
+    - Otherwise classify as 'leaf'.
+    """
+    overrides = overrides or {}
+    pid = product.get("id")
+    if pid in overrides:
+        return overrides[pid]
+
+    primary_types = {"k8s-charm", "machine-charm", "subordinate-charm", "snap"}
+    components = product.get("components", []) or []
+    primary_components = [
+        c
+        for c in components
+        if c.get("role") == "primary" and c.get("type") in primary_types
+    ]
+    return "root" if primary_components else "leaf"

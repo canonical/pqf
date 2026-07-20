@@ -68,3 +68,14 @@ def test_inventory_report_detects_missing_and_id_mismatch():
     report = build_inventory_report(docs_products, pqf_products)
     assert report["missing_in_pqf"] == ["wordpress-k8s"]
     assert report["id_mismatches"] == [{"pqf_id": "wordpress", "docs_id": "wordpress-k8s"}]
+
+
+def test_classifier_respects_force_leaf_override():
+    from engine.catalog_discovery import classify_product_role
+
+    product = {
+        "id": "saml-integrator",
+        "components": [{"name": "saml-integrator", "role": "primary", "type": "k8s-charm"}],
+    }
+    role = classify_product_role(product, overrides={"saml-integrator": "leaf"})
+    assert role == "leaf"
