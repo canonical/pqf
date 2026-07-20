@@ -24,6 +24,16 @@ def canonical_docs_id(raw: Dict[str, Any]) -> str:
 def normalize_docs_product(raw: Dict[str, Any]) -> Dict[str, Any]:
     product = raw.get("product", {})
     ownership = raw.get("ownership", {})
+    # Try to preserve a top-level documentation_url if present on product or root
+    doc_url = product.get("documentation_url") or raw.get("documentation_url")
+    if not doc_url:
+        # fallback: look for a link named docs/documentation/readme
+        for l in raw.get("links", []):
+            name = (l.get("name") or "").lower()
+            if name in ("documentation", "docs", "readme") and l.get("url"):
+                doc_url = l.get("url")
+                break
+
     normalized = {
         "id": canonical_docs_id(raw),
         "name": product.get("name", product.get("id")),
@@ -31,6 +41,7 @@ def normalize_docs_product(raw: Dict[str, Any]) -> Dict[str, Any]:
         "summary": product.get("summary", ""),
         "description": product.get("description", ""),
         "squad": (ownership.get("squad") or "").lower(),
+        "documentation_url": doc_url,
         "links": raw.get("links", []),
         "components": raw.get("components", []),
     }
@@ -39,14 +50,26 @@ def normalize_docs_product(raw: Dict[str, Any]) -> Dict[str, Any]:
 
 
 def normalize_pqf_product(raw: Dict[str, Any]) -> Dict[str, Any]:
-    # Minimal normalizer for existing PQF product dicts. Keep documentation_url
-    # and links; do not add service_level.
+    """Normalize an existing PQF product dict while preserving structural
+    fields required for inventory and classification.
+
+    Preserved fields: product_type, ownership (and ownership.squad), source,
+    lifecycle, composed_of, context_refs, documentation_url, links, components.
+    """
     normalized = {
         "id": raw.get("id"),
         "name": raw.get("name", raw.get("id")),
         "target_medal": raw.get("target_medal"),
         "summary": raw.get("summary", ""),
         "description": raw.get("description", ""),
+        # structural fields preserved for later inventory/classification
+        "product_type": raw.get("product_type"),
+        "ownership": raw.get("ownership"),
+        "squad": (raw.get("ownership") or {}).get("squad") if raw.get("ownership") else None,
+        "source": raw.get("source"),
+        "lifecycle": raw.get("lifecycle"),
+        "composed_of": raw.get("composed_of"),
+        "context_refs": raw.get("context_refs"),
         "documentation_url": raw.get("documentation_url"),
         "links": raw.get("links", []),
         "components": raw.get("components", []),
