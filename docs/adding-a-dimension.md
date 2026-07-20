@@ -22,6 +22,9 @@ Add a new top-level entry under `dimensions:`:
     label: "My Dimension"
     description: "One sentence describing what this dimension measures."
     scorer: scorers/my_dimension/scorer.py
+    applies_to:
+      product_types: [charm, snap]   # which product types this dimension scores
+    aggregation: worst_in_scope
     outputs:
       some_boolean:
         type: boolean
@@ -41,6 +44,8 @@ Add a new top-level entry under `dimensions:`:
       gold:
         - some_number >= 90
 ```
+
+If your dimension only applies to charms, set `applies_to.product_types: [charm]`. Root products automatically return `not_applicable` for this dimension and are not penalized in their medal calculation.
 
 ### Medal criteria syntax
 
@@ -77,14 +82,18 @@ touch scorers/my_dimension/__tests__/test_logic.py
 ## Step 3: Write `logic.py` (pure function)
 
 `logic.py` must contain a `compute_metrics` function that:
-- Accepts `product: dict[str, Any]` (the full parsed YAML) and optionally `github_token: str | None`
+- Accepts `unit: EvaluationUnit` and optionally `github_token: str | None`
 - Returns `dict[str, Any]` with **exactly** the keys declared in `dimensions.yaml` outputs
 - Has **no side effects** — no `os.environ`, no file I/O, no print statements
+
+Use `unit.repo`, `unit.subpath`, `unit.allure_report_url`, and `unit.documentation_url` to access the leaf product's source information.
 
 ```python
 from __future__ import annotations
 from typing import Any
 import requests
+
+from engine.models import EvaluationUnit
 
 _GITHUB_API = "https://api.github.com"
 
@@ -92,30 +101,21 @@ _GITHUB_API = "https://api.github.com"
 def _make_github_session(github_token: str) -> requests.Session:
     session = requests.Session()
     session.headers.update({
-        "Authorization": f"Bearer {github_token}",
+        "Authorization": f"******",
         "Accept": "application/vnd.github+json",
         "X-GitHub-Api-Version": "2022-11-28",
     })
     return session
 
 
-def _primary_repo(product: dict) -> str | None:
-    """Return the github_repo of the first foundational component."""
-    components = product.get("components", {})
-    items = components.get("foundational", [])
-    return items[0].get("github_repo") if items else None
-
-
-def compute_metrics(product: dict[str, Any], github_token: str | None = None) -> dict[str, Any]:
-    primary = _primary_repo(product)
-
+def compute_metrics(unit: EvaluationUnit, github_token: str | None = None) -> dict[str, Any]:
     some_boolean = False
     some_number = 0.0
 
-    if github_token and primary:
+    if github_token and unit.repo:
         session = _make_github_session(github_token)
         # ... make API calls, compute metrics
-        resp = session.get(f"{_GITHUB_API}/repos/{primary}", timeout=15)
+        resp = session.get(f"{_GITHUB_API}/repos/{unit.repo}", timeout=15)
         if resp.ok:
             some_boolean = True
             some_number = 75.0
@@ -135,18 +135,18 @@ Mock all HTTP with `@responses.activate`. Never make real network calls in tests
 ```python
 import pytest
 import responses as resp_lib
+from engine.models import EvaluationUnit, ProductType
 from scorers.my_dimension.logic import compute_metrics
 
-PRODUCT = {
-    "id": "test-product",
-    "components": {
-        "foundational": [{"id": "test-charm", "github_repo": "canonical/test-repo"}]
-    },
-}
+UNIT = EvaluationUnit(
+    product_id="test-charm",
+    product_type=ProductType.CHARM,
+    repo="canonical/test-repo",
+)
 
 
-def test_returns_false_when_no_token():
-    result = compute_metrics(PRODUCT)
+def test_returns_defaults_when_no_token():
+    result = compute_metrics(UNIT)
     assert result["some_boolean"] is False
     assert result["some_number"] == 0.0
 
@@ -159,7 +159,7 @@ def test_some_boolean_true_when_api_ok():
         json={"default_branch": "main"},
         status=200,
     )
-    result = compute_metrics(PRODUCT, github_token="test-token")
+    result = compute_metrics(UNIT, github_token="test-token")
     assert result["some_boolean"] is True
 
 
@@ -170,7 +170,7 @@ def test_some_boolean_false_when_api_fails():
         "https://api.github.com/repos/canonical/test-repo",
         status=403,
     )
-    result = compute_metrics(PRODUCT, github_token="test-token")
+    result = compute_metrics(UNIT, github_token="test-token")
     assert result["some_boolean"] is False
 ```
 
@@ -186,13 +186,15 @@ python3 -m pytest scorers/my_dimension/ -v
 
 ```python
 #!/usr/bin/env python3
-"""my_dimension scorer — reads GITHUB_TOKEN from env, calls logic.compute_metrics."""
+"""my_dimension scorer — reads GITHUB_TOKEN from env, calls logic.compute_metrics per leaf unit."""
 import argparse
 import json
 import os
 import sys
+from pathlib import Path
 import yaml
 
+from engine.graph import build_graph, resolve_leaf_units
 from scorers.my_dimension.logic import compute_metrics
 
 
@@ -201,13 +203,17 @@ def main() -> int:
     parser.add_argument("--product-yaml", required=True)
     args = parser.parse_args()
 
-    with open(args.product_yaml) as f:
-        product = yaml.safe_load(f)
+    product = yaml.safe_load(Path(args.product_yaml).read_text())
+    graph = build_graph([product])
+    units = resolve_leaf_units(graph)
 
     github_token = os.environ.get("GITHUB_TOKEN")
 
-    result = compute_metrics(product, github_token=github_token)
-    print(json.dumps(result, indent=2))
+    results = {}
+    for unit in units:
+        results[unit.product_id] = compute_metrics(unit, github_token=github_token)
+
+    print(json.dumps(results, indent=2))
     return 0
 
 
@@ -219,23 +225,42 @@ if __name__ == "__main__":
 
 ## Step 6: Register the scorer in `Makefile`
 
-Add the new scorer to the `score` target in `Makefile`:
+Add the new scorer to the `score` and `score-no-llm` targets in `Makefile`:
 
 ```makefile
 	$(PYTHON) scorers/my_dimension/scorer.py --product-yaml products/$(PRODUCT).yaml \
 		> $(SCORE_DIR)/$(PRODUCT)/my_dimension.json
 ```
 
+Add it to both targets so `make score-all-no-llm` still runs your scorer.
+
 ---
 
-## Step 7: Checklist before opening a PR
+## Step 7: Verify locally
 
-- [ ] `config/dimensions.yaml` has the new dimension with `label`, `description`, `outputs`, and `medals`
-- [ ] `scorers/my_dimension/logic.py` returns exactly the keys declared in `outputs`
+Run the full pipeline to see your new dimension appear in the dashboard:
+
+```bash
+make score-no-llm PRODUCT=<any-product>
+make _merge PRODUCT=<any-product>
+make _assemble
+make dev   # → http://localhost:5173
+```
+
+See [Running scorers locally](local-scoring.md) for the full workflow.
+
+---
+
+## Step 8: Checklist before opening a PR
+
+- [ ] `config/dimensions.yaml` has the new dimension with `label`, `description`, `applies_to`, `aggregation`, `outputs`, and `medals`
+- [ ] `scorers/my_dimension/logic.py` accepts `EvaluationUnit` and returns exactly the keys declared in `outputs`
 - [ ] `scorers/my_dimension/__tests__/test_logic.py` tests all main code paths (token missing, API ok, API failing)
 - [ ] `make test` passes (all Python tests)
 - [ ] `make lint` passes
-- [ ] `make score PRODUCT=<any-product>` runs without error (needs real `GITHUB_TOKEN`)
+- [ ] `make score-no-llm PRODUCT=<any-product>` runs without error
+- [ ] `make _merge PRODUCT=<any-product> && make _assemble` updates `public/portfolio.json`
+- [ ] New dimension appears correctly in the dashboard (`make dev`)
 
 ---
 
@@ -250,6 +275,6 @@ def test_llm_scorer(mocker):
     mock_instance.chat.completions.create.return_value = mocker.Mock(
         choices=[mocker.Mock(message=mocker.Mock(content='{"result": true}'))]
     )
-    result = compute_metrics(PRODUCT, github_token="tok", openrouter_api_key="key")
+    result = compute_metrics(UNIT, github_token="tok", openrouter_api_key="key")
     assert result["result"] is True
 ```

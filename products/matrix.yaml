@@ -1,11 +1,10 @@
 # products/matrix.yaml
 id: matrix
+product_type: root
 name: "Matrix (Synapse)"
 description: "Open-standard chat for secure real-time collaboration"
-
-lifecycle: stable          # experimental | beta | stable | legacy
+lifecycle: stable
 target_medal: gold
-
 ownership:
   squad: americas
   stakeholders:
@@ -13,23 +12,21 @@ ownership:
     - "Community Team"
   users:
     - "PFE"
-
 documentation_url: "https://charmhub.io/synapse"
-allure_report_url: "https://canonical.github.io/synapse-operator/_latest"
-
-components:
-  foundational:
-    - id: synapse
-      type: charm
-      github_repo: canonical/synapse-operator
-    - id: postgresql-k8s
-      type: charm
-      github_repo: canonical/postgresql-k8s-operator
-  feature:
-    - id: saml-integrator
-      type: charm
-      github_repo: canonical/saml-integrator-operator
-  auxiliary:
-    - id: synapse-stats-exporter
-      type: charm
-      github_repo: canonical/synapse-operator
+composed_of:
+  - id: synapse
+    product_type: charm
+    source:
+      repo: canonical/synapse-operator
+    target_medal: gold
+    allure_report_url: "https://canonical.github.io/synapse-operator/_latest"
+  - id: saml-integrator
+    product_type: charm
+    source:
+      repo: canonical/saml-integrator-operator
+    target_medal: gold
+context_refs:
+  - label: "PostgreSQL K8s"
+    repo: canonical/postgresql-k8s-operator
+  - label: "Synapse Stats Exporter"
+    repo: canonical/synapse-operator

@@ -1,4 +1,5 @@
-id: wordpress-k8s
+id: wordpress
+product_type: root
 name: "WordPress"
 description: "A Juju charm deploying and managing WordPress on Kubernetes, with ingress integration and optional monitoring."
 lifecycle: stable
@@ -10,16 +11,15 @@ ownership:
   users:
     - "Web content teams"
 documentation_url: "https://charmhub.io/wordpress-k8s"
-allure_report_url: "https://canonical.github.io/wordpress-k8s-operator/_latest"
-components:
-  foundational:
-    - id: wordpress-k8s
-      type: charm
-      github_repo: canonical/wordpress-k8s-operator
-  auxiliary:
-    - id: mysql-k8s
-      type: charm
-      github_repo: canonical/mysql-k8s-operator
-    - id: nginx-ingress-integrator
-      type: charm
-      github_repo: canonical/nginx-ingress-integrator-operator
+composed_of:
+  - id: wordpress-k8s
+    product_type: charm
+    source:
+      repo: canonical/wordpress-k8s-operator
+    target_medal: bronze
+    allure_report_url: "https://canonical.github.io/wordpress-k8s-operator/_latest"
+context_refs:
+  - label: "MySQL K8s"
+    repo: canonical/mysql-k8s-operator
+  - label: "NGINX Ingress Integrator"
+    repo: canonical/nginx-ingress-integrator-operator

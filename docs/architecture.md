@@ -9,22 +9,28 @@ products/*.yaml          config/dimensions.yaml
       │                          │
       │           ┌──────────────┘
       ▼           ▼
-  scorers/{dim}/scorer.py   (one per dimension, runs via GHA nightly)
+  engine/graph.py              (builds product graph; extracts inline leaves)
       │
       ▼
-  computed/{product}.json   (raw metrics — GHA-written, never hand-edited)
+  evaluation units             (one per leaf product: repo + optional subpath)
       │
       ▼
-  engine/assemble.py        (computes medals, drift, assembles portfolio)
-      │
-      ├─► public/portfolio.json   (the single data source for the UI)
-      └─► public/badges/          (per-product SVG medal badges)
+  scorers/{dim}/scorer.py      (per evaluation unit; outputs per-leaf metric dict)
       │
       ▼
-  ui/ (React 19 + Vite)     (reads portfolio.json at startup, no backend)
+  computed/{product}.json      (leaf_metrics envelope; GHA-written, never hand-edited)
       │
       ▼
-  GitHub Pages              (https://srbouffard.github.io/pqf/)
+  engine/assemble.py           (worst-in-scope aggregation → medals; portfolio assembly)
+      │
+      ├─► public/portfolio.json    (single data source for UI)
+      └─► public/badges/
+      │
+      ▼
+  ui/ (React 19 + Vite)
+      │
+      ▼
+  GitHub Pages
 ```
 
 ---
@@ -36,11 +42,50 @@ products/*.yaml          config/dimensions.yaml
 | `products/` | PE team (PR-reviewed) | One YAML per product — manually maintained source of truth |
 | `config/dimensions.yaml` | Contributors | Medal rubrics, scorer contracts, output metadata |
 | `scorers/{dim}/` | Contributors | `logic.py` (pure, testable) + `scorer.py` (IO wrapper) |
-| `computed/` | GHA only | Raw scorer output per product — **never hand-edited** |
+| `computed/` | GHA only | `leaf_metrics` envelope keyed by leaf product ID — **never hand-edited** |
 | `engine/` | Contributors | Medal computation, drift tracking, portfolio assembly |
 | `public/` | GHA only | `portfolio.json` + badge SVGs — **never hand-edited** |
 | `ui/` | Contributors | React SPA reading `portfolio.json` |
 | `.github/workflows/` | Contributors | Two GHA workflows (see below) |
+
+---
+
+## Product Graph Model
+
+### `product_type` enum
+
+Every node in the product graph has a `product_type`:
+
+| Value | Meaning |
+|-------|---------|
+| `root` | Top-level portfolio entry. Has no source repo of its own. Composed of one or more leaf products. Its medal is the worst across all scored leaves. |
+| `charm` | A Juju charm — the primary unit of quality scoring. Has a `source.repo` (and optionally `source.subpath` for mono-repos). |
+| `snap` | A snap package. Same scoring contract as `charm`. |
+
+### Inline leaf vs standalone leaf
+
+A leaf product (charm or snap) that appears inside a root's `composed_of` list can be:
+
+| Kind | When to use | How declared |
+|------|-------------|--------------|
+| **Inline** | Your squad owns it; it belongs to exactly one root product | Embed the full leaf definition in `composed_of` |
+| **Standalone** | Shared across multiple roots *or* independently tracked in the portfolio | Own `products/<id>.yaml` file + a `ref: <id>` entry in `composed_of` |
+
+Inline leaves are the common case. Use standalone leaves only when the same charm needs to appear under multiple root products or when the team wants to track it independently on the dashboard.
+
+### `context_refs` — context-only dependencies
+
+`context_refs` lists repos that provide context (e.g., a shared database charm owned by another squad) without being scored as part of this product:
+
+- They appear in the UI for context
+- They are **never** included in medal computation
+- They do not require a `products/` YAML file
+
+### Scoring deduplication by `(repo, subpath)`
+
+`engine/graph.py` returns one `EvaluationUnit` per unique `(repo, subpath)` pair. If the same charm appears under multiple root products, scorers only run once and the result is reused.
+
+> **Planned improvement:** The `compute-metrics.yml` GHA workflow currently runs per root product. True `(repo, subpath)` deduplication at the workflow level (avoiding redundant scorer invocations across root products) is a planned follow-up PR.
 
 ---
 
@@ -76,8 +121,8 @@ products/*.yaml          config/dimensions.yaml
 
 Every scorer is split into two files:
 
-- `logic.py` — a pure function `compute_metrics(product: dict, ...) -> dict[str, Any]`. No `os.environ`, no file I/O. Receives all external data as parameters. This makes it fully unit-testable with mocks.
-- `scorer.py` — a thin IO wrapper that reads env vars (`GITHUB_TOKEN`, `OPENROUTER_API_KEY`), loads the product YAML, calls `logic.py`, and prints JSON to stdout.
+- `logic.py` — a pure function `compute_metrics(unit: EvaluationUnit, ...) -> dict[str, Any]`. No `os.environ`, no file I/O. Receives all external data as parameters. This makes it fully unit-testable with mocks.
+- `scorer.py` — a thin IO wrapper that reads env vars (`GITHUB_TOKEN`, `OPENROUTER_API_KEY`), builds the product graph, resolves leaf `EvaluationUnit` objects, calls `logic.py` for each unit, and prints JSON to stdout.
 
 This split means the core scoring logic can be tested exhaustively without network access.
 

@@ -3,6 +3,7 @@ import { usePortfolio } from '../hooks/usePortfolio'
 import MedalBadge from '../components/MedalBadge'
 import DriftChip from '../components/DriftChip'
 import MetricsList from '../components/MetricsList'
+import RootMetricsList from '../components/RootMetricsList'
 import LoadingSpinner from '../components/LoadingSpinner'
 
 const SQUAD_TEAMS: Record<string, { label: string; url: string }> = {
@@ -13,21 +14,16 @@ const SQUAD_TEAMS: Record<string, { label: string; url: string }> = {
 
 function parseCriteria(criteria: string[]): Record<string, { operator: string; value: number | boolean }> {
   const result: Record<string, { operator: string; value: number | boolean }> = {}
-
   for (const criterion of criteria) {
     const match = criterion.match(/^(\w+)\s*(>=|<=|==|>|<)\s*(.+)$/)
     if (!match) continue
-
     const [, metric, operator, rawValue] = match
     let value: number | boolean
-
     if (rawValue === 'true') value = true
     else if (rawValue === 'false') value = false
     else value = parseFloat(rawValue)
-
     result[metric] = { operator, value }
   }
-
   return result
 }
 
@@ -50,28 +46,40 @@ export default function ProductDetail() {
     )
   }
 
-  const componentGroups: Array<{ label: string; key: 'foundational' | 'feature' | 'auxiliary' }> = [
-    { label: 'Foundational', key: 'foundational' },
-    { label: 'Feature', key: 'feature' },
-    { label: 'Auxiliary', key: 'auxiliary' },
-  ]
-
-  const hasComponents = product.components &&
-    (product.components.foundational?.length || product.components.feature?.length || product.components.auxiliary?.length)
+  const isRoot = product.product_type === 'root'
+  const hasComposedOf = isRoot && product.composed_of && product.composed_of.length > 0
+  const hasDependencies =
+    (product.composed_of && product.composed_of.length > 0) ||
+    product.context_refs.length > 0
 
   return (
     <div className="row" style={{ paddingTop: '1.5rem' }}>
       <div className="col-12">
 
         {/* Back nav */}
-        <p style={{ marginBottom: '1rem' }}><Link to="/">← Portfolio</Link></p>
+        {product.parent_product_ids.length > 0 ? (
+          <p style={{ marginBottom: '1rem' }}>
+            {product.parent_product_ids.map(parentId => {
+              const parent = portfolio.products.find(p => p.id === parentId)
+              return parent ? (
+                <Link key={parentId} to={`/products/${parentId}`}>
+                  ← {parent.name}
+                </Link>
+              ) : null
+            })}
+          </p>
+        ) : (
+          <p style={{ marginBottom: '1rem' }}><Link to="/">← Portfolio</Link></p>
+        )}
 
         {/* Header card */}
         <div className="p-card u-sv3">
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '1rem' }}>
             <div>
               <h1 className="p-heading--3" style={{ marginBottom: '0.25rem' }}>{product.name}</h1>
-              {product.description && <p className="u-text--muted" style={{ margin: 0 }}>{product.description}</p>}
+              {product.description && (
+                <p className="u-text--muted" style={{ margin: 0 }}>{product.description}</p>
+              )}
             </div>
             {product.documentation_url && (
               <a href={product.documentation_url} target="_blank" rel="noreferrer" className="p-button--neutral is-small">
@@ -80,33 +88,85 @@ export default function ProductDetail() {
             )}
           </div>
           <hr style={{ margin: '1rem 0' }} />
+
+          {/* Medal / lifecycle / squad row */}
           <div style={{ display: 'flex', gap: '2rem', flexWrap: 'wrap' }}>
             <div>
-              <span className="u-text--muted" style={{ fontSize: '0.75rem', display: 'block', marginBottom: '0.25rem' }}>CURRENT</span>
+              <span className="u-text--muted" style={{ fontSize: '0.75rem', display: 'block', marginBottom: '0.25rem' }}>
+                {isRoot ? 'CURRENT' : 'MEDAL'}
+              </span>
               <MedalBadge medal={product.current_medal} />
             </div>
-            <div>
-              <span className="u-text--muted" style={{ fontSize: '0.75rem', display: 'block', marginBottom: '0.25rem' }}>TARGET</span>
-              <MedalBadge medal={product.target_medal} />
-            </div>
+            {isRoot && (
+              <div>
+                <span className="u-text--muted" style={{ fontSize: '0.75rem', display: 'block', marginBottom: '0.25rem' }}>TARGET</span>
+                <MedalBadge medal={product.target_medal} />
+              </div>
+            )}
             <div>
               <span className="u-text--muted" style={{ fontSize: '0.75rem', display: 'block', marginBottom: '0.25rem' }}>LIFECYCLE</span>
               <span className="p-label">{product.lifecycle}</span>
             </div>
-            <div>
-              <span className="u-text--muted" style={{ fontSize: '0.75rem', display: 'block', marginBottom: '0.25rem' }}>SQUAD</span>
-              {(() => {
-                const team = SQUAD_TEAMS[product.squad?.toLowerCase()]
-                if (!team) return <span>{product.squad}</span>
-
-                return (
-                  <a href={team.url} target="_blank" rel="noreferrer" className="p-chip" style={{ textDecoration: 'none', fontSize: '0.875rem', padding: '0.2rem 0.6rem' }}>
+            {product.squad && (() => {
+              const team = SQUAD_TEAMS[product.squad?.toLowerCase()]
+              if (team) return (
+                <div>
+                  <span className="u-text--muted" style={{ fontSize: '0.75rem', display: 'block', marginBottom: '0.25rem' }}>SQUAD</span>
+                  <a href={team.url} target="_blank" rel="noreferrer"
+                    className="p-chip"
+                    style={{ textDecoration: 'none', fontSize: '0.875rem', padding: '0.2rem 0.6rem' }}>
                     {team.label}
                   </a>
-                )
-              })()}
-            </div>
+                </div>
+              )
+              return null
+            })()}
           </div>
+
+          {/* Part of: (leaf pages) — shown inline with Components for consistency */}
+          {product.parent_product_ids.length > 0 && (
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap', marginTop: '1rem' }}>
+              <span className="u-text--muted" style={{ fontSize: '0.75rem' }}>Part of:</span>
+              {product.parent_product_ids.map(parentId => {
+                const parent = portfolio.products.find(p => p.id === parentId)
+                return parent ? (
+                  <Link key={parentId} to={`/products/${parentId}`}
+                    className="p-chip"
+                    style={{ fontSize: '0.75rem', textDecoration: 'none', padding: '0.15rem 0.5rem' }}>
+                    {parent.name} →
+                  </Link>
+                ) : null
+              })}
+            </div>
+          )}
+
+          {/* Components chips (root products only) */}
+          {hasComposedOf && (
+            <div style={{ marginTop: '1rem' }}>
+              <span className="u-text--muted" style={{ fontSize: '0.75rem', display: 'block', marginBottom: '0.25rem' }}>COMPONENTS</span>
+              <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+                {product.composed_of!.map(c => {
+                  const leafProduct = portfolio.products.find(p => p.id === c.product_id)
+                  return (
+                    <Link key={c.product_id} to={`/products/${c.product_id}`}
+                      style={{
+                        fontSize: '0.8125rem',
+                        textDecoration: 'none',
+                        padding: '0.2rem 0.6rem',
+                        borderRadius: '2rem',
+                        border: '1px solid #06c',
+                        color: '#06c',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '0.25rem',
+                      }}>
+                      {leafProduct?.name ?? c.product_id} ↗
+                    </Link>
+                  )
+                })}
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Dimensions card */}
@@ -132,9 +192,10 @@ export default function ProductDetail() {
                 {Object.entries(product.dimensions).map(([dim, entry], idx) => {
                   const dimMeta = portfolio.dimensions_meta[dim]
                   const targetTier = product.target_medal
-                  const targetCriteria = targetTier === 'bronze' || targetTier === 'silver' || targetTier === 'gold'
-                    ? dimMeta?.medals?.[targetTier]?.criteria ?? []
-                    : []
+                  const targetCriteria =
+                    targetTier === 'bronze' || targetTier === 'silver' || targetTier === 'gold'
+                      ? dimMeta?.medals?.[targetTier]?.criteria ?? []
+                      : []
                   const targetThresholds = parseCriteria(targetCriteria)
 
                   return (
@@ -146,10 +207,22 @@ export default function ProductDetail() {
                         <MedalBadge medal={entry.medal} size="small" />
                       </td>
                       <td style={{ padding: '0.75rem', verticalAlign: 'top' }}>
-                        <DriftChip drift={entry.drift} />
+                        {isRoot && <DriftChip drift={entry.drift} />}
                       </td>
                       <td style={{ padding: '0.75rem', verticalAlign: 'top' }}>
-                        <MetricsList metrics={entry.metrics} thresholds={targetThresholds} metaOutputs={dimMeta?.outputs} />
+                        {isRoot && entry.composition && entry.composition.length > 0 ? (
+                          <RootMetricsList
+                            composition={entry.composition}
+                            thresholds={targetThresholds}
+                            metaOutputs={dimMeta?.outputs}
+                          />
+                        ) : (
+                          <MetricsList
+                            metrics={entry.metrics}
+                            thresholds={isRoot ? targetThresholds : undefined}
+                            metaOutputs={dimMeta?.outputs}
+                          />
+                        )}
                       </td>
                     </tr>
                   )
@@ -159,31 +232,68 @@ export default function ProductDetail() {
           </div>
         </div>
 
-        {/* Components card */}
-        {hasComponents && (
+        {/* Unified Dependencies card */}
+        {hasDependencies && (
           <div className="p-card u-sv3">
-            <h2 className="p-heading--4" style={{ marginBottom: '1rem' }}>Components</h2>
-            {componentGroups.map(({ label, key }, groupIdx) => {
-              const items = product.components?.[key]
-              if (!items || items.length === 0) return null
-              return (
-                <div key={key}>
-                  {groupIdx > 0 && <hr style={{ margin: '1rem 0', borderColor: '#e5e5e5' }} />}
-                  <h3 className="p-heading--6" style={{ textTransform: 'uppercase', color: '#666', letterSpacing: '0.05em', marginBottom: '0.5rem' }}>{label}</h3>
-                  <ul className="p-list" style={{ marginBottom: 0 }}>
-                    {items.map(c => (
-                      <li key={c.id} className="p-list__item" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.4rem 0' }}>
-                        <strong>{c.id}</strong>
-                        <span className="p-label" style={{ fontSize: '0.6875rem' }}>{c.type}</span>
-                        <a href={`https://github.com/${c.github_repo}`} target="_blank" rel="noreferrer" style={{ fontSize: '0.875rem' }}>
-                          {c.github_repo}
-                        </a>
+            <h2 className="p-heading--4" style={{ marginBottom: '0.5rem' }}>Dependencies</h2>
+
+            {product.composed_of && product.composed_of.length > 0 && (
+              <div style={{ marginBottom: product.context_refs.length > 0 ? '1rem' : 0 }}>
+                <p className="u-text--muted" style={{ fontSize: '0.875rem', margin: '0 0 0.5rem' }}>
+                  Sub-products — scored and included in medal calculation
+                </p>
+                <ul className="p-list" style={{ marginBottom: 0 }}>
+                  {product.composed_of.map(c => {
+                    const leafProduct = portfolio.products.find(p => p.id === c.product_id)
+                    return (
+                      <li key={c.product_id} className="p-list__item"
+                        style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.4rem 0' }}>
+                        <Link to={`/products/${c.product_id}`}>
+                          {leafProduct?.name ?? c.product_id}
+                        </Link>
+                        {leafProduct?.product_type && (
+                          <span className="p-label--information" style={{ fontSize: '0.75rem' }}>
+                            {leafProduct.product_type}
+                          </span>
+                        )}
+                        {leafProduct?.source?.repo && (
+                          <a href={`https://github.com/${leafProduct.source.repo}`}
+                            target="_blank" rel="noreferrer"
+                            style={{ fontSize: '0.875rem', color: '#666' }}>
+                            {leafProduct.source.repo} ↗
+                          </a>
+                        )}
+                        {c.excluded_from_parent_medal && (
+                          <span style={{ fontSize: '0.75rem', color: '#666' }}>(excluded from medal)</span>
+                        )}
                       </li>
-                    ))}
-                  </ul>
-                </div>
-              )
-            })}
+                    )
+                  })}
+                </ul>
+              </div>
+            )}
+
+            {product.context_refs.length > 0 && (
+              <div>
+                <p className="u-text--muted" style={{ fontSize: '0.875rem', margin: '0 0 0.5rem' }}>
+                  Context only — not scored by this team
+                </p>
+                <ul className="p-list" style={{ marginBottom: 0 }}>
+                  {product.context_refs.map((cr, i) => (
+                    <li key={i} className="p-list__item"
+                      style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.4rem 0' }}>
+                      <span>{cr.label}</span>
+                      {cr.repo && (
+                        <a href={`https://github.com/${cr.repo}`} target="_blank" rel="noreferrer"
+                          style={{ fontSize: '0.875rem', color: '#666' }}>
+                          {cr.repo} ↗
+                        </a>
+                      )}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
           </div>
         )}
 

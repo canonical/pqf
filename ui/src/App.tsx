@@ -4,6 +4,7 @@ import GlobalNav from './components/GlobalNav'
 import LoadingSpinner from './components/LoadingSpinner'
 
 const Overview = lazy(() => import('./views/Overview'))
+const ProductsExplorer = lazy(() => import('./views/ProductsExplorer'))
 const ProductDetail = lazy(() => import('./views/ProductDetail'))
 const DimensionsOverview = lazy(() => import('./views/DimensionsOverview'))
 const DimensionDetail = lazy(() => import('./views/DimensionDetail'))
@@ -17,6 +18,7 @@ export default function App() {
         <Suspense fallback={<LoadingSpinner />}>
           <Routes>
             <Route path="/" element={<Overview />} />
+            <Route path="/products" element={<ProductsExplorer />} />
             <Route path="/products/:id" element={<ProductDetail />} />
             <Route path="/dimensions" element={<DimensionsOverview />} />
             <Route path="/dimensions/:id" element={<DimensionDetail />} />

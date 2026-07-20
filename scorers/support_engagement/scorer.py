@@ -1,4 +1,6 @@
-# scorers/support_engagement/scorer.py
+#!/usr/bin/env python3
+"""support_engagement scorer — iterates leaf products and outputs per-leaf metrics."""
+
 import argparse
 import json
 import os
@@ -7,18 +9,25 @@ from pathlib import Path
 
 import yaml
 
-sys.path.insert(0, str(Path(__file__).parent.parent.parent))
+from engine.graph import build_graph, resolve_leaf_units
 from scorers.support_engagement.logic import compute_metrics
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="PQF support_engagement scorer")
+    parser = argparse.ArgumentParser()
     parser.add_argument("--product-yaml", required=True)
     args = parser.parse_args()
 
     product = yaml.safe_load(Path(args.product_yaml).read_text())
-    result = compute_metrics(product, os.environ["GITHUB_TOKEN"])
-    print(json.dumps(result))
+    graph = build_graph([product])
+    units = resolve_leaf_units(graph)
+    github_token = os.environ["GITHUB_TOKEN"]
+
+    results = {}
+    for unit in units:
+        results[unit.product_id] = compute_metrics(unit, github_token)
+
+    print(json.dumps(results, indent=2))
     return 0
 
 

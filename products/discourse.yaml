@@ -1,4 +1,5 @@
 id: discourse
+product_type: root
 name: "Discourse"
 description: "An open-source, community- and customer-friendly discussion platform."
 lifecycle: stable
@@ -12,19 +13,17 @@ ownership:
     - "Internal Canonical"
     - "Ubuntu community"
 documentation_url: "https://charmhub.io/discourse-k8s"
-allure_report_url: "https://canonical.github.io/discourse-k8s-operator/_latest"
-components:
-  foundational:
-    - id: discourse-k8s
-      type: charm
-      github_repo: canonical/discourse-k8s-operator
-  auxiliary:
-    - id: postgresql-k8s
-      type: charm
-      github_repo: canonical/postgresql-k8s-operator
-    - id: redis-k8s
-      type: charm
-      github_repo: canonical/redis-k8s-operator
-    - id: nginx-ingress-integrator
-      type: charm
-      github_repo: canonical/nginx-ingress-integrator-operator
+composed_of:
+  - id: discourse-k8s
+    product_type: charm
+    source:
+      repo: canonical/discourse-k8s-operator
+    target_medal: silver
+    allure_report_url: "https://canonical.github.io/discourse-k8s-operator/_latest"
+context_refs:
+  - label: "PostgreSQL K8s"
+    repo: canonical/postgresql-k8s-operator
+  - label: "Redis K8s"
+    repo: canonical/redis-k8s-operator
+  - label: "NGINX Ingress Integrator"
+    repo: canonical/nginx-ingress-integrator-operator

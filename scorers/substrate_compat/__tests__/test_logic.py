@@ -3,6 +3,7 @@ import base64
 
 import responses
 
+from engine.models import EvaluationUnit, ProductType
 from scorers.substrate_compat.logic import compute_metrics
 
 _GITHUB_API = "https://api.github.com"
@@ -68,23 +69,24 @@ def _mock_workflow_file(owner_repo: str, filename: str, content: str):
     )
 
 
-_PRODUCT = {"components": {"foundational": [{"github_repo": "canonical/synapse-operator"}]}}
+UNIT = EvaluationUnit(
+    product_id="synapse",
+    product_type=ProductType.CHARM,
+    repo="canonical/synapse-operator",
+)
 
-_PRODUCT_TWO_REPOS = {
-    "components": {
-        "foundational": [
-            {"github_repo": "canonical/synapse-operator"},
-            {"github_repo": "canonical/postgresql-k8s-operator"},
-        ]
-    }
-}
+UNIT_EMPTY = EvaluationUnit(
+    product_id="synapse",
+    product_type=ProductType.CHARM,
+    repo="",
+)
 
 
 @responses.activate
 def test_detects_juju3_from_workflow():
     _mock_workflows_dir("canonical/synapse-operator", ["integration.yaml"])
     _mock_workflow_file("canonical/synapse-operator", "integration.yaml", _JUJU3_WORKFLOW)
-    result = compute_metrics(_PRODUCT, "token")
+    result = compute_metrics(UNIT, "token")
     assert result["supports_juju_3"] is True
     assert result["supports_juju_4"] is False
     assert result["supports_ck8s"] is False
@@ -94,7 +96,7 @@ def test_detects_juju3_from_workflow():
 def test_detects_juju4_from_workflow():
     _mock_workflows_dir("canonical/synapse-operator", ["integration.yaml"])
     _mock_workflow_file("canonical/synapse-operator", "integration.yaml", _JUJU4_CK8S_WORKFLOW)
-    result = compute_metrics(_PRODUCT, "token")
+    result = compute_metrics(UNIT, "token")
     assert result["supports_juju_3"] is False
     assert result["supports_juju_4"] is True
 
@@ -103,7 +105,7 @@ def test_detects_juju4_from_workflow():
 def test_detects_ck8s_from_workflow():
     _mock_workflows_dir("canonical/synapse-operator", ["integration.yaml"])
     _mock_workflow_file("canonical/synapse-operator", "integration.yaml", _JUJU4_CK8S_WORKFLOW)
-    result = compute_metrics(_PRODUCT, "token")
+    result = compute_metrics(UNIT, "token")
     assert result["supports_ck8s"] is True
 
 
@@ -111,24 +113,8 @@ def test_detects_ck8s_from_workflow():
 def test_generic_workflow_sets_no_flags():
     _mock_workflows_dir("canonical/synapse-operator", ["ci.yaml"])
     _mock_workflow_file("canonical/synapse-operator", "ci.yaml", _GENERIC_WORKFLOW)
-    result = compute_metrics(_PRODUCT, "token")
+    result = compute_metrics(UNIT, "token")
     assert result == {"supports_juju_3": False, "supports_juju_4": False, "supports_ck8s": False}
-
-
-@responses.activate
-def test_scans_all_foundational_repos():
-    _mock_workflows_dir("canonical/synapse-operator", ["integration.yaml"])
-    _mock_workflow_file("canonical/synapse-operator", "integration.yaml", _JUJU3_WORKFLOW)
-    _mock_workflows_dir("canonical/postgresql-k8s-operator", ["integration.yaml"])
-    _mock_workflow_file(
-        "canonical/postgresql-k8s-operator",
-        "integration.yaml",
-        _JUJU4_CK8S_WORKFLOW,
-    )
-    result = compute_metrics(_PRODUCT_TWO_REPOS, "token")
-    assert result["supports_juju_3"] is True
-    assert result["supports_juju_4"] is True
-    assert result["supports_ck8s"] is True
 
 
 @responses.activate
@@ -138,10 +124,10 @@ def test_missing_workflows_dir_returns_false():
         f"{_GITHUB_API}/repos/canonical/synapse-operator/contents/.github/workflows",
         status=404,
     )
-    result = compute_metrics(_PRODUCT, "token")
+    result = compute_metrics(UNIT, "token")
     assert result == {"supports_juju_3": False, "supports_juju_4": False, "supports_ck8s": False}
 
 
-def test_no_foundational_components_returns_false():
-    result = compute_metrics({}, "token")
+def test_returns_defaults_when_repo_empty():
+    result = compute_metrics(UNIT_EMPTY, "token")
     assert result == {"supports_juju_3": False, "supports_juju_4": False, "supports_ck8s": False}

@@ -3,6 +3,8 @@
 import json
 from pathlib import Path
 
+import jsonschema
+import pytest
 import yaml
 
 from engine.validate import validate_file
@@ -10,6 +12,21 @@ from engine.validate import validate_file
 _SCHEMAS_DIR = Path(__file__).parent.parent.parent / "config" / "schemas"
 _DIM_SCHEMA = json.loads((_SCHEMAS_DIR / "dimensions.schema.json").read_text())
 _PROD_SCHEMA = json.loads((_SCHEMAS_DIR / "product.schema.json").read_text())
+
+
+def _validate_dict(data: dict, schema: dict) -> list[str]:
+    """Validate a plain dict against a schema; return human-readable error messages."""
+    validator = jsonschema.Draft7Validator(schema)
+    errors = []
+    for err in sorted(validator.iter_errors(data), key=lambda e: list(e.path)):
+        loc = " > ".join(str(p) for p in err.path) or "(root)"
+        errors.append(f"  {loc}: {err.message}")
+    return errors
+
+
+@pytest.fixture
+def prod_schema():
+    return _PROD_SCHEMA
 
 
 # ── Dimensions schema ─────────────────────────────────────────────────────────
@@ -205,3 +222,97 @@ class TestProductSchema:
         p.write_text(yaml.dump(bad))
         errors = validate_file(p, _PROD_SCHEMA)
         assert errors
+
+
+# New product schema test fixtures
+ROOT_PRODUCT_VALID = {
+    "id": "test-root",
+    "product_type": "root",
+    "name": "Test Root",
+    "lifecycle": "stable",
+    "target_medal": "silver",
+    "ownership": {"squad": "emea"},
+    "composed_of": [
+        {
+            "id": "test-charm",
+            "product_type": "charm",
+            "source": {"repo": "canonical/test-charm"},
+            "target_medal": "silver",
+        }
+    ],
+}
+
+LEAF_PRODUCT_VALID = {
+    "id": "test-charm",
+    "product_type": "charm",
+    "name": "Test Charm",
+    "lifecycle": "stable",
+    "target_medal": "silver",
+    "ownership": {"squad": "emea"},
+    "source": {"repo": "canonical/test-charm"},
+}
+
+LEAF_WITH_SUBPATH = {
+    "id": "backup-charm",
+    "product_type": "charm",
+    "name": "Backup Charm",
+    "lifecycle": "stable",
+    "target_medal": "bronze",
+    "ownership": {"squad": "emea"},
+    "source": {"repo": "canonical/backup-operators", "subpath": "charms/backup"},
+}
+
+ROOT_MISSING_PRODUCT_TYPE = {
+    "id": "bad",
+    "name": "Bad",
+    "lifecycle": "stable",
+    "target_medal": "silver",
+    "ownership": {"squad": "emea"},
+}
+
+LEAF_MISSING_SOURCE = {
+    "id": "bad-charm",
+    "product_type": "charm",
+    "name": "Bad Charm",
+    "lifecycle": "stable",
+    "target_medal": "silver",
+    "ownership": {"squad": "emea"},
+}
+
+ROOT_WITH_SOURCE = {
+    **ROOT_PRODUCT_VALID,
+    "source": {"repo": "canonical/something"},  # root must NOT have source
+}
+
+
+def test_root_product_valid(prod_schema):
+    assert _validate_dict(ROOT_PRODUCT_VALID, prod_schema) == []
+
+
+def test_leaf_product_valid(prod_schema):
+    assert _validate_dict(LEAF_PRODUCT_VALID, prod_schema) == []
+
+
+def test_leaf_with_subpath_valid(prod_schema):
+    assert _validate_dict(LEAF_WITH_SUBPATH, prod_schema) == []
+
+
+def test_product_type_required(prod_schema):
+    errors = _validate_dict(ROOT_MISSING_PRODUCT_TYPE, prod_schema)
+    assert any("product_type" in e for e in errors)
+
+
+def test_root_must_have_composed_of(prod_schema):
+    bad = {k: v for k, v in ROOT_PRODUCT_VALID.items() if k != "composed_of"}
+    errors = _validate_dict(bad, prod_schema)
+    assert any("composed_of" in e for e in errors)
+
+
+def test_leaf_must_have_source(prod_schema):
+    errors = _validate_dict(LEAF_MISSING_SOURCE, prod_schema)
+    assert any("source" in e for e in errors)
+
+
+def test_root_must_not_have_source(prod_schema):
+    errors = _validate_dict(ROOT_WITH_SOURCE, prod_schema)
+    assert any("source" in e for e in errors)

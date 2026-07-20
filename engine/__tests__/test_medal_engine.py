@@ -1,8 +1,8 @@
 # engine/__tests__/test_medal_engine.py
-from engine.medal_engine import compute_product
-from engine.models import Medal
+from engine.medal_engine import compute_leaf_product, compute_product
+from engine.models import ApplicabilityOutcome, Medal
 
-# Minimal two-dimension config for testing
+# Minimal two-dimension config for testing (no applies_to → compute_product only)
 _DIMENSIONS = {
     "dimensions": {
         "test_verification": {
@@ -18,6 +18,28 @@ _DIMENSIONS = {
                 "silver": ["diataxis_coverage >= 4"],
                 "gold": ["style_linter_passing == true", "diataxis_coverage == 4"],
             }
+        },
+    }
+}
+
+# Dimensions with applies_to for compute_leaf_product tests
+_DIMENSIONS_WITH_APPLICABILITY = {
+    "dimensions": {
+        "test_verification": {
+            "applies_to": {"product_types": ["charm", "snap"]},
+            "medals": {
+                "bronze": ["coverage_pct >= 70", "latest_build_passing == true"],
+                "silver": ["coverage_pct >= 80"],
+                "gold": ["coverage_pct >= 90"],
+            },
+        },
+        "documentation": {
+            "applies_to": {"product_types": ["charm", "snap"]},
+            "medals": {
+                "bronze": ["has_readme == true"],
+                "silver": ["diataxis_coverage >= 4"],
+                "gold": ["style_linter_passing == true", "diataxis_coverage == 4"],
+            },
         },
     }
 }
@@ -124,3 +146,51 @@ def test_drift_is_none_for_dimension_when_no_history():
     result = compute_product(_PRODUCT, computed, _DIMENSIONS, {})
     # Documentation is bronze, target is gold → drifting, but no history entry yet → None
     assert result.dimensions["documentation"].drift is None
+
+
+# --- compute_leaf_product tests ---
+
+
+def test_leaf_product_all_gold():
+    metrics = {
+        "test_verification": {"coverage_pct": 95, "latest_build_passing": True},
+        "documentation": {"has_readme": True, "diataxis_coverage": 4, "style_linter_passing": True},
+    }
+    result = compute_leaf_product("p", "charm", metrics, _DIMENSIONS_WITH_APPLICABILITY, {}, "gold")
+    assert result.current_medal == Medal.GOLD
+    assert result.dimensions["test_verification"].applicability == ApplicabilityOutcome.SCORED
+
+
+def test_leaf_product_not_applicable_for_wrong_type():
+    metrics = {
+        "test_verification": {"coverage_pct": 95, "latest_build_passing": True},
+        "documentation": {"has_readme": True, "diataxis_coverage": 4, "style_linter_passing": True},
+    }
+    result = compute_leaf_product("p", "root", metrics, _DIMENSIONS_WITH_APPLICABILITY, {}, "gold")
+    # "root" not in applies_to → all NOT_APPLICABLE → current_medal UNRATED
+    assert result.current_medal == Medal.UNRATED
+    for dim in result.dimensions.values():
+        assert dim.applicability == ApplicabilityOutcome.NOT_APPLICABLE
+
+
+def test_leaf_product_insufficient_data_excluded_from_medal():
+    # Only documentation has metrics; test_verification is empty → INSUFFICIENT_DATA
+    metrics = {
+        "documentation": {"has_readme": True, "diataxis_coverage": 4, "style_linter_passing": True},
+    }
+    result = compute_leaf_product("p", "charm", metrics, _DIMENSIONS_WITH_APPLICABILITY, {}, "gold")
+    assert (
+        result.dimensions["test_verification"].applicability
+        == ApplicabilityOutcome.INSUFFICIENT_DATA
+    )
+    assert result.dimensions["test_verification"].medal == Medal.UNRATED
+    # Only scored dimension is documentation (gold) → current_medal is gold
+    assert result.current_medal == Medal.GOLD
+
+
+def test_leaf_product_id_and_target_medal():
+    result = compute_leaf_product(
+        "my-charm", "charm", {}, _DIMENSIONS_WITH_APPLICABILITY, {}, "silver"
+    )
+    assert result.product_id == "my-charm"
+    assert result.target_medal == Medal.SILVER
