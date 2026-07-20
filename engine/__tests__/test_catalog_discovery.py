@@ -164,9 +164,11 @@ def test_build_field_mapping_report_is_source_driven():
     pqf_schema_fields = {"id", "target_medal", "documentation_url", "ownership"}
     ui_product_fields = {"id", "target_medal", "squad"}
 
-    mappings = build_field_mapping_report(docs_fields=docs_fields,
-                                          pqf_schema_fields=pqf_schema_fields,
-                                          ui_product_fields=ui_product_fields)
+    mappings = build_field_mapping_report(
+        docs_fields=docs_fields,
+        pqf_schema_fields=pqf_schema_fields,
+        ui_product_fields=ui_product_fields,
+    )
 
     # convert to dict for easy lookup
     by_src = {m["source_field"]: m for m in mappings}
@@ -194,9 +196,11 @@ def test_build_field_mapping_report_keeps_intended_ui_target_when_missing():
     pqf_schema_fields = {"id", "target_medal"}
     ui_product_fields = {"id"}  # target_medal missing from UI
 
-    mappings = build_field_mapping_report(docs_fields=docs_fields,
-                                          pqf_schema_fields=pqf_schema_fields,
-                                          ui_product_fields=ui_product_fields)
+    mappings = build_field_mapping_report(
+        docs_fields=docs_fields,
+        pqf_schema_fields=pqf_schema_fields,
+        ui_product_fields=ui_product_fields,
+    )
     by_src = {m["source_field"]: m for m in mappings}
     svc = by_src["service_level"]
     assert svc["pqf_field"] == "target_medal"
@@ -211,7 +215,29 @@ def test_build_field_mapping_report_respects_explicit_empty_docs_fields():
     pqf_schema_fields = {"id", "target_medal"}
     ui_product_fields = {"id", "target_medal"}
 
-    mappings = build_field_mapping_report(docs_fields=docs_fields,
-                                          pqf_schema_fields=pqf_schema_fields,
-                                          ui_product_fields=ui_product_fields)
+    mappings = build_field_mapping_report(
+        docs_fields=docs_fields,
+        pqf_schema_fields=pqf_schema_fields,
+        ui_product_fields=ui_product_fields,
+    )
     assert mappings == []
+
+
+def test_load_pqf_schema_fields_from_config():
+    from engine.catalog_discovery import load_pqf_schema_fields
+
+    fields = load_pqf_schema_fields("config/schemas/product.schema.json")
+    # Expect top-level properties from the schema
+    assert "id" in fields
+    assert "ownership" in fields
+    assert "target_medal" in fields
+
+
+def test_parse_ui_types_fields_from_ui_file():
+    from engine.catalog_discovery import parse_ui_types_fields
+
+    fields = parse_ui_types_fields("ui/src/types.ts")
+    # Expect several Product interface fields
+    assert "id" in fields
+    assert "squad" in fields
+    assert "dimensions" in fields

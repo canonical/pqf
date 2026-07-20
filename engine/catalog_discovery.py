@@ -4,7 +4,13 @@ Contains:
 - normalize_docs_product(raw: dict) -> dict
 - normalize_pqf_product(raw: dict) -> dict
 - canonical_docs_id(raw: dict) -> str
+- load_pqf_schema_fields(path: str) -> set[str]
+- parse_ui_types_fields(path: str) -> set[str]
 """
+
+import json
+import re
+from pathlib import Path
 from typing import Any
 
 RENAME_MAP = {
@@ -166,9 +172,7 @@ def classify_product_role(product: dict, overrides: dict[str, str] | None = None
     primary_types = {"k8s-charm", "machine-charm", "subordinate-charm", "snap"}
     components = product.get("components", []) or []
     primary_components = [
-        c
-        for c in components
-        if c.get("role") == "primary" and c.get("type") in primary_types
+        c for c in components if c.get("role") == "primary" and c.get("type") in primary_types
     ]
     return "root" if primary_components else "leaf"
 
@@ -193,6 +197,7 @@ def build_gap_report(*, pqf_schema_fields: set[str], ui_product_fields: set[str]
     present if either the full dotted name is present in the provided set or the
     top-level container (e.g. 'ownership') is present.
     """
+
     def missing_from(target_fields: set[str], available: set[str]) -> list[str]:
         missing = []
         for f in PUBLIC_TARGET_FIELDS:
@@ -215,9 +220,80 @@ def build_gap_report(*, pqf_schema_fields: set[str], ui_product_fields: set[str]
     return {"schema_missing_fields": schema_missing, "ui_missing_fields": ui_missing}
 
 
-def build_field_mapping_report(docs_fields: set[str] | None = None,
-                               pqf_schema_fields: set[str] | None = None,
-                               ui_product_fields: set[str] | None = None) -> list[dict]:
+def load_pqf_schema_fields(path: str) -> set[str]:
+    """Load top-level property names from a PQF product JSON Schema file.
+
+    Returns a set of property names present in the schema's `properties` object.
+    """
+    p = Path(path)
+    if not p.exists():
+        raise FileNotFoundError(f"pqf schema not found: {path!r}")
+    text = p.read_text(encoding="utf-8")
+    obj = json.loads(text)
+    props = obj.get("properties", {}) or {}
+    return set(props.keys())
+
+
+def parse_ui_types_fields(path: str) -> set[str]:
+    """Parse a TypeScript `Product` interface and return its top-level field names.
+
+    The parser is deterministic and tolerant of formatting: it searches for the
+    `export interface Product {` token and collects identifiers defined before
+    the matching closing brace. Optional properties (ending with `?`) are
+    supported. Comments and trailing commas are ignored.
+    """
+    p = Path(path)
+    if not p.exists():
+        raise FileNotFoundError(f"ui types file not found: {path!r}")
+    text = p.read_text(encoding="utf-8")
+
+    # Find the Product interface start
+    m = re.search(r"export\s+interface\s+Product\s*\{", text)
+    if not m:
+        raise ValueError("Product interface not found in UI types file")
+    start = m.end()
+    # Scan forward collecting lines until matching closing brace at same depth
+    depth = 1
+    fields: set[str] = set()
+    i = start
+    # iterate character by character to respect nested braces
+    while i < len(text) and depth > 0:
+        ch = text[i]
+        if ch == "{":
+            depth += 1
+            i += 1
+            continue
+        if ch == "}":
+            depth -= 1
+            i += 1
+            if depth == 0:
+                break
+            continue
+        # For property parsing, extract per-line tokens until next newline
+        # Find end of line
+        nl = text.find("\n", i)
+        if nl == -1:
+            line = text[i:].strip()
+            i = len(text)
+        else:
+            line = text[i:nl].strip()
+            i = nl + 1
+        # Remove trailing comments
+        line = re.sub(r"//.*$", "", line).strip()
+        if not line:
+            continue
+        # Match a property: identifier, optional '?', then ':'
+        mprop = re.match(r"^([A-Za-z_][A-Za-z0-9_]*)\s*\??\s*:\s*", line)
+        if mprop:
+            fields.add(mprop.group(1))
+    return fields
+
+
+def build_field_mapping_report(
+    docs_fields: set[str] | None = None,
+    pqf_schema_fields: set[str] | None = None,
+    ui_product_fields: set[str] | None = None,
+) -> list[dict]:
     """Produce a minimal field mapping report describing how docs fields map to PQF schema and UI.
 
     This returns a list of mapping entries with keys:
@@ -309,4 +385,3 @@ def build_field_mapping_report(docs_fields: set[str] | None = None,
         mappings.append({"source_field": src, "pqf_field": pqf_present, "ui_field": ui_field})
 
     return mappings
-

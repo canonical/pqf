@@ -29,8 +29,10 @@ from engine.catalog_discovery import (
     build_gap_report,
     build_inventory_report,
     classify_product_role,
+    load_pqf_schema_fields,
     normalize_docs_product,
     normalize_pqf_product,
+    parse_ui_types_fields,
 )
 
 
@@ -101,7 +103,11 @@ def infer_docs_fields(docs_products: list[dict[str, Any]]) -> set[str]:
 
 
 def generate_discovery_report(
-    docs_dir: str, pqf_dir: str, overrides_file: str | None = None
+    docs_dir: str,
+    pqf_dir: str,
+    overrides_file: str | None = None,
+    pqf_schema_path: str | None = None,
+    ui_types_path: str | None = None,
 ) -> dict[str, Any]:
     # Fail fast if the docs source directory is absent — avoid silently
     # producing an empty artifact that masks missing input.
@@ -139,18 +145,36 @@ def generate_discovery_report(
         classification[p["id"]] = classify_product_role(p, overrides=overrides)
 
     docs_fields = infer_docs_fields(docs_raw)
+
+    # PQF schema fields: prefer explicit schema file when provided, otherwise
+    # fall back to inferring from normalized pqf products.
     pqf_schema_fields: set[str] = set()
+    if pqf_schema_path:
+        try:
+            pqf_schema_fields = load_pqf_schema_fields(pqf_schema_path)
+        except Exception:
+            pqf_schema_fields = set()
+    else:
+        for p in pqf_norm:
+            pqf_schema_fields.update(p.keys())
+
+    # UI product fields: prefer explicit ui types file when provided, otherwise
+    # fall back to inferring from normalized pqf products.
     ui_product_fields: set[str] = set()
-    # best-effort: infer pqf schema / ui fields from pqf normalized products
-    for p in pqf_norm:
-        pqf_schema_fields.update(p.keys())
-        # UI often exposes 'squad' as top-level
-        if p.get("squad"):
-            ui_product_fields.add("squad")
-        ui_product_fields.update(p.keys())
+    if ui_types_path:
+        try:
+            ui_product_fields = parse_ui_types_fields(ui_types_path)
+        except Exception:
+            ui_product_fields = set()
+    else:
+        for p in pqf_norm:
+            # UI often exposes 'squad' as top-level
+            if p.get("squad"):
+                ui_product_fields.add("squad")
+            ui_product_fields.update(p.keys())
 
     field_mapping = build_field_mapping_report(
-        docs_fields=docs_fields if docs_fields else None,
+        docs_fields=docs_fields,
         pqf_schema_fields=pqf_schema_fields,
         ui_product_fields=ui_product_fields,
     )
@@ -176,6 +200,16 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--pqf-products-dir", required=True)
     parser.add_argument("--output", required=True)
     parser.add_argument("--overrides", required=False)
+    parser.add_argument(
+        "--pqf-schema-path",
+        required=False,
+        help="Path to PQF product JSON Schema (config/schemas/product.schema.json)",
+    )
+    parser.add_argument(
+        "--ui-types-path",
+        required=False,
+        help="Path to UI types file (ui/src/types.ts) to parse Product interface",
+    )
     args = parser.parse_args(argv)
 
     try:
@@ -183,6 +217,8 @@ def main(argv: list[str] | None = None) -> int:
             args.docs_products_dir,
             args.pqf_products_dir,
             args.overrides,
+            pqf_schema_path=args.pqf_schema_path,
+            ui_types_path=args.ui_types_path,
         )
     except Exception as e:
         # Fail loudly for CI and callers; print helpful message to stderr
