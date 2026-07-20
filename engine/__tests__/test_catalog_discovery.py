@@ -1,6 +1,9 @@
-import pytest
-
-from engine.catalog_discovery import normalize_docs_product, canonical_docs_id, normalize_pqf_product, build_inventory_report
+from engine.catalog_discovery import (
+    build_inventory_report,
+    canonical_docs_id,
+    normalize_docs_product,
+    normalize_pqf_product,
+)
 
 
 def test_normalize_docs_product_maps_service_level_to_target_medal():

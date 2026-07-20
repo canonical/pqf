@@ -5,33 +5,33 @@ Contains:
 - normalize_pqf_product(raw: dict) -> dict
 - canonical_docs_id(raw: dict) -> str
 """
-from typing import Dict, Any
+from typing import Any
 
 RENAME_MAP = {
     "wordpress": "wordpress-k8s",
 }
 
 
-def canonical_docs_id(raw: Dict[str, Any]) -> str:
+def canonical_docs_id(raw: dict[str, Any]) -> str:
     # Use docs product.id as canonical id, with explicit rename handling
     product = raw.get("product", {}) if isinstance(raw, dict) else {}
-    pid = product.get("id") or raw.get("id")
-    if not pid:
+    product_id = product.get("id") or raw.get("id")
+    if not product_id:
         raise ValueError("missing product id")
-    return RENAME_MAP.get(pid, pid)
+    return RENAME_MAP.get(product_id, product_id)
 
 
-def normalize_docs_product(raw: Dict[str, Any]) -> Dict[str, Any]:
+def normalize_docs_product(raw: dict[str, Any]) -> dict[str, Any]:
     product = raw.get("product", {})
     ownership = raw.get("ownership", {})
     # Try to preserve a top-level documentation_url if present on product or root
     doc_url = product.get("documentation_url") or raw.get("documentation_url")
     if not doc_url:
         # fallback: look for a link named docs/documentation/readme
-        for l in raw.get("links", []):
-            name = (l.get("name") or "").lower()
-            if name in ("documentation", "docs", "readme") and l.get("url"):
-                doc_url = l.get("url")
+        for link in raw.get("links", []):
+            name = (link.get("name") or "").lower()
+            if name in ("documentation", "docs", "readme") and link.get("url"):
+                doc_url = link.get("url")
                 break
 
     normalized = {
@@ -49,7 +49,7 @@ def normalize_docs_product(raw: Dict[str, Any]) -> Dict[str, Any]:
     return normalized
 
 
-def normalize_pqf_product(raw: Dict[str, Any]) -> Dict[str, Any]:
+def normalize_pqf_product(raw: dict[str, Any]) -> dict[str, Any]:
     """Normalize an existing PQF product dict while preserving structural
     fields required for inventory and classification.
 
