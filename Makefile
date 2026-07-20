@@ -215,3 +215,10 @@ _require-github-token:
 
 _require-openrouter-key:
 	@test -n "$(OPENROUTER_API_KEY)" || (echo "Error: OPENROUTER_API_KEY is not set" && exit 1)
+
+# Generate a discovery artifact describing differences between docs and PQF catalog
+catalog-discovery:
+	$(PYTHON) tools/generate_catalog_discovery.py \
+		--docs-products-dir .pqf-cache/platform-engineering-docs/data/products \
+		--pqf-products-dir products \
+		--output docs/superpowers/artifacts/2026-07-20-product-catalog-discovery.json
