@@ -120,22 +120,38 @@ def build_inventory_report(docs_products: list[dict], pqf_products: list[dict]) 
 def classify_product_role(product: dict, overrides: dict[str, str] | None = None) -> str:
     """Classify a product as 'root' or 'leaf'.
 
+    Deterministic override lookup precedence (highest -> lowest):
+      1. exact product id as provided in the product object
+      2. canonical id (RENAME_MAP[product_id]) if different
+      3. legacy id (inverse of RENAME_MAP) if product_id is the canonical form
+
     Rules:
-    - If an override exists for product['id'], validate and return it.
-      Only the contract values 'root' and 'leaf' (case-insensitive) are accepted.
-      Known case variants are normalized to lowercase. Unknown values raise ValueError.
+    - If an override exists for any of the lookup ids above, the first match
+      in the precedence order is used. Only 'root' and 'leaf' (case-insensitive)
+      are accepted. Unknown values raise ValueError.
     - Otherwise, if the product has any component with role == 'primary' and
       type in the supported charm/snap types, classify as 'root'.
     - Otherwise classify as 'leaf'.
     """
     overrides = overrides or {}
     pid = product.get("id")
-    # Support canonicalized ids for override lookups so mappings like
-    # 'wordpress' -> 'wordpress-k8s' are respected regardless of which form
-    # appears in the overrides dict. Check both the raw id and its canonical
-    # mapping from RENAME_MAP.
-    lookup_ids = {pid, RENAME_MAP.get(pid, pid)}
-    for lookup in lookup_ids:
+    if not pid:
+        raise ValueError("product id is required for classification")
+
+    # Compute canonical and legacy forms deterministically
+    canonical = RENAME_MAP.get(pid, pid)
+    # Build inverse map once to find a legacy id that maps to this pid (if any)
+    inverse = {v: k for k, v in RENAME_MAP.items()}
+    legacy = inverse.get(pid)
+
+    # Ordered precedence list: exact -> canonical (if different) -> legacy (if present)
+    lookup_order = [pid]
+    if canonical != pid:
+        lookup_order.append(canonical)
+    if legacy and legacy not in lookup_order:
+        lookup_order.append(legacy)
+
+    for lookup in lookup_order:
         if lookup in overrides:
             raw_val = overrides[lookup]
             if not isinstance(raw_val, str):

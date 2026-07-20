@@ -114,3 +114,25 @@ def test_invalid_override_raises():
         assert "invalid override value" in str(e)
     else:
         raise AssertionError("Expected ValueError for invalid override value")
+
+
+def test_conflicting_override_keys_precedence():
+    """When both exact and canonical override keys exist, the exact product id wins."""
+    from engine.catalog_discovery import classify_product_role
+
+    product = {"id": "wordpress", "components": []}
+    overrides = {"wordpress": "leaf", "wordpress-k8s": "root"}
+    role = classify_product_role(product, overrides=overrides)
+    assert role == "leaf"
+
+
+def test_reverse_rename_key_support():
+    """A product with canonical id should honor a legacy-keyed override.
+
+    e.g. product id 'wordpress-k8s' should respect overrides keyed as 'wordpress'.
+    """
+    from engine.catalog_discovery import classify_product_role
+
+    product = {"id": "wordpress-k8s", "components": []}
+    role = classify_product_role(product, overrides={"wordpress": "root"})
+    assert role == "root"
