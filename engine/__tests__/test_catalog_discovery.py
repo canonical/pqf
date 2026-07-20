@@ -3,6 +3,7 @@ from engine.catalog_discovery import (
     canonical_docs_id,
     normalize_docs_product,
     normalize_pqf_product,
+    build_gap_report,
 )
 
 
@@ -136,3 +137,12 @@ def test_reverse_rename_key_support():
     product = {"id": "wordpress-k8s", "components": []}
     role = classify_product_role(product, overrides={"wordpress": "root"})
     assert role == "root"
+
+
+def test_gap_report_flags_links_as_missing():
+    report = build_gap_report(
+        pqf_schema_fields={"documentation_url", "ownership", "composed_of"},
+        ui_product_fields={"documentation_url", "squad", "composed_of"},
+    )
+    assert "links" in report["schema_missing_fields"]
+    assert "links" in report["ui_missing_fields"]

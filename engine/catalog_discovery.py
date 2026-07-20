@@ -171,3 +171,77 @@ def classify_product_role(product: dict, overrides: dict[str, str] | None = None
         if c.get("role") == "primary" and c.get("type") in primary_types
     ]
     return "root" if primary_components else "leaf"
+
+
+# Public target fields expected across PQF schema and UI product model
+PUBLIC_TARGET_FIELDS = {
+    "id",
+    "name",
+    "description",
+    "target_medal",
+    "ownership.squad",
+    "documentation_url",
+    "links",
+}
+
+
+def build_gap_report(*, pqf_schema_fields: set[str], ui_product_fields: set[str]) -> dict:
+    """Report missing public target fields in the schema and UI.
+
+    Both inputs are sets of top-level field names present in the respective schemas.
+    Fields that are nested in the public set (e.g. 'ownership.squad') are considered
+    present if either the full dotted name is present in the provided set or the
+    top-level container (e.g. 'ownership') is present.
+    """
+    def missing_from(target_fields: set[str], available: set[str]) -> list[str]:
+        missing = []
+        for f in PUBLIC_TARGET_FIELDS:
+            # if dotted, check either the full dotted name or the top-level key
+            top = f.split(".")[0]
+            if f not in available and top not in available:
+                missing.append(f)
+        return sorted(missing)
+
+    schema_missing = missing_from(PUBLIC_TARGET_FIELDS, set(pqf_schema_fields or []))
+    ui_missing = missing_from(PUBLIC_TARGET_FIELDS, set(ui_product_fields or []))
+    return {"schema_missing_fields": schema_missing, "ui_missing_fields": ui_missing}
+
+
+def build_field_mapping_report(docs_fields: set[str] | None = None,
+                               pqf_schema_fields: set[str] | None = None,
+                               ui_product_fields: set[str] | None = None) -> list[dict]:
+    """Produce a minimal field mapping report describing how docs fields map to PQF schema and UI.
+
+    This returns a list of mapping entries with keys:
+      - source_field: the docs field name
+      - pqf_field: mapped pqf schema field (or None)
+      - ui_field: mapped ui field (or None)
+
+    The implementation is intentionally conservative and only maps a handful
+    of well-known fields used by the PQF importer.
+    """
+    docs_fields = set(docs_fields or [])
+    pqf_schema_fields = set(pqf_schema_fields or [])
+    ui_product_fields = set(ui_product_fields or [])
+
+    mappings = []
+    # canonical mappings
+    simple_map = {
+        "id": "id",
+        "name": "name",
+        "service_level": "target_medal",
+        "summary": "summary",
+        "description": "description",
+        "documentation_url": "documentation_url",
+        "links": "links",
+        "ownership.squad": "ownership.squad",
+        "components": "components",
+    }
+
+    for src, pqf_field in simple_map.items():
+        ui_field = pqf_field if pqf_field in ui_product_fields else None
+        pqf_present = pqf_field if pqf_field in pqf_schema_fields else None
+        mappings.append({"source_field": src, "pqf_field": pqf_present, "ui_field": ui_field})
+
+    return mappings
+
