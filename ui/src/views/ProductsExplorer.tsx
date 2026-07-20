@@ -109,19 +109,31 @@ export default function ProductsExplorer() {
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.75rem', marginBottom: '1rem', alignItems: 'center' }}>
           {/* Search */}
           <div style={{ position: 'relative', flexGrow: 1, minWidth: '200px', maxWidth: '360px' }}>
-            <span style={{ position: 'absolute', left: '0.65rem', top: '50%', transform: 'translateY(-50%)', color: '#999', pointerEvents: 'none', fontSize: '0.875rem' }}>
-              🔍
-            </span>
-            <input
-              type="search"
-              value={search}
-              onChange={e => setSearch(e.target.value)}
-              placeholder="Search products…"
-              aria-label="Search products"
-              className="p-form__control"
-              style={{ paddingLeft: '2rem', width: '100%' }}
-            />
-          </div>
+          <svg
+            style={{ position: 'absolute', left: '0.6rem', top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none' }}
+            xmlns="http://www.w3.org/2000/svg"
+            width="14" height="14"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="#999"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            aria-hidden="true"
+          >
+            <circle cx="11" cy="11" r="8" />
+            <line x1="21" y1="21" x2="16.65" y2="16.65" />
+          </svg>
+          <input
+            type="search"
+            value={search}
+            onChange={e => setSearch(e.target.value)}
+            placeholder="Search products…"
+            aria-label="Search products"
+            className="p-form__control"
+            style={{ paddingLeft: '2rem', width: '100%' }}
+          />
+        </div>
 
           {/* Medal filter */}
           <select
@@ -246,34 +258,45 @@ export default function ProductsExplorer() {
                               background: '#fff',
                             }}
                           >
-                            {/* Product name cell with tree connector lines */}
-                            <td style={{ padding: '0.45rem 0.75rem', position: 'relative' }}>
-                              {/* Vertical line: full height for non-last, half for last */}
-                              <span style={{
-                                position: 'absolute',
-                                left: '1.35rem',
-                                top: 0,
-                                bottom: isLast ? '50%' : 0,
-                                width: '1px',
-                                background: '#c8d3e0',
-                                pointerEvents: 'none',
-                              }} />
-                              {/* Horizontal tick */}
-                              <span style={{
-                                position: 'absolute',
-                                left: '1.35rem',
-                                top: '50%',
-                                width: '0.6rem',
-                                height: '1px',
-                                background: '#c8d3e0',
-                                pointerEvents: 'none',
-                              }} />
-                              <Link
-                                to={`/products/${leaf.id}`}
-                                style={{ paddingLeft: '2.25rem', display: 'inline-block', fontSize: '0.875rem' }}
-                              >
-                                {leaf.name}
-                              </Link>
+                            {/* Product name cell with tree connector — flex layout avoids absolute-positioning coordinate issues */}
+                            <td style={{ padding: '0.45rem 0.75rem' }}>
+                             <div style={{ display: 'flex', alignItems: 'center' }}>
+                               {/* Tree connector: fixed-width column, stretches full cell height */}
+                               <div style={{
+                                 width: '1.25rem',
+                                 flexShrink: 0,
+                                 alignSelf: 'stretch',
+                                 position: 'relative',
+                                 marginRight: '0.35rem',
+                               }}>
+                                 {/* Vertical line: runs from top to midpoint (last child) or full height (others) */}
+                                 <span style={{
+                                   position: 'absolute',
+                                   left: '0.5rem',
+                                   top: 0,
+                                   bottom: isLast ? '50%' : 0,
+                                   width: '1px',
+                                   background: '#c8d3e0',
+                                   pointerEvents: 'none',
+                                 }} />
+                                 {/* Horizontal tick */}
+                                 <span style={{
+                                   position: 'absolute',
+                                   left: '0.5rem',
+                                   top: '50%',
+                                   width: '0.6rem',
+                                   height: '1px',
+                                   background: '#c8d3e0',
+                                   pointerEvents: 'none',
+                                 }} />
+                               </div>
+                               <Link
+                                 to={`/products/${leaf.id}`}
+                                 style={{ fontSize: '0.875rem' }}
+                               >
+                                 {leaf.name}
+                               </Link>
+                             </div>
                             </td>
                             <td style={{ padding: '0.45rem 0.75rem' }}>
                               <span className="p-label--information" style={{ fontSize: '0.75rem' }}>
