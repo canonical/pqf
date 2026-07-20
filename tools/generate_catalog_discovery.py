@@ -65,6 +65,8 @@ def load_product_files(d: str, *, strict: bool = False) -> list[dict[str, Any]]:
                         continue
             if isinstance(obj, dict):
                 products.append(obj)
+            elif strict:
+                raise ValueError(f"{f} did not parse to a YAML/JSON object")
         except Exception:
             if strict:
                 raise

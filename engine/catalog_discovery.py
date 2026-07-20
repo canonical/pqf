@@ -198,25 +198,27 @@ def build_gap_report(*, pqf_schema_fields: set[str], ui_product_fields: set[str]
     top-level container (e.g. 'ownership') is present.
     """
 
-    def missing_from(target_fields: set[str], available: set[str]) -> list[str]:
+    def missing_from_schema(available: set[str]) -> list[str]:
         missing = []
         for f in PUBLIC_TARGET_FIELDS:
-            # if dotted, check either the full dotted name or the top-level key
             top = f.split(".")[0]
-            # Special-case: UI historically exposes squad as a top-level 'squad'
-            # field rather than under 'ownership.squad'. Treat 'squad' as
-            # equivalent for 'ownership.squad' when checking UI availability.
-            if f == "ownership.squad":
-                # present if either dotted name or ownership container or top-level 'squad' exists
-                if (f not in available) and (top not in available) and ("squad" not in available):
-                    missing.append(f)
-            else:
-                if f not in available and top not in available:
-                    missing.append(f)
+            if f not in available and top not in available:
+                missing.append(f)
         return sorted(missing)
 
-    schema_missing = missing_from(PUBLIC_TARGET_FIELDS, set(pqf_schema_fields or []))
-    ui_missing = missing_from(PUBLIC_TARGET_FIELDS, set(ui_product_fields or []))
+    def missing_from_ui(available: set[str]) -> list[str]:
+        missing = []
+        for f in PUBLIC_TARGET_FIELDS:
+            top = f.split(".")[0]
+            if f == "ownership.squad":
+                if (f not in available) and (top not in available) and ("squad" not in available):
+                    missing.append(f)
+            elif f not in available and top not in available:
+                missing.append(f)
+        return sorted(missing)
+
+    schema_missing = missing_from_schema(set(pqf_schema_fields or []))
+    ui_missing = missing_from_ui(set(ui_product_fields or []))
     return {"schema_missing_fields": schema_missing, "ui_missing_fields": ui_missing}
 
 

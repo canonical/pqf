@@ -164,6 +164,14 @@ def test_gap_report_treats_squad_as_equivalent_for_ui_ownership():
     assert "ownership.squad" not in report["ui_missing_fields"]
 
 
+def test_gap_report_does_not_treat_squad_as_schema_alias():
+    report = build_gap_report(
+        pqf_schema_fields={"id", "name", "squad", "documentation_url"},
+        ui_product_fields={"id", "name", "squad", "documentation_url"},
+    )
+    assert "ownership.squad" in report["schema_missing_fields"]
+
+
 def test_build_field_mapping_report_is_source_driven():
     docs_fields = {"id", "service_level", "ownership.squad", "extra_field"}
     pqf_schema_fields = {"id", "target_medal", "documentation_url", "ownership"}
@@ -314,3 +322,45 @@ composed_of:
     assert out_file.exists()
     report = json.loads(out_file.read_text(encoding="utf-8"))
     assert report["inventory"]["docs_count"] == 1
+
+
+def test_catalog_discovery_cli_fails_on_non_object_docs_file(tmp_path):
+    docs_dir = tmp_path / "docs-products"
+    pqf_dir = tmp_path / "pqf-products"
+    docs_dir.mkdir()
+    pqf_dir.mkdir()
+
+    (docs_dir / "bad.yaml").write_text("- not\n- an\n- object\n", encoding="utf-8")
+    (pqf_dir / "ok.yaml").write_text(
+        "id: test\nproduct_type: root\nname: Test\nlifecycle: stable\ntarget_medal: bronze\n"
+        "ownership:\n  squad: emea\ncomposed_of:\n  - id: leaf\n    product_type: charm\n"
+        "    source:\n      repo: canonical/leaf\n    target_medal: bronze\n",
+        encoding="utf-8",
+    )
+
+    out_file = tmp_path / "discovery.json"
+    repo_root = Path(__file__).resolve().parents[2]
+    script_path = repo_root / "tools" / "generate_catalog_discovery.py"
+
+    completed = subprocess.run(
+        [
+            sys.executable,
+            str(script_path),
+            "--docs-products-dir",
+            str(docs_dir),
+            "--pqf-products-dir",
+            str(pqf_dir),
+            "--pqf-schema-path",
+            str(repo_root / "config" / "schemas" / "product.schema.json"),
+            "--ui-types-path",
+            str(repo_root / "ui" / "src" / "types.ts"),
+            "--output",
+            str(out_file),
+        ],
+        check=False,
+        capture_output=True,
+        text=True,
+    )
+
+    assert completed.returncode == 2
+    assert "did not parse to a YAML/JSON object" in completed.stderr
