@@ -1,13 +1,135 @@
 {
   "inventory": {
-    "docs_count": 0,
+    "docs_count": 34,
     "pqf_count": 8,
-    "missing_in_pqf": [],
-    "overlap": [],
-    "id_mismatches": []
+    "missing_in_pqf": [
+      "12-factor",
+      "aproxy",
+      "backup",
+      "chrony",
+      "cloudflared",
+      "content-cache",
+      "content-cache-k8s",
+      "digest-squid-auth-helper",
+      "dns",
+      "falco",
+      "gateway-api-integrator",
+      "haproxy",
+      "hockeypuck-k8s",
+      "http-proxy",
+      "httprequest-lego-provider",
+      "mailserver-operators",
+      "nginx-ingress-integrator",
+      "opencti",
+      "penpot",
+      "pollen",
+      "saml-integrator",
+      "self-hosted-github-runner",
+      "smtp-integrator",
+      "traefik-k8s",
+      "ubuntu-motd",
+      "wireguard",
+      "wordpress-k8s"
+    ],
+    "overlap": [
+      "discourse",
+      "indico",
+      "jenkins",
+      "matrix",
+      "mattermost",
+      "netbox",
+      "wazuh"
+    ],
+    "id_mismatches": [
+      {
+        "pqf_id": "wordpress",
+        "docs_id": "wordpress-k8s"
+      }
+    ]
   },
-  "classification": {},
-  "field_mapping": [],
+  "classification": {
+    "12-factor": "leaf",
+    "aproxy": "root",
+    "backup": "root",
+    "chrony": "root",
+    "cloudflared": "root",
+    "content-cache-k8s": "root",
+    "content-cache": "root",
+    "digest-squid-auth-helper": "root",
+    "discourse": "root",
+    "dns": "root",
+    "falco": "root",
+    "gateway-api-integrator": "root",
+    "haproxy": "root",
+    "hockeypuck-k8s": "root",
+    "http-proxy": "root",
+    "httprequest-lego-provider": "root",
+    "indico": "root",
+    "jenkins": "root",
+    "mailserver-operators": "root",
+    "matrix": "root",
+    "mattermost": "root",
+    "netbox": "root",
+    "nginx-ingress-integrator": "root",
+    "opencti": "root",
+    "penpot": "root",
+    "pollen": "root",
+    "saml-integrator": "root",
+    "self-hosted-github-runner": "root",
+    "smtp-integrator": "root",
+    "traefik-k8s": "root",
+    "ubuntu-motd": "root",
+    "wazuh": "root",
+    "wireguard": "root",
+    "wordpress-k8s": "root"
+  },
+  "field_mapping": [
+    {
+      "source_field": "components",
+      "pqf_field": null,
+      "ui_field": "components"
+    },
+    {
+      "source_field": "description",
+      "pqf_field": "description",
+      "ui_field": "description"
+    },
+    {
+      "source_field": "id",
+      "pqf_field": "id",
+      "ui_field": "id"
+    },
+    {
+      "source_field": "links",
+      "pqf_field": null,
+      "ui_field": "links"
+    },
+    {
+      "source_field": "name",
+      "pqf_field": "name",
+      "ui_field": "name"
+    },
+    {
+      "source_field": "ownership.squad",
+      "pqf_field": "ownership",
+      "ui_field": "squad"
+    },
+    {
+      "source_field": "schema_version",
+      "pqf_field": null,
+      "ui_field": null
+    },
+    {
+      "source_field": "service_level",
+      "pqf_field": "target_medal",
+      "ui_field": "target_medal"
+    },
+    {
+      "source_field": "summary",
+      "pqf_field": null,
+      "ui_field": "summary"
+    }
+  ],
   "gaps": {
     "schema_missing_fields": [
       "links"
