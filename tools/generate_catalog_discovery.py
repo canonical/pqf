@@ -16,6 +16,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import sys
 from pathlib import Path
 from typing import Any
 
@@ -219,7 +220,7 @@ def main(argv: list[str] | None = None) -> int:
         )
     except Exception as e:
         # Fail loudly for CI and callers; print helpful message to stderr
-        print(f"Error: {e}", flush=True)
+        print(f"Error: {e}", file=sys.stderr, flush=True)
         return 2
 
     out_path = Path(args.output)
