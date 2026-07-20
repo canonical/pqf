@@ -150,10 +150,8 @@ def generate_discovery_report(
     # fall back to inferring from normalized pqf products.
     pqf_schema_fields: set[str] = set()
     if pqf_schema_path:
-        try:
-            pqf_schema_fields = load_pqf_schema_fields(pqf_schema_path)
-        except Exception:
-            pqf_schema_fields = set()
+        # Prefer explicit schema file; let errors propagate so callers fail fast
+        pqf_schema_fields = load_pqf_schema_fields(pqf_schema_path)
     else:
         for p in pqf_norm:
             pqf_schema_fields.update(p.keys())
@@ -162,10 +160,8 @@ def generate_discovery_report(
     # fall back to inferring from normalized pqf products.
     ui_product_fields: set[str] = set()
     if ui_types_path:
-        try:
-            ui_product_fields = parse_ui_types_fields(ui_types_path)
-        except Exception:
-            ui_product_fields = set()
+        # Prefer explicit UI types file; let errors propagate so callers fail fast
+        ui_product_fields = parse_ui_types_fields(ui_types_path)
     else:
         for p in pqf_norm:
             # UI often exposes 'squad' as top-level

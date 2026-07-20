@@ -223,4 +223,6 @@ catalog-discovery:
 	$(PYTHON) tools/generate_catalog_discovery.py \
 		--docs-products-dir $(DOCS_PRODUCTS_DIR) \
 		--pqf-products-dir products \
+		--pqf-schema-path config/schemas/product.schema.json \
+		--ui-types-path ui/src/types.ts \
 		--output docs/superpowers/artifacts/2026-07-20-product-catalog-discovery.json
