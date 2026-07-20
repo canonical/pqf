@@ -56,6 +56,10 @@ def normalize_pqf_product(raw: dict[str, Any]) -> dict[str, Any]:
     Preserved fields: product_type, ownership (and ownership.squad), source,
     lifecycle, composed_of, context_refs, documentation_url, links, components.
     """
+    ownership = raw.get("ownership") or {}
+    # Only retain squad ownership details; drop other ownership metadata.
+    ownership_reduced = {"squad": ownership.get("squad")} if ownership else None
+
     normalized = {
         "id": raw.get("id"),
         "name": raw.get("name", raw.get("id")),
@@ -64,8 +68,9 @@ def normalize_pqf_product(raw: dict[str, Any]) -> dict[str, Any]:
         "description": raw.get("description", ""),
         # structural fields preserved for later inventory/classification
         "product_type": raw.get("product_type"),
-        "ownership": raw.get("ownership"),
-        "squad": (raw.get("ownership") or {}).get("squad") if raw.get("ownership") else None,
+        # Expose only squad ownership to avoid leaking other internal details
+        "ownership": ownership_reduced,
+        "squad": ownership.get("squad") if ownership else None,
         "source": raw.get("source"),
         "lifecycle": raw.get("lifecycle"),
         "composed_of": raw.get("composed_of"),
@@ -125,18 +130,22 @@ def classify_product_role(product: dict, overrides: dict[str, str] | None = None
     """
     overrides = overrides or {}
     pid = product.get("id")
-    if pid in overrides:
-        raw_val = overrides[pid]
-        if not isinstance(raw_val, str):
-            raise TypeError(f"override for {pid!r} must be a string")
-        val = raw_val.strip().lower()
-        if val in ("root", "leaf"):
-            return val
-        # Explicitly fail on unknown override values to avoid leaking unexpected
-        # or malformed contract outputs downstream.
-        raise ValueError(
-            f"invalid override value for {pid!r}: {raw_val!r}; expected 'root' or 'leaf'"
-        )
+    # Support canonicalized ids for override lookups so mappings like
+    # 'wordpress' -> 'wordpress-k8s' are respected regardless of which form
+    # appears in the overrides dict. Check both the raw id and its canonical
+    # mapping from RENAME_MAP.
+    lookup_ids = {pid, RENAME_MAP.get(pid, pid)}
+    for lookup in lookup_ids:
+        if lookup in overrides:
+            raw_val = overrides[lookup]
+            if not isinstance(raw_val, str):
+                raise TypeError(f"override for {lookup!r} must be a string")
+            val = raw_val.strip().lower()
+            if val in ("root", "leaf"):
+                return val
+            raise ValueError(
+                f"invalid override value for {lookup!r}: {raw_val!r}; expected 'root' or 'leaf'"
+            )
 
     primary_types = {"k8s-charm", "machine-charm", "subordinate-charm", "snap"}
     components = product.get("components", []) or []

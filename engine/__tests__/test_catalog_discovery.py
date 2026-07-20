@@ -44,7 +44,8 @@ def test_normalize_pqf_product_preserves_structural_fields():
         "summary": "S",
         "description": "D",
         "product_type": "service",
-        "ownership": {"squad": "Platform"},
+        # include extra ownership metadata that should be dropped by normalization
+        "ownership": {"squad": "Platform", "team_email": "team@canonical.com", "owners": ["alice"]},
         "source": "git",
         "lifecycle": "production",
         "composed_of": ["component-a", "component-b"],
@@ -53,7 +54,8 @@ def test_normalize_pqf_product_preserves_structural_fields():
     }
     normalized = normalize_pqf_product(raw)
     assert normalized["product_type"] == "service"
-    assert normalized["ownership"]["squad"] == "Platform"
+    # ownership should only contain squad information
+    assert normalized["ownership"] == {"squad": "Platform"}
     assert normalized["squad"] == "Platform"
     assert normalized["source"] == "git"
     assert normalized["lifecycle"] == "production"
@@ -90,6 +92,15 @@ def test_default_root_classification_without_override():
     }
     # No overrides provided -> primary charm component should classify as root
     role = classify_product_role(product)
+    assert role == "root"
+
+
+def test_override_lookup_respects_canonical_id():
+    from engine.catalog_discovery import classify_product_role
+
+    # Product uses legacy id 'wordpress' but override is provided for canonical docs id
+    product = {"id": "wordpress", "components": []}
+    role = classify_product_role(product, overrides={"wordpress-k8s": "root"})
     assert role == "root"
 
 
