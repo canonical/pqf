@@ -75,3 +75,38 @@ def normalize_pqf_product(raw: Dict[str, Any]) -> Dict[str, Any]:
         "components": raw.get("components", []),
     }
     return normalized
+
+
+def build_inventory_report(docs_products: list[dict], pqf_products: list[dict]) -> dict:
+    """Build inventory diff report between normalized docs products and PQF products.
+
+    Report keys:
+      - docs_count: number of unique docs ids
+      - pqf_count: number of unique pqf ids
+      - missing_in_pqf: list of docs ids not present in PQF
+      - overlap: list of ids present in both
+      - id_mismatches: list of mappings where PQF uses an old id that should
+        map to a docs id (e.g. pqf_id: "wordpress", docs_id: "wordpress-k8s").
+    """
+    docs_ids = {p["id"] for p in docs_products}
+    pqf_ids = {p["id"] for p in pqf_products}
+
+    missing = sorted(docs_ids - pqf_ids)
+    overlap = sorted(docs_ids & pqf_ids)
+
+    # Detect id mismatches using the rename map: if a pqf id is an old name
+    # that maps to a docs id, and the docs id is present but pqf id is not
+    # listed as the canonical id, report the mismatch.
+    id_mismatches = []
+    # Build inverse mapping: old_name -> new_name (already RENAME_MAP maps old->new)
+    for old_name, new_name in RENAME_MAP.items():
+        if new_name in docs_ids and old_name in pqf_ids and new_name not in pqf_ids:
+            id_mismatches.append({"pqf_id": old_name, "docs_id": new_name})
+
+    return {
+        "docs_count": len(docs_ids),
+        "pqf_count": len(pqf_ids),
+        "missing_in_pqf": missing,
+        "overlap": overlap,
+        "id_mismatches": id_mismatches,
+    }

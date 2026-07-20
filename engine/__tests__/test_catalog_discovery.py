@@ -1,6 +1,6 @@
 import pytest
 
-from engine.catalog_discovery import normalize_docs_product, canonical_docs_id, normalize_pqf_product
+from engine.catalog_discovery import normalize_docs_product, canonical_docs_id, normalize_pqf_product, build_inventory_report
 
 
 def test_normalize_docs_product_maps_service_level_to_target_medal():
@@ -57,3 +57,11 @@ def test_normalize_pqf_product_preserves_structural_fields():
     assert normalized["composed_of"] == ["component-a", "component-b"]
     assert normalized["context_refs"]["jira"] == "PROJ-1"
     assert normalized["documentation_url"] == "https://docs/myprod"
+
+
+def test_inventory_report_detects_missing_and_id_mismatch():
+    docs_products = [{"id": "wordpress-k8s"}, {"id": "discourse"}]
+    pqf_products = [{"id": "wordpress"}, {"id": "discourse"}]
+    report = build_inventory_report(docs_products, pqf_products)
+    assert report["missing_in_pqf"] == ["wordpress-k8s"]
+    assert report["id_mismatches"] == [{"pqf_id": "wordpress", "docs_id": "wordpress-k8s"}]
