@@ -4,6 +4,7 @@ from engine.catalog_discovery import (
     normalize_docs_product,
     normalize_pqf_product,
     build_gap_report,
+    build_field_mapping_report,
 )
 
 
@@ -146,3 +147,41 @@ def test_gap_report_flags_links_as_missing():
     )
     assert "links" in report["schema_missing_fields"]
     assert "links" in report["ui_missing_fields"]
+
+
+def test_gap_report_treats_squad_as_equivalent_for_ui_ownership():
+    # UI exposes 'squad' as a top-level field; ensure ownership.squad is not
+    # reported as missing when 'squad' is present in UI fields.
+    report = build_gap_report(
+        pqf_schema_fields={"documentation_url", "ownership", "composed_of"},
+        ui_product_fields={"documentation_url", "squad", "composed_of"},
+    )
+    assert "ownership.squad" not in report["ui_missing_fields"]
+
+
+def test_build_field_mapping_report_is_source_driven():
+    docs_fields = {"id", "service_level", "ownership.squad", "extra_field"}
+    pqf_schema_fields = {"id", "target_medal", "documentation_url", "ownership"}
+    ui_product_fields = {"id", "target_medal", "squad"}
+
+    mappings = build_field_mapping_report(docs_fields=docs_fields,
+                                          pqf_schema_fields=pqf_schema_fields,
+                                          ui_product_fields=ui_product_fields)
+
+    # convert to dict for easy lookup
+    by_src = {m["source_field"]: m for m in mappings}
+
+    # service_level should map to target_medal in both PQF and UI
+    svc = by_src["service_level"]
+    assert svc["pqf_field"] == "target_medal"
+    assert svc["ui_field"] == "target_medal"
+
+    # ownership.squad should detect PQF 'ownership' container and UI 'squad'
+    own = by_src["ownership.squad"]
+    assert own["pqf_field"] == "ownership"
+    assert own["ui_field"] == "squad"
+
+    # extra_field has no mapping -> both pqf_field and ui_field should be None
+    extra = by_src["extra_field"]
+    assert extra["pqf_field"] is None
+    assert extra["ui_field"] is None

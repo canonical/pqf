@@ -198,8 +198,16 @@ def build_gap_report(*, pqf_schema_fields: set[str], ui_product_fields: set[str]
         for f in PUBLIC_TARGET_FIELDS:
             # if dotted, check either the full dotted name or the top-level key
             top = f.split(".")[0]
-            if f not in available and top not in available:
-                missing.append(f)
+            # Special-case: UI historically exposes squad as a top-level 'squad'
+            # field rather than under 'ownership.squad'. Treat 'squad' as
+            # equivalent for 'ownership.squad' when checking UI availability.
+            if f == "ownership.squad":
+                # present if either dotted name or ownership container or top-level 'squad' exists
+                if (f not in available) and (top not in available) and ("squad" not in available):
+                    missing.append(f)
+            else:
+                if f not in available and top not in available:
+                    missing.append(f)
         return sorted(missing)
 
     schema_missing = missing_from(PUBLIC_TARGET_FIELDS, set(pqf_schema_fields or []))
@@ -218,14 +226,16 @@ def build_field_mapping_report(docs_fields: set[str] | None = None,
       - ui_field: mapped ui field (or None)
 
     The implementation is intentionally conservative and only maps a handful
-    of well-known fields used by the PQF importer.
+    of well-known fields used by the PQF importer. When docs_fields is provided
+    this function is source-driven and will report mappings for the actual
+    docs fields observed (including unmapped/extra fields).
     """
     docs_fields = set(docs_fields or [])
     pqf_schema_fields = set(pqf_schema_fields or [])
     ui_product_fields = set(ui_product_fields or [])
 
     mappings = []
-    # canonical mappings
+    # canonical mappings from docs -> pqf
     simple_map = {
         "id": "id",
         "name": "name",
@@ -238,9 +248,43 @@ def build_field_mapping_report(docs_fields: set[str] | None = None,
         "components": "components",
     }
 
-    for src, pqf_field in simple_map.items():
-        ui_field = pqf_field if pqf_field in ui_product_fields else None
-        pqf_present = pqf_field if pqf_field in pqf_schema_fields else None
+    # Determine source fields to report: prefer actual docs_fields when provided,
+    # otherwise fall back to the known canonical mapping keys.
+    source_fields = sorted(docs_fields) if docs_fields else sorted(simple_map.keys())
+
+    for src in source_fields:
+        pqf_field = simple_map.get(src)
+        pqf_present = None
+        ui_field = None
+
+        if pqf_field:
+            # PQF presence may be expressed as the dotted name or the top-level container
+            top = pqf_field.split(".")[0]
+            if pqf_field in pqf_schema_fields:
+                pqf_present = pqf_field
+            elif top in pqf_schema_fields:
+                pqf_present = top
+
+            # UI may expose ownership.squad as top-level 'squad'
+            if pqf_field == "ownership.squad":
+                if "ownership.squad" in ui_product_fields:
+                    ui_field = "ownership.squad"
+                elif "squad" in ui_product_fields:
+                    ui_field = "squad"
+            else:
+                if pqf_field in ui_product_fields:
+                    ui_field = pqf_field
+                elif pqf_field is None and src in ui_product_fields:
+                    # unlikely, but if docs field equals ui field name
+                    ui_field = src
+
+        else:
+            # No canonical mapping known for this docs field; detect if UI or PQF happens to contain same name
+            if src in pqf_schema_fields:
+                pqf_present = src
+            if src in ui_product_fields:
+                ui_field = src
+
         mappings.append({"source_field": src, "pqf_field": pqf_present, "ui_field": ui_field})
 
     return mappings
