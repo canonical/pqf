@@ -107,33 +107,33 @@ export default function ProductsExplorer() {
 
         {/* Filter bar */}
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.75rem', marginBottom: '1rem', alignItems: 'center' }}>
-          {/* Search */}
-          <div style={{ position: 'relative', flexGrow: 1, minWidth: '200px', maxWidth: '360px' }}>
-          <svg
-            style={{ position: 'absolute', left: '0.6rem', top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none' }}
-            xmlns="http://www.w3.org/2000/svg"
-            width="14" height="14"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="#999"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            aria-hidden="true"
-          >
-            <circle cx="11" cy="11" r="8" />
-            <line x1="21" y1="21" x2="16.65" y2="16.65" />
-          </svg>
-          <input
-            type="search"
-            value={search}
-            onChange={e => setSearch(e.target.value)}
-            placeholder="Search products…"
-            aria-label="Search products"
-            className="p-form__control"
-            style={{ paddingLeft: '2rem', width: '100%' }}
-          />
-        </div>
+          {/* Search — grid overlay: SVG and input share the same cell */}
+          <div style={{ display: 'grid', alignItems: 'center', flexGrow: 1, minWidth: '200px', maxWidth: '360px' }}>
+            <svg
+              style={{ gridArea: '1 / 1', justifySelf: 'start', marginLeft: '0.6rem', zIndex: 1, pointerEvents: 'none' }}
+              xmlns="http://www.w3.org/2000/svg"
+              width="14" height="14"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="#999"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              aria-hidden="true"
+            >
+              <circle cx="11" cy="11" r="8" />
+              <line x1="21" y1="21" x2="16.65" y2="16.65" />
+            </svg>
+            <input
+              type="search"
+              value={search}
+              onChange={e => setSearch(e.target.value)}
+              placeholder="Search products…"
+              aria-label="Search products"
+              className="p-form__control"
+              style={{ gridArea: '1 / 1', paddingLeft: '2rem', width: '100%', marginBottom: 0 }}
+            />
+          </div>
 
           {/* Medal filter */}
           <select
