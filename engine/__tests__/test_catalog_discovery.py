@@ -185,3 +185,33 @@ def test_build_field_mapping_report_is_source_driven():
     extra = by_src["extra_field"]
     assert extra["pqf_field"] is None
     assert extra["ui_field"] is None
+
+
+def test_build_field_mapping_report_keeps_intended_ui_target_when_missing():
+    # When the UI does not advertise the mapped field we should still preserve
+    # the intended ui_field target (the pqf mapping) rather than blanking it.
+    docs_fields = {"service_level"}
+    pqf_schema_fields = {"id", "target_medal"}
+    ui_product_fields = {"id"}  # target_medal missing from UI
+
+    mappings = build_field_mapping_report(docs_fields=docs_fields,
+                                          pqf_schema_fields=pqf_schema_fields,
+                                          ui_product_fields=ui_product_fields)
+    by_src = {m["source_field"]: m for m in mappings}
+    svc = by_src["service_level"]
+    assert svc["pqf_field"] == "target_medal"
+    # intentionally preserve the intended UI target even though it's not present
+    assert svc["ui_field"] == "target_medal"
+
+
+def test_build_field_mapping_report_respects_explicit_empty_docs_fields():
+    # An explicit empty docs_fields set signals a source-driven invocation and
+    # should produce an empty mapping list rather than falling back to defaults.
+    docs_fields = set()
+    pqf_schema_fields = {"id", "target_medal"}
+    ui_product_fields = {"id", "target_medal"}
+
+    mappings = build_field_mapping_report(docs_fields=docs_fields,
+                                          pqf_schema_fields=pqf_schema_fields,
+                                          ui_product_fields=ui_product_fields)
+    assert mappings == []

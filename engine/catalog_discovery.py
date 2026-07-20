@@ -228,8 +228,11 @@ def build_field_mapping_report(docs_fields: set[str] | None = None,
     The implementation is intentionally conservative and only maps a handful
     of well-known fields used by the PQF importer. When docs_fields is provided
     this function is source-driven and will report mappings for the actual
-    docs fields observed (including unmapped/extra fields).
+    docs fields observed (including unmapped/extra fields). An explicit empty
+    docs_fields (i.e. set()) is treated as a deliberate source-driven input
+    and will produce an empty mapping list.
     """
+    docs_provided = docs_fields is not None
     docs_fields = set(docs_fields or [])
     pqf_schema_fields = set(pqf_schema_fields or [])
     ui_product_fields = set(ui_product_fields or [])
@@ -248,9 +251,9 @@ def build_field_mapping_report(docs_fields: set[str] | None = None,
         "components": "components",
     }
 
-    # Determine source fields to report: prefer actual docs_fields when provided,
-    # otherwise fall back to the known canonical mapping keys.
-    source_fields = sorted(docs_fields) if docs_fields else sorted(simple_map.keys())
+    # Determine source fields to report: if docs_fields was provided (even if empty),
+    # use it verbatim. Otherwise fall back to the known canonical mapping keys.
+    source_fields = sorted(docs_fields) if docs_provided else sorted(simple_map.keys())
 
     for src in source_fields:
         pqf_field = simple_map.get(src)
@@ -265,7 +268,12 @@ def build_field_mapping_report(docs_fields: set[str] | None = None,
             elif top in pqf_schema_fields:
                 pqf_present = top
 
-            # UI may expose ownership.squad as top-level 'squad'
+            # By default, keep the intended ui target (the pqf_field) even if
+            # it's not present in the UI field set. This preserves the mapping
+            # intent for downstream consumers. Override only when UI exposes a
+            # canonical alternate (e.g. 'squad' for 'ownership.squad').
+            ui_field = pqf_field
+
             if pqf_field == "ownership.squad":
                 if "ownership.squad" in ui_product_fields:
                     ui_field = "ownership.squad"
