@@ -1,458 +1,2084 @@
 {
-  "generated_at": "2026-07-15T13:58:13.037430+00:00",
+  "generated_at": "2026-07-20T14:28:24.341224+00:00",
   "products": [
     {
       "id": "discourse",
+      "product_type": "root",
       "name": "Discourse",
       "description": "An open-source, community- and customer-friendly discussion platform.",
       "lifecycle": "stable",
       "target_medal": "silver",
       "current_medal": "bronze",
       "squad": "americas",
+      "is_portfolio_entry": true,
       "documentation_url": "https://charmhub.io/discourse-k8s",
-      "allure_report_url": "https://canonical.github.io/discourse-k8s-operator/_latest",
-      "components": {
-        "foundational": [
-          {
-            "id": "discourse-k8s",
-            "type": "charm",
-            "github_repo": "canonical/discourse-k8s-operator"
-          }
-        ],
-        "auxiliary": [
-          {
-            "id": "postgresql-k8s",
-            "type": "charm",
-            "github_repo": "canonical/postgresql-k8s-operator"
-          },
-          {
-            "id": "redis-k8s",
-            "type": "charm",
-            "github_repo": "canonical/redis-k8s-operator"
-          },
-          {
-            "id": "nginx-ingress-integrator",
-            "type": "charm",
-            "github_repo": "canonical/nginx-ingress-integrator-operator"
-          }
-        ]
-      },
+      "source": null,
+      "composed_of": [
+        {
+          "product_id": "discourse-k8s",
+          "excluded_from_parent_medal": false
+        }
+      ],
+      "context_refs": [
+        {
+          "label": "PostgreSQL K8s",
+          "repo": "canonical/postgresql-k8s-operator"
+        },
+        {
+          "label": "Redis K8s",
+          "repo": "canonical/redis-k8s-operator"
+        },
+        {
+          "label": "NGINX Ingress Integrator",
+          "repo": "canonical/nginx-ingress-integrator-operator"
+        }
+      ],
+      "parent_product_ids": [],
       "dimensions": {
         "test_verification": {
           "medal": "silver",
           "target": "silver",
-          "metrics": {
-            "coverage_pct": 83,
-            "stability_pct": 92,
-            "latest_build_passing": false,
-            "uses_ops_testing": true,
-            "uses_jubilant": false
-          },
-          "drift": null
+          "applicability": "scored",
+          "metrics": {},
+          "drift": null,
+          "composition": [
+            {
+              "product_id": "discourse-k8s",
+              "repo": "canonical/discourse-k8s-operator",
+              "medal": "silver",
+              "applicability": "scored",
+              "metrics": {
+                "coverage_pct": 83,
+                "stability_pct": 92,
+                "latest_build_passing": false,
+                "uses_ops_testing": false,
+                "uses_jubilant": true
+              },
+              "excluded_from_parent_medal": false
+            }
+          ]
         },
         "documentation": {
           "medal": "bronze",
           "target": "silver",
-          "metrics": {
-            "has_readme": true,
-            "has_contributing": true,
-            "has_security": true,
-            "diataxis_coverage": 2,
-            "style_linter_passing": true,
-            "links_passing": true
-          },
-          "drift": {
-            "status": "remediating",
-            "first_seen_at": "2026-06-30T17:00:20.537842+00:00",
-            "deadline": "2027-06-30T17:00:20.537842+00:00"
-          }
+          "applicability": "scored",
+          "metrics": {},
+          "drift": null,
+          "composition": [
+            {
+              "product_id": "discourse-k8s",
+              "repo": "canonical/discourse-k8s-operator",
+              "medal": "bronze",
+              "applicability": "scored",
+              "metrics": {
+                "has_readme": true,
+                "has_contributing": true,
+                "has_security": true,
+                "diataxis_coverage": 2,
+                "style_linter_passing": true,
+                "links_passing": false
+              },
+              "excluded_from_parent_medal": false
+            }
+          ]
         },
         "substrate_compat": {
           "medal": "bronze",
           "target": "silver",
-          "metrics": {
-            "supports_juju_3": false,
-            "supports_juju_4": false,
-            "supports_ck8s": false
-          },
-          "drift": {
-            "status": "remediating",
-            "first_seen_at": "2026-06-30T17:00:20.537842+00:00",
-            "deadline": "2027-06-30T17:00:20.537842+00:00"
-          }
+          "applicability": "scored",
+          "metrics": {},
+          "drift": null,
+          "composition": [
+            {
+              "product_id": "discourse-k8s",
+              "repo": "canonical/discourse-k8s-operator",
+              "medal": "bronze",
+              "applicability": "scored",
+              "metrics": {
+                "supports_juju_3": false,
+                "supports_juju_4": false,
+                "supports_ck8s": false
+              },
+              "excluded_from_parent_medal": false
+            }
+          ]
         },
         "security_ssdlc": {
           "medal": "bronze",
           "target": "silver",
-          "metrics": {
-            "dependabot_enabled": false,
-            "codeql_enabled": false,
-            "branch_protection_required_checks": false
-          },
-          "drift": {
-            "status": "remediating",
-            "first_seen_at": "2026-06-30T17:00:20.537842+00:00",
-            "deadline": "2027-06-30T17:00:20.537842+00:00"
-          }
+          "applicability": "scored",
+          "metrics": {},
+          "drift": null,
+          "composition": [
+            {
+              "product_id": "discourse-k8s",
+              "repo": "canonical/discourse-k8s-operator",
+              "medal": "bronze",
+              "applicability": "scored",
+              "metrics": {
+                "dependabot_enabled": false,
+                "codeql_enabled": false,
+                "branch_protection_required_checks": true
+              },
+              "excluded_from_parent_medal": false
+            }
+          ]
         },
         "support_engagement": {
           "medal": "bronze",
           "target": "silver",
-          "metrics": {
-            "avg_triage_days": 216.0,
-            "avg_pr_review_days": 1.9,
-            "has_squad_topic": true,
-            "has_jira_sync": true
-          },
-          "drift": {
-            "status": "remediating",
-            "first_seen_at": "2026-06-30T17:00:20.537842+00:00",
-            "deadline": "2027-06-30T17:00:20.537842+00:00"
-          }
+          "applicability": "scored",
+          "metrics": {},
+          "drift": null,
+          "composition": [
+            {
+              "product_id": "discourse-k8s",
+              "repo": "canonical/discourse-k8s-operator",
+              "medal": "bronze",
+              "applicability": "scored",
+              "metrics": {
+                "avg_triage_days": 292.8,
+                "avg_pr_review_days": 2.2,
+                "has_squad_topic": true,
+                "has_jira_sync": true
+              },
+              "excluded_from_parent_medal": false
+            }
+          ]
         }
       }
     },
     {
       "id": "indico",
+      "product_type": "root",
       "name": "Indico",
       "description": "Event management platform for conferences and meetings",
       "lifecycle": "stable",
       "target_medal": "silver",
       "current_medal": "unrated",
       "squad": "emea",
+      "is_portfolio_entry": true,
       "documentation_url": "https://charmhub.io/indico",
-      "allure_report_url": "https://canonical.github.io/indico-operator/_latest",
-      "components": {
-        "foundational": [
-          {
-            "id": "indico-operator",
-            "type": "charm",
-            "github_repo": "canonical/indico-operator"
-          },
-          {
-            "id": "postgresql-k8s",
-            "type": "charm",
-            "github_repo": "canonical/postgresql-k8s-operator"
-          }
-        ],
-        "auxiliary": [
-          {
-            "id": "redis-k8s",
-            "type": "charm",
-            "github_repo": "canonical/redis-k8s-operator"
-          }
-        ]
-      },
+      "source": null,
+      "composed_of": [
+        {
+          "product_id": "indico-operator",
+          "excluded_from_parent_medal": false
+        }
+      ],
+      "context_refs": [
+        {
+          "label": "PostgreSQL K8s",
+          "repo": "canonical/postgresql-k8s-operator"
+        },
+        {
+          "label": "Redis K8s",
+          "repo": "canonical/redis-k8s-operator"
+        }
+      ],
+      "parent_product_ids": [],
       "dimensions": {
         "test_verification": {
           "medal": "silver",
           "target": "silver",
-          "metrics": {
-            "coverage_pct": 94,
-            "stability_pct": 94,
-            "latest_build_passing": false,
-            "uses_ops_testing": true,
-            "uses_jubilant": false
-          },
-          "drift": null
+          "applicability": "scored",
+          "metrics": {},
+          "drift": null,
+          "composition": [
+            {
+              "product_id": "indico-operator",
+              "repo": "canonical/indico-operator",
+              "medal": "silver",
+              "applicability": "scored",
+              "metrics": {
+                "coverage_pct": 94,
+                "stability_pct": 94,
+                "latest_build_passing": false,
+                "uses_ops_testing": true,
+                "uses_jubilant": true
+              },
+              "excluded_from_parent_medal": false
+            }
+          ]
         },
         "documentation": {
           "medal": "unrated",
           "target": "silver",
-          "metrics": {
-            "has_readme": true,
-            "has_contributing": false,
-            "has_security": true,
-            "diataxis_coverage": 3,
-            "style_linter_passing": true,
-            "links_passing": true
-          },
-          "drift": {
-            "status": "remediating",
-            "first_seen_at": "2026-06-30T16:03:48.224357+00:00",
-            "deadline": "2027-06-30T16:03:48.224357+00:00"
-          }
+          "applicability": "scored",
+          "metrics": {},
+          "drift": null,
+          "composition": [
+            {
+              "product_id": "indico-operator",
+              "repo": "canonical/indico-operator",
+              "medal": "unrated",
+              "applicability": "scored",
+              "metrics": {
+                "has_readme": true,
+                "has_contributing": false,
+                "has_security": true,
+                "diataxis_coverage": 3,
+                "style_linter_passing": true,
+                "links_passing": false
+              },
+              "excluded_from_parent_medal": false
+            }
+          ]
         },
         "substrate_compat": {
           "medal": "bronze",
           "target": "silver",
-          "metrics": {
-            "supports_juju_3": false,
-            "supports_juju_4": false,
-            "supports_ck8s": false
-          },
-          "drift": {
-            "status": "remediating",
-            "first_seen_at": "2026-06-30T16:03:48.224357+00:00",
-            "deadline": "2027-06-30T16:03:48.224357+00:00"
-          }
+          "applicability": "scored",
+          "metrics": {},
+          "drift": null,
+          "composition": [
+            {
+              "product_id": "indico-operator",
+              "repo": "canonical/indico-operator",
+              "medal": "bronze",
+              "applicability": "scored",
+              "metrics": {
+                "supports_juju_3": false,
+                "supports_juju_4": false,
+                "supports_ck8s": false
+              },
+              "excluded_from_parent_medal": false
+            }
+          ]
         },
         "security_ssdlc": {
           "medal": "bronze",
           "target": "silver",
-          "metrics": {
-            "dependabot_enabled": false,
-            "codeql_enabled": false,
-            "branch_protection_required_checks": false
-          },
-          "drift": {
-            "status": "remediating",
-            "first_seen_at": "2026-06-30T16:03:48.224357+00:00",
-            "deadline": "2027-06-30T16:03:48.224357+00:00"
-          }
+          "applicability": "scored",
+          "metrics": {},
+          "drift": null,
+          "composition": [
+            {
+              "product_id": "indico-operator",
+              "repo": "canonical/indico-operator",
+              "medal": "bronze",
+              "applicability": "scored",
+              "metrics": {
+                "dependabot_enabled": false,
+                "codeql_enabled": false,
+                "branch_protection_required_checks": true
+              },
+              "excluded_from_parent_medal": false
+            }
+          ]
         },
         "support_engagement": {
           "medal": "bronze",
           "target": "silver",
-          "metrics": {
-            "avg_triage_days": 731.1,
-            "avg_pr_review_days": 0.6,
-            "has_squad_topic": true,
-            "has_jira_sync": true
-          },
-          "drift": {
-            "status": "remediating",
-            "first_seen_at": "2026-06-30T16:03:48.224357+00:00",
-            "deadline": "2027-06-30T16:03:48.224357+00:00"
-          }
+          "applicability": "scored",
+          "metrics": {},
+          "drift": null,
+          "composition": [
+            {
+              "product_id": "indico-operator",
+              "repo": "canonical/indico-operator",
+              "medal": "bronze",
+              "applicability": "scored",
+              "metrics": {
+                "avg_triage_days": 731.1,
+                "avg_pr_review_days": 1.3,
+                "has_squad_topic": true,
+                "has_jira_sync": true
+              },
+              "excluded_from_parent_medal": false
+            }
+          ]
         }
       }
     },
     {
       "id": "jenkins",
+      "product_type": "root",
       "name": "Jenkins",
       "description": "An open source automation server for building, deploying and automating projects.",
       "lifecycle": "stable",
       "target_medal": "bronze",
       "current_medal": "unrated",
       "squad": "apac",
+      "is_portfolio_entry": true,
       "documentation_url": "https://charmhub.io/jenkins-k8s/docs",
-      "allure_report_url": "https://canonical.github.io/jenkins-k8s-operator/_latest",
-      "components": {
-        "foundational": [
-          {
-            "id": "jenkins-k8s",
-            "type": "charm",
-            "github_repo": "canonical/jenkins-k8s-operator"
-          }
-        ],
-        "feature": [
-          {
-            "id": "jenkins-agent-k8s",
-            "type": "charm",
-            "github_repo": "canonical/jenkins-agent-k8s-operator"
-          },
-          {
-            "id": "jenkins-agent",
-            "type": "charm",
-            "github_repo": "canonical/jenkins-agent-operator"
-          }
-        ]
-      },
+      "source": null,
+      "composed_of": [
+        {
+          "product_id": "jenkins-k8s",
+          "excluded_from_parent_medal": false
+        }
+      ],
+      "context_refs": [
+        {
+          "label": "Jenkins Agent K8s",
+          "repo": "canonical/jenkins-agent-k8s-operator"
+        },
+        {
+          "label": "Jenkins Agent",
+          "repo": "canonical/jenkins-agent-operator"
+        }
+      ],
+      "parent_product_ids": [],
       "dimensions": {
         "test_verification": {
           "medal": "unrated",
           "target": "bronze",
-          "metrics": {
-            "coverage_pct": 0,
-            "stability_pct": 100,
-            "latest_build_passing": true,
-            "uses_ops_testing": true,
-            "uses_jubilant": false
-          },
-          "drift": null
+          "applicability": "scored",
+          "metrics": {},
+          "drift": null,
+          "composition": [
+            {
+              "product_id": "jenkins-k8s",
+              "repo": "canonical/jenkins-k8s-operator",
+              "medal": "unrated",
+              "applicability": "scored",
+              "metrics": {
+                "coverage_pct": 0,
+                "stability_pct": 100,
+                "latest_build_passing": true,
+                "uses_ops_testing": false,
+                "uses_jubilant": true
+              },
+              "excluded_from_parent_medal": false
+            }
+          ]
         },
         "documentation": {
           "medal": "bronze",
           "target": "bronze",
-          "metrics": {
-            "has_readme": true,
-            "has_contributing": true,
-            "has_security": true,
-            "diataxis_coverage": 3,
-            "style_linter_passing": true,
-            "links_passing": true
-          },
-          "drift": null
+          "applicability": "scored",
+          "metrics": {},
+          "drift": null,
+          "composition": [
+            {
+              "product_id": "jenkins-k8s",
+              "repo": "canonical/jenkins-k8s-operator",
+              "medal": "bronze",
+              "applicability": "scored",
+              "metrics": {
+                "has_readme": true,
+                "has_contributing": true,
+                "has_security": true,
+                "diataxis_coverage": 3,
+                "style_linter_passing": true,
+                "links_passing": false
+              },
+              "excluded_from_parent_medal": false
+            }
+          ]
         },
         "substrate_compat": {
           "medal": "silver",
           "target": "bronze",
-          "metrics": {
-            "supports_juju_3": true,
-            "supports_juju_4": false,
-            "supports_ck8s": false
-          },
-          "drift": null
+          "applicability": "scored",
+          "metrics": {},
+          "drift": null,
+          "composition": [
+            {
+              "product_id": "jenkins-k8s",
+              "repo": "canonical/jenkins-k8s-operator",
+              "medal": "silver",
+              "applicability": "scored",
+              "metrics": {
+                "supports_juju_3": true,
+                "supports_juju_4": false,
+                "supports_ck8s": false
+              },
+              "excluded_from_parent_medal": false
+            }
+          ]
         },
         "security_ssdlc": {
           "medal": "bronze",
           "target": "bronze",
-          "metrics": {
-            "dependabot_enabled": false,
-            "codeql_enabled": false,
-            "branch_protection_required_checks": false
-          },
-          "drift": null
+          "applicability": "scored",
+          "metrics": {},
+          "drift": null,
+          "composition": [
+            {
+              "product_id": "jenkins-k8s",
+              "repo": "canonical/jenkins-k8s-operator",
+              "medal": "bronze",
+              "applicability": "scored",
+              "metrics": {
+                "dependabot_enabled": false,
+                "codeql_enabled": false,
+                "branch_protection_required_checks": true
+              },
+              "excluded_from_parent_medal": false
+            }
+          ]
         },
         "support_engagement": {
           "medal": "bronze",
           "target": "bronze",
-          "metrics": {
-            "avg_triage_days": 147.8,
-            "avg_pr_review_days": 1.1,
-            "has_squad_topic": true,
-            "has_jira_sync": true
-          },
-          "drift": null
+          "applicability": "scored",
+          "metrics": {},
+          "drift": null,
+          "composition": [
+            {
+              "product_id": "jenkins-k8s",
+              "repo": "canonical/jenkins-k8s-operator",
+              "medal": "bronze",
+              "applicability": "scored",
+              "metrics": {
+                "avg_triage_days": 147.8,
+                "avg_pr_review_days": 1.2,
+                "has_squad_topic": true,
+                "has_jira_sync": true
+              },
+              "excluded_from_parent_medal": false
+            }
+          ]
         }
       }
     },
     {
       "id": "matrix",
+      "product_type": "root",
       "name": "Matrix (Synapse)",
       "description": "Open-standard chat for secure real-time collaboration",
       "lifecycle": "stable",
       "target_medal": "gold",
       "current_medal": "unrated",
       "squad": "americas",
+      "is_portfolio_entry": true,
       "documentation_url": "https://charmhub.io/synapse",
-      "allure_report_url": "https://canonical.github.io/synapse-operator/_latest",
-      "components": {
-        "foundational": [
-          {
-            "id": "synapse",
-            "type": "charm",
-            "github_repo": "canonical/synapse-operator"
-          },
-          {
-            "id": "postgresql-k8s",
-            "type": "charm",
-            "github_repo": "canonical/postgresql-k8s-operator"
-          }
-        ],
-        "feature": [
-          {
-            "id": "saml-integrator",
-            "type": "charm",
-            "github_repo": "canonical/saml-integrator-operator"
-          }
-        ],
-        "auxiliary": [
-          {
-            "id": "synapse-stats-exporter",
-            "type": "charm",
-            "github_repo": "canonical/synapse-operator"
-          }
-        ]
-      },
+      "source": null,
+      "composed_of": [
+        {
+          "product_id": "synapse",
+          "excluded_from_parent_medal": false
+        },
+        {
+          "product_id": "saml-integrator",
+          "excluded_from_parent_medal": false
+        }
+      ],
+      "context_refs": [
+        {
+          "label": "PostgreSQL K8s",
+          "repo": "canonical/postgresql-k8s-operator"
+        },
+        {
+          "label": "Synapse Stats Exporter",
+          "repo": "canonical/synapse-operator"
+        }
+      ],
+      "parent_product_ids": [],
       "dimensions": {
         "test_verification": {
           "medal": "unrated",
           "target": "gold",
-          "metrics": {
-            "coverage_pct": 0,
-            "stability_pct": 100,
-            "latest_build_passing": true,
-            "uses_ops_testing": true,
-            "uses_jubilant": false
-          },
-          "drift": {
-            "status": "remediating",
-            "first_seen_at": "2026-06-30T12:23:27.428352+00:00",
-            "deadline": "2026-12-30T12:23:27.428352+00:00"
-          }
+          "applicability": "scored",
+          "metrics": {},
+          "drift": null,
+          "composition": [
+            {
+              "product_id": "synapse",
+              "repo": "canonical/synapse-operator",
+              "medal": "unrated",
+              "applicability": "scored",
+              "metrics": {
+                "coverage_pct": 0,
+                "stability_pct": 100,
+                "latest_build_passing": true,
+                "uses_ops_testing": false,
+                "uses_jubilant": false
+              },
+              "excluded_from_parent_medal": false
+            },
+            {
+              "product_id": "saml-integrator",
+              "repo": "canonical/saml-integrator-operator",
+              "medal": "unrated",
+              "applicability": "scored",
+              "metrics": {
+                "coverage_pct": 0,
+                "stability_pct": 0,
+                "latest_build_passing": false,
+                "uses_ops_testing": false,
+                "uses_jubilant": false
+              },
+              "excluded_from_parent_medal": false
+            }
+          ]
         },
         "documentation": {
           "medal": "unrated",
           "target": "gold",
-          "metrics": {
-            "has_readme": true,
-            "has_contributing": true,
-            "has_security": false,
-            "diataxis_coverage": 3,
-            "style_linter_passing": true,
-            "links_passing": true
-          },
-          "drift": {
-            "status": "remediating",
-            "first_seen_at": "2026-06-30T12:23:27.428352+00:00",
-            "deadline": "2026-12-30T12:23:27.428352+00:00"
-          }
+          "applicability": "scored",
+          "metrics": {},
+          "drift": null,
+          "composition": [
+            {
+              "product_id": "synapse",
+              "repo": "canonical/synapse-operator",
+              "medal": "unrated",
+              "applicability": "scored",
+              "metrics": {
+                "has_readme": true,
+                "has_contributing": true,
+                "has_security": false,
+                "diataxis_coverage": 2,
+                "style_linter_passing": true,
+                "links_passing": false
+              },
+              "excluded_from_parent_medal": false
+            },
+            {
+              "product_id": "saml-integrator",
+              "repo": "canonical/saml-integrator-operator",
+              "medal": "bronze",
+              "applicability": "scored",
+              "metrics": {
+                "has_readme": true,
+                "has_contributing": true,
+                "has_security": true,
+                "diataxis_coverage": 2,
+                "style_linter_passing": true,
+                "links_passing": false
+              },
+              "excluded_from_parent_medal": false
+            }
+          ]
         },
         "substrate_compat": {
           "medal": "bronze",
           "target": "gold",
-          "metrics": {
-            "supports_juju_3": false,
-            "supports_juju_4": false,
-            "supports_ck8s": false
-          },
-          "drift": {
-            "status": "remediating",
-            "first_seen_at": "2026-06-30T12:23:27.428352+00:00",
-            "deadline": "2026-12-30T12:23:27.428352+00:00"
-          }
+          "applicability": "scored",
+          "metrics": {},
+          "drift": null,
+          "composition": [
+            {
+              "product_id": "synapse",
+              "repo": "canonical/synapse-operator",
+              "medal": "bronze",
+              "applicability": "scored",
+              "metrics": {
+                "supports_juju_3": false,
+                "supports_juju_4": false,
+                "supports_ck8s": false
+              },
+              "excluded_from_parent_medal": false
+            },
+            {
+              "product_id": "saml-integrator",
+              "repo": "canonical/saml-integrator-operator",
+              "medal": "bronze",
+              "applicability": "scored",
+              "metrics": {
+                "supports_juju_3": false,
+                "supports_juju_4": false,
+                "supports_ck8s": false
+              },
+              "excluded_from_parent_medal": false
+            }
+          ]
         },
         "security_ssdlc": {
           "medal": "bronze",
           "target": "gold",
-          "metrics": {
-            "dependabot_enabled": false,
-            "codeql_enabled": false,
-            "branch_protection_required_checks": false
-          },
-          "drift": {
-            "status": "remediating",
-            "first_seen_at": "2026-06-30T12:23:27.428352+00:00",
-            "deadline": "2026-12-30T12:23:27.428352+00:00"
-          }
+          "applicability": "scored",
+          "metrics": {},
+          "drift": null,
+          "composition": [
+            {
+              "product_id": "synapse",
+              "repo": "canonical/synapse-operator",
+              "medal": "bronze",
+              "applicability": "scored",
+              "metrics": {
+                "dependabot_enabled": false,
+                "codeql_enabled": false,
+                "branch_protection_required_checks": true
+              },
+              "excluded_from_parent_medal": false
+            },
+            {
+              "product_id": "saml-integrator",
+              "repo": "canonical/saml-integrator-operator",
+              "medal": "bronze",
+              "applicability": "scored",
+              "metrics": {
+                "dependabot_enabled": false,
+                "codeql_enabled": false,
+                "branch_protection_required_checks": true
+              },
+              "excluded_from_parent_medal": false
+            }
+          ]
         },
         "support_engagement": {
           "medal": "bronze",
           "target": "gold",
-          "metrics": {
-            "avg_triage_days": 364.6,
-            "avg_pr_review_days": 0.4,
-            "has_squad_topic": true,
-            "has_jira_sync": false
-          },
-          "drift": {
-            "status": "remediating",
-            "first_seen_at": "2026-06-30T12:23:27.428352+00:00",
-            "deadline": "2026-12-30T12:23:27.428352+00:00"
-          }
+          "applicability": "scored",
+          "metrics": {},
+          "drift": null,
+          "composition": [
+            {
+              "product_id": "synapse",
+              "repo": "canonical/synapse-operator",
+              "medal": "bronze",
+              "applicability": "scored",
+              "metrics": {
+                "avg_triage_days": 729.2,
+                "avg_pr_review_days": 0.7,
+                "has_squad_topic": true,
+                "has_jira_sync": false
+              },
+              "excluded_from_parent_medal": false
+            },
+            {
+              "product_id": "saml-integrator",
+              "repo": "canonical/saml-integrator-operator",
+              "medal": "bronze",
+              "applicability": "scored",
+              "metrics": {
+                "avg_triage_days": 381.4,
+                "avg_pr_review_days": 1.3,
+                "has_squad_topic": true,
+                "has_jira_sync": true
+              },
+              "excluded_from_parent_medal": false
+            }
+          ]
         }
       }
     },
     {
       "id": "mattermost",
+      "product_type": "root",
       "name": "Mattermost",
       "description": "Open source messaging platform for team collaboration",
       "lifecycle": "stable",
       "target_medal": "gold",
       "current_medal": "unrated",
       "squad": "americas",
+      "is_portfolio_entry": true,
       "documentation_url": "https://charmhub.io/mattermost-k8s",
-      "allure_report_url": "https://canonical.github.io/mattermost-k8s-operator/_latest",
-      "components": {
-        "foundational": [
-          {
-            "id": "mattermost-k8s",
-            "type": "charm",
-            "github_repo": "canonical/mattermost-k8s-operator"
-          },
-          {
-            "id": "postgresql-k8s",
-            "type": "charm",
-            "github_repo": "canonical/postgresql-k8s-operator"
-          }
-        ]
-      },
+      "source": null,
+      "composed_of": [
+        {
+          "product_id": "mattermost-k8s",
+          "excluded_from_parent_medal": false
+        }
+      ],
+      "context_refs": [
+        {
+          "label": "PostgreSQL K8s",
+          "repo": "canonical/postgresql-k8s-operator"
+        }
+      ],
+      "parent_product_ids": [],
       "dimensions": {
         "test_verification": {
           "medal": "unrated",
           "target": "gold",
+          "applicability": "scored",
+          "metrics": {},
+          "drift": null,
+          "composition": [
+            {
+              "product_id": "mattermost-k8s",
+              "repo": "canonical/mattermost-k8s-operator",
+              "medal": "unrated",
+              "applicability": "scored",
+              "metrics": {
+                "coverage_pct": 0,
+                "stability_pct": 0,
+                "latest_build_passing": false,
+                "uses_ops_testing": true,
+                "uses_jubilant": true
+              },
+              "excluded_from_parent_medal": false
+            }
+          ]
+        },
+        "documentation": {
+          "medal": "bronze",
+          "target": "gold",
+          "applicability": "scored",
+          "metrics": {},
+          "drift": null,
+          "composition": [
+            {
+              "product_id": "mattermost-k8s",
+              "repo": "canonical/mattermost-k8s-operator",
+              "medal": "bronze",
+              "applicability": "scored",
+              "metrics": {
+                "has_readme": true,
+                "has_contributing": true,
+                "has_security": true,
+                "diataxis_coverage": 1,
+                "style_linter_passing": true,
+                "links_passing": false
+              },
+              "excluded_from_parent_medal": false
+            }
+          ]
+        },
+        "substrate_compat": {
+          "medal": "silver",
+          "target": "gold",
+          "applicability": "scored",
+          "metrics": {},
+          "drift": null,
+          "composition": [
+            {
+              "product_id": "mattermost-k8s",
+              "repo": "canonical/mattermost-k8s-operator",
+              "medal": "silver",
+              "applicability": "scored",
+              "metrics": {
+                "supports_juju_3": true,
+                "supports_juju_4": true,
+                "supports_ck8s": false
+              },
+              "excluded_from_parent_medal": false
+            }
+          ]
+        },
+        "security_ssdlc": {
+          "medal": "bronze",
+          "target": "gold",
+          "applicability": "scored",
+          "metrics": {},
+          "drift": null,
+          "composition": [
+            {
+              "product_id": "mattermost-k8s",
+              "repo": "canonical/mattermost-k8s-operator",
+              "medal": "bronze",
+              "applicability": "scored",
+              "metrics": {
+                "dependabot_enabled": false,
+                "codeql_enabled": false,
+                "branch_protection_required_checks": true
+              },
+              "excluded_from_parent_medal": false
+            }
+          ]
+        },
+        "support_engagement": {
+          "medal": "bronze",
+          "target": "gold",
+          "applicability": "scored",
+          "metrics": {},
+          "drift": null,
+          "composition": [
+            {
+              "product_id": "mattermost-k8s",
+              "repo": "canonical/mattermost-k8s-operator",
+              "medal": "bronze",
+              "applicability": "scored",
+              "metrics": {
+                "avg_triage_days": 406.1,
+                "avg_pr_review_days": 6.3,
+                "has_squad_topic": true,
+                "has_jira_sync": true
+              },
+              "excluded_from_parent_medal": false
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "netbox",
+      "product_type": "root",
+      "name": "NetBox",
+      "description": "The world's most popular ecosystem for operating, automating, and securing networks and infrastructure.",
+      "lifecycle": "stable",
+      "target_medal": "bronze",
+      "current_medal": "unrated",
+      "squad": "emea",
+      "is_portfolio_entry": true,
+      "documentation_url": "https://netboxlabs.com/",
+      "source": null,
+      "composed_of": [
+        {
+          "product_id": "netbox-k8s",
+          "excluded_from_parent_medal": false
+        }
+      ],
+      "context_refs": [],
+      "parent_product_ids": [],
+      "dimensions": {
+        "test_verification": {
+          "medal": "gold",
+          "target": "bronze",
+          "applicability": "scored",
+          "metrics": {},
+          "drift": null,
+          "composition": [
+            {
+              "product_id": "netbox-k8s",
+              "repo": "canonical/netbox-k8s-operator",
+              "medal": "gold",
+              "applicability": "scored",
+              "metrics": {
+                "coverage_pct": 100,
+                "stability_pct": 100,
+                "latest_build_passing": true,
+                "uses_ops_testing": true,
+                "uses_jubilant": true
+              },
+              "excluded_from_parent_medal": false
+            }
+          ]
+        },
+        "documentation": {
+          "medal": "unrated",
+          "target": "bronze",
+          "applicability": "scored",
+          "metrics": {},
+          "drift": null,
+          "composition": [
+            {
+              "product_id": "netbox-k8s",
+              "repo": "canonical/netbox-k8s-operator",
+              "medal": "unrated",
+              "applicability": "scored",
+              "metrics": {
+                "has_readme": true,
+                "has_contributing": true,
+                "has_security": false,
+                "diataxis_coverage": 2,
+                "style_linter_passing": true,
+                "links_passing": false
+              },
+              "excluded_from_parent_medal": false
+            }
+          ]
+        },
+        "substrate_compat": {
+          "medal": "bronze",
+          "target": "bronze",
+          "applicability": "scored",
+          "metrics": {},
+          "drift": null,
+          "composition": [
+            {
+              "product_id": "netbox-k8s",
+              "repo": "canonical/netbox-k8s-operator",
+              "medal": "bronze",
+              "applicability": "scored",
+              "metrics": {
+                "supports_juju_3": false,
+                "supports_juju_4": false,
+                "supports_ck8s": false
+              },
+              "excluded_from_parent_medal": false
+            }
+          ]
+        },
+        "security_ssdlc": {
+          "medal": "bronze",
+          "target": "bronze",
+          "applicability": "scored",
+          "metrics": {},
+          "drift": null,
+          "composition": [
+            {
+              "product_id": "netbox-k8s",
+              "repo": "canonical/netbox-k8s-operator",
+              "medal": "bronze",
+              "applicability": "scored",
+              "metrics": {
+                "dependabot_enabled": false,
+                "codeql_enabled": false,
+                "branch_protection_required_checks": true
+              },
+              "excluded_from_parent_medal": false
+            }
+          ]
+        },
+        "support_engagement": {
+          "medal": "silver",
+          "target": "bronze",
+          "applicability": "scored",
+          "metrics": {},
+          "drift": null,
+          "composition": [
+            {
+              "product_id": "netbox-k8s",
+              "repo": "canonical/netbox-k8s-operator",
+              "medal": "silver",
+              "applicability": "scored",
+              "metrics": {
+                "avg_triage_days": 0.0,
+                "avg_pr_review_days": 4.2,
+                "has_squad_topic": true,
+                "has_jira_sync": true
+              },
+              "excluded_from_parent_medal": false
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "wazuh",
+      "product_type": "root",
+      "name": "Wazuh",
+      "description": "A platform that unifies XDR and SIEM protection for endpoints and cloud workloads.",
+      "lifecycle": "stable",
+      "target_medal": "silver",
+      "current_medal": "unrated",
+      "squad": "emea",
+      "is_portfolio_entry": true,
+      "documentation_url": "https://wazuh.com/",
+      "source": null,
+      "composed_of": [
+        {
+          "product_id": "wazuh-server",
+          "excluded_from_parent_medal": false
+        },
+        {
+          "product_id": "wazuh-indexer",
+          "excluded_from_parent_medal": false
+        },
+        {
+          "product_id": "wazuh-dashboard",
+          "excluded_from_parent_medal": false
+        }
+      ],
+      "context_refs": [
+        {
+          "label": "Traefik K8s",
+          "repo": "canonical/traefik-k8s-operator"
+        }
+      ],
+      "parent_product_ids": [],
+      "dimensions": {
+        "test_verification": {
+          "medal": "unrated",
+          "target": "silver",
+          "applicability": "scored",
+          "metrics": {},
+          "drift": null,
+          "composition": [
+            {
+              "product_id": "wazuh-server",
+              "repo": "canonical/wazuh-server-operator",
+              "medal": "gold",
+              "applicability": "scored",
+              "metrics": {
+                "coverage_pct": 100,
+                "stability_pct": 100,
+                "latest_build_passing": true,
+                "uses_ops_testing": false,
+                "uses_jubilant": false
+              },
+              "excluded_from_parent_medal": false
+            },
+            {
+              "product_id": "wazuh-indexer",
+              "repo": "canonical/wazuh-indexer-operator",
+              "medal": "unrated",
+              "applicability": "scored",
+              "metrics": {
+                "coverage_pct": 0,
+                "stability_pct": 0,
+                "latest_build_passing": false,
+                "uses_ops_testing": true,
+                "uses_jubilant": false
+              },
+              "excluded_from_parent_medal": false
+            },
+            {
+              "product_id": "wazuh-dashboard",
+              "repo": "canonical/wazuh-dashboard-operator",
+              "medal": "unrated",
+              "applicability": "scored",
+              "metrics": {
+                "coverage_pct": 0,
+                "stability_pct": 0,
+                "latest_build_passing": false,
+                "uses_ops_testing": true,
+                "uses_jubilant": false
+              },
+              "excluded_from_parent_medal": false
+            }
+          ]
+        },
+        "documentation": {
+          "medal": "unrated",
+          "target": "silver",
+          "applicability": "scored",
+          "metrics": {},
+          "drift": null,
+          "composition": [
+            {
+              "product_id": "wazuh-server",
+              "repo": "canonical/wazuh-server-operator",
+              "medal": "bronze",
+              "applicability": "scored",
+              "metrics": {
+                "has_readme": true,
+                "has_contributing": true,
+                "has_security": true,
+                "diataxis_coverage": 2,
+                "style_linter_passing": true,
+                "links_passing": false
+              },
+              "excluded_from_parent_medal": false
+            },
+            {
+              "product_id": "wazuh-indexer",
+              "repo": "canonical/wazuh-indexer-operator",
+              "medal": "unrated",
+              "applicability": "scored",
+              "metrics": {
+                "has_readme": true,
+                "has_contributing": true,
+                "has_security": false,
+                "diataxis_coverage": 2,
+                "style_linter_passing": true,
+                "links_passing": false
+              },
+              "excluded_from_parent_medal": false
+            },
+            {
+              "product_id": "wazuh-dashboard",
+              "repo": "canonical/wazuh-dashboard-operator",
+              "medal": "unrated",
+              "applicability": "scored",
+              "metrics": {
+                "has_readme": true,
+                "has_contributing": false,
+                "has_security": false,
+                "diataxis_coverage": 2,
+                "style_linter_passing": true,
+                "links_passing": false
+              },
+              "excluded_from_parent_medal": false
+            }
+          ]
+        },
+        "substrate_compat": {
+          "medal": "bronze",
+          "target": "silver",
+          "applicability": "scored",
+          "metrics": {},
+          "drift": null,
+          "composition": [
+            {
+              "product_id": "wazuh-server",
+              "repo": "canonical/wazuh-server-operator",
+              "medal": "bronze",
+              "applicability": "scored",
+              "metrics": {
+                "supports_juju_3": false,
+                "supports_juju_4": false,
+                "supports_ck8s": false
+              },
+              "excluded_from_parent_medal": false
+            },
+            {
+              "product_id": "wazuh-indexer",
+              "repo": "canonical/wazuh-indexer-operator",
+              "medal": "bronze",
+              "applicability": "scored",
+              "metrics": {
+                "supports_juju_3": false,
+                "supports_juju_4": false,
+                "supports_ck8s": false
+              },
+              "excluded_from_parent_medal": false
+            },
+            {
+              "product_id": "wazuh-dashboard",
+              "repo": "canonical/wazuh-dashboard-operator",
+              "medal": "bronze",
+              "applicability": "scored",
+              "metrics": {
+                "supports_juju_3": false,
+                "supports_juju_4": false,
+                "supports_ck8s": false
+              },
+              "excluded_from_parent_medal": false
+            }
+          ]
+        },
+        "security_ssdlc": {
+          "medal": "bronze",
+          "target": "silver",
+          "applicability": "scored",
+          "metrics": {},
+          "drift": null,
+          "composition": [
+            {
+              "product_id": "wazuh-server",
+              "repo": "canonical/wazuh-server-operator",
+              "medal": "bronze",
+              "applicability": "scored",
+              "metrics": {
+                "dependabot_enabled": false,
+                "codeql_enabled": false,
+                "branch_protection_required_checks": true
+              },
+              "excluded_from_parent_medal": false
+            },
+            {
+              "product_id": "wazuh-indexer",
+              "repo": "canonical/wazuh-indexer-operator",
+              "medal": "bronze",
+              "applicability": "scored",
+              "metrics": {
+                "dependabot_enabled": false,
+                "codeql_enabled": false,
+                "branch_protection_required_checks": true
+              },
+              "excluded_from_parent_medal": false
+            },
+            {
+              "product_id": "wazuh-dashboard",
+              "repo": "canonical/wazuh-dashboard-operator",
+              "medal": "bronze",
+              "applicability": "scored",
+              "metrics": {
+                "dependabot_enabled": false,
+                "codeql_enabled": false,
+                "branch_protection_required_checks": true
+              },
+              "excluded_from_parent_medal": false
+            }
+          ]
+        },
+        "support_engagement": {
+          "medal": "bronze",
+          "target": "silver",
+          "applicability": "scored",
+          "metrics": {},
+          "drift": null,
+          "composition": [
+            {
+              "product_id": "wazuh-server",
+              "repo": "canonical/wazuh-server-operator",
+              "medal": "bronze",
+              "applicability": "scored",
+              "metrics": {
+                "avg_triage_days": 392.8,
+                "avg_pr_review_days": 1.5,
+                "has_squad_topic": true,
+                "has_jira_sync": true
+              },
+              "excluded_from_parent_medal": false
+            },
+            {
+              "product_id": "wazuh-indexer",
+              "repo": "canonical/wazuh-indexer-operator",
+              "medal": "gold",
+              "applicability": "scored",
+              "metrics": {
+                "avg_triage_days": 0.0,
+                "avg_pr_review_days": 0.0,
+                "has_squad_topic": true,
+                "has_jira_sync": true
+              },
+              "excluded_from_parent_medal": false
+            },
+            {
+              "product_id": "wazuh-dashboard",
+              "repo": "canonical/wazuh-dashboard-operator",
+              "medal": "gold",
+              "applicability": "scored",
+              "metrics": {
+                "avg_triage_days": 0.0,
+                "avg_pr_review_days": 0.0,
+                "has_squad_topic": true,
+                "has_jira_sync": true
+              },
+              "excluded_from_parent_medal": false
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "wordpress",
+      "product_type": "root",
+      "name": "WordPress",
+      "description": "A Juju charm deploying and managing WordPress on Kubernetes, with ingress integration and optional monitoring.",
+      "lifecycle": "stable",
+      "target_medal": "bronze",
+      "current_medal": "unrated",
+      "squad": "apac",
+      "is_portfolio_entry": true,
+      "documentation_url": "https://charmhub.io/wordpress-k8s",
+      "source": null,
+      "composed_of": [
+        {
+          "product_id": "wordpress-k8s",
+          "excluded_from_parent_medal": false
+        }
+      ],
+      "context_refs": [
+        {
+          "label": "MySQL K8s",
+          "repo": "canonical/mysql-k8s-operator"
+        },
+        {
+          "label": "NGINX Ingress Integrator",
+          "repo": "canonical/nginx-ingress-integrator-operator"
+        }
+      ],
+      "parent_product_ids": [],
+      "dimensions": {
+        "test_verification": {
+          "medal": "unrated",
+          "target": "bronze",
+          "applicability": "scored",
+          "metrics": {},
+          "drift": null,
+          "composition": [
+            {
+              "product_id": "wordpress-k8s",
+              "repo": "canonical/wordpress-k8s-operator",
+              "medal": "unrated",
+              "applicability": "scored",
+              "metrics": {
+                "coverage_pct": 0,
+                "stability_pct": 100,
+                "latest_build_passing": true,
+                "uses_ops_testing": false,
+                "uses_jubilant": false
+              },
+              "excluded_from_parent_medal": false
+            }
+          ]
+        },
+        "documentation": {
+          "medal": "bronze",
+          "target": "bronze",
+          "applicability": "scored",
+          "metrics": {},
+          "drift": null,
+          "composition": [
+            {
+              "product_id": "wordpress-k8s",
+              "repo": "canonical/wordpress-k8s-operator",
+              "medal": "bronze",
+              "applicability": "scored",
+              "metrics": {
+                "has_readme": true,
+                "has_contributing": true,
+                "has_security": true,
+                "diataxis_coverage": 3,
+                "style_linter_passing": true,
+                "links_passing": false
+              },
+              "excluded_from_parent_medal": false
+            }
+          ]
+        },
+        "substrate_compat": {
+          "medal": "silver",
+          "target": "bronze",
+          "applicability": "scored",
+          "metrics": {},
+          "drift": null,
+          "composition": [
+            {
+              "product_id": "wordpress-k8s",
+              "repo": "canonical/wordpress-k8s-operator",
+              "medal": "silver",
+              "applicability": "scored",
+              "metrics": {
+                "supports_juju_3": true,
+                "supports_juju_4": false,
+                "supports_ck8s": false
+              },
+              "excluded_from_parent_medal": false
+            }
+          ]
+        },
+        "security_ssdlc": {
+          "medal": "bronze",
+          "target": "bronze",
+          "applicability": "scored",
+          "metrics": {},
+          "drift": null,
+          "composition": [
+            {
+              "product_id": "wordpress-k8s",
+              "repo": "canonical/wordpress-k8s-operator",
+              "medal": "bronze",
+              "applicability": "scored",
+              "metrics": {
+                "dependabot_enabled": false,
+                "codeql_enabled": false,
+                "branch_protection_required_checks": true
+              },
+              "excluded_from_parent_medal": false
+            }
+          ]
+        },
+        "support_engagement": {
+          "medal": "bronze",
+          "target": "bronze",
+          "applicability": "scored",
+          "metrics": {},
+          "drift": null,
+          "composition": [
+            {
+              "product_id": "wordpress-k8s",
+              "repo": "canonical/wordpress-k8s-operator",
+              "medal": "bronze",
+              "applicability": "scored",
+              "metrics": {
+                "avg_triage_days": 735.1,
+                "avg_pr_review_days": 6.6,
+                "has_squad_topic": true,
+                "has_jira_sync": true
+              },
+              "excluded_from_parent_medal": false
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "discourse-k8s",
+      "product_type": "charm",
+      "name": "discourse-k8s",
+      "description": "",
+      "lifecycle": "stable",
+      "target_medal": "silver",
+      "current_medal": "bronze",
+      "squad": "",
+      "is_portfolio_entry": false,
+      "documentation_url": "",
+      "source": {
+        "repo": "canonical/discourse-k8s-operator",
+        "subpath": null
+      },
+      "composed_of": null,
+      "context_refs": [],
+      "parent_product_ids": [
+        "discourse"
+      ],
+      "dimensions": {
+        "test_verification": {
+          "medal": "silver",
+          "target": "silver",
+          "applicability": "scored",
+          "metrics": {
+            "coverage_pct": 83,
+            "stability_pct": 92,
+            "latest_build_passing": false,
+            "uses_ops_testing": false,
+            "uses_jubilant": true
+          },
+          "drift": null,
+          "composition": null
+        },
+        "documentation": {
+          "medal": "bronze",
+          "target": "silver",
+          "applicability": "scored",
+          "metrics": {
+            "has_readme": true,
+            "has_contributing": true,
+            "has_security": true,
+            "diataxis_coverage": 2,
+            "style_linter_passing": true,
+            "links_passing": false
+          },
+          "drift": null,
+          "composition": null
+        },
+        "substrate_compat": {
+          "medal": "bronze",
+          "target": "silver",
+          "applicability": "scored",
+          "metrics": {
+            "supports_juju_3": false,
+            "supports_juju_4": false,
+            "supports_ck8s": false
+          },
+          "drift": null,
+          "composition": null
+        },
+        "security_ssdlc": {
+          "medal": "bronze",
+          "target": "silver",
+          "applicability": "scored",
+          "metrics": {
+            "dependabot_enabled": false,
+            "codeql_enabled": false,
+            "branch_protection_required_checks": true
+          },
+          "drift": null,
+          "composition": null
+        },
+        "support_engagement": {
+          "medal": "bronze",
+          "target": "silver",
+          "applicability": "scored",
+          "metrics": {
+            "avg_triage_days": 292.8,
+            "avg_pr_review_days": 2.2,
+            "has_squad_topic": true,
+            "has_jira_sync": true
+          },
+          "drift": null,
+          "composition": null
+        }
+      }
+    },
+    {
+      "id": "indico-operator",
+      "product_type": "charm",
+      "name": "indico-operator",
+      "description": "",
+      "lifecycle": "stable",
+      "target_medal": "silver",
+      "current_medal": "unrated",
+      "squad": "",
+      "is_portfolio_entry": false,
+      "documentation_url": "",
+      "source": {
+        "repo": "canonical/indico-operator",
+        "subpath": null
+      },
+      "composed_of": null,
+      "context_refs": [],
+      "parent_product_ids": [
+        "indico"
+      ],
+      "dimensions": {
+        "test_verification": {
+          "medal": "silver",
+          "target": "silver",
+          "applicability": "scored",
+          "metrics": {
+            "coverage_pct": 94,
+            "stability_pct": 94,
+            "latest_build_passing": false,
+            "uses_ops_testing": true,
+            "uses_jubilant": true
+          },
+          "drift": null,
+          "composition": null
+        },
+        "documentation": {
+          "medal": "unrated",
+          "target": "silver",
+          "applicability": "scored",
+          "metrics": {
+            "has_readme": true,
+            "has_contributing": false,
+            "has_security": true,
+            "diataxis_coverage": 3,
+            "style_linter_passing": true,
+            "links_passing": false
+          },
+          "drift": null,
+          "composition": null
+        },
+        "substrate_compat": {
+          "medal": "bronze",
+          "target": "silver",
+          "applicability": "scored",
+          "metrics": {
+            "supports_juju_3": false,
+            "supports_juju_4": false,
+            "supports_ck8s": false
+          },
+          "drift": null,
+          "composition": null
+        },
+        "security_ssdlc": {
+          "medal": "bronze",
+          "target": "silver",
+          "applicability": "scored",
+          "metrics": {
+            "dependabot_enabled": false,
+            "codeql_enabled": false,
+            "branch_protection_required_checks": true
+          },
+          "drift": null,
+          "composition": null
+        },
+        "support_engagement": {
+          "medal": "bronze",
+          "target": "silver",
+          "applicability": "scored",
+          "metrics": {
+            "avg_triage_days": 731.1,
+            "avg_pr_review_days": 1.3,
+            "has_squad_topic": true,
+            "has_jira_sync": true
+          },
+          "drift": null,
+          "composition": null
+        }
+      }
+    },
+    {
+      "id": "jenkins-k8s",
+      "product_type": "charm",
+      "name": "jenkins-k8s",
+      "description": "",
+      "lifecycle": "stable",
+      "target_medal": "bronze",
+      "current_medal": "unrated",
+      "squad": "",
+      "is_portfolio_entry": false,
+      "documentation_url": "",
+      "source": {
+        "repo": "canonical/jenkins-k8s-operator",
+        "subpath": null
+      },
+      "composed_of": null,
+      "context_refs": [],
+      "parent_product_ids": [
+        "jenkins"
+      ],
+      "dimensions": {
+        "test_verification": {
+          "medal": "unrated",
+          "target": "bronze",
+          "applicability": "scored",
+          "metrics": {
+            "coverage_pct": 0,
+            "stability_pct": 100,
+            "latest_build_passing": true,
+            "uses_ops_testing": false,
+            "uses_jubilant": true
+          },
+          "drift": null,
+          "composition": null
+        },
+        "documentation": {
+          "medal": "bronze",
+          "target": "bronze",
+          "applicability": "scored",
+          "metrics": {
+            "has_readme": true,
+            "has_contributing": true,
+            "has_security": true,
+            "diataxis_coverage": 3,
+            "style_linter_passing": true,
+            "links_passing": false
+          },
+          "drift": null,
+          "composition": null
+        },
+        "substrate_compat": {
+          "medal": "silver",
+          "target": "bronze",
+          "applicability": "scored",
+          "metrics": {
+            "supports_juju_3": true,
+            "supports_juju_4": false,
+            "supports_ck8s": false
+          },
+          "drift": null,
+          "composition": null
+        },
+        "security_ssdlc": {
+          "medal": "bronze",
+          "target": "bronze",
+          "applicability": "scored",
+          "metrics": {
+            "dependabot_enabled": false,
+            "codeql_enabled": false,
+            "branch_protection_required_checks": true
+          },
+          "drift": null,
+          "composition": null
+        },
+        "support_engagement": {
+          "medal": "bronze",
+          "target": "bronze",
+          "applicability": "scored",
+          "metrics": {
+            "avg_triage_days": 147.8,
+            "avg_pr_review_days": 1.2,
+            "has_squad_topic": true,
+            "has_jira_sync": true
+          },
+          "drift": null,
+          "composition": null
+        }
+      }
+    },
+    {
+      "id": "synapse",
+      "product_type": "charm",
+      "name": "synapse",
+      "description": "",
+      "lifecycle": "stable",
+      "target_medal": "gold",
+      "current_medal": "unrated",
+      "squad": "",
+      "is_portfolio_entry": false,
+      "documentation_url": "",
+      "source": {
+        "repo": "canonical/synapse-operator",
+        "subpath": null
+      },
+      "composed_of": null,
+      "context_refs": [],
+      "parent_product_ids": [
+        "matrix"
+      ],
+      "dimensions": {
+        "test_verification": {
+          "medal": "unrated",
+          "target": "gold",
+          "applicability": "scored",
+          "metrics": {
+            "coverage_pct": 0,
+            "stability_pct": 100,
+            "latest_build_passing": true,
+            "uses_ops_testing": false,
+            "uses_jubilant": false
+          },
+          "drift": null,
+          "composition": null
+        },
+        "documentation": {
+          "medal": "unrated",
+          "target": "gold",
+          "applicability": "scored",
+          "metrics": {
+            "has_readme": true,
+            "has_contributing": true,
+            "has_security": false,
+            "diataxis_coverage": 2,
+            "style_linter_passing": true,
+            "links_passing": false
+          },
+          "drift": null,
+          "composition": null
+        },
+        "substrate_compat": {
+          "medal": "bronze",
+          "target": "gold",
+          "applicability": "scored",
+          "metrics": {
+            "supports_juju_3": false,
+            "supports_juju_4": false,
+            "supports_ck8s": false
+          },
+          "drift": null,
+          "composition": null
+        },
+        "security_ssdlc": {
+          "medal": "bronze",
+          "target": "gold",
+          "applicability": "scored",
+          "metrics": {
+            "dependabot_enabled": false,
+            "codeql_enabled": false,
+            "branch_protection_required_checks": true
+          },
+          "drift": null,
+          "composition": null
+        },
+        "support_engagement": {
+          "medal": "bronze",
+          "target": "gold",
+          "applicability": "scored",
+          "metrics": {
+            "avg_triage_days": 729.2,
+            "avg_pr_review_days": 0.7,
+            "has_squad_topic": true,
+            "has_jira_sync": false
+          },
+          "drift": null,
+          "composition": null
+        }
+      }
+    },
+    {
+      "id": "saml-integrator",
+      "product_type": "charm",
+      "name": "saml-integrator",
+      "description": "",
+      "lifecycle": "stable",
+      "target_medal": "gold",
+      "current_medal": "unrated",
+      "squad": "",
+      "is_portfolio_entry": false,
+      "documentation_url": "",
+      "source": {
+        "repo": "canonical/saml-integrator-operator",
+        "subpath": null
+      },
+      "composed_of": null,
+      "context_refs": [],
+      "parent_product_ids": [
+        "matrix"
+      ],
+      "dimensions": {
+        "test_verification": {
+          "medal": "unrated",
+          "target": "gold",
+          "applicability": "scored",
+          "metrics": {
+            "coverage_pct": 0,
+            "stability_pct": 0,
+            "latest_build_passing": false,
+            "uses_ops_testing": false,
+            "uses_jubilant": false
+          },
+          "drift": null,
+          "composition": null
+        },
+        "documentation": {
+          "medal": "bronze",
+          "target": "gold",
+          "applicability": "scored",
+          "metrics": {
+            "has_readme": true,
+            "has_contributing": true,
+            "has_security": true,
+            "diataxis_coverage": 2,
+            "style_linter_passing": true,
+            "links_passing": false
+          },
+          "drift": null,
+          "composition": null
+        },
+        "substrate_compat": {
+          "medal": "bronze",
+          "target": "gold",
+          "applicability": "scored",
+          "metrics": {
+            "supports_juju_3": false,
+            "supports_juju_4": false,
+            "supports_ck8s": false
+          },
+          "drift": null,
+          "composition": null
+        },
+        "security_ssdlc": {
+          "medal": "bronze",
+          "target": "gold",
+          "applicability": "scored",
+          "metrics": {
+            "dependabot_enabled": false,
+            "codeql_enabled": false,
+            "branch_protection_required_checks": true
+          },
+          "drift": null,
+          "composition": null
+        },
+        "support_engagement": {
+          "medal": "bronze",
+          "target": "gold",
+          "applicability": "scored",
+          "metrics": {
+            "avg_triage_days": 381.4,
+            "avg_pr_review_days": 1.3,
+            "has_squad_topic": true,
+            "has_jira_sync": true
+          },
+          "drift": null,
+          "composition": null
+        }
+      }
+    },
+    {
+      "id": "mattermost-k8s",
+      "product_type": "charm",
+      "name": "mattermost-k8s",
+      "description": "",
+      "lifecycle": "stable",
+      "target_medal": "gold",
+      "current_medal": "unrated",
+      "squad": "",
+      "is_portfolio_entry": false,
+      "documentation_url": "",
+      "source": {
+        "repo": "canonical/mattermost-k8s-operator",
+        "subpath": null
+      },
+      "composed_of": null,
+      "context_refs": [],
+      "parent_product_ids": [
+        "mattermost"
+      ],
+      "dimensions": {
+        "test_verification": {
+          "medal": "unrated",
+          "target": "gold",
+          "applicability": "scored",
+          "metrics": {
+            "coverage_pct": 0,
+            "stability_pct": 0,
+            "latest_build_passing": false,
+            "uses_ops_testing": true,
+            "uses_jubilant": true
+          },
+          "drift": null,
+          "composition": null
+        },
+        "documentation": {
+          "medal": "bronze",
+          "target": "gold",
+          "applicability": "scored",
+          "metrics": {
+            "has_readme": true,
+            "has_contributing": true,
+            "has_security": true,
+            "diataxis_coverage": 1,
+            "style_linter_passing": true,
+            "links_passing": false
+          },
+          "drift": null,
+          "composition": null
+        },
+        "substrate_compat": {
+          "medal": "silver",
+          "target": "gold",
+          "applicability": "scored",
+          "metrics": {
+            "supports_juju_3": true,
+            "supports_juju_4": true,
+            "supports_ck8s": false
+          },
+          "drift": null,
+          "composition": null
+        },
+        "security_ssdlc": {
+          "medal": "bronze",
+          "target": "gold",
+          "applicability": "scored",
+          "metrics": {
+            "dependabot_enabled": false,
+            "codeql_enabled": false,
+            "branch_protection_required_checks": true
+          },
+          "drift": null,
+          "composition": null
+        },
+        "support_engagement": {
+          "medal": "bronze",
+          "target": "gold",
+          "applicability": "scored",
+          "metrics": {
+            "avg_triage_days": 406.1,
+            "avg_pr_review_days": 6.3,
+            "has_squad_topic": true,
+            "has_jira_sync": true
+          },
+          "drift": null,
+          "composition": null
+        }
+      }
+    },
+    {
+      "id": "netbox-k8s",
+      "product_type": "charm",
+      "name": "netbox-k8s",
+      "description": "",
+      "lifecycle": "stable",
+      "target_medal": "bronze",
+      "current_medal": "unrated",
+      "squad": "",
+      "is_portfolio_entry": false,
+      "documentation_url": "",
+      "source": {
+        "repo": "canonical/netbox-k8s-operator",
+        "subpath": null
+      },
+      "composed_of": null,
+      "context_refs": [],
+      "parent_product_ids": [
+        "netbox"
+      ],
+      "dimensions": {
+        "test_verification": {
+          "medal": "gold",
+          "target": "bronze",
+          "applicability": "scored",
+          "metrics": {
+            "coverage_pct": 100,
+            "stability_pct": 100,
+            "latest_build_passing": true,
+            "uses_ops_testing": true,
+            "uses_jubilant": true
+          },
+          "drift": null,
+          "composition": null
+        },
+        "documentation": {
+          "medal": "unrated",
+          "target": "bronze",
+          "applicability": "scored",
+          "metrics": {
+            "has_readme": true,
+            "has_contributing": true,
+            "has_security": false,
+            "diataxis_coverage": 2,
+            "style_linter_passing": true,
+            "links_passing": false
+          },
+          "drift": null,
+          "composition": null
+        },
+        "substrate_compat": {
+          "medal": "bronze",
+          "target": "bronze",
+          "applicability": "scored",
+          "metrics": {
+            "supports_juju_3": false,
+            "supports_juju_4": false,
+            "supports_ck8s": false
+          },
+          "drift": null,
+          "composition": null
+        },
+        "security_ssdlc": {
+          "medal": "bronze",
+          "target": "bronze",
+          "applicability": "scored",
+          "metrics": {
+            "dependabot_enabled": false,
+            "codeql_enabled": false,
+            "branch_protection_required_checks": true
+          },
+          "drift": null,
+          "composition": null
+        },
+        "support_engagement": {
+          "medal": "silver",
+          "target": "bronze",
+          "applicability": "scored",
+          "metrics": {
+            "avg_triage_days": 0.0,
+            "avg_pr_review_days": 4.2,
+            "has_squad_topic": true,
+            "has_jira_sync": true
+          },
+          "drift": null,
+          "composition": null
+        }
+      }
+    },
+    {
+      "id": "wazuh-server",
+      "product_type": "charm",
+      "name": "wazuh-server",
+      "description": "",
+      "lifecycle": "stable",
+      "target_medal": "silver",
+      "current_medal": "bronze",
+      "squad": "",
+      "is_portfolio_entry": false,
+      "documentation_url": "",
+      "source": {
+        "repo": "canonical/wazuh-server-operator",
+        "subpath": null
+      },
+      "composed_of": null,
+      "context_refs": [],
+      "parent_product_ids": [
+        "wazuh"
+      ],
+      "dimensions": {
+        "test_verification": {
+          "medal": "gold",
+          "target": "silver",
+          "applicability": "scored",
+          "metrics": {
+            "coverage_pct": 100,
+            "stability_pct": 100,
+            "latest_build_passing": true,
+            "uses_ops_testing": false,
+            "uses_jubilant": false
+          },
+          "drift": null,
+          "composition": null
+        },
+        "documentation": {
+          "medal": "bronze",
+          "target": "silver",
+          "applicability": "scored",
+          "metrics": {
+            "has_readme": true,
+            "has_contributing": true,
+            "has_security": true,
+            "diataxis_coverage": 2,
+            "style_linter_passing": true,
+            "links_passing": false
+          },
+          "drift": null,
+          "composition": null
+        },
+        "substrate_compat": {
+          "medal": "bronze",
+          "target": "silver",
+          "applicability": "scored",
+          "metrics": {
+            "supports_juju_3": false,
+            "supports_juju_4": false,
+            "supports_ck8s": false
+          },
+          "drift": null,
+          "composition": null
+        },
+        "security_ssdlc": {
+          "medal": "bronze",
+          "target": "silver",
+          "applicability": "scored",
+          "metrics": {
+            "dependabot_enabled": false,
+            "codeql_enabled": false,
+            "branch_protection_required_checks": true
+          },
+          "drift": null,
+          "composition": null
+        },
+        "support_engagement": {
+          "medal": "bronze",
+          "target": "silver",
+          "applicability": "scored",
+          "metrics": {
+            "avg_triage_days": 392.8,
+            "avg_pr_review_days": 1.5,
+            "has_squad_topic": true,
+            "has_jira_sync": true
+          },
+          "drift": null,
+          "composition": null
+        }
+      }
+    },
+    {
+      "id": "wazuh-indexer",
+      "product_type": "charm",
+      "name": "wazuh-indexer",
+      "description": "",
+      "lifecycle": "stable",
+      "target_medal": "silver",
+      "current_medal": "unrated",
+      "squad": "",
+      "is_portfolio_entry": false,
+      "documentation_url": "",
+      "source": {
+        "repo": "canonical/wazuh-indexer-operator",
+        "subpath": null
+      },
+      "composed_of": null,
+      "context_refs": [],
+      "parent_product_ids": [
+        "wazuh"
+      ],
+      "dimensions": {
+        "test_verification": {
+          "medal": "unrated",
+          "target": "silver",
+          "applicability": "scored",
           "metrics": {
             "coverage_pct": 0,
             "stability_pct": 0,
@@ -460,350 +2086,238 @@
             "uses_ops_testing": true,
             "uses_jubilant": false
           },
-          "drift": {
-            "status": "remediating",
-            "first_seen_at": "2026-06-30T16:03:48.224357+00:00",
-            "deadline": "2026-12-30T16:03:48.224357+00:00"
-          }
-        },
-        "documentation": {
-          "medal": "bronze",
-          "target": "gold",
-          "metrics": {
-            "has_readme": true,
-            "has_contributing": true,
-            "has_security": true,
-            "diataxis_coverage": 1,
-            "style_linter_passing": true,
-            "links_passing": true
-          },
-          "drift": {
-            "status": "remediating",
-            "first_seen_at": "2026-06-30T16:03:48.224357+00:00",
-            "deadline": "2026-12-30T16:03:48.224357+00:00"
-          }
-        },
-        "substrate_compat": {
-          "medal": "silver",
-          "target": "gold",
-          "metrics": {
-            "supports_juju_3": true,
-            "supports_juju_4": true,
-            "supports_ck8s": false
-          },
-          "drift": {
-            "status": "remediating",
-            "first_seen_at": "2026-06-30T16:03:48.224357+00:00",
-            "deadline": "2026-12-30T16:03:48.224357+00:00"
-          }
-        },
-        "security_ssdlc": {
-          "medal": "bronze",
-          "target": "gold",
-          "metrics": {
-            "dependabot_enabled": false,
-            "codeql_enabled": false,
-            "branch_protection_required_checks": false
-          },
-          "drift": {
-            "status": "remediating",
-            "first_seen_at": "2026-06-30T16:03:48.224357+00:00",
-            "deadline": "2026-12-30T16:03:48.224357+00:00"
-          }
-        },
-        "support_engagement": {
-          "medal": "bronze",
-          "target": "gold",
-          "metrics": {
-            "avg_triage_days": 315.1,
-            "avg_pr_review_days": 2.6,
-            "has_squad_topic": true,
-            "has_jira_sync": true
-          },
-          "drift": {
-            "status": "remediating",
-            "first_seen_at": "2026-06-30T16:03:48.224357+00:00",
-            "deadline": "2026-12-30T16:03:48.224357+00:00"
-          }
-        }
-      }
-    },
-    {
-      "id": "netbox",
-      "name": "NetBox",
-      "description": "The world's most popular ecosystem for operating, automating, and securing networks and infrastructure.",
-      "lifecycle": "stable",
-      "target_medal": "bronze",
-      "current_medal": "unrated",
-      "squad": "emea",
-      "documentation_url": "https://netboxlabs.com/",
-      "allure_report_url": "https://canonical.github.io/netbox-k8s-operator/_latest",
-      "components": {
-        "foundational": [
-          {
-            "id": "netbox-k8s",
-            "type": "charm",
-            "github_repo": "canonical/netbox-k8s-operator"
-          }
-        ]
-      },
-      "dimensions": {
-        "test_verification": {
-          "medal": "gold",
-          "target": "bronze",
-          "metrics": {
-            "coverage_pct": 100,
-            "stability_pct": 100,
-            "latest_build_passing": true,
-            "uses_ops_testing": true,
-            "uses_jubilant": false
-          },
-          "drift": null
+          "drift": null,
+          "composition": null
         },
         "documentation": {
           "medal": "unrated",
-          "target": "bronze",
+          "target": "silver",
+          "applicability": "scored",
           "metrics": {
             "has_readme": true,
             "has_contributing": true,
             "has_security": false,
             "diataxis_coverage": 2,
             "style_linter_passing": true,
-            "links_passing": true
+            "links_passing": false
           },
-          "drift": null
+          "drift": null,
+          "composition": null
         },
         "substrate_compat": {
           "medal": "bronze",
-          "target": "bronze",
+          "target": "silver",
+          "applicability": "scored",
           "metrics": {
             "supports_juju_3": false,
             "supports_juju_4": false,
             "supports_ck8s": false
           },
-          "drift": null
+          "drift": null,
+          "composition": null
         },
         "security_ssdlc": {
           "medal": "bronze",
-          "target": "bronze",
+          "target": "silver",
+          "applicability": "scored",
           "metrics": {
             "dependabot_enabled": false,
             "codeql_enabled": false,
-            "branch_protection_required_checks": false
+            "branch_protection_required_checks": true
           },
-          "drift": null
+          "drift": null,
+          "composition": null
         },
         "support_engagement": {
-          "medal": "silver",
-          "target": "bronze",
+          "medal": "gold",
+          "target": "silver",
+          "applicability": "scored",
           "metrics": {
             "avg_triage_days": 0.0,
-            "avg_pr_review_days": 4.6,
+            "avg_pr_review_days": 0.0,
             "has_squad_topic": true,
             "has_jira_sync": true
           },
-          "drift": null
+          "drift": null,
+          "composition": null
         }
       }
     },
     {
-      "id": "wazuh",
-      "name": "Wazuh",
-      "description": "A platform that unifies XDR and SIEM protection for endpoints and cloud workloads.",
+      "id": "wazuh-dashboard",
+      "product_type": "charm",
+      "name": "wazuh-dashboard",
+      "description": "",
       "lifecycle": "stable",
       "target_medal": "silver",
-      "current_medal": "bronze",
-      "squad": "emea",
-      "documentation_url": "https://wazuh.com/",
-      "allure_report_url": "https://canonical.github.io/wazuh-server-operator/_latest",
-      "components": {
-        "foundational": [
-          {
-            "id": "wazuh-server",
-            "type": "charm",
-            "github_repo": "canonical/wazuh-server-operator"
-          },
-          {
-            "id": "wazuh-indexer",
-            "type": "charm",
-            "github_repo": "canonical/wazuh-indexer-operator"
-          },
-          {
-            "id": "wazuh-dashboard",
-            "type": "charm",
-            "github_repo": "canonical/wazuh-dashboard-operator"
-          }
-        ],
-        "feature": [
-          {
-            "id": "traefik-k8s",
-            "type": "charm",
-            "github_repo": "canonical/traefik-k8s-operator"
-          }
-        ]
+      "current_medal": "unrated",
+      "squad": "",
+      "is_portfolio_entry": false,
+      "documentation_url": "",
+      "source": {
+        "repo": "canonical/wazuh-dashboard-operator",
+        "subpath": null
       },
+      "composed_of": null,
+      "context_refs": [],
+      "parent_product_ids": [
+        "wazuh"
+      ],
       "dimensions": {
         "test_verification": {
-          "medal": "gold",
+          "medal": "unrated",
           "target": "silver",
+          "applicability": "scored",
           "metrics": {
-            "coverage_pct": 100,
-            "stability_pct": 100,
-            "latest_build_passing": true,
+            "coverage_pct": 0,
+            "stability_pct": 0,
+            "latest_build_passing": false,
             "uses_ops_testing": true,
             "uses_jubilant": false
           },
-          "drift": null
+          "drift": null,
+          "composition": null
         },
         "documentation": {
-          "medal": "bronze",
+          "medal": "unrated",
           "target": "silver",
+          "applicability": "scored",
           "metrics": {
             "has_readme": true,
-            "has_contributing": true,
-            "has_security": true,
+            "has_contributing": false,
+            "has_security": false,
             "diataxis_coverage": 2,
             "style_linter_passing": true,
-            "links_passing": true
+            "links_passing": false
           },
-          "drift": {
-            "status": "remediating",
-            "first_seen_at": "2026-06-30T17:00:20.537842+00:00",
-            "deadline": "2027-06-30T17:00:20.537842+00:00"
-          }
+          "drift": null,
+          "composition": null
         },
         "substrate_compat": {
           "medal": "bronze",
           "target": "silver",
+          "applicability": "scored",
           "metrics": {
             "supports_juju_3": false,
             "supports_juju_4": false,
             "supports_ck8s": false
           },
-          "drift": {
-            "status": "remediating",
-            "first_seen_at": "2026-06-30T17:00:20.537842+00:00",
-            "deadline": "2027-06-30T17:00:20.537842+00:00"
-          }
+          "drift": null,
+          "composition": null
         },
         "security_ssdlc": {
           "medal": "bronze",
           "target": "silver",
+          "applicability": "scored",
           "metrics": {
             "dependabot_enabled": false,
             "codeql_enabled": false,
-            "branch_protection_required_checks": false
+            "branch_protection_required_checks": true
           },
-          "drift": {
-            "status": "remediating",
-            "first_seen_at": "2026-06-30T17:00:20.537842+00:00",
-            "deadline": "2027-06-30T17:00:20.537842+00:00"
-          }
+          "drift": null,
+          "composition": null
         },
         "support_engagement": {
-          "medal": "bronze",
+          "medal": "gold",
           "target": "silver",
+          "applicability": "scored",
           "metrics": {
-            "avg_triage_days": 392.8,
-            "avg_pr_review_days": 1.4,
+            "avg_triage_days": 0.0,
+            "avg_pr_review_days": 0.0,
             "has_squad_topic": true,
             "has_jira_sync": true
           },
-          "drift": {
-            "status": "remediating",
-            "first_seen_at": "2026-06-30T17:00:20.537842+00:00",
-            "deadline": "2027-06-30T17:00:20.537842+00:00"
-          }
+          "drift": null,
+          "composition": null
         }
       }
     },
     {
       "id": "wordpress-k8s",
-      "name": "WordPress",
-      "description": "A Juju charm deploying and managing WordPress on Kubernetes, with ingress integration and optional monitoring.",
+      "product_type": "charm",
+      "name": "wordpress-k8s",
+      "description": "",
       "lifecycle": "stable",
       "target_medal": "bronze",
       "current_medal": "unrated",
-      "squad": "apac",
-      "documentation_url": "https://charmhub.io/wordpress-k8s",
-      "allure_report_url": "https://canonical.github.io/wordpress-k8s-operator/_latest",
-      "components": {
-        "foundational": [
-          {
-            "id": "wordpress-k8s",
-            "type": "charm",
-            "github_repo": "canonical/wordpress-k8s-operator"
-          }
-        ],
-        "auxiliary": [
-          {
-            "id": "mysql-k8s",
-            "type": "charm",
-            "github_repo": "canonical/mysql-k8s-operator"
-          },
-          {
-            "id": "nginx-ingress-integrator",
-            "type": "charm",
-            "github_repo": "canonical/nginx-ingress-integrator-operator"
-          }
-        ]
+      "squad": "",
+      "is_portfolio_entry": false,
+      "documentation_url": "",
+      "source": {
+        "repo": "canonical/wordpress-k8s-operator",
+        "subpath": null
       },
+      "composed_of": null,
+      "context_refs": [],
+      "parent_product_ids": [
+        "wordpress"
+      ],
       "dimensions": {
         "test_verification": {
           "medal": "unrated",
           "target": "bronze",
+          "applicability": "scored",
           "metrics": {
             "coverage_pct": 0,
             "stability_pct": 100,
             "latest_build_passing": true,
-            "uses_ops_testing": true,
+            "uses_ops_testing": false,
             "uses_jubilant": false
           },
-          "drift": null
+          "drift": null,
+          "composition": null
         },
         "documentation": {
           "medal": "bronze",
           "target": "bronze",
+          "applicability": "scored",
           "metrics": {
             "has_readme": true,
             "has_contributing": true,
             "has_security": true,
             "diataxis_coverage": 3,
             "style_linter_passing": true,
-            "links_passing": true
+            "links_passing": false
           },
-          "drift": null
+          "drift": null,
+          "composition": null
         },
         "substrate_compat": {
           "medal": "silver",
           "target": "bronze",
+          "applicability": "scored",
           "metrics": {
             "supports_juju_3": true,
             "supports_juju_4": false,
             "supports_ck8s": false
           },
-          "drift": null
+          "drift": null,
+          "composition": null
         },
         "security_ssdlc": {
           "medal": "bronze",
           "target": "bronze",
+          "applicability": "scored",
           "metrics": {
             "dependabot_enabled": false,
             "codeql_enabled": false,
-            "branch_protection_required_checks": false
+            "branch_protection_required_checks": true
           },
-          "drift": null
+          "drift": null,
+          "composition": null
         },
         "support_engagement": {
           "medal": "bronze",
           "target": "bronze",
+          "applicability": "scored",
           "metrics": {
             "avg_triage_days": 735.1,
-            "avg_pr_review_days": 4.9,
+            "avg_pr_review_days": 6.6,
             "has_squad_topic": true,
             "has_jira_sync": true
           },
-          "drift": null
+          "drift": null,
+          "composition": null
         }
       }
     }
@@ -812,41 +2326,51 @@
     "test_verification": {
       "label": "Test Verification",
       "description": "Measures the breadth and reliability of automated test coverage across the product's component repositories.",
+      "applies_to": [
+        "charm",
+        "snap"
+      ],
+      "aggregation": "worst_in_scope",
       "outputs": {
         "coverage_pct": {
           "label": "Coverage",
           "description": "Percentage of source lines covered by automated tests, averaged across foundational components.",
           "type": "number",
           "range": "0\u2013100",
-          "ai_assisted": false
+          "ai_assisted": false,
+          "informational": false
         },
         "stability_pct": {
           "label": "Stability",
           "description": "Percentage of CI runs that passed over the last 30 days.",
           "type": "number",
           "range": "0\u2013100",
-          "ai_assisted": false
+          "ai_assisted": false,
+          "informational": false
         },
         "latest_build_passing": {
           "label": "Latest build passing",
           "description": "Whether the most recent CI run on the default branch is green.",
           "type": "boolean",
           "range": "",
-          "ai_assisted": false
+          "ai_assisted": false,
+          "informational": false
         },
         "uses_ops_testing": {
           "label": "Uses ops.testing (no Harness)",
           "description": "No references to the deprecated ops.testing Harness class found in test files. Checks via GitHub Search API.",
           "type": "boolean",
           "range": "",
-          "ai_assisted": false
+          "ai_assisted": false,
+          "informational": false
         },
         "uses_jubilant": {
           "label": "Uses Jubilant",
           "description": "Integration tests import the Jubilant framework. Canonical standard for charm integration testing.",
           "type": "boolean",
           "range": "",
-          "ai_assisted": false
+          "ai_assisted": false,
+          "informational": false
         }
       },
       "medals": {
@@ -873,48 +2397,59 @@
     "documentation": {
       "label": "Documentation",
       "description": "Evaluates the completeness and quality of product documentation against the Di\u00e1taxis framework and Canonical style guide.",
+      "applies_to": [
+        "charm",
+        "snap"
+      ],
+      "aggregation": "worst_in_scope",
       "outputs": {
         "has_readme": {
           "label": "README present",
           "description": "A README.md exists in the primary component repository.",
           "type": "boolean",
           "range": "",
-          "ai_assisted": false
+          "ai_assisted": false,
+          "informational": false
         },
         "has_contributing": {
           "label": "CONTRIBUTING present",
           "description": "A CONTRIBUTING.md guide exists, helping contributors get started.",
           "type": "boolean",
           "range": "",
-          "ai_assisted": false
+          "ai_assisted": false,
+          "informational": false
         },
         "has_security": {
           "label": "SECURITY present",
           "description": "A SECURITY.md file exists with vulnerability disclosure instructions.",
           "type": "boolean",
           "range": "",
-          "ai_assisted": false
+          "ai_assisted": false,
+          "informational": false
         },
         "diataxis_coverage": {
           "label": "Di\u00e1taxis coverage",
           "description": "Number of Di\u00e1taxis doc types present (tutorial, how-to, reference, explanation). Scored by LLM analysis of the docs folder.",
           "type": "number",
           "range": "0\u20134",
-          "ai_assisted": true
+          "ai_assisted": true,
+          "informational": false
         },
         "style_linter_passing": {
           "label": "Style linter passing",
           "description": "Documentation passes the Canonical Vale style linter with no errors.",
           "type": "boolean",
           "range": "",
-          "ai_assisted": true
+          "ai_assisted": true,
+          "informational": false
         },
         "links_passing": {
           "label": "Links passing",
-          "description": "All hyperlinks in documentation resolve without HTTP errors.",
+          "description": "All hyperlinks in documentation resolve without HTTP errors. Informational only \u2014 link checks are enforced separately by CI.",
           "type": "boolean",
           "range": "",
-          "ai_assisted": false
+          "ai_assisted": false,
+          "informational": true
         }
       },
       "medals": {
@@ -922,8 +2457,7 @@
           "criteria": [
             "has_readme == true",
             "has_contributing == true",
-            "has_security == true",
-            "links_passing == true"
+            "has_security == true"
           ]
         },
         "silver": {
@@ -942,27 +2476,34 @@
     "substrate_compat": {
       "label": "Substrate Compatibility",
       "description": "Checks that the product supports current and next-generation Juju and Charmed Kubernetes versions.",
+      "applies_to": [
+        "charm"
+      ],
+      "aggregation": "worst_in_scope",
       "outputs": {
         "supports_juju_3": {
           "label": "Juju 3 support",
           "description": "The product's charms declare compatibility with Juju 3.x in their metadata.",
           "type": "boolean",
           "range": "",
-          "ai_assisted": false
+          "ai_assisted": false,
+          "informational": false
         },
         "supports_juju_4": {
           "label": "Juju 4 support",
           "description": "The product's charms declare compatibility with Juju 4.x (next-gen).",
           "type": "boolean",
           "range": "",
-          "ai_assisted": false
+          "ai_assisted": false,
+          "informational": false
         },
         "supports_ck8s": {
           "label": "Charmed K8s support",
           "description": "The product is tested and documented for Charmed Kubernetes deployments.",
           "type": "boolean",
           "range": "",
-          "ai_assisted": false
+          "ai_assisted": false,
+          "informational": false
         }
       },
       "medals": {
@@ -982,27 +2523,35 @@
     "security_ssdlc": {
       "label": "Security / SSDLC",
       "description": "Verifies that the product follows the Secure Software Development Lifecycle practices mandated by Canonical's PSQF security baseline.",
+      "applies_to": [
+        "charm",
+        "snap"
+      ],
+      "aggregation": "worst_in_scope",
       "outputs": {
         "dependabot_enabled": {
           "label": "Dependabot enabled",
           "description": "A .github/dependabot.yml file is present in at least one foundational component repository, enabling automated dependency updates.",
           "type": "boolean",
           "range": "",
-          "ai_assisted": false
+          "ai_assisted": false,
+          "informational": false
         },
         "codeql_enabled": {
           "label": "CodeQL enabled",
           "description": "At least one foundational repository has a GitHub Actions workflow that references github/codeql-action, enabling static analysis.",
           "type": "boolean",
           "range": "",
-          "ai_assisted": false
+          "ai_assisted": false,
+          "informational": false
         },
         "branch_protection_required_checks": {
           "label": "Branch protection with required checks",
           "description": "The default branch has at least one required status check configured in branch protection rules, preventing merging of broken code.",
           "type": "boolean",
           "range": "",
-          "ai_assisted": false
+          "ai_assisted": false,
+          "informational": false
         }
       },
       "medals": {
@@ -1022,34 +2571,43 @@
     "support_engagement": {
       "label": "Support Engagement",
       "description": "Measures how responsive the product team is to community and customer issues and pull requests.",
+      "applies_to": [
+        "charm",
+        "snap"
+      ],
+      "aggregation": "worst_in_scope",
       "outputs": {
         "avg_triage_days": {
           "label": "Avg. triage time",
           "description": "Average number of days between issue creation and first team response or label, over the last 90 days.",
           "type": "number",
           "range": "\u2265 0 days",
-          "ai_assisted": false
+          "ai_assisted": false,
+          "informational": false
         },
         "avg_pr_review_days": {
           "label": "Avg. PR review time",
           "description": "Average number of days between PR opening and first review, over the last 90 days.",
           "type": "number",
           "range": "\u2265 0 days",
-          "ai_assisted": false
+          "ai_assisted": false,
+          "informational": false
         },
         "has_squad_topic": {
           "label": "Squad GitHub topic",
           "description": "The primary component repository has a GitHub topic matching 'squad-*', enabling automated ownership discovery and routing.",
           "type": "boolean",
           "range": "",
-          "ai_assisted": false
+          "ai_assisted": false,
+          "informational": false
         },
         "has_jira_sync": {
           "label": "Jira sync configured",
           "description": "A .github/.jira_sync_config.yaml file exists in the primary component repository, enabling GitHub-to-Jira issue synchronisation.",
           "type": "boolean",
           "range": "",
-          "ai_assisted": false
+          "ai_assisted": false,
+          "informational": false
         }
       },
       "medals": {
