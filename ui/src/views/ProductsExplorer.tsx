@@ -140,7 +140,7 @@ export default function ProductsExplorer() {
             value={medalFilter}
             onChange={e => setMedalFilter(e.target.value)}
             className="p-form__control"
-            style={{ width: 'auto' }}
+            style={{ width: 'auto', marginBottom: 0 }}
             aria-label="Filter by medal"
           >
             {MEDAL_OPTIONS.map(m => (
@@ -154,7 +154,7 @@ export default function ProductsExplorer() {
               value={typeFilter}
               onChange={e => setTypeFilter(e.target.value)}
               className="p-form__control"
-              style={{ width: 'auto' }}
+              style={{ width: 'auto', marginBottom: 0 }}
               aria-label="Filter by type"
             >
               <option value="all">All types</option>
@@ -169,7 +169,7 @@ export default function ProductsExplorer() {
             value={squadFilter}
             onChange={e => setSquadFilter(e.target.value)}
             className="p-form__control"
-            style={{ width: 'auto' }}
+            style={{ width: 'auto', marginBottom: 0 }}
             aria-label="Filter by squad"
           >
             <option value="all">All squads</option>
