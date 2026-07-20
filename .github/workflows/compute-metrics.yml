@@ -160,6 +160,7 @@ jobs:
   # ── 4. Commit artifacts back to main ────────────────────────────────────────
   commit-artifacts:
     needs: run-engine
+    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
