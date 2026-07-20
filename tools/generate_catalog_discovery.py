@@ -36,7 +36,7 @@ from engine.catalog_discovery import (
 )
 
 
-def load_product_files(d: str) -> list[dict[str, Any]]:
+def load_product_files(d: str, *, strict: bool = False) -> list[dict[str, Any]]:
     p = Path(d)
     if not p.exists() or not p.is_dir():
         # Caller-level code should validate existence; return empty to allow
@@ -65,7 +65,8 @@ def load_product_files(d: str) -> list[dict[str, Any]]:
             if isinstance(obj, dict):
                 products.append(obj)
         except Exception:
-            # ignore individual file errors
+            if strict:
+                raise
             continue
     return products
 
@@ -119,8 +120,10 @@ def generate_discovery_report(
     if not pqf_path.exists() or not pqf_path.is_dir():
         raise FileNotFoundError(f"pqf products directory not found: {pqf_dir!r}")
 
-    docs_raw = load_product_files(docs_dir)
-    pqf_raw = load_product_files(pqf_dir)
+    docs_raw = load_product_files(docs_dir, strict=True)
+    pqf_raw = load_product_files(pqf_dir, strict=True)
+    if not docs_raw:
+        raise ValueError(f"no docs product descriptors loaded from {docs_dir!r}")
 
     docs_norm = [normalize_docs_product(r) for r in docs_raw]
     pqf_norm = [normalize_pqf_product(r) for r in pqf_raw]
@@ -130,15 +133,13 @@ def generate_discovery_report(
     # classification: default classify docs-normalized products
     overrides: dict[str, str] = {}
     if overrides_file:
-        try:
-            text = Path(overrides_file).read_text(encoding="utf-8")
-            if overrides_file.endswith(".json"):
-                overrides = json.loads(text)
-            else:
-                if yaml:
-                    overrides = yaml.safe_load(text) or {}
-        except Exception:
-            overrides = {}
+        text = Path(overrides_file).read_text(encoding="utf-8")
+        if overrides_file.endswith(".json"):
+            overrides = json.loads(text)
+        else:
+            if not yaml:
+                raise RuntimeError("PyYAML is required for non-JSON overrides files")
+            overrides = yaml.safe_load(text) or {}
 
     classification: dict[str, str] = {}
     for p in docs_norm:

@@ -355,12 +355,6 @@ def build_field_mapping_report(
             elif top in pqf_schema_fields:
                 pqf_present = top
 
-            # By default, keep the intended ui target (the pqf_field) even if
-            # it's not present in the UI field set. This preserves the mapping
-            # intent for downstream consumers. Override only when UI exposes a
-            # canonical alternate (e.g. 'squad' for 'ownership.squad').
-            ui_field = pqf_field
-
             if pqf_field == "ownership.squad":
                 # Prefer ui dotted exposure if present, otherwise top-level 'squad'
                 if "ownership.squad" in ui_product_fields:
@@ -370,9 +364,6 @@ def build_field_mapping_report(
             else:
                 if pqf_field in ui_product_fields:
                     ui_field = pqf_field
-                elif pqf_field is None and src in ui_product_fields:
-                    # unlikely, but if docs field equals ui field name
-                    ui_field = src
 
         else:
             # No canonical mapping known for this docs field.

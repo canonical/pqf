@@ -218,6 +218,7 @@ _require-openrouter-key:
 
 # Generate a discovery artifact describing differences between docs and PQF catalog
 DOCS_PRODUCTS_DIR ?= .pqf-cache/platform-engineering-docs/data/products
+CATALOG_OVERRIDES_FILE ?=
 
 catalog-discovery:
 	$(PYTHON) tools/generate_catalog_discovery.py \
@@ -225,4 +226,5 @@ catalog-discovery:
 		--pqf-products-dir products \
 		--pqf-schema-path config/schemas/product.schema.json \
 		--ui-types-path ui/src/types.ts \
+		$(if $(CATALOG_OVERRIDES_FILE),--overrides $(CATALOG_OVERRIDES_FILE),) \
 		--output docs/superpowers/artifacts/2026-07-20-product-catalog-discovery.json
