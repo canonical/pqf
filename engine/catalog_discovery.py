@@ -116,7 +116,9 @@ def classify_product_role(product: dict, overrides: dict[str, str] | None = None
     """Classify a product as 'root' or 'leaf'.
 
     Rules:
-    - If an override exists for product['id'], return it.
+    - If an override exists for product['id'], validate and return it.
+      Only the contract values 'root' and 'leaf' (case-insensitive) are accepted.
+      Known case variants are normalized to lowercase. Unknown values raise ValueError.
     - Otherwise, if the product has any component with role == 'primary' and
       type in the supported charm/snap types, classify as 'root'.
     - Otherwise classify as 'leaf'.
@@ -124,7 +126,17 @@ def classify_product_role(product: dict, overrides: dict[str, str] | None = None
     overrides = overrides or {}
     pid = product.get("id")
     if pid in overrides:
-        return overrides[pid]
+        raw_val = overrides[pid]
+        if not isinstance(raw_val, str):
+            raise TypeError(f"override for {pid!r} must be a string")
+        val = raw_val.strip().lower()
+        if val in ("root", "leaf"):
+            return val
+        # Explicitly fail on unknown override values to avoid leaking unexpected
+        # or malformed contract outputs downstream.
+        raise ValueError(
+            f"invalid override value for {pid!r}: {raw_val!r}; expected 'root' or 'leaf'"
+        )
 
     primary_types = {"k8s-charm", "machine-charm", "subordinate-charm", "snap"}
     components = product.get("components", []) or []

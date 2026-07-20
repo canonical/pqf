@@ -79,3 +79,27 @@ def test_classifier_respects_force_leaf_override():
     }
     role = classify_product_role(product, overrides={"saml-integrator": "leaf"})
     assert role == "leaf"
+
+
+def test_default_root_classification_without_override():
+    from engine.catalog_discovery import classify_product_role
+
+    product = {
+        "id": "saml-integrator",
+        "components": [{"name": "saml-integrator", "role": "primary", "type": "k8s-charm"}],
+    }
+    # No overrides provided -> primary charm component should classify as root
+    role = classify_product_role(product)
+    assert role == "root"
+
+
+def test_invalid_override_raises():
+    from engine.catalog_discovery import classify_product_role
+
+    product = {"id": "foo", "components": []}
+    try:
+        classify_product_role(product, overrides={"foo": "unknown-role"})
+    except ValueError as e:
+        assert "invalid override value" in str(e)
+    else:
+        raise AssertionError("Expected ValueError for invalid override value")
