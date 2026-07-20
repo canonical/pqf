@@ -1,12 +1,24 @@
 {
   "inventory": {
-    "docs_count": 0,
+    "docs_count": 2,
     "pqf_count": 8,
-    "missing_in_pqf": [],
-    "overlap": [],
-    "id_mismatches": []
+    "missing_in_pqf": [
+      "wordpress-k8s"
+    ],
+    "overlap": [
+      "discourse"
+    ],
+    "id_mismatches": [
+      {
+        "pqf_id": "wordpress",
+        "docs_id": "wordpress-k8s"
+      }
+    ]
   },
-  "classification": {},
+  "classification": {
+    "discourse": "leaf",
+    "wordpress-k8s": "leaf"
+  },
   "field_mapping": [
     {
       "source_field": "components",
@@ -17,11 +29,6 @@
       "source_field": "description",
       "pqf_field": "description",
       "ui_field": "description"
-    },
-    {
-      "source_field": "documentation_url",
-      "pqf_field": "documentation_url",
-      "ui_field": "documentation_url"
     },
     {
       "source_field": "id",

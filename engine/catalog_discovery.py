@@ -255,7 +255,17 @@ def build_field_mapping_report(docs_fields: set[str] | None = None,
     # use it verbatim. Otherwise fall back to the known canonical mapping keys.
     source_fields = sorted(docs_fields) if docs_provided else sorted(simple_map.keys())
 
+    # Excluded docs fields that must not be reintroduced into mapping/reporting
+    EXCLUDED_DOCS_FIELDS = {"deployments", "communication"}
+
     for src in source_fields:
+        # Skip excluded fields defensively
+        if src in EXCLUDED_DOCS_FIELDS:
+            continue
+        # Skip generic ownership fields; only ownership.squad is allowed
+        if src == "ownership" or (src.startswith("ownership.") and src != "ownership.squad"):
+            continue
+
         pqf_field = simple_map.get(src)
         pqf_present = None
         ui_field = None
@@ -263,6 +273,7 @@ def build_field_mapping_report(docs_fields: set[str] | None = None,
         if pqf_field:
             # PQF presence may be expressed as the dotted name or the top-level container
             top = pqf_field.split(".")[0]
+            # Prefer exact dotted presence for ownership.squad when available
             if pqf_field in pqf_schema_fields:
                 pqf_present = pqf_field
             elif top in pqf_schema_fields:
@@ -275,6 +286,7 @@ def build_field_mapping_report(docs_fields: set[str] | None = None,
             ui_field = pqf_field
 
             if pqf_field == "ownership.squad":
+                # Prefer ui dotted exposure if present, otherwise top-level 'squad'
                 if "ownership.squad" in ui_product_fields:
                     ui_field = "ownership.squad"
                 elif "squad" in ui_product_fields:

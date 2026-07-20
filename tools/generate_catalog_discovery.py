@@ -37,6 +37,8 @@ from engine.catalog_discovery import (
 def load_product_files(d: str) -> list[dict[str, Any]]:
     p = Path(d)
     if not p.exists() or not p.is_dir():
+        # Caller-level code should validate existence; return empty to allow
+        # best-effort behavior in callers that intentionally want that.
         return []
     products: list[dict[str, Any]] = []
     for f in sorted(p.iterdir()):
@@ -78,15 +80,21 @@ def infer_docs_fields(docs_products: list[dict[str, Any]]) -> set[str]:
         for k in raw.keys() if isinstance(raw, dict) else []:
             if k == "product":
                 continue
+            # Exclude non-migration fields that should not be exposed
+            if k in ("deployments", "communication"):
+                continue
             if k == "ownership":
-                # ownership.squad
+                # Only expose squad ownership for migration; ignore other ownership
+                # metadata to avoid reintroducing internal fields.
                 if (
                     isinstance(raw.get("ownership"), dict)
                     and raw.get("ownership").get("squad") is not None
                 ):
                     fields.add("ownership.squad")
                 else:
-                    fields.add("ownership")
+                    # Do not add a generic 'ownership' field — it would reintroduce
+                    # non-squad ownership details which are excluded by policy.
+                    continue
             else:
                 fields.add(k)
     return fields
@@ -95,6 +103,16 @@ def infer_docs_fields(docs_products: list[dict[str, Any]]) -> set[str]:
 def generate_discovery_report(
     docs_dir: str, pqf_dir: str, overrides_file: str | None = None
 ) -> dict[str, Any]:
+    # Fail fast if the docs source directory is absent — avoid silently
+    # producing an empty artifact that masks missing input.
+    docs_path = Path(docs_dir)
+    if not docs_path.exists() or not docs_path.is_dir():
+        raise FileNotFoundError(f"docs products directory not found: {docs_dir!r}")
+
+    pqf_path = Path(pqf_dir)
+    if not pqf_path.exists() or not pqf_path.is_dir():
+        raise FileNotFoundError(f"pqf products directory not found: {pqf_dir!r}")
+
     docs_raw = load_product_files(docs_dir)
     pqf_raw = load_product_files(pqf_dir)
 
@@ -160,11 +178,16 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--overrides", required=False)
     args = parser.parse_args(argv)
 
-    report = generate_discovery_report(
-        args.docs_products_dir,
-        args.pqf_products_dir,
-        args.overrides,
-    )
+    try:
+        report = generate_discovery_report(
+            args.docs_products_dir,
+            args.pqf_products_dir,
+            args.overrides,
+        )
+    except Exception as e:
+        # Fail loudly for CI and callers; print helpful message to stderr
+        print(f"Error: {e}", flush=True)
+        return 2
 
     out_path = Path(args.output)
     out_path.parent.mkdir(parents=True, exist_ok=True)
