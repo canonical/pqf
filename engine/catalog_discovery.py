@@ -279,7 +279,8 @@ def build_field_mapping_report(docs_fields: set[str] | None = None,
                     ui_field = src
 
         else:
-            # No canonical mapping known for this docs field; detect if UI or PQF happens to contain same name
+            # No canonical mapping known for this docs field.
+            # Detect if UI or PQF happens to contain the same name.
             if src in pqf_schema_fields:
                 pqf_present = src
             if src in ui_product_fields:

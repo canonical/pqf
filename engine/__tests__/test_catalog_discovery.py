@@ -1,10 +1,10 @@
 from engine.catalog_discovery import (
+    build_field_mapping_report,
+    build_gap_report,
     build_inventory_report,
     canonical_docs_id,
     normalize_docs_product,
     normalize_pqf_product,
-    build_gap_report,
-    build_field_mapping_report,
 )
 
 
