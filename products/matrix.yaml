@@ -43,11 +43,7 @@ composed_of:
     source:
       repo: canonical/synapse_stats_exporter
     target_medal: bronze
-  - id: saml-integrator
-    product_type: charm
-    source:
-      repo: canonical/saml-integrator-operator
-    target_medal: bronze
+  - ref: saml-integrator
 documentation_url: https://ubuntu.com/community/communications/matrix
 context_refs:
   - label: Maubot
