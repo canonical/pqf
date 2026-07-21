@@ -31,7 +31,8 @@ def test_compute_metrics_deploys_production_from_engine_artifacts() -> None:
 
     deploy_job = jobs["deploy-production"]
     assert deploy_job["needs"] == "run-engine"
-    # Production deploy must be allowed for schedule, workflow_dispatch, or pushes to main in canonical/pqf
+    # Production deploy must be allowed for schedule, workflow_dispatch,
+    # or pushes to main in canonical/pqf.
     expr = deploy_job["if"]
     assert "github.event_name == 'schedule'" in expr
     assert "github.event_name == 'workflow_dispatch'" in expr
@@ -70,7 +71,9 @@ def test_compute_metrics_deploys_production_from_engine_artifacts() -> None:
 
     preview_names = step_names(preview)
     # Step name includes extra context in YAML; check substring for robustness
-    assert any("Download engine artifacts" in n for n in preview_names), "preview must download engine-artifacts"
+    assert any("Download engine artifacts" in n for n in preview_names), (
+        "preview must download engine-artifacts"
+    )
     assert "Build UI" in preview_names, "preview must build the UI"
 
     # Verify ordering: download occurs before build in preview job
@@ -98,13 +101,15 @@ def test_deploy_pages_only_runs_for_ui_changes_and_skips_mixed_commits() -> None
 
     detect_scope = jobs["detect-scope"]
     detect_step = next(
-        step for step in detect_scope["steps"] if step.get("name") == "Detect data-affecting changes"
+        step
+        for step in detect_scope["steps"]
+        if step.get("name") == "Detect data-affecting changes"
     )
     # The detect step must handle the all-zero "before" (initial commit) case by
     # diffing against the empty tree object instead of the root commit.
     assert "0000000000000000000000000000000000000000" in detect_step["run"]
-    assert "git hash-object -t tree" in detect_step["run"] or "git rev-list --max-parents=0" in detect_step["run"]
-    assert '"$base"' in detect_step["run"] or '"$before"' in detect_step["run"]
+    assert "git hash-object -t tree" in detect_step["run"]
+    assert '"$base"' in detect_step["run"]
     assert "git diff --name-only" in detect_step["run"]
     assert "products/ config/ scorers/ engine/" in detect_step["run"]
     assert detect_scope["outputs"]["data_changed"] == "${{ steps.scope.outputs.data_changed }}"
