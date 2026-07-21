@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-21T14:03:45.425438+00:00",
+  "generated_at": "2026-07-21T14:10:16.262707+00:00",
   "products": [
     {
       "id": "12-factor",
@@ -21,14 +21,13 @@
         {
           "product_id": "charmcraft",
           "excluded_from_parent_medal": false
-        }
-      ],
-      "context_refs": [
+        },
         {
-          "label": "Paas Charm",
-          "repo": "canonical/paas-charm"
+          "product_id": "paas-charm",
+          "excluded_from_parent_medal": false
         }
       ],
+      "context_refs": [],
       "parent_product_ids": [],
       "dimensions": {
         "test_verification": {
@@ -49,6 +48,14 @@
             {
               "product_id": "charmcraft",
               "repo": "canonical/charmcraft",
+              "medal": "unrated",
+              "applicability": "insufficient_data",
+              "metrics": {},
+              "excluded_from_parent_medal": false
+            },
+            {
+              "product_id": "paas-charm",
+              "repo": "canonical/paas-charm",
               "medal": "unrated",
               "applicability": "insufficient_data",
               "metrics": {},
@@ -78,13 +85,21 @@
               "applicability": "insufficient_data",
               "metrics": {},
               "excluded_from_parent_medal": false
+            },
+            {
+              "product_id": "paas-charm",
+              "repo": "canonical/paas-charm",
+              "medal": "unrated",
+              "applicability": "insufficient_data",
+              "metrics": {},
+              "excluded_from_parent_medal": false
             }
           ]
         },
         "substrate_compat": {
           "medal": "unrated",
           "target": "gold",
-          "applicability": "not_applicable",
+          "applicability": "insufficient_data",
           "metrics": {},
           "drift": null,
           "composition": [
@@ -101,6 +116,14 @@
               "repo": "canonical/charmcraft",
               "medal": "unrated",
               "applicability": "not_applicable",
+              "metrics": {},
+              "excluded_from_parent_medal": false
+            },
+            {
+              "product_id": "paas-charm",
+              "repo": "canonical/paas-charm",
+              "medal": "unrated",
+              "applicability": "insufficient_data",
               "metrics": {},
               "excluded_from_parent_medal": false
             }
@@ -128,6 +151,14 @@
               "applicability": "insufficient_data",
               "metrics": {},
               "excluded_from_parent_medal": false
+            },
+            {
+              "product_id": "paas-charm",
+              "repo": "canonical/paas-charm",
+              "medal": "unrated",
+              "applicability": "insufficient_data",
+              "metrics": {},
+              "excluded_from_parent_medal": false
             }
           ]
         },
@@ -149,6 +180,14 @@
             {
               "product_id": "charmcraft",
               "repo": "canonical/charmcraft",
+              "medal": "unrated",
+              "applicability": "insufficient_data",
+              "metrics": {},
+              "excluded_from_parent_medal": false
+            },
+            {
+              "product_id": "paas-charm",
+              "repo": "canonical/paas-charm",
               "medal": "unrated",
               "applicability": "insufficient_data",
               "metrics": {},
@@ -2657,10 +2696,6 @@
       ],
       "context_refs": [
         {
-          "label": "Httprequest Lego Provider",
-          "repo": "canonical/httprequest-lego-provider"
-        },
-        {
           "label": "Postgresql K8S",
           "repo": "canonical/postgresql-k8s-operator"
         }
@@ -2773,18 +2808,6 @@
         }
       ],
       "context_refs": [
-        {
-          "label": "Indico",
-          "repo": "canonical/indico-operator"
-        },
-        {
-          "label": "Anonymize",
-          "repo": "canonical/indico-operator"
-        },
-        {
-          "label": "Autocreate",
-          "repo": "canonical/indico-operator"
-        },
         {
           "label": "Smtp Integrator",
           "repo": "canonical/smtp-integrator-operator"
@@ -3441,17 +3464,17 @@
         {
           "product_id": "saml-integrator",
           "excluded_from_parent_medal": false
+        },
+        {
+          "product_id": "maubot",
+          "excluded_from_parent_medal": false
+        },
+        {
+          "product_id": "irc-bridge",
+          "excluded_from_parent_medal": false
         }
       ],
       "context_refs": [
-        {
-          "label": "Maubot",
-          "repo": "canonical/maubot-operator"
-        },
-        {
-          "label": "Irc Bridge",
-          "repo": "canonical/irc-bridge-operator"
-        },
         {
           "label": "Smtp Integrator",
           "repo": "canonical/smtp-integrator-operator"
@@ -3466,7 +3489,7 @@
         },
         {
           "label": "Redis K8S",
-          "repo": "canonical/postgresql-k8s-operator"
+          "repo": "canonical/redis-k8s-operator"
         }
       ],
       "parent_product_ids": [],
@@ -3544,6 +3567,22 @@
                 "uses_ops_testing": false,
                 "uses_jubilant": false
               },
+              "excluded_from_parent_medal": false
+            },
+            {
+              "product_id": "maubot",
+              "repo": "canonical/maubot-operator",
+              "medal": "unrated",
+              "applicability": "insufficient_data",
+              "metrics": {},
+              "excluded_from_parent_medal": false
+            },
+            {
+              "product_id": "irc-bridge",
+              "repo": "canonical/irc-bridge-operator",
+              "medal": "unrated",
+              "applicability": "insufficient_data",
+              "metrics": {},
               "excluded_from_parent_medal": false
             }
           ]
@@ -3624,6 +3663,22 @@
                 "links_passing": false
               },
               "excluded_from_parent_medal": false
+            },
+            {
+              "product_id": "maubot",
+              "repo": "canonical/maubot-operator",
+              "medal": "unrated",
+              "applicability": "insufficient_data",
+              "metrics": {},
+              "excluded_from_parent_medal": false
+            },
+            {
+              "product_id": "irc-bridge",
+              "repo": "canonical/irc-bridge-operator",
+              "medal": "unrated",
+              "applicability": "insufficient_data",
+              "metrics": {},
+              "excluded_from_parent_medal": false
             }
           ]
         },
@@ -3697,6 +3752,22 @@
                 "supports_ck8s": false
               },
               "excluded_from_parent_medal": false
+            },
+            {
+              "product_id": "maubot",
+              "repo": "canonical/maubot-operator",
+              "medal": "unrated",
+              "applicability": "insufficient_data",
+              "metrics": {},
+              "excluded_from_parent_medal": false
+            },
+            {
+              "product_id": "irc-bridge",
+              "repo": "canonical/irc-bridge-operator",
+              "medal": "unrated",
+              "applicability": "insufficient_data",
+              "metrics": {},
+              "excluded_from_parent_medal": false
             }
           ]
         },
@@ -3769,6 +3840,22 @@
                 "codeql_enabled": false,
                 "branch_protection_required_checks": true
               },
+              "excluded_from_parent_medal": false
+            },
+            {
+              "product_id": "maubot",
+              "repo": "canonical/maubot-operator",
+              "medal": "unrated",
+              "applicability": "insufficient_data",
+              "metrics": {},
+              "excluded_from_parent_medal": false
+            },
+            {
+              "product_id": "irc-bridge",
+              "repo": "canonical/irc-bridge-operator",
+              "medal": "unrated",
+              "applicability": "insufficient_data",
+              "metrics": {},
               "excluded_from_parent_medal": false
             }
           ]
@@ -3844,6 +3931,22 @@
                 "has_squad_topic": true,
                 "has_jira_sync": true
               },
+              "excluded_from_parent_medal": false
+            },
+            {
+              "product_id": "maubot",
+              "repo": "canonical/maubot-operator",
+              "medal": "unrated",
+              "applicability": "insufficient_data",
+              "metrics": {},
+              "excluded_from_parent_medal": false
+            },
+            {
+              "product_id": "irc-bridge",
+              "repo": "canonical/irc-bridge-operator",
+              "medal": "unrated",
+              "applicability": "insufficient_data",
+              "metrics": {},
               "excluded_from_parent_medal": false
             }
           ]
@@ -5949,6 +6052,69 @@
           "medal": "unrated",
           "target": "gold",
           "applicability": "not_applicable",
+          "metrics": {},
+          "drift": null,
+          "composition": null
+        },
+        "security_ssdlc": {
+          "medal": "unrated",
+          "target": "gold",
+          "applicability": "insufficient_data",
+          "metrics": {},
+          "drift": null,
+          "composition": null
+        },
+        "support_engagement": {
+          "medal": "unrated",
+          "target": "gold",
+          "applicability": "insufficient_data",
+          "metrics": {},
+          "drift": null,
+          "composition": null
+        }
+      }
+    },
+    {
+      "id": "paas-charm",
+      "product_type": "charm",
+      "name": "paas-charm",
+      "description": "",
+      "lifecycle": "stable",
+      "target_medal": "gold",
+      "current_medal": "unrated",
+      "squad": "",
+      "is_portfolio_entry": false,
+      "documentation_url": "",
+      "source": {
+        "repo": "canonical/paas-charm",
+        "subpath": null
+      },
+      "composed_of": null,
+      "context_refs": [],
+      "parent_product_ids": [
+        "12-factor"
+      ],
+      "dimensions": {
+        "test_verification": {
+          "medal": "unrated",
+          "target": "gold",
+          "applicability": "insufficient_data",
+          "metrics": {},
+          "drift": null,
+          "composition": null
+        },
+        "documentation": {
+          "medal": "unrated",
+          "target": "gold",
+          "applicability": "insufficient_data",
+          "metrics": {},
+          "drift": null,
+          "composition": null
+        },
+        "substrate_compat": {
+          "medal": "unrated",
+          "target": "gold",
+          "applicability": "insufficient_data",
           "metrics": {},
           "drift": null,
           "composition": null
@@ -9240,6 +9406,132 @@
           "medal": "unrated",
           "target": "bronze",
           "applicability": "not_applicable",
+          "metrics": {},
+          "drift": null,
+          "composition": null
+        },
+        "security_ssdlc": {
+          "medal": "unrated",
+          "target": "bronze",
+          "applicability": "insufficient_data",
+          "metrics": {},
+          "drift": null,
+          "composition": null
+        },
+        "support_engagement": {
+          "medal": "unrated",
+          "target": "bronze",
+          "applicability": "insufficient_data",
+          "metrics": {},
+          "drift": null,
+          "composition": null
+        }
+      }
+    },
+    {
+      "id": "maubot",
+      "product_type": "charm",
+      "name": "maubot",
+      "description": "",
+      "lifecycle": "stable",
+      "target_medal": "bronze",
+      "current_medal": "unrated",
+      "squad": "",
+      "is_portfolio_entry": false,
+      "documentation_url": "",
+      "source": {
+        "repo": "canonical/maubot-operator",
+        "subpath": null
+      },
+      "composed_of": null,
+      "context_refs": [],
+      "parent_product_ids": [
+        "matrix"
+      ],
+      "dimensions": {
+        "test_verification": {
+          "medal": "unrated",
+          "target": "bronze",
+          "applicability": "insufficient_data",
+          "metrics": {},
+          "drift": null,
+          "composition": null
+        },
+        "documentation": {
+          "medal": "unrated",
+          "target": "bronze",
+          "applicability": "insufficient_data",
+          "metrics": {},
+          "drift": null,
+          "composition": null
+        },
+        "substrate_compat": {
+          "medal": "unrated",
+          "target": "bronze",
+          "applicability": "insufficient_data",
+          "metrics": {},
+          "drift": null,
+          "composition": null
+        },
+        "security_ssdlc": {
+          "medal": "unrated",
+          "target": "bronze",
+          "applicability": "insufficient_data",
+          "metrics": {},
+          "drift": null,
+          "composition": null
+        },
+        "support_engagement": {
+          "medal": "unrated",
+          "target": "bronze",
+          "applicability": "insufficient_data",
+          "metrics": {},
+          "drift": null,
+          "composition": null
+        }
+      }
+    },
+    {
+      "id": "irc-bridge",
+      "product_type": "charm",
+      "name": "irc-bridge",
+      "description": "",
+      "lifecycle": "stable",
+      "target_medal": "bronze",
+      "current_medal": "unrated",
+      "squad": "",
+      "is_portfolio_entry": false,
+      "documentation_url": "",
+      "source": {
+        "repo": "canonical/irc-bridge-operator",
+        "subpath": null
+      },
+      "composed_of": null,
+      "context_refs": [],
+      "parent_product_ids": [
+        "matrix"
+      ],
+      "dimensions": {
+        "test_verification": {
+          "medal": "unrated",
+          "target": "bronze",
+          "applicability": "insufficient_data",
+          "metrics": {},
+          "drift": null,
+          "composition": null
+        },
+        "documentation": {
+          "medal": "unrated",
+          "target": "bronze",
+          "applicability": "insufficient_data",
+          "metrics": {},
+          "drift": null,
+          "composition": null
+        },
+        "substrate_compat": {
+          "medal": "unrated",
+          "target": "bronze",
+          "applicability": "insufficient_data",
           "metrics": {},
           "drift": null,
           "composition": null
