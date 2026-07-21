@@ -98,6 +98,11 @@ def test_compute_metrics_deploys_production_from_engine_artifacts() -> None:
 
     assert "github.event.action != 'closed'" in preview_if
 
+    preview_deploy_step = next(
+        step for step in preview["steps"] if step.get("name") == "Deploy PR preview"
+    )
+    assert preview_deploy_step["with"]["comment"] is False
+
     assert "cleanup-preview" in jobs, "expected 'cleanup-preview' job for closed PRs"
     cleanup = jobs["cleanup-preview"]
     cleanup_if = cleanup.get("if", "")
@@ -113,6 +118,7 @@ def test_compute_metrics_deploys_production_from_engine_artifacts() -> None:
     assert cleanup_step["with"]["preview-branch"] == "gh-pages"
     assert cleanup_step["with"]["umbrella-dir"] == "pr-preview"
     assert cleanup_step["with"]["pr-number"] == "${{ github.event.pull_request.number }}"
+    assert cleanup_step["with"]["comment"] is False
 
 
 def test_deploy_pages_only_runs_for_ui_changes_and_skips_mixed_commits() -> None:

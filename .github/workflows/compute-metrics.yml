@@ -261,6 +261,7 @@ jobs:
           umbrella-dir: pr-preview
           action: deploy
           pr-number: ${{ github.event.pull_request.number }}
+          comment: false
 
   cleanup-preview:
     if: >
@@ -279,6 +280,7 @@ jobs:
           umbrella-dir: pr-preview
           action: remove
           pr-number: ${{ github.event.pull_request.number }}
+          comment: false
 
   # ── 5. Build and deploy production site from fresh engine artifacts ───────────
   deploy-production:
