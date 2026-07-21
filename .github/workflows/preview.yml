@@ -15,6 +15,11 @@ permissions:
   contents: read
   pull-requests: write
 
+# For forks, we need write permissions on the fork itself, not the upstream
+# This will be handled by the deploy step gracefully failing on forks
+env:
+  IS_FORK: ${{ github.repository != 'canonical/pqf' }}
+
 concurrency:
   group: gh-pages-preview-${{ github.event.workflow_run.head_branch || github.ref_name }}
   cancel-in-progress: false
@@ -55,9 +60,17 @@ jobs:
         # Vite copies ../public/ (containing fresh portfolio.json from artifacts) into dist/
 
       - name: Deploy PR preview
+        if: github.repository == 'canonical/pqf'
         uses: rossjrw/pr-preview-action@v1
         with:
           source-dir: ./ui/dist
           preview-branch: gh-pages
           umbrella-dir: pr-preview
           action: deploy
+
+      - name: Note about fork deployments
+        if: github.repository != 'canonical/pqf'
+        run: |
+          echo "✓ Build successful!"
+          echo "Note: PR preview deployment only works on the canonical/pqf repository."
+          echo "Preview URL would be: https://canonical.github.io/pqf/pr-preview/pr-{PR_NUMBER}/"
