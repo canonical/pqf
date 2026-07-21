@@ -8,20 +8,20 @@ target_medal: gold
 ownership:
   squad: emea
   stakeholders:
-  - Starcraft
-  - Rockcrafters
+    - Starcraft
+    - Rockcrafters
 composed_of:
-- id: 12-factor-rockcraft
-  product_type: snap
-  source:
-    repo: canonical/rockcraft
-  target_medal: gold
-- id: 12-factor-charmcraft
-  product_type: snap
-  source:
-    repo: canonical/charmcraft
-  target_medal: gold
+  - id: rockcraft
+    product_type: snap
+    source:
+      repo: canonical/rockcraft
+    target_medal: gold
+  - id: charmcraft
+    product_type: snap
+    source:
+      repo: canonical/charmcraft
+    target_medal: gold
 documentation_url: https://canonical.com/juju/docs/12-factor/latest/
 context_refs:
-- label: Paas Charm
-  repo: canonical/paas-charm
+  - label: Paas Charm
+    repo: canonical/paas-charm

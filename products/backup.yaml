@@ -1,48 +1,43 @@
 id: backup
 product_type: root
 name: Backup
-description: 'The Backup product provides an easy-to-use, highly integrated backup
-  solution
-
+description: |-
+  The Backup product provides an easy-to-use, highly integrated backup solution
   for charms in Juju, built on top of the Bacula backup system.
 
-
   It includes a server charm managing all Bacula server components (Director,
-
   Storage Daemon, and Baculum web UI), a subordinate File Daemon charm deployed
-
   alongside workloads to be backed up, and an integrator charm that brokers
-
-  backup relations on behalf of other charms.'
+  backup relations on behalf of other charms.
 lifecycle: stable
 target_medal: silver
 ownership:
   squad: apac
   stakeholders:
-  - IS
+    - IS
 composed_of:
-- id: backup-bacula-server
-  product_type: charm
-  source:
-    repo: canonical/backup-operators
-    subpath: bacula_server_operator
-  target_medal: silver
-- id: backup-bacula-fd
-  product_type: charm
-  source:
-    repo: canonical/backup-operators
-    subpath: bacula_fd_operator
-  target_medal: silver
-- id: backup-backup-integrator
-  product_type: charm
-  source:
-    repo: canonical/backup-operators
-    subpath: backup_integrator_operator
-  target_medal: silver
-- id: backup-charmed-bacula-server
-  product_type: snap
-  source:
-    repo: canonical/backup-operators
-    subpath: charmed_bacula_server
-  target_medal: silver
+  - id: bacula-server
+    product_type: charm
+    source:
+      repo: canonical/backup-operators
+      subpath: bacula_server_operator
+    target_medal: silver
+  - id: bacula-fd
+    product_type: charm
+    source:
+      repo: canonical/backup-operators
+      subpath: bacula_fd_operator
+    target_medal: silver
+  - id: backup-integrator
+    product_type: charm
+    source:
+      repo: canonical/backup-operators
+      subpath: backup_integrator_operator
+    target_medal: silver
+  - id: charmed-bacula-server
+    product_type: snap
+    source:
+      repo: canonical/backup-operators
+      subpath: charmed_bacula_server
+    target_medal: silver
 documentation_url: https://documentation.ubuntu.com/backup-operators/

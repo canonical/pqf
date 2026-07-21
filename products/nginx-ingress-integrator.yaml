@@ -8,10 +8,10 @@ target_medal: bronze
 ownership:
   squad: emea
   stakeholders:
-  - IS
+    - IS
 composed_of:
-- id: nginx-ingress-integrator-nginx-ingress-integrator
-  product_type: charm
-  source:
-    repo: canonical/nginx-ingress-integrator-operator
-  target_medal: bronze
+  - id: nginx-ingress-integrator-charm
+    product_type: charm
+    source:
+      repo: canonical/nginx-ingress-integrator-operator
+    target_medal: bronze

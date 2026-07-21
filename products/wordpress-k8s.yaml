@@ -1,30 +1,27 @@
 id: wordpress-k8s
 product_type: root
 name: WordPress
-description: 'A Juju charm deploying and managing WordPress on Kubernetes. It supports
-  scaling,
-
-  ingress integration, and optional integrations like logging and monitoring. See
-  end-user docs at
-
-  https://documentation.ubuntu.com/wordpress-k8s-charm/latest/.'
+description: |-
+  A Juju charm deploying and managing WordPress on Kubernetes. It supports scaling,
+  ingress integration, and optional integrations like logging and monitoring. See end-user docs at
+  https://documentation.ubuntu.com/wordpress-k8s-charm/latest/.
 lifecycle: stable
 target_medal: bronze
 ownership:
   squad: apac
   stakeholders:
-  - IS
+    - IS
 composed_of:
-- id: wordpress-k8s-wordpress-k8s
-  product_type: charm
-  source:
-    repo: canonical/wordpress-k8s-operator
-  target_medal: bronze
+  - id: wordpress-k8s-charm
+    product_type: charm
+    source:
+      repo: canonical/wordpress-k8s-operator
+    target_medal: bronze
 documentation_url: https://charmhub.io/wordpress-k8s
 context_refs:
-- label: Mysql K8S
-  repo: canonical/mysql-k8s-operator
-- label: Nginx Ingress Integrator
-  repo: canonical/nginx-ingress-integrator-operator
-- label: Loki K8S
-  repo: canonical/loki-k8s-operator
+  - label: Mysql K8S
+    repo: canonical/mysql-k8s-operator
+  - label: Nginx Ingress Integrator
+    repo: canonical/nginx-ingress-integrator-operator
+  - label: Loki K8S
+    repo: canonical/loki-k8s-operator

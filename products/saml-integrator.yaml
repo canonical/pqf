@@ -9,9 +9,9 @@ target_medal: gold
 ownership:
   squad: emea
 composed_of:
-- id: saml-integrator-saml-integrator
-  product_type: charm
-  source:
-    repo: canonical/saml-integrator-operator
-  target_medal: gold
+  - id: saml-integrator-charm
+    product_type: charm
+    source:
+      repo: canonical/saml-integrator-operator
+    target_medal: gold
 documentation_url: https://charmhub.io/saml-integrator

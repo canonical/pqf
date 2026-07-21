@@ -1,61 +1,57 @@
 id: self-hosted-github-runner
 product_type: root
 name: Self-hosted GitHub Actions Runner
-description: 'The Self-Hosted GitHub Runner provides self-hosted GitHub Actions Runners.
-  Note, that there is a dedicated
-
-  documentation for our end-users available at https://documentation.ubuntu.com/self-hosted-runners/en/latest/
-  .
-
-  The documentation hosted here is mainly used for operational and team-internal information
-  only.'
+description: |-
+  The Self-Hosted GitHub Runner provides self-hosted GitHub Actions Runners. Note, that there is a dedicated
+  documentation for our end-users available at https://documentation.ubuntu.com/self-hosted-runners/en/latest/ .
+  The documentation hosted here is mainly used for operational and team-internal information only.
 lifecycle: stable
 target_medal: gold
 ownership:
   squad: apac
   stakeholders:
-  - IS
+    - IS
 composed_of:
-- id: self-hosted-github-runner-github-runner
-  product_type: charm
-  source:
-    repo: canonical/github-runner-operator
-  target_medal: gold
-- id: self-hosted-github-runner-github-runner-image-builder
-  product_type: charm
-  source:
-    repo: canonical/github-runner-image-builder-operator
-  target_medal: gold
-- id: self-hosted-github-runner-github-runner-webhook-router
-  product_type: charm
-  source:
-    repo: canonical/github-runner-webhook-router
-  target_medal: gold
-- id: self-hosted-github-runner-tmate-ssh-server
-  product_type: charm
-  source:
-    repo: canonical/tmate-ssh-server-operator
-  target_medal: gold
-- id: self-hosted-github-runner-repo-policy-compliance
-  product_type: charm
-  source:
-    repo: canonical/repo-policy-compliance
-  target_medal: gold
-- id: self-hosted-github-runner-github-runner-planner
-  product_type: charm
-  source:
-    repo: canonical/github-runner-operators
-    subpath: charms/planner-operator
-  target_medal: gold
-- id: self-hosted-github-runner-github-runner-webhook-gateway
-  product_type: charm
-  source:
-    repo: canonical/github-runner-operators
-    subpath: charms/webhook-gateway-operator
-  target_medal: gold
+  - id: github-runner
+    product_type: charm
+    source:
+      repo: canonical/github-runner-operator
+    target_medal: gold
+  - id: github-runner-image-builder
+    product_type: charm
+    source:
+      repo: canonical/github-runner-image-builder-operator
+    target_medal: gold
+  - id: github-runner-webhook-router
+    product_type: charm
+    source:
+      repo: canonical/github-runner-webhook-router
+    target_medal: gold
+  - id: tmate-ssh-server
+    product_type: charm
+    source:
+      repo: canonical/tmate-ssh-server-operator
+    target_medal: gold
+  - id: repo-policy-compliance
+    product_type: charm
+    source:
+      repo: canonical/repo-policy-compliance
+    target_medal: gold
+  - id: github-runner-planner
+    product_type: charm
+    source:
+      repo: canonical/github-runner-operators
+      subpath: charms/planner-operator
+    target_medal: gold
+  - id: github-runner-webhook-gateway
+    product_type: charm
+    source:
+      repo: canonical/github-runner-operators
+      subpath: charms/webhook-gateway-operator
+    target_medal: gold
 documentation_url: https://documentation.ubuntu.com/self-hosted-runners/en/latest/
 context_refs:
-- label: Github Actions Runner
-  repo: canonical/github-actions-runner
-- label: Action Tmate
-  repo: canonical/action-tmate
+  - label: Github Actions Runner
+    repo: canonical/github-actions-runner
+  - label: Action Tmate
+    repo: canonical/action-tmate

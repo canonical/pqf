@@ -8,13 +8,13 @@ target_medal: gold
 ownership:
   squad: americas
   stakeholders:
-  - IS
+    - IS
 composed_of:
-- id: mattermost-mattermost
-  product_type: charm
-  source:
-    repo: canonical/mattermost-k8s-operator
-  target_medal: gold
+  - id: mattermost-charm
+    product_type: charm
+    source:
+      repo: canonical/mattermost-k8s-operator
+    target_medal: gold
 documentation_url: https://charmhub.io/mattermost-k8s
 context_refs:
-- label: Postgresql K8S
+  - label: Postgresql K8S

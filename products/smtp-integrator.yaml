@@ -8,8 +8,8 @@ target_medal: silver
 ownership:
   squad: emea
 composed_of:
-- id: smtp-integrator-smtp-integrator
-  product_type: charm
-  source:
-    repo: canonical/smtp-integrator-operator
-  target_medal: silver
+  - id: smtp-integrator-charm
+    product_type: charm
+    source:
+      repo: canonical/smtp-integrator-operator
+    target_medal: silver

@@ -8,13 +8,13 @@ target_medal: gold
 ownership:
   squad: emea
   stakeholders:
-  - IS
+    - IS
 composed_of:
-- id: traefik-k8s-traefik-k8s
-  product_type: charm
-  source:
-    repo: canonical/traefik-k8s-operator
-  target_medal: gold
+  - id: traefik-k8s-charm
+    product_type: charm
+    source:
+      repo: canonical/traefik-k8s-operator
+    target_medal: gold
 context_refs:
-- label: Traefik Rock
-  repo: canonical/traefik-rock
+  - label: Traefik Rock
+    repo: canonical/traefik-rock

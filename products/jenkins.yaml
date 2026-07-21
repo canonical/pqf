@@ -1,36 +1,31 @@
 id: jenkins
 product_type: root
 name: Jenkins
-description: 'Jenkins is an extendable continuous integration server that monitors
-  executions of repeated jobs.
-
-  The focus of Jenkins is the building/testing of software projects continuously,
-  and monitoring
-
-  executions of externally-run jobs. This product provides the Jenkins server service
-  with both
-
-  Kubernetes and machine agent support for flexible automation environments.'
+description: |-
+  Jenkins is an extendable continuous integration server that monitors executions of repeated jobs.
+  The focus of Jenkins is the building/testing of software projects continuously, and monitoring
+  executions of externally-run jobs. This product provides the Jenkins server service with both
+  Kubernetes and machine agent support for flexible automation environments.
 lifecycle: stable
 target_medal: bronze
 ownership:
   squad: apac
   stakeholders:
-  - IS
+    - IS
 composed_of:
-- id: jenkins-jenkins-k8s
-  product_type: charm
-  source:
-    repo: canonical/jenkins-k8s-operator
-  target_medal: bronze
-- id: jenkins-jenkins-agent-k8s
-  product_type: charm
-  source:
-    repo: canonical/jenkins-agent-k8s-operator
-  target_medal: bronze
-- id: jenkins-jenkins-agent
-  product_type: charm
-  source:
-    repo: canonical/jenkins-agent-operator
-  target_medal: bronze
+  - id: jenkins-k8s
+    product_type: charm
+    source:
+      repo: canonical/jenkins-k8s-operator
+    target_medal: bronze
+  - id: jenkins-agent-k8s
+    product_type: charm
+    source:
+      repo: canonical/jenkins-agent-k8s-operator
+    target_medal: bronze
+  - id: jenkins-agent
+    product_type: charm
+    source:
+      repo: canonical/jenkins-agent-operator
+    target_medal: bronze
 documentation_url: https://charmhub.io/jenkins-k8s/docs

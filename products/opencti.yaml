@@ -8,13 +8,13 @@ target_medal: silver
 ownership:
   squad: emea
   stakeholders:
-  - SecOps
+    - SecOps
 composed_of:
-- id: opencti-opencti
-  product_type: charm
-  source:
-    repo: canonical/opencti-operator
-  target_medal: silver
+  - id: opencti-charm
+    product_type: charm
+    source:
+      repo: canonical/opencti-operator
+    target_medal: silver
 documentation_url: https://charmhub.io/opencti
 context_refs:
-- label: Opensearch
+  - label: Opensearch

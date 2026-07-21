@@ -10,23 +10,19 @@ target_medal: silver
 ownership:
   squad: americas
   stakeholders:
-  - IS
-  - Mauro Gaspari
-  - Aaron Prisk
+    - IS
+    - Mauro Gaspari
+    - Aaron Prisk
 composed_of:
-- id: discourse-discourse-k8s
-  product_type: charm
-  source:
-    repo: canonical/discourse-k8s-operator
-  target_medal: silver
-- id: discourse-nginx-ingress-integrator
-  product_type: charm
-  source:
-    repo: canonical/nginx-ingress-integrator-operator
-  target_medal: silver
+  - id: discourse-k8s
+    product_type: charm
+    source:
+      repo: canonical/discourse-k8s-operator
+    target_medal: silver
+  - ref: nginx-ingress-integrator-charm
 documentation_url: https://charmhub.io/discourse-k8s
 context_refs:
-- label: Postgresql K8S
-  repo: canonical/postgresql-k8s-operator
-- label: Redis K8S
-  repo: canonical/redis-k8s-operator
+  - label: Postgresql K8S
+    repo: canonical/postgresql-k8s-operator
+  - label: Redis K8S
+    repo: canonical/redis-k8s-operator

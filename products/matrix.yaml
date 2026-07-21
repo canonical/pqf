@@ -1,64 +1,63 @@
 id: matrix
 product_type: root
 name: Matrix
-description: 'Matrix is a drop in replacement for other chat servers like Mattermost
-  and Slack.
-
-  The synapse charm is useful if you want to spin up your own chat instance.'
+description: |-
+  Matrix is a drop in replacement for other chat servers like Mattermost and Slack.
+  The synapse charm is useful if you want to spin up your own chat instance.
 lifecycle: stable
 target_medal: bronze
 ownership:
   squad: americas
   stakeholders:
-  - Mauro Gaspari
-  - Aaron Prisk
-  - IS
+    - Mauro Gaspari
+    - Aaron Prisk
+    - IS
 composed_of:
-- id: matrix-synapse
-  product_type: charm
-  source:
-    repo: canonical/synapse-operator
-  target_medal: bronze
-- id: matrix-draupnir
-  product_type: snap
-  source:
-    repo: canonical/draupnir-snap
-  target_medal: bronze
-- id: matrix-mjolnir
-  product_type: snap
-  source:
-    repo: canonical/mjolnir-snap
-  target_medal: bronze
-- id: matrix-mas-cli
-  product_type: snap
-  source:
-    repo: canonical/mas-cli-snap
-  target_medal: bronze
-- id: matrix-matrix-appservice-irc
-  product_type: snap
-  source:
-    repo: canonical/matrix-appservice-irc
-  target_medal: bronze
-- id: matrix-synapse-stats-exporter
-  product_type: snap
-  source:
-    repo: canonical/synapse_stats_exporter
-  target_medal: bronze
+  - id: synapse
+    product_type: charm
+    source:
+      repo: canonical/synapse-operator
+    target_medal: bronze
+  - id: draupnir
+    product_type: snap
+    source:
+      repo: canonical/draupnir-snap
+    target_medal: bronze
+  - id: mjolnir
+    product_type: snap
+    source:
+      repo: canonical/mjolnir-snap
+    target_medal: bronze
+  - id: mas-cli
+    product_type: snap
+    source:
+      repo: canonical/mas-cli-snap
+    target_medal: bronze
+  - id: matrix-appservice-irc
+    product_type: snap
+    source:
+      repo: canonical/matrix-appservice-irc
+    target_medal: bronze
+  - id: synapse-stats-exporter
+    product_type: snap
+    source:
+      repo: canonical/synapse_stats_exporter
+    target_medal: bronze
 documentation_url: https://ubuntu.com/community/communications/matrix
 context_refs:
-- label: Maubot
-  repo: canonical/maubot-operator
-- label: Irc Bridge
-  repo: canonical/irc-bridge-operator
-- label: Synapse
-  repo: canonical/synapse-operator
-- label: Smtp Integrator
-  repo: canonical/smtp-integrator-operator
-- label: Saml Integrator
-  repo: canonical/saml-integrator-operator
-- label: S3 Integrator
-  repo: canonical/s3-integrator
-- label: Postgresql K8S
-  repo: canonical/postgresql-k8s-operator
-- label: Redis K8S
-  repo: canonical/postgresql-k8s-operator
+  - label: Maubot
+    repo: canonical/maubot-operator
+  - label: Irc Bridge
+    repo: canonical/irc-bridge-operator
+  - label: Synapse
+    repo: canonical/synapse-operator
+  - label: Smtp Integrator
+    repo: canonical/smtp-integrator-operator
+  - label: Saml Integrator
+    repo: canonical/saml-integrator-operator
+  - label: S3 Integrator
+    repo: canonical/s3-integrator
+  - label: Postgresql K8S
+    repo: canonical/postgresql-k8s-operator
+  - label: Redis K8S
+    repo: canonical/postgresql-k8s-operator
