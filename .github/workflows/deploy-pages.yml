@@ -3,13 +3,12 @@ name: Deploy to GitHub Pages
 on:
   push:
     branches: [main]
-  workflow_run:
-    workflows: ['Compute Metrics']
-    types: [completed]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
 
 permissions:
   contents: write
-  statuses: write
 
 concurrency:
   group: gh-pages-${{ github.ref }}
@@ -17,14 +16,9 @@ concurrency:
 
 jobs:
   deploy:
-    # Deploy after every compute-metrics completion
-    # Skip if compute-metrics failed
-    if: github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-        with:
-          ref: ${{ github.event.workflow_run.head_branch }}
 
       - uses: actions/setup-python@v5
         with:
@@ -33,13 +27,16 @@ jobs:
       - name: Install Python dependencies
         run: make install
 
-      # Download the freshly computed portfolio from compute-metrics
-      - name: Download computed artifacts
-        uses: actions/download-artifact@v4
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          run-id: ${{ github.event.workflow_run.id }}
-          name: engine-artifacts
+      # Generate fresh portfolio.json before building UI
+      # This ensures PR previews always have up-to-date medal computations
+      - name: Assemble portfolio
+        run: >
+          python engine/assemble.py
+          --products-dir products/
+          --computed-dir computed/
+          --dimensions config/dimensions.yaml
+          --drift-history drift-history.json
+          --output public/portfolio.json
 
       - uses: actions/setup-node@v4
         with:
@@ -56,23 +53,13 @@ jobs:
         working-directory: ui
         # Vite copies ../public/ into dist/ automatically via publicDir config
 
-      # For main branch: deploy to root /
-      # For PRs: deploy to pr-preview/pr-{number}/ based on branch name
-      - name: Determine deployment target
-        id: target
-        run: |
-          if [ "${{ github.event.workflow_run.head_branch }}" = "main" ]; then
-            echo "destination=." >> $GITHUB_OUTPUT
-            echo "is_pr=false" >> $GITHUB_OUTPUT
-          else
-            echo "destination=." >> $GITHUB_OUTPUT
-            echo "is_pr=true" >> $GITHUB_OUTPUT
-          fi
-
+      # Only deploy on main push or manual dispatch
+      # PR runs build and test but don't deploy
       - name: Deploy to GitHub Pages
+        if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ui/dist
-          destination_dir: ${{ steps.target.outputs.destination }}
+          destination_dir: .
           keep_files: true
