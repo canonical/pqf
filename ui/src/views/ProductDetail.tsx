@@ -260,7 +260,7 @@ export default function ProductDetail() {
                     const leaf = portfolio.products.find(p => p.id === c.product_id)
                     return (
                       <div key={c.product_id}
-                        style={{ display: 'grid', gridTemplateColumns: 'auto minmax(0, 1fr) auto minmax(0, 16rem)', alignItems: 'center', gap: '0.75rem' }}>
+                        style={{ display: 'grid', gridTemplateColumns: 'auto minmax(0, 1.1fr) auto minmax(14rem, 0.9fr)', alignItems: 'center', gap: '0.75rem' }}>
                         {leaf?.current_medal ? (
                           <MedalBadge medal={leaf.current_medal} size="small" />
                         ) : (

@@ -211,7 +211,7 @@ describe('ProductDetail', () => {
     expect(screen.getByText(/External dependencies/i)).toBeInTheDocument()
   })
 
-  it('keeps dependency rows shrink-safe for narrow browsers', () => {
+  it('balances dependency row widths toward product and repo content', () => {
     wrap('matrix')
 
     const productLink = screen.getByRole('link', { name: 'Synapse Charm' })
@@ -221,7 +221,7 @@ describe('ProductDetail', () => {
     expect(row).not.toBeNull()
     expect(row).toHaveStyle({
       display: 'grid',
-      gridTemplateColumns: 'auto minmax(0, 1fr) auto minmax(0, 16rem)',
+      gridTemplateColumns: 'auto minmax(0, 1.1fr) auto minmax(14rem, 0.9fr)',
     })
     expect(productLink.parentElement).toHaveStyle({ minWidth: '0' })
     expect(repoLink.parentElement).toHaveStyle({ minWidth: '0' })
