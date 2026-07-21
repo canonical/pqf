@@ -18,23 +18,19 @@ composed_of:
     source:
       repo: canonical/http-proxy-operators
       subpath: squid-forward-proxy-operator
-    target_medal: silver
   - id: http-proxy-policy
     product_type: charm
     source:
       repo: canonical/http-proxy-operators
       subpath: http-proxy-policy-operator
-    target_medal: silver
   - id: http-proxy-configurator
     product_type: charm
     source:
       repo: canonical/http-proxy-operators
       subpath: http-proxy-configurator-operator
-    target_medal: silver
   - id: charmed-http-proxy-policy
     product_type: snap
     source:
       repo: canonical/http-proxy-operators
       subpath: http-proxy-policy
-    target_medal: silver
 documentation_url: https://charmhub.io/squid-forward-proxy

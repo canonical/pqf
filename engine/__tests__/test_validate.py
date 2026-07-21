@@ -237,7 +237,6 @@ ROOT_PRODUCT_VALID = {
             "id": "test-charm",
             "product_type": "charm",
             "source": {"repo": "canonical/test-charm"},
-            "target_medal": "silver",
         }
     ],
 }

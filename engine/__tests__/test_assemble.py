@@ -41,7 +41,6 @@ composed_of:
     product_type: charm
     source:
       repo: canonical/synapse-operator
-    target_medal: gold
 context_refs:
   - label: PostgreSQL
     repo: canonical/postgresql-k8s-operator

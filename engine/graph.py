@@ -24,7 +24,7 @@ class ProductNode:
     id: str
     product_type: ProductType
     name: str
-    target_medal: str
+    target_medal: str | None  # None for inline leaves — they inherit from their parent root
     ownership_squad: str
     source_repo: str | None
     source_subpath: str | None
@@ -71,7 +71,7 @@ def _node_from_inline(entry: dict[str, Any], parent_id: str) -> ProductNode:
         id=entry["id"],
         product_type=ProductType(entry["product_type"]),
         name=entry.get("name", entry["id"]),
-        target_medal=entry["target_medal"],
+        target_medal=None,  # inherited from parent root at evaluation time
         ownership_squad="",
         source_repo=source["repo"],
         source_subpath=source.get("subpath"),
@@ -144,42 +144,58 @@ def build_graph(product_dicts: list[dict[str, Any]]) -> ProductGraph:
 
 def resolve_leaf_units(graph: ProductGraph) -> list[EvaluationUnit]:
     """Return one EvaluationUnit for every leaf (charm/snap) product in the graph."""
-    return [
-        EvaluationUnit(
-            product_id=node.id,
-            product_type=node.product_type,
-            repo=node.source_repo or "",
-            subpath=node.source_subpath,
-            allure_report_url=node.allure_report_url,
-            documentation_url=node.documentation_url,
-            target_medal=node.target_medal,
+    units = []
+    for node in graph.nodes.values():
+        if node.product_type not in (ProductType.CHARM, ProductType.SNAP):
+            continue
+        # Inline leaves inherit target from their single parent root
+        if node.target_medal is None:
+            parent = graph.nodes.get(node.parent_ids[0]) if node.parent_ids else None
+            target = parent.target_medal if parent else "bronze"
+        else:
+            target = node.target_medal
+        units.append(
+            EvaluationUnit(
+                product_id=node.id,
+                product_type=node.product_type,
+                repo=node.source_repo or "",
+                subpath=node.source_subpath,
+                allure_report_url=node.allure_report_url,
+                documentation_url=node.documentation_url,
+                target_medal=target,
+            )
         )
-        for node in graph.nodes.values()
-        if node.product_type in (ProductType.CHARM, ProductType.SNAP)
-    ]
+    return units
 
 
 def resolve_leaf_units_for(graph: ProductGraph, root_product_id: str) -> list[EvaluationUnit]:
     """Return EvaluationUnits for leaves that belong to the given root product.
 
-    This is the per-product scorer variant: when the full product graph is
-    loaded (so that ref: entries resolve correctly), only the leaves whose
-    parent_ids include root_product_id should be scored by that product's job.
+    Inline leaves inherit target_medal from this root. Standalone leaves (resolved
+    via ref:) keep their own target_medal for their standalone page, but are scored
+    here using their own target since they own their quality accountability.
     """
     root = graph.nodes.get(root_product_id)
     if root is None:
         raise ValueError(f"Product {root_product_id!r} not found in graph.")
     leaf_ids = {edge.product_id for edge in root.composed_of}
-    return [
-        EvaluationUnit(
-            product_id=node.id,
-            product_type=node.product_type,
-            repo=node.source_repo or "",
-            subpath=node.source_subpath,
-            allure_report_url=node.allure_report_url,
-            documentation_url=node.documentation_url,
-            target_medal=node.target_medal,
+    units = []
+    for node in graph.nodes.values():
+        if node.id not in leaf_ids:
+            continue
+        if node.product_type not in (ProductType.CHARM, ProductType.SNAP):
+            continue
+        # Inline leaves have no target of their own — use the root's target
+        target = root.target_medal if node.target_medal is None else node.target_medal
+        units.append(
+            EvaluationUnit(
+                product_id=node.id,
+                product_type=node.product_type,
+                repo=node.source_repo or "",
+                subpath=node.source_subpath,
+                allure_report_url=node.allure_report_url,
+                documentation_url=node.documentation_url,
+                target_medal=target,
+            )
         )
-        for node in graph.nodes.values()
-        if node.id in leaf_ids and node.product_type in (ProductType.CHARM, ProductType.SNAP)
-    ]
+    return units

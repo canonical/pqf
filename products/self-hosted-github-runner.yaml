@@ -16,39 +16,32 @@ composed_of:
     product_type: charm
     source:
       repo: canonical/github-runner-operator
-    target_medal: gold
   - id: github-runner-image-builder
     product_type: charm
     source:
       repo: canonical/github-runner-image-builder-operator
-    target_medal: gold
   - id: github-runner-webhook-router
     product_type: charm
     source:
       repo: canonical/github-runner-webhook-router
-    target_medal: gold
   - id: tmate-ssh-server
     product_type: charm
     source:
       repo: canonical/tmate-ssh-server-operator
-    target_medal: gold
   - id: repo-policy-compliance
     product_type: charm
     source:
       repo: canonical/repo-policy-compliance
-    target_medal: gold
   - id: github-runner-planner
     product_type: charm
     source:
       repo: canonical/github-runner-operators
       subpath: charms/planner-operator
-    target_medal: gold
   - id: github-runner-webhook-gateway
     product_type: charm
     source:
       repo: canonical/github-runner-operators
       subpath: charms/webhook-gateway-operator
-    target_medal: gold
 documentation_url: https://documentation.ubuntu.com/self-hosted-runners/en/latest/
 context_refs:
   - label: Github Actions Runner

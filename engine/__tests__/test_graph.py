@@ -15,7 +15,6 @@ ROOT_WITH_INLINE = {
             "id": "synapse",
             "product_type": "charm",
             "source": {"repo": "canonical/synapse-operator"},
-            "target_medal": "gold",
             "allure_report_url": "https://canonical.github.io/synapse-operator/_latest",
         },
     ],
@@ -128,7 +127,7 @@ def test_standalone_leaf_included_in_units():
 def test_inline_missing_source_raises():
     bad_root = {
         **ROOT_WITH_INLINE,
-        "composed_of": [{"id": "bad-charm", "product_type": "charm", "target_medal": "bronze"}],
+        "composed_of": [{"id": "bad-charm", "product_type": "charm"}],
     }
     with pytest.raises(ValueError, match="missing required 'source'"):
         build_graph([bad_root])
@@ -175,3 +174,33 @@ def test_resolve_leaf_units_for_unknown_root_raises():
     graph = build_graph([ROOT_WITH_INLINE])
     with pytest.raises(ValueError, match="not found in graph"):
         resolve_leaf_units_for(graph, "nonexistent")
+
+
+def test_inline_leaf_has_no_own_target_medal():
+    """Inline leaf target_medal is None — it must be inherited, not stored."""
+    graph = build_graph([ROOT_WITH_INLINE])
+    assert graph.nodes["synapse"].target_medal is None
+
+
+def test_inline_leaf_inherits_root_target_in_resolve_leaf_units():
+    """resolve_leaf_units substitutes the parent root's target for inline leaves."""
+    graph = build_graph([ROOT_WITH_INLINE])
+    units = resolve_leaf_units(graph)
+    synapse_unit = next(u for u in units if u.product_id == "synapse")
+    assert synapse_unit.target_medal == "gold"  # root matrix target
+
+
+def test_inline_leaf_inherits_root_target_in_resolve_leaf_units_for():
+    """resolve_leaf_units_for substitutes the scoring root's target for inline leaves."""
+    graph = build_graph([ROOT_WITH_INLINE])
+    units = resolve_leaf_units_for(graph, "matrix")
+    synapse_unit = next(u for u in units if u.product_id == "synapse")
+    assert synapse_unit.target_medal == "gold"  # root matrix target
+
+
+def test_standalone_ref_leaf_keeps_own_target():
+    """ref: leaves keep their own target_medal — they own their quality accountability."""
+    graph = build_graph([STANDALONE_LEAF, ROOT_WITH_REF])
+    units = resolve_leaf_units_for(graph, "discourse")
+    pg_unit = next(u for u in units if u.product_id == "postgresql-k8s")
+    assert pg_unit.target_medal == "gold"  # postgresql-k8s own target, not discourse's silver

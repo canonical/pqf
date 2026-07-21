@@ -136,13 +136,19 @@ def assemble_portfolio(
     leaf_results = {}
     for node in graph.nodes.values():
         if node.product_type in (ProductType.CHARM, ProductType.SNAP):
+            # Inline leaves inherit target from their single parent root
+            if node.target_medal is None:
+                parent = graph.nodes.get(node.parent_ids[0]) if node.parent_ids else None
+                target = parent.target_medal if parent else "bronze"
+            else:
+                target = node.target_medal
             leaf_results[node.id] = compute_leaf_product(
                 node.id,
                 node.product_type.value,
                 leaf_computed.get(node.id, {}),
                 dimensions_config,
                 drift_history,
-                node.target_medal,
+                target,
             )
 
     # Compute root product results

@@ -19,28 +19,23 @@ composed_of:
     source:
       repo: canonical/mailserver-operators
       subpath: dovecot-charm
-    target_medal: silver
   - id: postfix-relay
     product_type: charm
     source:
       repo: canonical/mailserver-operators
       subpath: postfix-relay-operator
-    target_medal: silver
   - id: postfix-relay-configurator
     product_type: charm
     source:
       repo: canonical/mailserver-operators
       subpath: postfix-relay-configurator-operator
-    target_medal: silver
   - id: opendkim
     product_type: charm
     source:
       repo: canonical/mailserver-operators
       subpath: opendkim-operator
-    target_medal: silver
   - id: opendkim-snap
     product_type: snap
     source:
       repo: canonical/mailserver-operators
       subpath: opendkim-snap
-    target_medal: silver
