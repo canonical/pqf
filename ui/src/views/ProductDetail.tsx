@@ -260,7 +260,7 @@ export default function ProductDetail() {
                     const leaf = portfolio.products.find(p => p.id === c.product_id)
                     return (
                       <div key={c.product_id}
-                        style={{ display: 'grid', gridTemplateColumns: 'auto 1fr minmax(80px, auto) minmax(120px, auto)', alignItems: 'center', gap: '0.75rem' }}>
+                        style={{ display: 'grid', gridTemplateColumns: 'auto minmax(0, 1fr) auto minmax(0, 16rem)', alignItems: 'center', gap: '0.75rem' }}>
                         {leaf?.current_medal ? (
                           <MedalBadge medal={leaf.current_medal} size="small" />
                         ) : (
@@ -272,15 +272,19 @@ export default function ProductDetail() {
                           </Link>
                         </div>
                         {leaf?.product_type ? (
-                          <span className="p-label--information" style={{ fontSize: '0.7rem', whiteSpace: 'nowrap' }}>
-                            {leaf.product_type}
-                          </span>
+                          <div style={{ minWidth: 0 }}>
+                            <span className="p-label--information" style={{ fontSize: '0.7rem', whiteSpace: 'nowrap' }}>
+                              {leaf.product_type}
+                            </span>
+                          </div>
                         ) : <span />}
                         {leaf?.source?.repo ? (
-                          <a href={`https://github.com/${leaf.source.repo}`} target="_blank" rel="noreferrer"
-                            style={{ fontSize: '0.8rem', color: '#666', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                            {leaf.source.repo} ↗
-                          </a>
+                          <div style={{ minWidth: 0 }}>
+                            <a href={`https://github.com/${leaf.source.repo}`} target="_blank" rel="noreferrer"
+                              style={{ display: 'block', fontSize: '0.8rem', color: '#666', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                              {leaf.source.repo} ↗
+                            </a>
+                          </div>
                         ) : <span />}
                       </div>
                     )

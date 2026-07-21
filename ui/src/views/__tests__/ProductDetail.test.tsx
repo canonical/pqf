@@ -211,6 +211,28 @@ describe('ProductDetail', () => {
     expect(screen.getByText(/External dependencies/i)).toBeInTheDocument()
   })
 
+  it('keeps dependency rows shrink-safe for narrow browsers', () => {
+    wrap('matrix')
+
+    const productLink = screen.getByRole('link', { name: 'Synapse Charm' })
+    const row = productLink.parentElement?.parentElement
+    const repoLink = screen.getByRole('link', { name: /canonical\/synapse-operator/i })
+
+    expect(row).not.toBeNull()
+    expect(row).toHaveStyle({
+      display: 'grid',
+      gridTemplateColumns: 'auto minmax(0, 1fr) auto minmax(0, 16rem)',
+    })
+    expect(productLink.parentElement).toHaveStyle({ minWidth: '0' })
+    expect(repoLink.parentElement).toHaveStyle({ minWidth: '0' })
+    expect(repoLink).toHaveStyle({
+      display: 'block',
+      overflow: 'hidden',
+      textOverflow: 'ellipsis',
+      whiteSpace: 'nowrap',
+    })
+  })
+
   it('root product evidence shows metric values from composition', () => {
     mockWith(
       portfolioWithComposition({
