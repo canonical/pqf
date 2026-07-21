@@ -21,7 +21,8 @@ def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--product-yaml", required=True)
     parser.add_argument("--products-dir", default=None,
-                        help="Directory containing all product YAMLs (needed to resolve ref: entries).")
+                        help="Directory containing all product YAMLs "
+                             "(needed to resolve ref: entries).")
     args = parser.parse_args()
 
     product_path = Path(args.product_yaml)
