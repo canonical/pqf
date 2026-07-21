@@ -5,7 +5,7 @@ description: |-
   Matrix is a drop in replacement for other chat servers like Mattermost and Slack.
   The synapse charm is useful if you want to spin up your own chat instance.
 lifecycle: stable
-target_medal: bronze
+target_medal: gold
 ownership:
   squad: americas
   stakeholders:
@@ -17,6 +17,7 @@ composed_of:
     product_type: charm
     source:
       repo: canonical/synapse-operator
+    allure_report_url: "https://canonical.github.io/synapse-operator/_latest"
   - id: draupnir
     product_type: snap
     source:
