@@ -12,13 +12,8 @@ on:
         type: string
 
 permissions:
-  contents: read
+  contents: write
   pull-requests: write
-
-# For forks, we need write permissions on the fork itself, not the upstream
-# This will be handled by the deploy step gracefully failing on forks
-env:
-  IS_FORK: ${{ github.repository != 'canonical/pqf' }}
 
 concurrency:
   group: gh-pages-preview-${{ github.event.workflow_run.head_branch || github.ref_name }}
