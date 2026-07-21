@@ -1,0 +1,19 @@
+id: traefik-k8s
+product_type: root
+name: Traefik
+description: Traefik is your all-in-one, self-hosted, cloud-native, GitOps-driven
+  application proxy, API gateway, and API management platform.
+lifecycle: stable
+target_medal: gold
+ownership:
+  squad: emea
+  stakeholders:
+    - IS
+composed_of:
+  - id: traefik-k8s-charm
+    product_type: charm
+    source:
+      repo: canonical/traefik-k8s-operator
+context_refs:
+  - label: Traefik Rock
+    repo: canonical/traefik-rock

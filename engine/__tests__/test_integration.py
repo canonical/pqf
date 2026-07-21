@@ -12,7 +12,7 @@ Fixture metric values and expected medals:
   support_engagement: silver (triage 3 <= 5; pr_review 6 <= 7; both > gold threshold)
 
 Overall current_medal: bronze (documentation pulls it down)
-Target: gold → all dimensions drifting, but no history entries yet → drift=None
+Target: gold (restored from the existing PQF product definition)
 """
 
 import json

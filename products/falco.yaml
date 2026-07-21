@@ -1,0 +1,26 @@
+id: falco
+product_type: root
+name: Falco
+description: |-
+  Falco is an open-source runtime security tool for physical and virtual machines.
+  It detects anomalous activity and potential security threats in real time.
+  The Falco operators include a subordinate machine charm for Falco and a Kubernetes
+  charm for Falcosidekick, which connects Falco to external ecosystems.
+lifecycle: stable
+target_medal: silver
+ownership:
+  squad: emea
+  stakeholders:
+    - SecOps
+composed_of:
+  - id: falco-charm
+    product_type: charm
+    source:
+      repo: canonical/falco-operators
+      subpath: falco-operator
+  - id: falcosidekick-k8s
+    product_type: charm
+    source:
+      repo: canonical/falco-operators
+      subpath: falcosidekick-k8s-operator
+documentation_url: https://charmhub.io/falco

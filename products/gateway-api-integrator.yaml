@@ -1,0 +1,18 @@
+id: gateway-api-integrator
+product_type: root
+name: Gateway API Integrator
+description: |-
+  The Gateway API Integrator Operator is a workload-less charm that manages external access to HTTP/HTTPS services in a Kubernetes cluster via a Gateway and an ``HTTPRoute`` resource.
+  This requires the Kubernetes cluster in question to have a Gateway API controller already deployed into it.
+lifecycle: stable
+target_medal: gold
+ownership:
+  squad: emea
+  stakeholders:
+    - IS
+composed_of:
+  - id: gateway-api-integrator-charm
+    product_type: charm
+    source:
+      repo: canonical/gateway-api-integrator-operator
+      subpath: gateway-api-integrator

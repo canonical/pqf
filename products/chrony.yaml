@@ -1,0 +1,27 @@
+id: chrony
+product_type: root
+name: Chrony
+description: |-
+  The Chrony operators deploy and manage the Chrony NTP server and client
+  across a range of environments, providing time provision and synchronisation
+  with NTP servers.
+
+  The chrony charm acts as an NTP server, while the chrony-client subordinate
+  charm configures Chrony as an NTP client on any principal charm, replacing
+  the system default NTP client.
+lifecycle: stable
+target_medal: silver
+ownership:
+  squad: apac
+  stakeholders:
+    - IS
+composed_of:
+  - id: chrony-charm
+    product_type: charm
+    source:
+      repo: canonical/chrony-operator
+  - id: chrony-client
+    product_type: charm
+    source:
+      repo: canonical/chrony-client-operator
+documentation_url: https://chrony-project.org/

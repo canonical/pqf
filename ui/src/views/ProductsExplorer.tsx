@@ -202,7 +202,15 @@ export default function ProductsExplorer() {
         {/* Products table */}
         <div className="p-card u-sv3" style={{ padding: 0, overflow: 'hidden' }}>
           <div style={{ overflowX: 'auto' }}>
-            <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+            <table style={{ width: '100%', borderCollapse: 'collapse', tableLayout: 'fixed' }}>
+              <colgroup>
+                <col style={{ width: '36%' }} />
+                <col style={{ width: '7rem' }} />
+                <col style={{ width: '7rem' }} />
+                <col style={{ width: '7rem' }} />
+                <col style={{ width: '6rem' }} />
+                <col style={{ width: '26%' }} />
+              </colgroup>
               <thead>
                 <tr style={{ background: '#f5f5f5' }}>
                   <th style={TH}>Product</th>
@@ -225,26 +233,35 @@ export default function ProductsExplorer() {
                         borderBottom: leaves.length === 0 ? '1px solid #e5e5e5' : 'none',
                         background: '#fafafa',
                       }}>
-                        <td style={{ padding: '0.65rem 0.75rem' }}>
-                          <Link to={`/products/${root.id}`} style={{ fontWeight: 600 }}>
+                        <td style={{ padding: '0.65rem 0.75rem', minWidth: 0 }}>
+                          <Link
+                            to={`/products/${root.id}`}
+                            style={{
+                              display: 'block',
+                              fontWeight: 600,
+                              overflow: 'hidden',
+                              textOverflow: 'ellipsis',
+                              whiteSpace: 'nowrap',
+                            }}
+                          >
                             {root.name}
                           </Link>
                         </td>
-                        <td style={{ padding: '0.65rem 0.75rem' }}>
-                          <span className="p-label" style={{ fontSize: '0.75rem' }}>
+                        <td style={{ padding: '0.65rem 0.75rem', whiteSpace: 'nowrap' }}>
+                          <span className="p-label" style={{ fontSize: '0.75rem', whiteSpace: 'nowrap' }}>
                             {root.product_type}
                           </span>
                         </td>
-                        <td style={{ padding: '0.65rem 0.75rem' }}>
+                        <td style={{ padding: '0.65rem 0.75rem', whiteSpace: 'nowrap' }}>
                           <MedalBadge medal={root.current_medal} size="small" />
                         </td>
-                        <td style={{ padding: '0.65rem 0.75rem' }}>
+                        <td style={{ padding: '0.65rem 0.75rem', whiteSpace: 'nowrap' }}>
                           <MedalBadge medal={root.target_medal} size="small" />
                         </td>
-                        <td style={{ padding: '0.65rem 0.75rem', fontSize: '0.875rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.04em', color: '#555' }}>
+                        <td style={{ padding: '0.65rem 0.75rem', whiteSpace: 'nowrap', fontSize: '0.875rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.04em', color: '#555' }}>
                           {SQUAD_LABELS[root.squad?.toLowerCase()] ?? root.squad}
                         </td>
-                        <td style={{ padding: '0.65rem 0.75rem', fontSize: '0.875rem', color: '#aaa' }}>—</td>
+                        <td style={{ padding: '0.65rem 0.75rem', minWidth: 0, fontSize: '0.875rem', color: '#aaa' }}>—</td>
                       </tr>
 
                       {/* Leaf rows with tree connector */}
@@ -259,8 +276,8 @@ export default function ProductsExplorer() {
                             }}
                           >
                             {/* Product name cell with tree connector — flex layout avoids absolute-positioning coordinate issues */}
-                            <td style={{ padding: '0.45rem 0.75rem' }}>
-                             <div style={{ display: 'flex', alignItems: 'center' }}>
+                            <td style={{ padding: '0.45rem 0.75rem', minWidth: 0 }}>
+                             <div style={{ display: 'flex', alignItems: 'center', minWidth: 0 }}>
                                {/* Tree connector: fixed-width column, stretches full cell height */}
                                <div style={{
                                  width: '1.25rem',
@@ -292,29 +309,29 @@ export default function ProductsExplorer() {
                                </div>
                                <Link
                                  to={`/products/${leaf.id}`}
-                                 style={{ fontSize: '0.875rem' }}
+                                 style={{ display: 'block', minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontSize: '0.875rem' }}
                                >
                                  {leaf.name}
                                </Link>
                              </div>
                             </td>
-                            <td style={{ padding: '0.45rem 0.75rem' }}>
-                              <span className="p-label--information" style={{ fontSize: '0.75rem' }}>
+                            <td style={{ padding: '0.45rem 0.75rem', whiteSpace: 'nowrap' }}>
+                             <span className="p-label--information" style={{ fontSize: '0.75rem', whiteSpace: 'nowrap' }}>
                                 {leaf.product_type}
                               </span>
                             </td>
-                            <td style={{ padding: '0.45rem 0.75rem' }}>
+                            <td style={{ padding: '0.45rem 0.75rem', whiteSpace: 'nowrap' }}>
                               <MedalBadge medal={leaf.current_medal} size="small" />
                             </td>
-                            <td style={{ padding: '0.45rem 0.75rem', color: '#ccc', fontSize: '0.875rem' }}>—</td>
-                            <td style={{ padding: '0.45rem 0.75rem', color: '#ccc', fontSize: '0.875rem' }}>—</td>
-                            <td style={{ padding: '0.45rem 0.75rem' }}>
+                            <td style={{ padding: '0.45rem 0.75rem', whiteSpace: 'nowrap', color: '#ccc', fontSize: '0.875rem' }}>—</td>
+                            <td style={{ padding: '0.45rem 0.75rem', whiteSpace: 'nowrap', color: '#ccc', fontSize: '0.875rem' }}>—</td>
+                            <td style={{ padding: '0.45rem 0.75rem', minWidth: 0 }}>
                               {leaf.source?.repo ? (
                                 <a
                                   href={`https://github.com/${leaf.source.repo}`}
                                   target="_blank"
                                   rel="noreferrer"
-                                  style={{ fontSize: '0.8125rem', color: '#555' }}
+                                 style={{ display: 'block', fontSize: '0.8125rem', color: '#555', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}
                                 >
                                   {leaf.source.repo} ↗
                                 </a>
@@ -331,35 +348,38 @@ export default function ProductsExplorer() {
 
                 {filteredData.type === 'flat' && filteredData.products.map(p => (
                   <tr key={p.id} style={{ borderBottom: '1px solid #e5e5e5' }}>
-                    <td style={{ padding: '0.6rem 0.75rem' }}>
-                      <Link to={`/products/${p.id}`} style={{ fontWeight: p.product_type === 'root' ? 600 : 400 }}>
+                    <td style={{ padding: '0.6rem 0.75rem', minWidth: 0 }}>
+                      <Link
+                        to={`/products/${p.id}`}
+                        style={{ display: 'block', fontWeight: p.product_type === 'root' ? 600 : 400, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}
+                      >
                         {p.name}
                       </Link>
                     </td>
-                    <td style={{ padding: '0.6rem 0.75rem' }}>
+                    <td style={{ padding: '0.6rem 0.75rem', whiteSpace: 'nowrap' }}>
                       <span
                         className={p.product_type === 'root' ? 'p-label' : 'p-label--information'}
-                        style={{ fontSize: '0.75rem' }}
+                        style={{ fontSize: '0.75rem', whiteSpace: 'nowrap' }}
                       >
                         {p.product_type}
                       </span>
                     </td>
-                    <td style={{ padding: '0.6rem 0.75rem' }}>
+                    <td style={{ padding: '0.6rem 0.75rem', whiteSpace: 'nowrap' }}>
                       <MedalBadge medal={p.current_medal} size="small" />
                     </td>
-                    <td style={{ padding: '0.6rem 0.75rem' }}>
+                    <td style={{ padding: '0.6rem 0.75rem', whiteSpace: 'nowrap' }}>
                       {p.target_medal ? <MedalBadge medal={p.target_medal} size="small" /> : <span style={{ color: '#ccc' }}>—</span>}
                     </td>
-                    <td style={{ padding: '0.6rem 0.75rem', fontSize: '0.875rem', fontWeight: p.squad ? 600 : 400, textTransform: p.squad ? 'uppercase' : undefined, letterSpacing: p.squad ? '0.04em' : undefined, color: p.squad ? '#555' : '#ccc' }}>
+                    <td style={{ padding: '0.6rem 0.75rem', whiteSpace: 'nowrap', fontSize: '0.875rem', fontWeight: p.squad ? 600 : 400, textTransform: p.squad ? 'uppercase' : undefined, letterSpacing: p.squad ? '0.04em' : undefined, color: p.squad ? '#555' : '#ccc' }}>
                       {p.squad ? (SQUAD_LABELS[p.squad.toLowerCase()] ?? p.squad) : '—'}
                     </td>
-                    <td style={{ padding: '0.6rem 0.75rem' }}>
+                    <td style={{ padding: '0.6rem 0.75rem', minWidth: 0 }}>
                       {p.source?.repo ? (
                         <a
                           href={`https://github.com/${p.source.repo}`}
                           target="_blank"
                           rel="noreferrer"
-                          style={{ fontSize: '0.8125rem', color: '#555' }}
+                          style={{ display: 'block', fontSize: '0.8125rem', color: '#555', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}
                         >
                           {p.source.repo} ↗
                         </a>

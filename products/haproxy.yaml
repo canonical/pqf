@@ -1,0 +1,33 @@
+id: haproxy
+product_type: root
+name: HAProxy
+description: |-
+  HAProxy is a TCP/HTTP reverse proxy which is particularly suited for high availability environments.
+  It features connection persistence through HTTP cookies, load balancing, header addition, modification, deletion both ways.
+  It has request blocking capabilities and provides interface to display server status.
+lifecycle: stable
+target_medal: gold
+ownership:
+  squad: emea
+  stakeholders:
+    - IS
+composed_of:
+  - id: haproxy-charm
+    product_type: charm
+    source:
+      repo: canonical/haproxy-operator
+      subpath: haproxy-operator
+  - id: ingress-configurator
+    product_type: charm
+    source:
+      repo: canonical/ingress-configurator-operator
+  - id: haproxy-spoe-auth
+    product_type: charm
+    source:
+      repo: canonical/haproxy-operator
+      subpath: haproxy-spoe-auth-operator
+  - id: haproxy-spoe-auth-snap
+    product_type: snap
+    source:
+      repo: canonical/haproxy-operator
+      subpath: haproxy-spoe-auth-snap

@@ -1,0 +1,16 @@
+id: digest-squid-auth-helper
+product_type: root
+name: Digest Squid auth helper
+description: A Juju subordinate charm for the Squid reverse proxy charm that enables
+  digest or basic authentication using squid-auth-helper relation.
+lifecycle: stable
+target_medal: bronze
+ownership:
+  squad: emea
+  stakeholders:
+    - IS
+composed_of:
+  - id: digest-squid-auth-helper-charm
+    product_type: charm
+    source:
+      repo: canonical/digest-squid-auth-helper

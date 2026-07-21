@@ -1,0 +1,18 @@
+id: wireguard
+product_type: root
+name: WireGuard gateway
+description: |-
+  WireGuard gateway is a machine charm that deploys a highly available site-to-site VPN solution based on WireGuard.
+  It features automatic key exchange, OSPF-based route fault tolerance, and VRRP-based virtual redundant routing for
+  enterprise-grade VPN deployments.
+lifecycle: stable
+target_medal: gold
+ownership:
+  squad: apac
+  stakeholders:
+    - IS
+composed_of:
+  - id: wireguard-gateway
+    product_type: charm
+    source:
+      repo: canonical/wireguard-gateway-operator

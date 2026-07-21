@@ -5,14 +5,16 @@
 
 .DEFAULT_GOAL := help
 .PHONY: help install install-ui install-all \
-	lint format format-check \
+	lint format format-check ci-check \
 	validate \
 	test test-ui test-all \
 	build dev \
 	audit audit-python audit-ui \
 	score score-docs score-no-llm \
 	score-all score-all-no-llm _merge _assemble \
-	e2e _require-github-token _require-openrouter-key
+	e2e _require-github-token _require-openrouter-key \
+	catalog-discovery catalog-discovery-fetch catalog-discovery-report \
+	catalog-import-products
 
 PYTHON := python3
 PIP    := pip
@@ -39,6 +41,7 @@ help:
 	@echo "    make lint           Lint Python with ruff"
 	@echo "    make format         Auto-format Python with ruff"
 	@echo "    make format-check   Check Python formatting without modifying"
+	@echo "    make ci-check       Run everything CI runs: lint + format-check + test + test-ui"
 	@echo "    make validate       Validate config YAML files against JSON Schemas"
 	@echo "    make test           Run Python unit tests"
 	@echo ""
@@ -62,6 +65,8 @@ help:
 	@echo "    make score-docs PRODUCT=<id>         Run only the documentation scorer"
 	@echo "    make score-all                       Score all products + rebuild portfolio.json (with LLM)"
 	@echo "    make score-all-no-llm                Score all products + rebuild portfolio.json (no LLM)"
+	@echo "    make catalog-discovery               Generate docs-vs-PQF catalog discovery artifact"
+	@echo "    make catalog-import-products         Import all docs products into products/ (temporary migration)"
 	@echo ""
 
 # ── Setup ─────────────────────────────────────────────────────────────────────
@@ -86,6 +91,8 @@ format:
 
 format-check:
 	ruff format --check .
+
+ci-check: lint format-check test test-ui
 
 # ── Python: tests ─────────────────────────────────────────────────────────────
 test:
@@ -123,15 +130,15 @@ PRODUCT ?= $(error PRODUCT is required. Usage: make score PRODUCT=matrix)
 score: _require-github-token _require-openrouter-key
 	@echo "Scoring product: $(PRODUCT)"
 	@mkdir -p $(SCORE_DIR)/$(PRODUCT)
-	$(PYTHON) scorers/test_verification/scorer.py --product-yaml products/$(PRODUCT).yaml \
+	$(PYTHON) scorers/test_verification/scorer.py --product-yaml products/$(PRODUCT).yaml --products-dir products/ \
 		> $(SCORE_DIR)/$(PRODUCT)/test_verification.json
-	$(PYTHON) scorers/documentation/scorer.py --product-yaml products/$(PRODUCT).yaml \
+	$(PYTHON) scorers/documentation/scorer.py --product-yaml products/$(PRODUCT).yaml --products-dir products/ \
 		> $(SCORE_DIR)/$(PRODUCT)/documentation.json
-	$(PYTHON) scorers/substrate_compat/scorer.py --product-yaml products/$(PRODUCT).yaml \
+	$(PYTHON) scorers/substrate_compat/scorer.py --product-yaml products/$(PRODUCT).yaml --products-dir products/ \
 		> $(SCORE_DIR)/$(PRODUCT)/substrate_compat.json
-	$(PYTHON) scorers/security_ssdlc/scorer.py --product-yaml products/$(PRODUCT).yaml \
+	$(PYTHON) scorers/security_ssdlc/scorer.py --product-yaml products/$(PRODUCT).yaml --products-dir products/ \
 		> $(SCORE_DIR)/$(PRODUCT)/security_ssdlc.json
-	$(PYTHON) scorers/support_engagement/scorer.py --product-yaml products/$(PRODUCT).yaml \
+	$(PYTHON) scorers/support_engagement/scorer.py --product-yaml products/$(PRODUCT).yaml --products-dir products/ \
 		> $(SCORE_DIR)/$(PRODUCT)/support_engagement.json
 	@echo ""
 	@echo "Results in $(SCORE_DIR)/$(PRODUCT)/"
@@ -140,22 +147,22 @@ score: _require-github-token _require-openrouter-key
 score-no-llm: _require-github-token
 	@echo "Scoring product: $(PRODUCT) (LLM checks skipped — diataxis/style will be 0/false)"
 	@mkdir -p $(SCORE_DIR)/$(PRODUCT)
-	$(PYTHON) scorers/test_verification/scorer.py --product-yaml products/$(PRODUCT).yaml \
+	$(PYTHON) scorers/test_verification/scorer.py --product-yaml products/$(PRODUCT).yaml --products-dir products/ \
 		> $(SCORE_DIR)/$(PRODUCT)/test_verification.json
-	OPENROUTER_API_KEY= $(PYTHON) scorers/documentation/scorer.py --product-yaml products/$(PRODUCT).yaml \
+	OPENROUTER_API_KEY= $(PYTHON) scorers/documentation/scorer.py --product-yaml products/$(PRODUCT).yaml --products-dir products/ \
 		> $(SCORE_DIR)/$(PRODUCT)/documentation.json
-	$(PYTHON) scorers/substrate_compat/scorer.py --product-yaml products/$(PRODUCT).yaml \
+	$(PYTHON) scorers/substrate_compat/scorer.py --product-yaml products/$(PRODUCT).yaml --products-dir products/ \
 		> $(SCORE_DIR)/$(PRODUCT)/substrate_compat.json
-	$(PYTHON) scorers/security_ssdlc/scorer.py --product-yaml products/$(PRODUCT).yaml \
+	$(PYTHON) scorers/security_ssdlc/scorer.py --product-yaml products/$(PRODUCT).yaml --products-dir products/ \
 		> $(SCORE_DIR)/$(PRODUCT)/security_ssdlc.json
-	$(PYTHON) scorers/support_engagement/scorer.py --product-yaml products/$(PRODUCT).yaml \
+	$(PYTHON) scorers/support_engagement/scorer.py --product-yaml products/$(PRODUCT).yaml --products-dir products/ \
 		> $(SCORE_DIR)/$(PRODUCT)/support_engagement.json
 	@echo ""
 	@echo "Results in $(SCORE_DIR)/$(PRODUCT)/"
 	@for f in $(SCORE_DIR)/$(PRODUCT)/*.json; do echo "  $$f:"; cat $$f | $(PYTHON) -m json.tool --indent 2; echo ""; done
 
 score-docs: _require-github-token _require-openrouter-key
-	$(PYTHON) scorers/documentation/scorer.py --product-yaml products/$(PRODUCT).yaml
+	$(PYTHON) scorers/documentation/scorer.py --product-yaml products/$(PRODUCT).yaml --products-dir products/
 
 # ── Score all products and rebuild portfolio.json ─────────────────────────────
 # Discovers all product YAMLs in products/, scores each one, merges the raw
@@ -215,3 +222,35 @@ _require-github-token:
 
 _require-openrouter-key:
 	@test -n "$(OPENROUTER_API_KEY)" || (echo "Error: OPENROUTER_API_KEY is not set" && exit 1)
+
+# Temporary migration workflow:
+# - fetch docs products into a local cache
+# - generate a discovery artifact from cached docs + repo PQF products
+# Remove the fetch step once the catalog migration no longer needs external docs.
+DOCS_PRODUCTS_DIR ?= .pqf-cache/platform-engineering-docs/data/products
+DOCS_PRODUCTS_REPO ?= canonical/platform-engineering-docs
+DOCS_PRODUCTS_REF ?= main
+CATALOG_OVERRIDES_FILE ?=
+
+catalog-discovery: catalog-discovery-fetch catalog-discovery-report
+
+catalog-discovery-fetch:
+	$(PYTHON) tools/fetch_platform_engineering_docs_products.py \
+		--repo $(DOCS_PRODUCTS_REPO) \
+		--ref $(DOCS_PRODUCTS_REF) \
+		--output-dir $(DOCS_PRODUCTS_DIR)
+
+catalog-discovery-report:
+	$(PYTHON) tools/generate_catalog_discovery.py \
+		--docs-products-dir $(DOCS_PRODUCTS_DIR) \
+		--pqf-products-dir products \
+		--pqf-schema-path config/schemas/product.schema.json \
+		--ui-types-path ui/src/types.ts \
+		$(if $(CATALOG_OVERRIDES_FILE),--overrides $(CATALOG_OVERRIDES_FILE),) \
+		--output docs/superpowers/artifacts/2026-07-20-product-catalog-discovery.json
+
+catalog-import-products: catalog-discovery-fetch
+	$(PYTHON) tools/import_platform_engineering_docs_products.py \
+		--docs-products-dir $(DOCS_PRODUCTS_DIR) \
+		--output-dir products \
+		--clean

@@ -1,0 +1,41 @@
+id: mailserver-operators
+product_type: root
+name: Mailserver Operators
+description: |-
+  The Mailserver Operators product provides a suite of Juju charms for
+  deploying and managing a complete email server stack on machines. It consists of:
+  Dovecot (IMAP/POP3 mail delivery), Postfix relay (SMTP relay server),
+  Postfix relay configurator (subordinate charm for additional relay configuration),
+  and OpenDKIM (DKIM signing and verification milter).
+lifecycle: stable
+target_medal: silver
+ownership:
+  squad: emea
+  stakeholders:
+    - IS
+composed_of:
+  - id: dovecot
+    product_type: charm
+    source:
+      repo: canonical/mailserver-operators
+      subpath: dovecot-charm
+  - id: postfix-relay
+    product_type: charm
+    source:
+      repo: canonical/mailserver-operators
+      subpath: postfix-relay-operator
+  - id: postfix-relay-configurator
+    product_type: charm
+    source:
+      repo: canonical/mailserver-operators
+      subpath: postfix-relay-configurator-operator
+  - id: opendkim
+    product_type: charm
+    source:
+      repo: canonical/mailserver-operators
+      subpath: opendkim-operator
+  - id: opendkim-snap
+    product_type: snap
+    source:
+      repo: canonical/mailserver-operators
+      subpath: opendkim-snap

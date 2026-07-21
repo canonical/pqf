@@ -12,23 +12,31 @@ _GITHUB_API = "https://api.github.com"
 _PROMPTS_DIR = Path(__file__).parent / "prompts"
 
 
-def _make_github_session(github_token: str) -> requests.Session:
+def _make_github_session(github_token: str | None = None) -> requests.Session:
     session = requests.Session()
     session.headers.update(
         {
-            "Authorization": f"Bearer {github_token}",
             "Accept": "application/vnd.github+json",
             "X-GitHub-Api-Version": "2022-11-28",
         }
     )
+    if github_token:
+        session.headers["Authorization"] = f"Bearer {github_token}"
     return session
+
+
+def _github_get(url: str, github_token: str) -> requests.Response:
+    resp = _make_github_session(github_token).get(url, timeout=15)
+    if github_token and resp.status_code in {401, 403, 404}:
+        # PR GITHUB_TOKENs can lack cross-repo access even for public repos.
+        resp = _make_github_session().get(url, timeout=15)
+    return resp
 
 
 def _check_file_exists(owner_repo: str, filename: str, github_token: str) -> bool:
     """Return True if the file exists in the repo's default branch root."""
-    session = _make_github_session(github_token)
     url = f"{_GITHUB_API}/repos/{owner_repo}/contents/{filename}"
-    resp = session.get(url, timeout=15)
+    resp = _github_get(url, github_token)
     return resp.status_code == 200
 
 
@@ -43,9 +51,8 @@ def _check_url_alive(url: str) -> bool:
 
 def _fetch_readme(owner_repo: str, github_token: str) -> str:
     """Fetch README.md content. Returns empty string if not found."""
-    session = _make_github_session(github_token)
     url = f"{_GITHUB_API}/repos/{owner_repo}/readme"
-    resp = session.get(url, timeout=15)
+    resp = _github_get(url, github_token)
     if not resp.ok:
         return ""
     data = resp.json()

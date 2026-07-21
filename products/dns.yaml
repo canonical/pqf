@@ -1,0 +1,54 @@
+id: dns
+product_type: root
+name: DNS
+description: |-
+  The DNS operators provide a collection of charms required to deploy a fully
+  functional DNS solution, facilitating the integration of DNS services with
+  other charms.
+
+  The goal is to provide an easy-to-use and reliable DNS deployment that offers
+  simple integration for existing charmed applications, enabling them to request
+  resource records and automate DNS processes.
+lifecycle: stable
+target_medal: bronze
+ownership:
+  squad: apac
+  stakeholders:
+    - IS
+composed_of:
+  - id: bind
+    product_type: charm
+    source:
+      repo: canonical/dns-operators
+      subpath: bind-operator
+  - id: dns-policy
+    product_type: charm
+    source:
+      repo: canonical/dns-operators
+      subpath: dns-policy-operator
+  - id: dns-integrator
+    product_type: charm
+    source:
+      repo: canonical/dns-operators
+      subpath: dns-integrator-operator
+  - id: dns-resolver
+    product_type: charm
+    source:
+      repo: canonical/dns-operators
+      subpath: dns-resolver-operator
+  - id: dns-secondary
+    product_type: charm
+    source:
+      repo: canonical/dns-operators
+      subpath: dns-secondary-operator
+  - id: charmed-bind
+    product_type: snap
+    source:
+      repo: canonical/dns-operators
+      subpath: charmed-bind
+  - id: charmed-dns-policy
+    product_type: snap
+    source:
+      repo: canonical/dns-operators
+      subpath: charmed-dns-policy
+documentation_url: https://documentation.ubuntu.com/dns-operators/

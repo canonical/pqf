@@ -8,7 +8,7 @@
   "properties": {
     "id": {
       "type": "string",
-      "pattern": "^[a-z][a-z0-9-]*$",
+      "pattern": "^[a-z0-9][a-z0-9-]*$",
       "description": "Unique product identifier. Kebab-case. Must match filename (without .yaml)."
     },
     "product_type": {
@@ -85,7 +85,7 @@
           "properties": {
             "ref": {
               "type": "string",
-              "pattern": "^[a-z][a-z0-9-]*$",
+              "pattern": "^[a-z0-9][a-z0-9-]*$",
               "description": "product_id of the standalone leaf product YAML."
             },
             "excluded_from_parent_medal": {
@@ -97,12 +97,12 @@
         {
           "description": "Inline leaf product — owned by this team, belongs to this root only.",
           "type": "object",
-          "required": ["id", "product_type", "source", "target_medal"],
+          "required": ["id", "product_type", "source"],
           "additionalProperties": false,
           "properties": {
             "id": {
               "type": "string",
-              "pattern": "^[a-z][a-z0-9-]*$",
+              "pattern": "^[a-z0-9][a-z0-9-]*$",
               "description": "Stable identifier for this leaf. Must be globally unique."
             },
             "product_type": {
@@ -110,10 +110,6 @@
               "enum": ["charm", "snap"]
             },
             "source": {"$ref": "#/definitions/Source"},
-            "target_medal": {
-              "type": "string",
-              "enum": ["bronze", "silver", "gold"]
-            },
             "allure_report_url": {
               "type": "string",
               "format": "uri",

@@ -1,0 +1,28 @@
+id: httprequest-lego-provider
+product_type: root
+name: HTTP Request Lego Provider
+description: |-
+  HTTP Request Lego Provider is a Juju charm deploying and managing
+  `HTTP request Lego provider as defined by ACME <https://go-acme.github.io/lego/dns/httpreq/>`_
+  on Kubernetes. It is a web application that implements the DNS HTTP request provider
+  to manage DNS records, enabling the automation of DNS management for ACME certificate issuance.
+
+  This charm simplifies initial deployment and operations on Kubernetes, allowing
+  deployment on many different Kubernetes platforms, from MicroK8s to Charmed Kubernetes
+  and public cloud Kubernetes offerings.
+lifecycle: stable
+target_medal: gold
+ownership:
+  squad: emea
+  stakeholders:
+    - IS
+composed_of:
+  - id: httprequest-lego-provider-charm
+    product_type: charm
+    source:
+      repo: canonical/httprequest-lego-provider
+  - ref: nginx-ingress-integrator
+documentation_url: https://charmhub.io/httprequest-lego-provider
+context_refs:
+  - label: Postgresql K8S
+    repo: canonical/postgresql-k8s-operator

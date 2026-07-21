@@ -22,7 +22,10 @@ const mockPortfolio: Portfolio = {
       squad: 'americas',
       is_portfolio_entry: true,
       documentation_url: 'https://charmhub.io/synapse',
-      context_refs: [{ label: 'Synapse Operator', repo: 'canonical/synapse-operator' }],
+      context_refs: [
+        { label: 'Synapse Operator', repo: 'canonical/synapse-operator' },
+        { label: 'PostgreSQL', repo: 'canonical/postgresql-k8s-operator' },
+      ],
       parent_product_ids: [],
       composed_of: [{ product_id: 'synapse', excluded_from_parent_medal: false }],
       dimensions: {
@@ -141,7 +144,8 @@ describe('ProductDetail', () => {
 
   it('shows current medal', () => {
     wrap('matrix')
-    expect(screen.getByText('Bronze')).toBeInTheDocument()
+    // multiple Bronze badges appear: product header + sub-product rows
+    expect(screen.getAllByText('Bronze').length).toBeGreaterThan(0)
   })
 
   it('shows dimension row', () => {
@@ -199,9 +203,34 @@ describe('ProductDetail', () => {
     expect(screen.getByRole('heading', { name: 'Dependencies' })).toBeInTheDocument()
     // sub-products section present
     expect(screen.getByText(/Sub-products/i)).toBeInTheDocument()
-    // context refs present
+    // synapse-operator is a known PQF product → "Also scored by this team"
     expect(screen.getByText('Synapse Operator')).toBeInTheDocument()
-    expect(screen.getByText(/Context only/i)).toBeInTheDocument()
+    expect(screen.getByText(/Also scored by this team/i)).toBeInTheDocument()
+    // postgresql is not in portfolio → "External dependencies"
+    expect(screen.getByText(/PostgreSQL/i)).toBeInTheDocument()
+    expect(screen.getByText(/External dependencies/i)).toBeInTheDocument()
+  })
+
+  it('balances dependency row widths toward product and repo content', () => {
+    wrap('matrix')
+
+    const productLink = screen.getByRole('link', { name: 'Synapse Charm' })
+    const row = productLink.parentElement?.parentElement
+    const repoLink = screen.getByRole('link', { name: /canonical\/synapse-operator/i })
+
+    expect(row).not.toBeNull()
+    expect(row).toHaveStyle({
+      display: 'grid',
+      gridTemplateColumns: 'auto minmax(0, 1.1fr) auto minmax(14rem, 0.9fr)',
+    })
+    expect(productLink.parentElement).toHaveStyle({ minWidth: '0' })
+    expect(repoLink.parentElement).toHaveStyle({ minWidth: '0' })
+    expect(repoLink).toHaveStyle({
+      display: 'block',
+      overflow: 'hidden',
+      textOverflow: 'ellipsis',
+      whiteSpace: 'nowrap',
+    })
   })
 
   it('root product evidence shows metric values from composition', () => {
@@ -279,6 +308,31 @@ describe('ProductDetail', () => {
     wrap('matrix')
     // 1 in-scope leaf → no expand button needed (no disagreement possible)
     expect(screen.queryByRole('button', { name: /components/i })).not.toBeInTheDocument()
+  })
+
+  it('leaf product shows GitHub repo link in header', () => {
+    wrap('synapse')
+    const link = screen.getByRole('link', { name: 'GitHub ↗' })
+    expect(link).toHaveAttribute('href', 'https://github.com/canonical/synapse-operator')
+  })
+
+  it('leaf product with subpath links to subpath in GitHub', () => {
+    const portfolioWithSubpath: Portfolio = {
+      ...mockPortfolio,
+      products: [
+        mockPortfolio.products[0],
+        { ...mockPortfolio.products[1], source: { repo: 'canonical/monorepo', subpath: 'my-charm' } },
+      ],
+    }
+    mockWith(portfolioWithSubpath)
+    wrap('synapse')
+    const link = screen.getByRole('link', { name: 'GitHub ↗' })
+    expect(link).toHaveAttribute('href', 'https://github.com/canonical/monorepo/tree/main/my-charm')
+  })
+
+  it('product without source does not show GitHub link', () => {
+    wrap('matrix')
+    expect(screen.queryByRole('link', { name: 'GitHub ↗' })).not.toBeInTheDocument()
   })
 
   it('leaf product shows Part of chip', () => {

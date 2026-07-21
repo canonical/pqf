@@ -1,0 +1,19 @@
+id: hockeypuck-k8s
+product_type: root
+name: Hockeypuck
+description: |-
+  Hockeypuck is an OpenPGP public keyserver tool used to manage public key infrastructure
+  for PGP (Pretty Good Privacy). PGP is a system for securing communication through
+  encryption and digital signatures.
+lifecycle: stable
+target_medal: bronze
+ownership:
+  squad: emea
+  stakeholders:
+    - IS
+composed_of:
+  - id: hockeypuck-k8s-charm
+    product_type: charm
+    source:
+      repo: canonical/hockeypuck-k8s-operator
+documentation_url: https://hockeypuck.io/

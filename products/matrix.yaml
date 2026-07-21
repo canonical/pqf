@@ -1,32 +1,59 @@
-# products/matrix.yaml
 id: matrix
 product_type: root
-name: "Matrix (Synapse)"
-description: "Open-standard chat for secure real-time collaboration"
+name: Matrix
+description: |-
+  Matrix is a drop in replacement for other chat servers like Mattermost and Slack.
+  The synapse charm is useful if you want to spin up your own chat instance.
 lifecycle: stable
 target_medal: gold
 ownership:
   squad: americas
   stakeholders:
-    - "IS Operations"
-    - "Community Team"
-  users:
-    - "PFE"
-documentation_url: "https://charmhub.io/synapse"
+    - Mauro Gaspari
+    - Aaron Prisk
+    - IS
 composed_of:
   - id: synapse
     product_type: charm
     source:
       repo: canonical/synapse-operator
-    target_medal: gold
     allure_report_url: "https://canonical.github.io/synapse-operator/_latest"
-  - id: saml-integrator
+  - id: draupnir
+    product_type: snap
+    source:
+      repo: canonical/draupnir-snap
+  - id: mjolnir
+    product_type: snap
+    source:
+      repo: canonical/mjolnir-snap
+  - id: mas-cli
+    product_type: snap
+    source:
+      repo: canonical/mas-cli-snap
+  - id: matrix-appservice-irc
+    product_type: snap
+    source:
+      repo: canonical/matrix-appservice-irc
+  - id: synapse-stats-exporter
+    product_type: snap
+    source:
+      repo: canonical/synapse_stats_exporter
+  - ref: saml-integrator
+  - id: maubot
     product_type: charm
     source:
-      repo: canonical/saml-integrator-operator
-    target_medal: gold
+      repo: canonical/maubot-operator
+  - id: irc-bridge
+    product_type: charm
+    source:
+      repo: canonical/irc-bridge-operator
+documentation_url: https://ubuntu.com/community/communications/matrix
 context_refs:
-  - label: "PostgreSQL K8s"
+  - label: Smtp Integrator
+    repo: canonical/smtp-integrator-operator
+  - label: S3 Integrator
+    repo: canonical/s3-integrator
+  - label: Postgresql K8S
     repo: canonical/postgresql-k8s-operator
-  - label: "Synapse Stats Exporter"
-    repo: canonical/synapse-operator
+  - label: Redis K8S
+    repo: canonical/redis-k8s-operator

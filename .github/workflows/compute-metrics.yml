@@ -11,6 +11,19 @@ on:
       - 'config/**'          # re-run when dimension config changes
       - 'scorers/**'         # re-run when scorer logic changes
       - 'engine/**'          # re-run when assembly logic changes
+  pull_request:
+    paths:
+      - 'products/**'
+      - 'config/**'
+      - 'scorers/**'
+      - 'engine/**'
+
+# Cancel any in-progress run on the same branch when a new push arrives.
+# This prevents N sequential LLM runs when multiple commits land quickly.
+# The nightly schedule run is never cancelled (unique group per run_id).
+concurrency:
+  group: compute-metrics-${{ github.ref }}-${{ github.event_name == 'schedule' && github.run_id || 'push' }}
+  cancel-in-progress: ${{ github.event_name != 'schedule' }}
 
 permissions:
   contents: write            # needed for the commit-artifacts job
@@ -39,62 +52,104 @@ jobs:
     strategy:
       matrix: ${{ fromJson(needs.discover-products.outputs.matrix) }}
       fail-fast: false
+      max-parallel: 10   # Limit concurrent jobs to avoid GitHub API rate limits (1000 req/hr)
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0   # Needed to compare against base branch
+
+      # For pull_request: skip rescoring unchanged products, reuse committed computed file
+      - name: Check if product needs rescoring
+        id: needs_rescore
+        if: github.event_name == 'pull_request'
+        run: |
+          if git diff --name-only origin/${{ github.base_ref }}...HEAD -- \
+              products/${{ matrix.product }}.yaml config/ scorers/ engine/ \
+              | grep -q .; then
+            echo "changed=true" >> $GITHUB_OUTPUT
+          elif [ -f "computed/${{ matrix.product }}.json" ]; then
+            echo "changed=false" >> $GITHUB_OUTPUT
+          else
+            # New product with no existing computed file
+            echo "changed=true" >> $GITHUB_OUTPUT
+          fi
+
+      # If product is unchanged on PR, reuse the committed computed file
+      - name: Reuse existing computed file (unchanged product)
+        if: github.event_name == 'pull_request' && steps.needs_rescore.outputs.changed == 'false'
+        uses: actions/upload-artifact@v4
+        with:
+          name: computed-${{ matrix.product }}
+          path: computed/${{ matrix.product }}.json
+          retention-days: 1
 
       - uses: actions/setup-python@v5
+        if: github.event_name != 'pull_request' || steps.needs_rescore.outputs.changed == 'true'
         with:
           python-version: '3.11'
           cache: pip
 
       - name: Install dependencies
+        if: github.event_name != 'pull_request' || steps.needs_rescore.outputs.changed == 'true'
         run: pip install -e ".[dev]"
 
       - name: Create scorer output directory
+        if: github.event_name != 'pull_request' || steps.needs_rescore.outputs.changed == 'true'
         run: mkdir -p /tmp/scorers/${{ matrix.product }}
 
       - name: Run test_verification scorer
+        if: github.event_name != 'pull_request' || steps.needs_rescore.outputs.changed == 'true'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           python scorers/test_verification/scorer.py \
             --product-yaml products/${{ matrix.product }}.yaml \
+            --products-dir products/ \
             > /tmp/scorers/${{ matrix.product }}/test_verification.json
 
       - name: Run documentation scorer
+        if: github.event_name != 'pull_request' || steps.needs_rescore.outputs.changed == 'true'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
         run: |
           python scorers/documentation/scorer.py \
             --product-yaml products/${{ matrix.product }}.yaml \
+            --products-dir products/ \
             > /tmp/scorers/${{ matrix.product }}/documentation.json
 
       - name: Run substrate_compat scorer
+        if: github.event_name != 'pull_request' || steps.needs_rescore.outputs.changed == 'true'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           python scorers/substrate_compat/scorer.py \
             --product-yaml products/${{ matrix.product }}.yaml \
+            --products-dir products/ \
             > /tmp/scorers/${{ matrix.product }}/substrate_compat.json
 
       - name: Run security_ssdlc scorer
+        if: github.event_name != 'pull_request' || steps.needs_rescore.outputs.changed == 'true'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           python scorers/security_ssdlc/scorer.py \
             --product-yaml products/${{ matrix.product }}.yaml \
+            --products-dir products/ \
             > /tmp/scorers/${{ matrix.product }}/security_ssdlc.json
 
       - name: Run support_engagement scorer
+        if: github.event_name != 'pull_request' || steps.needs_rescore.outputs.changed == 'true'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           python scorers/support_engagement/scorer.py \
             --product-yaml products/${{ matrix.product }}.yaml \
+            --products-dir products/ \
             > /tmp/scorers/${{ matrix.product }}/support_engagement.json
 
       - name: Merge scorer outputs into computed/${{ matrix.product }}.json
+        if: github.event_name != 'pull_request' || steps.needs_rescore.outputs.changed == 'true'
         run: |
           python engine/merge_computed.py \
             --product-id ${{ matrix.product }} \
@@ -103,6 +158,7 @@ jobs:
             --output computed/${{ matrix.product }}.json
 
       - name: Upload computed artifact
+        if: github.event_name != 'pull_request' || steps.needs_rescore.outputs.changed == 'true'
         uses: actions/upload-artifact@v4
         with:
           name: computed-${{ matrix.product }}
@@ -157,14 +213,58 @@ jobs:
             drift-history.json
           retention-days: 1
 
-  # ── 4. Commit artifacts back to main ────────────────────────────────────────
-  commit-artifacts:
+  # ── 4. Build and deploy PR preview ─────────────────────────────────────────
+  build-preview:
     needs: run-engine
+    if: github.event_name == 'pull_request' && github.repository == 'canonical/pqf'
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: main
+          ref: ${{ github.head_ref }}
+
+      - name: Download engine artifacts (fresh medals)
+        uses: actions/download-artifact@v4
+        with:
+          name: engine-artifacts
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: ui/package-lock.json
+
+      - name: Install UI dependencies
+        run: npm install
+        working-directory: ui
+
+      - name: Build UI
+        run: npm run build
+        working-directory: ui
+        # Vite copies ../public/ (containing fresh portfolio.json from artifacts) into dist/
+
+      - name: Deploy PR preview
+        uses: rossjrw/pr-preview-action@v1
+        with:
+          source-dir: ./ui/dist
+          preview-branch: gh-pages
+          umbrella-dir: pr-preview
+          action: deploy
+          pr-number: ${{ github.event.pull_request.number }}
+
+  # ── 5. Commit artifacts back to main ────────────────────────────────────────
+  commit-artifacts:
+    needs: run-engine
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    continue-on-error: true  # Don't fail the workflow if branch protection rejects unsigned commits
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref }}
           token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Download engine artifacts

@@ -1,0 +1,16 @@
+id: nginx-ingress-integrator
+product_type: root
+name: Nginx Ingress Integrator
+description: The Nginx Integrator Operator is a workload-less charm that allows other
+  charms to configure an Nginx Ingress resource.
+lifecycle: stable
+target_medal: bronze
+ownership:
+  squad: emea
+  stakeholders:
+    - IS
+composed_of:
+  - id: nginx-ingress-integrator-charm
+    product_type: charm
+    source:
+      repo: canonical/nginx-ingress-integrator-operator

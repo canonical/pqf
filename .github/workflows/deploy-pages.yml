@@ -3,7 +3,6 @@ name: Deploy to GitHub Pages
 on:
   push:
     branches: [main]
-  workflow_dispatch:
 
 permissions:
   contents: write
@@ -17,22 +16,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
-      - uses: actions/setup-python@v5
-        with:
-          python-version: '3.11'
-
-      - name: Install Python dependencies
-        run: make install
-
-      - name: Assemble portfolio for production
-        run: >
-          python engine/assemble.py
-          --products-dir products/
-          --computed-dir computed/
-          --dimensions config/dimensions.yaml
-          --drift-history drift-history.json
-          --output public/portfolio.json
 
       - uses: actions/setup-node@v4
         with:
@@ -49,7 +32,7 @@ jobs:
         working-directory: ui
         # Vite copies ../public/ into dist/ automatically via publicDir config
 
-      - name: Deploy to gh-pages branch
+      - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
