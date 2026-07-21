@@ -83,3 +83,31 @@ def test_compute_metrics_deploys_production_from_engine_artifacts() -> None:
     )
     # Confirm it downloads the named artifact
     assert dl_step["with"]["name"] == "engine-artifacts"
+
+
+def test_deploy_pages_only_runs_for_ui_changes_and_skips_mixed_commits() -> None:
+    workflow = load_workflow(".github/workflows/deploy-pages.yml")
+
+    on = workflow.get("on") or workflow.get(True) or {}
+    push = on.get("push", {})
+    assert push["branches"] == ["main"]
+    assert push["paths"] == ["ui/**", ".github/workflows/deploy-pages.yml"]
+
+    jobs = workflow["jobs"]
+    assert "detect-scope" in jobs
+
+    detect_scope = jobs["detect-scope"]
+    detect_step = next(
+        step for step in detect_scope["steps"] if step.get("name") == "Detect data-affecting changes"
+    )
+    assert "git diff --name-only" in detect_step["run"]
+    assert "products/ config/ scorers/ engine/" in detect_step["run"]
+    assert detect_scope["outputs"]["data_changed"] == "${{ steps.scope.outputs.data_changed }}"
+
+    deploy_job = jobs["deploy"]
+    assert deploy_job["needs"] == "detect-scope"
+    assert deploy_job["if"] == "needs.detect-scope.outputs.data_changed != 'true'"
+
+    names = step_names(deploy_job)
+    assert "Build UI" in names
+    assert "Deploy to GitHub Pages" in names
