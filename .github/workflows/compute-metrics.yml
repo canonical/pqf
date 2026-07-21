@@ -11,6 +11,12 @@ on:
       - 'config/**'          # re-run when dimension config changes
       - 'scorers/**'         # re-run when scorer logic changes
       - 'engine/**'          # re-run when assembly logic changes
+  pull_request:
+    paths:
+      - 'products/**'
+      - 'config/**'
+      - 'scorers/**'
+      - 'engine/**'
 
 # Cancel any in-progress run on the same branch when a new push arrives.
 # This prevents N sequential LLM runs when multiple commits land quickly.
@@ -172,6 +178,7 @@ jobs:
   # ── 4. Commit artifacts back to main ────────────────────────────────────────
   commit-artifacts:
     needs: run-engine
+    if: github.event_name == 'push'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
