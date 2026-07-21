@@ -22,7 +22,10 @@ const mockPortfolio: Portfolio = {
       squad: 'americas',
       is_portfolio_entry: true,
       documentation_url: 'https://charmhub.io/synapse',
-      context_refs: [{ label: 'Synapse Operator', repo: 'canonical/synapse-operator' }],
+      context_refs: [
+        { label: 'Synapse Operator', repo: 'canonical/synapse-operator' },
+        { label: 'PostgreSQL', repo: 'canonical/postgresql-k8s-operator' },
+      ],
       parent_product_ids: [],
       composed_of: [{ product_id: 'synapse', excluded_from_parent_medal: false }],
       dimensions: {
@@ -199,9 +202,12 @@ describe('ProductDetail', () => {
     expect(screen.getByRole('heading', { name: 'Dependencies' })).toBeInTheDocument()
     // sub-products section present
     expect(screen.getByText(/Sub-products/i)).toBeInTheDocument()
-    // context refs present
+    // synapse-operator is a known PQF product → "Also scored by this team"
     expect(screen.getByText('Synapse Operator')).toBeInTheDocument()
-    expect(screen.getByText(/Context only/i)).toBeInTheDocument()
+    expect(screen.getByText(/Also scored by this team/i)).toBeInTheDocument()
+    // postgresql is not in portfolio → "External dependencies"
+    expect(screen.getByText('PostgreSQL')).toBeInTheDocument()
+    expect(screen.getByText(/External dependencies/i)).toBeInTheDocument()
   })
 
   it('root product evidence shows metric values from composition', () => {

@@ -284,27 +284,72 @@ export default function ProductDetail() {
               </div>
             )}
 
-            {product.context_refs.length > 0 && (
-              <div>
-                <p className="u-text--muted" style={{ fontSize: '0.875rem', margin: '0 0 0.5rem' }}>
-                  Context only — not scored by this team
-                </p>
-                <ul className="p-list" style={{ marginBottom: 0 }}>
-                  {product.context_refs.map((cr, i) => (
-                    <li key={i} className="p-list__item"
-                      style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.4rem 0' }}>
+            {product.context_refs.length > 0 && (() => {
+              // Split context_refs into PE-owned (has a product in portfolio) vs external
+              const peOwned = product.context_refs.filter(cr =>
+                cr.repo && portfolio.products.some(p =>
+                  p.source?.repo === cr.repo || p.composed_of?.some(c => {
+                    const leaf = portfolio.products.find(lp => lp.id === c.product_id)
+                    return leaf?.source?.repo === cr.repo
+                  })
+                )
+              )
+              const external = product.context_refs.filter(cr => !peOwned.includes(cr))
+
+              const renderRef = (cr: typeof product.context_refs[0], i: number) => {
+                // Find the PQF product whose source repo (or a leaf's repo) matches
+                const linkedProduct = cr.repo
+                  ? portfolio.products.find(p =>
+                      p.source?.repo === cr.repo ||
+                      p.composed_of?.some(c => {
+                        const leaf = portfolio.products.find(lp => lp.id === c.product_id)
+                        return leaf?.source?.repo === cr.repo
+                      })
+                    )
+                  : undefined
+                return (
+                  <li key={i} className="p-list__item"
+                    style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.4rem 0' }}>
+                    {linkedProduct ? (
+                      <Link to={`/products/${linkedProduct.id}`}>{cr.label}</Link>
+                    ) : (
                       <span>{cr.label}</span>
-                      {cr.repo && (
-                        <a href={`https://github.com/${cr.repo}`} target="_blank" rel="noreferrer"
-                          style={{ fontSize: '0.875rem', color: '#666' }}>
-                          {cr.repo} ↗
-                        </a>
-                      )}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
+                    )}
+                    {cr.repo && (
+                      <a href={`https://github.com/${cr.repo}`} target="_blank" rel="noreferrer"
+                        style={{ fontSize: '0.875rem', color: '#666' }}>
+                        {cr.repo} ↗
+                      </a>
+                    )}
+                  </li>
+                )
+              }
+
+              return (
+                <>
+                  {peOwned.length > 0 && (
+                    <div style={{ marginBottom: external.length > 0 ? '1rem' : 0 }}>
+                      <p className="u-text--muted" style={{ fontSize: '0.875rem', margin: '0 0 0.5rem' }}>
+                        Also scored by this team
+                      </p>
+                      <ul className="p-list" style={{ marginBottom: 0 }}>
+                        {peOwned.map((cr, i) => renderRef(cr, i))}
+                      </ul>
+                    </div>
+                  )}
+                  {external.length > 0 && (
+                    <div>
+                      <p className="u-text--muted" style={{ fontSize: '0.875rem', margin: '0 0 0.5rem' }}>
+                        External dependencies — not scored by this team
+                      </p>
+                      <ul className="p-list" style={{ marginBottom: 0 }}>
+                        {external.map((cr, i) => renderRef(cr, i))}
+                      </ul>
+                    </div>
+                  )}
+                </>
+              )
+            })()}
           </div>
         )}
 
