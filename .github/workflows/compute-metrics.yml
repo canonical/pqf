@@ -6,17 +6,23 @@ on:
     - cron: '0 2 * * *'    # nightly at 02:00 UTC
   workflow_dispatch:         # manual trigger
   push:
+    branches: [main]
     paths:
       - 'products/**'        # re-run when a product YAML changes
       - 'config/**'          # re-run when dimension config changes
       - 'scorers/**'         # re-run when scorer logic changes
+      - '!scorers/**/__tests__/**'
       - 'engine/**'          # re-run when assembly logic changes
+      - '!engine/__tests__/**'
   pull_request:
+    types: [opened, reopened, synchronize, closed]
     paths:
       - 'products/**'
       - 'config/**'
       - 'scorers/**'
+      - '!scorers/**/__tests__/**'
       - 'engine/**'
+      - '!engine/__tests__/**'
 
 # Cancel any in-progress run on the same branch when a new push arrives.
 # This prevents N sequential LLM runs when multiple commits land quickly.
@@ -32,6 +38,7 @@ jobs:
 
   # ── 1. Discover products ────────────────────────────────────────────────────
   discover-products:
+    if: github.event_name != 'pull_request' || github.event.action != 'closed'
     runs-on: ubuntu-latest
     outputs:
       matrix: ${{ steps.scan.outputs.matrix }}
@@ -47,6 +54,7 @@ jobs:
 
   # ── 2. Compute metrics per product ─────────────────────────────────────────
   compute-metrics:
+    if: github.event_name != 'pull_request' || github.event.action != 'closed'
     needs: discover-products
     runs-on: ubuntu-latest
     strategy:
@@ -63,9 +71,13 @@ jobs:
         id: needs_rescore
         if: github.event_name == 'pull_request'
         run: |
-          if git diff --name-only origin/${{ github.base_ref }}...HEAD -- \
+          changed_paths=$(
+            git diff --name-only origin/${{ github.base_ref }}...HEAD -- \
               products/${{ matrix.product }}.yaml config/ scorers/ engine/ \
-              | grep -q .; then
+              | grep -Ev '^(engine/__tests__/|scorers/.*/__tests__/)' || true
+          )
+
+          if [ -n "$changed_paths" ]; then
             echo "changed=true" >> $GITHUB_OUTPUT
           elif [ -f "computed/${{ matrix.product }}.json" ]; then
             echo "changed=false" >> $GITHUB_OUTPUT
@@ -167,6 +179,7 @@ jobs:
 
   # ── 3. Run medal engine + generate badges ───────────────────────────────────
   run-engine:
+    if: github.event_name != 'pull_request' || github.event.action != 'closed'
     needs: compute-metrics
     runs-on: ubuntu-latest
     steps:
@@ -216,7 +229,10 @@ jobs:
   # ── 4. Build and deploy PR preview ─────────────────────────────────────────
   build-preview:
     needs: run-engine
-    if: github.event_name == 'pull_request' && github.repository == 'canonical/pqf'
+    if: >
+      github.event_name == 'pull_request' &&
+      github.event.action != 'closed' &&
+      github.repository == 'canonical/pqf'
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -254,6 +270,26 @@ jobs:
           umbrella-dir: pr-preview
           action: deploy
           pr-number: ${{ github.event.pull_request.number }}
+          comment: false
+
+  cleanup-preview:
+    if: >
+      github.event_name == 'pull_request' &&
+      github.event.action == 'closed' &&
+      github.repository == 'canonical/pqf'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - name: Remove PR preview
+        uses: rossjrw/pr-preview-action@v1
+        with:
+          preview-branch: gh-pages
+          umbrella-dir: pr-preview
+          action: remove
+          pr-number: ${{ github.event.pull_request.number }}
+          comment: false
 
   # ── 5. Build and deploy production site from fresh engine artifacts ───────────
   deploy-production:
