@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-21T12:56:50.196017+00:00",
+  "generated_at": "2026-07-21T13:02:22.208053+00:00",
   "products": [
     {
       "id": "12-factor",
@@ -3437,6 +3437,10 @@
         {
           "product_id": "synapse-stats-exporter",
           "excluded_from_parent_medal": false
+        },
+        {
+          "product_id": "saml-integrator",
+          "excluded_from_parent_medal": false
         }
       ],
       "context_refs": [
@@ -3449,16 +3453,8 @@
           "repo": "canonical/irc-bridge-operator"
         },
         {
-          "label": "Synapse",
-          "repo": "canonical/synapse-operator"
-        },
-        {
           "label": "Smtp Integrator",
           "repo": "canonical/smtp-integrator-operator"
-        },
-        {
-          "label": "Saml Integrator",
-          "repo": "canonical/saml-integrator-operator"
         },
         {
           "label": "S3 Integrator",
@@ -3535,6 +3531,20 @@
               "applicability": "insufficient_data",
               "metrics": {},
               "excluded_from_parent_medal": false
+            },
+            {
+              "product_id": "saml-integrator",
+              "repo": "canonical/saml-integrator-operator",
+              "medal": "unrated",
+              "applicability": "scored",
+              "metrics": {
+                "coverage_pct": 0,
+                "stability_pct": 0,
+                "latest_build_passing": false,
+                "uses_ops_testing": false,
+                "uses_jubilant": false
+              },
+              "excluded_from_parent_medal": false
             }
           ]
         },
@@ -3599,6 +3609,21 @@
               "applicability": "insufficient_data",
               "metrics": {},
               "excluded_from_parent_medal": false
+            },
+            {
+              "product_id": "saml-integrator",
+              "repo": "canonical/saml-integrator-operator",
+              "medal": "bronze",
+              "applicability": "scored",
+              "metrics": {
+                "has_readme": true,
+                "has_contributing": true,
+                "has_security": true,
+                "diataxis_coverage": 2,
+                "style_linter_passing": true,
+                "links_passing": false
+              },
+              "excluded_from_parent_medal": false
             }
           ]
         },
@@ -3659,6 +3684,18 @@
               "medal": "unrated",
               "applicability": "not_applicable",
               "metrics": {},
+              "excluded_from_parent_medal": false
+            },
+            {
+              "product_id": "saml-integrator",
+              "repo": "canonical/saml-integrator-operator",
+              "medal": "bronze",
+              "applicability": "scored",
+              "metrics": {
+                "supports_juju_3": false,
+                "supports_juju_4": false,
+                "supports_ck8s": false
+              },
               "excluded_from_parent_medal": false
             }
           ]
@@ -3721,6 +3758,18 @@
               "applicability": "insufficient_data",
               "metrics": {},
               "excluded_from_parent_medal": false
+            },
+            {
+              "product_id": "saml-integrator",
+              "repo": "canonical/saml-integrator-operator",
+              "medal": "bronze",
+              "applicability": "scored",
+              "metrics": {
+                "dependabot_enabled": false,
+                "codeql_enabled": false,
+                "branch_protection_required_checks": true
+              },
+              "excluded_from_parent_medal": false
             }
           ]
         },
@@ -3782,6 +3831,19 @@
               "medal": "unrated",
               "applicability": "insufficient_data",
               "metrics": {},
+              "excluded_from_parent_medal": false
+            },
+            {
+              "product_id": "saml-integrator",
+              "repo": "canonical/saml-integrator-operator",
+              "medal": "bronze",
+              "applicability": "scored",
+              "metrics": {
+                "avg_triage_days": 381.4,
+                "avg_pr_review_days": 1.3,
+                "has_squad_topic": true,
+                "has_jira_sync": true
+              },
               "excluded_from_parent_medal": false
             }
           ]
@@ -4477,109 +4539,90 @@
     },
     {
       "id": "saml-integrator",
-      "product_type": "root",
+      "product_type": "charm",
       "name": "SAML Integrator",
-      "description": "| SAML Integrator is an integrator charm for providing SAML configuration details to consumer charms which seek to authenticate using a SAML server. Configure the SAML endpoint in the integrator charm and relate consumer charms as needed.",
+      "description": "SAML Integrator is an integrator charm for providing SAML configuration\ndetails to consumer charms which seek to authenticate using a SAML server.\nConfigure the SAML endpoint in the integrator charm and relate consumer charms\nas needed.",
       "lifecycle": "stable",
       "target_medal": "gold",
       "current_medal": "unrated",
       "squad": "emea",
       "is_portfolio_entry": true,
       "documentation_url": "https://charmhub.io/saml-integrator",
-      "source": null,
-      "composed_of": [
-        {
-          "product_id": "saml-integrator-charm",
-          "excluded_from_parent_medal": false
-        }
-      ],
+      "source": {
+        "repo": "canonical/saml-integrator-operator",
+        "subpath": null
+      },
+      "composed_of": null,
       "context_refs": [],
-      "parent_product_ids": [],
+      "parent_product_ids": [
+        "matrix"
+      ],
       "dimensions": {
         "test_verification": {
           "medal": "unrated",
           "target": "gold",
-          "applicability": "insufficient_data",
-          "metrics": {},
+          "applicability": "scored",
+          "metrics": {
+            "coverage_pct": 0,
+            "stability_pct": 0,
+            "latest_build_passing": false,
+            "uses_ops_testing": false,
+            "uses_jubilant": false
+          },
           "drift": null,
-          "composition": [
-            {
-              "product_id": "saml-integrator-charm",
-              "repo": "canonical/saml-integrator-operator",
-              "medal": "unrated",
-              "applicability": "insufficient_data",
-              "metrics": {},
-              "excluded_from_parent_medal": false
-            }
-          ]
+          "composition": null
         },
         "documentation": {
-          "medal": "unrated",
+          "medal": "bronze",
           "target": "gold",
-          "applicability": "insufficient_data",
-          "metrics": {},
+          "applicability": "scored",
+          "metrics": {
+            "has_readme": true,
+            "has_contributing": true,
+            "has_security": true,
+            "diataxis_coverage": 2,
+            "style_linter_passing": true,
+            "links_passing": false
+          },
           "drift": null,
-          "composition": [
-            {
-              "product_id": "saml-integrator-charm",
-              "repo": "canonical/saml-integrator-operator",
-              "medal": "unrated",
-              "applicability": "insufficient_data",
-              "metrics": {},
-              "excluded_from_parent_medal": false
-            }
-          ]
+          "composition": null
         },
         "substrate_compat": {
-          "medal": "unrated",
+          "medal": "bronze",
           "target": "gold",
-          "applicability": "insufficient_data",
-          "metrics": {},
+          "applicability": "scored",
+          "metrics": {
+            "supports_juju_3": false,
+            "supports_juju_4": false,
+            "supports_ck8s": false
+          },
           "drift": null,
-          "composition": [
-            {
-              "product_id": "saml-integrator-charm",
-              "repo": "canonical/saml-integrator-operator",
-              "medal": "unrated",
-              "applicability": "insufficient_data",
-              "metrics": {},
-              "excluded_from_parent_medal": false
-            }
-          ]
+          "composition": null
         },
         "security_ssdlc": {
-          "medal": "unrated",
+          "medal": "bronze",
           "target": "gold",
-          "applicability": "insufficient_data",
-          "metrics": {},
+          "applicability": "scored",
+          "metrics": {
+            "dependabot_enabled": false,
+            "codeql_enabled": false,
+            "branch_protection_required_checks": true
+          },
           "drift": null,
-          "composition": [
-            {
-              "product_id": "saml-integrator-charm",
-              "repo": "canonical/saml-integrator-operator",
-              "medal": "unrated",
-              "applicability": "insufficient_data",
-              "metrics": {},
-              "excluded_from_parent_medal": false
-            }
-          ]
+          "composition": null
         },
         "support_engagement": {
-          "medal": "unrated",
+          "medal": "bronze",
           "target": "gold",
-          "applicability": "insufficient_data",
-          "metrics": {},
+          "applicability": "scored",
+          "metrics": {
+            "avg_triage_days": 381.4,
+            "avg_pr_review_days": 1.3,
+            "has_squad_topic": true,
+            "has_jira_sync": true
+          },
           "drift": null,
-          "composition": [
-            {
-              "product_id": "saml-integrator-charm",
-              "repo": "canonical/saml-integrator-operator",
-              "medal": "unrated",
-              "applicability": "insufficient_data",
-              "metrics": {},
-              "excluded_from_parent_medal": false
-            }
-          ]
+          "composition": null
         }
       }
     },
@@ -9616,69 +9659,6 @@
         "support_engagement": {
           "medal": "unrated",
           "target": "bronze",
-          "applicability": "insufficient_data",
-          "metrics": {},
-          "drift": null,
-          "composition": null
-        }
-      }
-    },
-    {
-      "id": "saml-integrator-charm",
-      "product_type": "charm",
-      "name": "saml-integrator-charm",
-      "description": "",
-      "lifecycle": "stable",
-      "target_medal": "gold",
-      "current_medal": "unrated",
-      "squad": "",
-      "is_portfolio_entry": false,
-      "documentation_url": "",
-      "source": {
-        "repo": "canonical/saml-integrator-operator",
-        "subpath": null
-      },
-      "composed_of": null,
-      "context_refs": [],
-      "parent_product_ids": [
-        "saml-integrator"
-      ],
-      "dimensions": {
-        "test_verification": {
-          "medal": "unrated",
-          "target": "gold",
-          "applicability": "insufficient_data",
-          "metrics": {},
-          "drift": null,
-          "composition": null
-        },
-        "documentation": {
-          "medal": "unrated",
-          "target": "gold",
-          "applicability": "insufficient_data",
-          "metrics": {},
-          "drift": null,
-          "composition": null
-        },
-        "substrate_compat": {
-          "medal": "unrated",
-          "target": "gold",
-          "applicability": "insufficient_data",
-          "metrics": {},
-          "drift": null,
-          "composition": null
-        },
-        "security_ssdlc": {
-          "medal": "unrated",
-          "target": "gold",
-          "applicability": "insufficient_data",
-          "metrics": {},
-          "drift": null,
-          "composition": null
-        },
-        "support_engagement": {
-          "medal": "unrated",
-          "target": "gold",
           "applicability": "insufficient_data",
           "metrics": {},
           "drift": null,
