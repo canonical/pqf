@@ -27,6 +27,7 @@ concurrency:
 
 permissions:
   contents: write            # needed for the commit-artifacts job
+  actions: write             # needed for trigger-preview to dispatch workflow_dispatch
 
 jobs:
 
@@ -181,14 +182,13 @@ jobs:
     if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
     steps:
-      - name: Trigger PR preview with fresh artifacts
+      - name: Trigger PR preview workflow with fresh artifacts
         run: |
-          gh api repos/${{ github.repository }}/dispatches \
-            --method POST \
-            --field event_type=preview-pr \
-            --field "client_payload[run_id]=${{ github.run_id }}" \
-            --field "client_payload[pr_number]=${{ github.event.pull_request.number }}" \
-            --field "client_payload[head_branch]=${{ github.head_ref }}"
+          gh workflow run preview.yml \
+            --repo ${{ github.repository }} \
+            --ref ${{ github.head_ref }} \
+            -f run_id=${{ github.run_id }} \
+            -f pr_number=${{ github.event.pull_request.number }}
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
