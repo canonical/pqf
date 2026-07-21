@@ -5,7 +5,7 @@
 
 .DEFAULT_GOAL := help
 .PHONY: help install install-ui install-all \
-	lint format format-check \
+	lint format format-check ci-check \
 	validate \
 	test test-ui test-all \
 	build dev \
@@ -41,6 +41,7 @@ help:
 	@echo "    make lint           Lint Python with ruff"
 	@echo "    make format         Auto-format Python with ruff"
 	@echo "    make format-check   Check Python formatting without modifying"
+	@echo "    make ci-check       Run everything CI runs: lint + format-check + test + test-ui"
 	@echo "    make validate       Validate config YAML files against JSON Schemas"
 	@echo "    make test           Run Python unit tests"
 	@echo ""
@@ -90,6 +91,8 @@ format:
 
 format-check:
 	ruff format --check .
+
+ci-check: lint format-check test test-ui
 
 # ── Python: tests ─────────────────────────────────────────────────────────────
 test:
