@@ -1,3 +1,4 @@
+import React from 'react'
 import { useParams, Link } from 'react-router'
 import { usePortfolio } from '../hooks/usePortfolio'
 import MedalBadge from '../components/MedalBadge'
@@ -246,105 +247,120 @@ export default function ProductDetail() {
         {/* Unified Dependencies card */}
         {hasDependencies && (
           <div className="p-card u-sv3">
-            <h2 className="p-heading--4" style={{ marginBottom: '0.5rem' }}>Dependencies</h2>
+            <h2 className="p-heading--4" style={{ marginBottom: '1rem' }}>Dependencies</h2>
 
+            {/* Sub-products — primary, table-style aligned rows with medals */}
             {product.composed_of && product.composed_of.length > 0 && (
-              <div style={{ marginBottom: product.context_refs.length > 0 ? '1rem' : 0 }}>
-                <p className="u-text--muted" style={{ fontSize: '0.875rem', margin: '0 0 0.5rem' }}>
-                  Sub-products — scored and included in medal calculation
+              <div>
+                <p style={{ fontSize: '0.7rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.06em', color: '#333', margin: '0 0 0.6rem' }}>
+                  Sub-products
                 </p>
-                <ul className="p-list" style={{ marginBottom: 0 }}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem' }}>
                   {product.composed_of.map(c => {
-                    const leafProduct = portfolio.products.find(p => p.id === c.product_id)
+                    const leaf = portfolio.products.find(p => p.id === c.product_id)
                     return (
-                      <li key={c.product_id} className="p-list__item"
-                        style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.4rem 0' }}>
-                        <Link to={`/products/${c.product_id}`}>
-                          {leafProduct?.name ?? c.product_id}
+                      <div key={c.product_id}
+                        style={{ display: 'grid', gridTemplateColumns: '6rem 1fr auto auto', alignItems: 'center', gap: '0.75rem' }}>
+                        {leaf?.current_medal ? (
+                          <MedalBadge medal={leaf.current_medal} size="small" />
+                        ) : (
+                          <span style={{ fontSize: '0.75rem', color: '#999', textAlign: 'center' }}>—</span>
+                        )}
+                        <Link to={`/products/${c.product_id}`} style={{ fontWeight: 500 }}>
+                          {leaf?.name ?? c.product_id}
                         </Link>
-                        {leafProduct?.product_type && (
-                          <span className="p-label--information" style={{ fontSize: '0.75rem' }}>
-                            {leafProduct.product_type}
+                        {leaf?.product_type ? (
+                          <span className="p-label--information" style={{ fontSize: '0.7rem' }}>
+                            {leaf.product_type}
                           </span>
-                        )}
-                        {leafProduct?.source?.repo && (
-                          <a href={`https://github.com/${leafProduct.source.repo}`}
-                            target="_blank" rel="noreferrer"
-                            style={{ fontSize: '0.875rem', color: '#666' }}>
-                            {leafProduct.source.repo} ↗
+                        ) : <span />}
+                        {leaf?.source?.repo ? (
+                          <a href={`https://github.com/${leaf.source.repo}`} target="_blank" rel="noreferrer"
+                            style={{ fontSize: '0.8rem', color: '#666', whiteSpace: 'nowrap' }}>
+                            {leaf.source.repo} ↗
                           </a>
-                        )}
-                        {c.excluded_from_parent_medal && (
-                          <span style={{ fontSize: '0.75rem', color: '#666' }}>(excluded from medal)</span>
-                        )}
-                      </li>
+                        ) : <span />}
+                      </div>
                     )
                   })}
-                </ul>
+                </div>
               </div>
             )}
 
+            {/* Also scored / External context — compact inline sections */}
             {product.context_refs.length > 0 && (() => {
-              // Split context_refs into PE-owned (has a product in portfolio) vs external
-              const peOwned = product.context_refs.filter(cr =>
-                cr.repo && portfolio.products.some(p =>
-                  p.source?.repo === cr.repo || p.composed_of?.some(c => {
+              const findLinkedProduct = (cr: typeof product.context_refs[0]) =>
+                cr.repo ? portfolio.products.find(p =>
+                  p.source?.repo === cr.repo ||
+                  p.composed_of?.some(c => {
                     const leaf = portfolio.products.find(lp => lp.id === c.product_id)
                     return leaf?.source?.repo === cr.repo
                   })
-                )
-              )
-              const external = product.context_refs.filter(cr => !peOwned.includes(cr))
+                ) : undefined
 
-              const renderRef = (cr: typeof product.context_refs[0], i: number) => {
-                // Find the PQF product whose source repo (or a leaf's repo) matches
-                const linkedProduct = cr.repo
-                  ? portfolio.products.find(p =>
-                      p.source?.repo === cr.repo ||
-                      p.composed_of?.some(c => {
-                        const leaf = portfolio.products.find(lp => lp.id === c.product_id)
-                        return leaf?.source?.repo === cr.repo
-                      })
-                    )
-                  : undefined
-                return (
-                  <li key={i} className="p-list__item"
-                    style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.4rem 0' }}>
-                    {linkedProduct ? (
-                      <Link to={`/products/${linkedProduct.id}`}>{cr.label}</Link>
-                    ) : (
-                      <span>{cr.label}</span>
-                    )}
-                    {cr.repo && (
-                      <a href={`https://github.com/${cr.repo}`} target="_blank" rel="noreferrer"
-                        style={{ fontSize: '0.875rem', color: '#666' }}>
-                        {cr.repo} ↗
-                      </a>
-                    )}
-                  </li>
-                )
+              const peOwned = product.context_refs.filter(cr => findLinkedProduct(cr) !== undefined)
+              const external = product.context_refs.filter(cr => findLinkedProduct(cr) === undefined)
+
+              const sectionStyle: React.CSSProperties = {
+                borderTop: '1px solid #e5e5e5',
+                marginTop: '1rem',
+                paddingTop: '0.75rem',
+              }
+              const labelStyle: React.CSSProperties = {
+                fontSize: '0.7rem',
+                fontWeight: 600,
+                textTransform: 'uppercase',
+                letterSpacing: '0.06em',
+                margin: '0 0 0.4rem',
+              }
+              const inlineListStyle: React.CSSProperties = {
+                display: 'flex',
+                flexWrap: 'wrap',
+                alignItems: 'center',
+                gap: '0.25rem 0',
               }
 
               return (
                 <>
                   {peOwned.length > 0 && (
-                    <div style={{ marginBottom: external.length > 0 ? '1rem' : 0 }}>
-                      <p className="u-text--muted" style={{ fontSize: '0.875rem', margin: '0 0 0.5rem' }}>
-                        Also scored by this team
-                      </p>
-                      <ul className="p-list" style={{ marginBottom: 0 }}>
-                        {peOwned.map((cr, i) => renderRef(cr, i))}
-                      </ul>
+                    <div style={sectionStyle}>
+                      <p style={{ ...labelStyle, color: '#555' }}>Also scored by this team</p>
+                      <div style={inlineListStyle}>
+                        {peOwned.map((cr, i) => {
+                          const linked = findLinkedProduct(cr)
+                          return (
+                            <React.Fragment key={i}>
+                              {i > 0 && <span style={{ color: '#ccc', margin: '0 0.4rem' }}>·</span>}
+                              <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem' }}>
+                                {linked?.current_medal && <MedalBadge medal={linked.current_medal} size="small" />}
+                                <Link to={`/products/${linked!.id}`}>{cr.label}</Link>
+                              </span>
+                            </React.Fragment>
+                          )
+                        })}
+                      </div>
                     </div>
                   )}
                   {external.length > 0 && (
-                    <div>
-                      <p className="u-text--muted" style={{ fontSize: '0.875rem', margin: '0 0 0.5rem' }}>
-                        External dependencies — not scored by this team
-                      </p>
-                      <ul className="p-list" style={{ marginBottom: 0 }}>
-                        {external.map((cr, i) => renderRef(cr, i))}
-                      </ul>
+                    <div style={sectionStyle}>
+                      <p style={{ ...labelStyle, color: '#888' }}>External dependencies</p>
+                      <div style={inlineListStyle}>
+                        {external.map((cr, i) => (
+                          <React.Fragment key={i}>
+                            {i > 0 && <span style={{ color: '#ccc', margin: '0 0.4rem' }}>·</span>}
+                            <span>
+                              {cr.repo ? (
+                                <a href={`https://github.com/${cr.repo}`} target="_blank" rel="noreferrer"
+                                  style={{ color: '#666' }}>
+                                  {cr.label} ↗
+                                </a>
+                              ) : (
+                                <span style={{ color: '#666' }}>{cr.label}</span>
+                              )}
+                            </span>
+                          </React.Fragment>
+                        ))}
+                      </div>
                     </div>
                   )}
                 </>

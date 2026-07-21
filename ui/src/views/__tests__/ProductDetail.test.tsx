@@ -144,7 +144,8 @@ describe('ProductDetail', () => {
 
   it('shows current medal', () => {
     wrap('matrix')
-    expect(screen.getByText('Bronze')).toBeInTheDocument()
+    // multiple Bronze badges appear: product header + sub-product rows
+    expect(screen.getAllByText('Bronze').length).toBeGreaterThan(0)
   })
 
   it('shows dimension row', () => {
@@ -206,7 +207,7 @@ describe('ProductDetail', () => {
     expect(screen.getByText('Synapse Operator')).toBeInTheDocument()
     expect(screen.getByText(/Also scored by this team/i)).toBeInTheDocument()
     // postgresql is not in portfolio → "External dependencies"
-    expect(screen.getByText('PostgreSQL')).toBeInTheDocument()
+    expect(screen.getByText(/PostgreSQL/i)).toBeInTheDocument()
     expect(screen.getByText(/External dependencies/i)).toBeInTheDocument()
   })
 
