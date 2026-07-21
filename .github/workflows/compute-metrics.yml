@@ -175,7 +175,24 @@ jobs:
             drift-history.json
           retention-days: 1
 
-  # ── 4. Commit artifacts back to main ────────────────────────────────────────
+  # ── 4. Trigger PR preview with fresh artifacts ──────────────────────────────
+  trigger-preview:
+    needs: run-engine
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger PR preview with fresh artifacts
+        run: |
+          gh api repos/${{ github.repository }}/dispatches \
+            --method POST \
+            --field event_type=preview-pr \
+            --field "client_payload[run_id]=${{ github.run_id }}" \
+            --field "client_payload[pr_number]=${{ github.event.pull_request.number }}" \
+            --field "client_payload[head_branch]=${{ github.head_ref }}"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  # ── 5. Commit artifacts back to main ────────────────────────────────────────
   commit-artifacts:
     needs: run-engine
     if: github.event_name == 'push'

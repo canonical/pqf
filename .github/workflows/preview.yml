@@ -1,14 +1,17 @@
 name: PR Preview
 
 on:
-  workflow_run:
-    workflows: [Compute Metrics]
-    types: [completed]
+  repository_dispatch:
+    types: [preview-pr]
   workflow_dispatch:
     inputs:
       run_id:
-        description: 'compute-metrics run ID (leave empty to use latest PR compute-metrics)'
-        required: false
+        description: 'compute-metrics run ID to fetch artifacts from'
+        required: true
+        type: string
+      pr_number:
+        description: 'Pull request number to deploy preview for'
+        required: true
         type: string
 
 permissions:
@@ -16,27 +19,27 @@ permissions:
   pull-requests: write
 
 concurrency:
-  group: gh-pages-preview-${{ github.event.workflow_run.head_branch || github.ref_name }}
+  group: gh-pages-preview-${{ github.event.client_payload.pr_number || inputs.pr_number }}
   cancel-in-progress: false
 
 jobs:
   deploy-preview:
     name: Build and deploy PR preview
     runs-on: ubuntu-latest
-    if: |
-      (github.event.workflow_run.conclusion == 'success' &&
-       github.event.workflow_run.event == 'pull_request') ||
-      github.event_name == 'workflow_dispatch'
+    env:
+      RUN_ID: ${{ github.event.client_payload.run_id || inputs.run_id }}
+      PR_NUMBER: ${{ github.event.client_payload.pr_number || inputs.pr_number }}
+      HEAD_BRANCH: ${{ github.event.client_payload.head_branch || github.ref_name }}
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: ${{ github.event.workflow_run.head_branch || github.ref_name }}
+          ref: ${{ github.event.client_payload.head_branch || github.ref_name }}
 
       - name: Download compute-metrics artifacts (fresh medals)
         uses: actions/download-artifact@v4
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          run-id: ${{ github.event.workflow_run.id || inputs.run_id }}
+          run-id: ${{ env.RUN_ID }}
           name: engine-artifacts
 
       - uses: actions/setup-node@v4
@@ -62,10 +65,11 @@ jobs:
           preview-branch: gh-pages
           umbrella-dir: pr-preview
           action: deploy
+          pr-number: ${{ env.PR_NUMBER }}
 
       - name: Note about fork deployments
         if: github.repository != 'canonical/pqf'
         run: |
           echo "✓ Build successful!"
           echo "Note: PR preview deployment only works on the canonical/pqf repository."
-          echo "Preview URL would be: https://canonical.github.io/pqf/pr-preview/pr-{PR_NUMBER}/"
+          echo "Preview URL would be: https://canonical.github.io/pqf/pr-preview/pr-${{ env.PR_NUMBER }}/"
