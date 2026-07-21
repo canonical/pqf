@@ -258,7 +258,9 @@ jobs:
   # ── 5. Build and deploy production site from fresh engine artifacts ───────────
   deploy-production:
     needs: run-engine
-    if: github.event_name != 'pull_request' && github.repository == 'canonical/pqf'
+    if: >
+      github.event_name == 'schedule' || github.event_name == 'workflow_dispatch' ||
+      (github.event_name == 'push' && github.ref == 'refs/heads/main' && github.repository == 'canonical/pqf')
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4

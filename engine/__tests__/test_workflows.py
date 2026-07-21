@@ -20,10 +20,14 @@ def test_compute_metrics_deploys_production_from_engine_artifacts() -> None:
 
     deploy_job = jobs["deploy-production"]
     assert deploy_job["needs"] == "run-engine"
-    assert (
-        deploy_job["if"]
-        == "github.event_name != 'pull_request' && github.repository == 'canonical/pqf'"
-    )
+    # Production deploy must be allowed for schedule and workflow_dispatch,
+    # and for push events only when the ref is the main branch in the canonical/pqf repo.
+    expr = deploy_job["if"]
+    assert "github.event_name == 'schedule'" in expr
+    assert "github.event_name == 'workflow_dispatch'" in expr
+    assert "github.event_name == 'push'" in expr
+    assert "github.ref == 'refs/heads/main'" in expr
+    assert "github.repository == 'canonical/pqf'" in expr
 
     names = step_names(deploy_job)
     assert "Download engine artifacts" in names
