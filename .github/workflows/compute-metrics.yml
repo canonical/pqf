@@ -6,6 +6,8 @@ on:
     - cron: '0 2 * * *'    # nightly at 02:00 UTC
   workflow_dispatch:         # manual trigger
   push:
+    branches:
+      - main                 # only run on main, not PR branches
     paths:
       - 'products/**'        # re-run when a product YAML changes
       - 'config/**'          # re-run when dimension config changes
