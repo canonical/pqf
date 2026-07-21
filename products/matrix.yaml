@@ -44,12 +44,18 @@ composed_of:
       repo: canonical/synapse_stats_exporter
     target_medal: bronze
   - ref: saml-integrator
+  - id: maubot
+    product_type: charm
+    source:
+      repo: canonical/maubot-operator
+    target_medal: bronze
+  - id: irc-bridge
+    product_type: charm
+    source:
+      repo: canonical/irc-bridge-operator
+    target_medal: bronze
 documentation_url: https://ubuntu.com/community/communications/matrix
 context_refs:
-  - label: Maubot
-    repo: canonical/maubot-operator
-  - label: Irc Bridge
-    repo: canonical/irc-bridge-operator
   - label: Smtp Integrator
     repo: canonical/smtp-integrator-operator
   - label: S3 Integrator
@@ -57,4 +63,4 @@ context_refs:
   - label: Postgresql K8S
     repo: canonical/postgresql-k8s-operator
   - label: Redis K8S
-    repo: canonical/postgresql-k8s-operator
+    repo: canonical/redis-k8s-operator
