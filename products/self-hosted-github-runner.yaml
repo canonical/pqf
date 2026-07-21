@@ -45,11 +45,13 @@ composed_of:
   product_type: charm
   source:
     repo: canonical/github-runner-operators
+    subpath: charms/planner-operator
   target_medal: gold
 - id: self-hosted-github-runner-github-runner-webhook-gateway
   product_type: charm
   source:
     repo: canonical/github-runner-operators
+    subpath: charms/webhook-gateway-operator
   target_medal: gold
 documentation_url: https://documentation.ubuntu.com/self-hosted-runners/en/latest/
 context_refs:

@@ -25,20 +25,24 @@ composed_of:
   product_type: charm
   source:
     repo: canonical/backup-operators
+    subpath: bacula_server_operator
   target_medal: silver
 - id: backup-bacula-fd
   product_type: charm
   source:
     repo: canonical/backup-operators
+    subpath: bacula_fd_operator
   target_medal: silver
 - id: backup-backup-integrator
   product_type: charm
   source:
     repo: canonical/backup-operators
+    subpath: backup_integrator_operator
   target_medal: silver
 - id: backup-charmed-bacula-server
   product_type: snap
   source:
     repo: canonical/backup-operators
+    subpath: charmed_bacula_server
   target_medal: silver
 documentation_url: https://documentation.ubuntu.com/backup-operators/

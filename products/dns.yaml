@@ -25,35 +25,42 @@ composed_of:
   product_type: charm
   source:
     repo: canonical/dns-operators
+    subpath: bind-operator
   target_medal: bronze
 - id: dns-dns-policy
   product_type: charm
   source:
     repo: canonical/dns-operators
+    subpath: dns-policy-operator
   target_medal: bronze
 - id: dns-dns-integrator
   product_type: charm
   source:
     repo: canonical/dns-operators
+    subpath: dns-integrator-operator
   target_medal: bronze
 - id: dns-dns-resolver
   product_type: charm
   source:
     repo: canonical/dns-operators
+    subpath: dns-resolver-operator
   target_medal: bronze
 - id: dns-dns-secondary
   product_type: charm
   source:
     repo: canonical/dns-operators
+    subpath: dns-secondary-operator
   target_medal: bronze
 - id: dns-charmed-bind
   product_type: snap
   source:
     repo: canonical/dns-operators
+    subpath: charmed-bind
   target_medal: bronze
 - id: dns-charmed-dns-policy
   product_type: snap
   source:
     repo: canonical/dns-operators
+    subpath: charmed-dns-policy
   target_medal: bronze
 documentation_url: https://documentation.ubuntu.com/dns-operators/
