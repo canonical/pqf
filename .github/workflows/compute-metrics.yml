@@ -180,6 +180,7 @@ jobs:
     needs: run-engine
     if: github.event_name == 'push'
     runs-on: ubuntu-latest
+    continue-on-error: true  # Don't fail the workflow if branch protection rejects unsigned commits
     steps:
       - uses: actions/checkout@v4
         with:
