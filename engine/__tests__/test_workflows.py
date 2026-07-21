@@ -100,6 +100,11 @@ def test_deploy_pages_only_runs_for_ui_changes_and_skips_mixed_commits() -> None
     detect_step = next(
         step for step in detect_scope["steps"] if step.get("name") == "Detect data-affecting changes"
     )
+    # The detect step must handle the all-zero "before" (initial commit) case by
+    # diffing against the empty tree object instead of the root commit.
+    assert "0000000000000000000000000000000000000000" in detect_step["run"]
+    assert "git hash-object -t tree" in detect_step["run"] or "git rev-list --max-parents=0" in detect_step["run"]
+    assert '"$base"' in detect_step["run"] or '"$before"' in detect_step["run"]
     assert "git diff --name-only" in detect_step["run"]
     assert "products/ config/ scorers/ engine/" in detect_step["run"]
     assert detect_scope["outputs"]["data_changed"] == "${{ steps.scope.outputs.data_changed }}"
