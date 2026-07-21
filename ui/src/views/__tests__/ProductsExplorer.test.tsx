@@ -166,4 +166,40 @@ describe('ProductsExplorer', () => {
     fireEvent.change(searchInput, { target: { value: 'wazuh' } })
     expect(screen.getByText(/result/i)).toBeInTheDocument()
   })
+
+  it('uses explicit column sizing to prioritize product and repo columns', () => {
+    const { container } = wrap()
+
+    const cols = container.querySelectorAll('col')
+    expect(cols).toHaveLength(6)
+    expect(cols[0]).toHaveStyle({ width: '36%' })
+    expect(cols[1]).toHaveStyle({ width: '7rem' })
+    expect(cols[2]).toHaveStyle({ width: '7rem' })
+    expect(cols[3]).toHaveStyle({ width: '7rem' })
+    expect(cols[4]).toHaveStyle({ width: '6rem' })
+    expect(cols[5]).toHaveStyle({ width: '26%' })
+  })
+
+  it('keeps product and repo cells overflow-safe in grouped rows', () => {
+    wrap()
+
+    const rootLink = screen.getByRole('link', { name: 'Matrix (Synapse)' })
+    const leafRepoLink = screen.getByRole('link', { name: /canonical\/synapse-operator/i })
+
+    expect(rootLink.parentElement).toHaveStyle({ minWidth: '0' })
+    expect(rootLink).toHaveStyle({
+      display: 'block',
+      overflow: 'hidden',
+      textOverflow: 'ellipsis',
+      whiteSpace: 'nowrap',
+    })
+
+    expect(leafRepoLink.parentElement).toHaveStyle({ minWidth: '0' })
+    expect(leafRepoLink).toHaveStyle({
+      display: 'block',
+      overflow: 'hidden',
+      textOverflow: 'ellipsis',
+      whiteSpace: 'nowrap',
+    })
+  })
 })
