@@ -15,13 +15,23 @@ def test_compute_metrics_deploys_production_from_engine_artifacts() -> None:
     workflow = load_workflow(".github/workflows/compute-metrics.yml")
     jobs = workflow["jobs"]
 
+    # Workflow-level ownership triggers
+    # YAML 1.1 treats the bare key 'on' as a boolean, so it can be parsed as True.
+    on = workflow.get("on") or workflow.get(True) or {}
+    assert "schedule" in on, "expected 'schedule' trigger at workflow level"
+    assert "workflow_dispatch" in on, "expected 'workflow_dispatch' trigger at workflow level"
+
+    push = on.get("push", {})
+    paths = push.get("paths", [])
+    for pattern in ["products/**", "config/**", "scorers/**", "engine/**"]:
+        assert pattern in paths, f"push.paths must include '{pattern}'"
+
     assert "deploy-production" in jobs
     assert "commit-artifacts" not in jobs
 
     deploy_job = jobs["deploy-production"]
     assert deploy_job["needs"] == "run-engine"
-    # Production deploy must be allowed for schedule and workflow_dispatch,
-    # and for push events only when the ref is the main branch in the canonical/pqf repo.
+    # Production deploy must be allowed for schedule, workflow_dispatch, or pushes to main in canonical/pqf
     expr = deploy_job["if"]
     assert "github.event_name == 'schedule'" in expr
     assert "github.event_name == 'workflow_dispatch'" in expr
@@ -33,6 +43,11 @@ def test_compute_metrics_deploys_production_from_engine_artifacts() -> None:
     assert "Download engine artifacts" in names
     assert "Build UI" in names
     assert "Deploy to GitHub Pages" in names
+
+    # Verify ordering: Download engine artifacts must come before Build UI
+    idx_artifacts = names.index("Download engine artifacts")
+    idx_build = names.index("Build UI")
+    assert idx_artifacts < idx_build, "Download engine artifacts must run before Build UI"
 
     artifact_step = next(
         step for step in deploy_job["steps"] if step.get("name") == "Download engine artifacts"
