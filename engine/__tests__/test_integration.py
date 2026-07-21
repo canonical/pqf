@@ -12,7 +12,7 @@ Fixture metric values and expected medals:
   support_engagement: silver (triage 3 <= 5; pr_review 6 <= 7; both > gold threshold)
 
 Overall current_medal: bronze (documentation pulls it down)
-Target: bronze (aligned with imported docs catalog)
+Target: gold (restored from the existing PQF product definition)
 """
 
 import json
@@ -90,7 +90,7 @@ def test_cli_computes_expected_medals_for_matrix():
 
     assert output["id"] == "matrix"
     assert output["current_medal"] == "bronze"
-    assert output["target_medal"] == "bronze"
+    assert output["target_medal"] == "gold"
 
     dims = output["dimensions"]
     assert dims["test_verification"]["medal"] == "silver"

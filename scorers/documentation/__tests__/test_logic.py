@@ -48,6 +48,25 @@ def test_check_file_exists_false_on_404():
 
 
 @responses.activate
+def test_check_file_exists_retries_without_auth_on_public_repo_404():
+    responses.add(
+        responses.GET,
+        "https://api.github.com/repos/canonical/synapse-operator/contents/README.md",
+        status=404,
+        match=[responses.matchers.header_matcher({"Authorization": "Bearer gh-token"})],
+    )
+    responses.add(
+        responses.GET,
+        "https://api.github.com/repos/canonical/synapse-operator/contents/README.md",
+        json={"name": "README.md"},
+        status=200,
+        match=[responses.matchers.header_matcher({})],
+    )
+
+    assert _check_file_exists("canonical/synapse-operator", "README.md", "gh-token") is True
+
+
+@responses.activate
 def test_check_url_alive_true():
     responses.add(responses.GET, "https://charmhub.io/synapse", status=200)
     assert _check_url_alive("https://charmhub.io/synapse") is True
