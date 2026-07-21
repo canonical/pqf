@@ -3,15 +3,12 @@ name: Deploy to GitHub Pages
 on:
   push:
     branches: [main]
-  pull_request:
-    branches: [main]
-  workflow_dispatch:
 
 permissions:
   contents: write
 
 concurrency:
-  group: gh-pages-${{ github.ref }}
+  group: gh-pages
   cancel-in-progress: false
 
 jobs:
@@ -19,24 +16,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
-      - uses: actions/setup-python@v5
-        with:
-          python-version: '3.11'
-
-      - name: Install Python dependencies
-        run: make install
-
-      # Generate fresh portfolio.json before building UI
-      # This ensures PR previews always have up-to-date medal computations
-      - name: Assemble portfolio
-        run: >
-          python engine/assemble.py
-          --products-dir products/
-          --computed-dir computed/
-          --dimensions config/dimensions.yaml
-          --drift-history drift-history.json
-          --output public/portfolio.json
 
       - uses: actions/setup-node@v4
         with:
@@ -53,10 +32,7 @@ jobs:
         working-directory: ui
         # Vite copies ../public/ into dist/ automatically via publicDir config
 
-      # Only deploy on main push or manual dispatch
-      # PR runs build and test but don't deploy
       - name: Deploy to GitHub Pages
-        if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
