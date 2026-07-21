@@ -1,42 +1,36 @@
 name: PR Preview
 
 on:
-  pull_request:
-    types: [opened, synchronize, reopened, closed]
+  workflow_run:
+    workflows: [Compute Metrics]
+    types: [completed]
 
 permissions:
-  contents: write
+  contents: read
   pull-requests: write
 
-# Shared group with deploy-pages.yml — serializes gh-pages writes to prevent push conflicts.
 concurrency:
-  group: gh-pages
+  group: gh-pages-preview-${{ github.event.workflow_run.head_branch }}
   cancel-in-progress: false
 
 jobs:
   deploy-preview:
     name: Build and deploy PR preview
     runs-on: ubuntu-latest
-    # Only deploy previews for same-repo PRs. Fork PRs run CI but skip preview deploy.
-    if: github.event.action != 'closed' && github.event.pull_request.head.repo.full_name == github.repository
+    if: |
+      github.event.workflow_run.conclusion == 'success' &&
+      github.event.workflow_run.event == 'pull_request'
     steps:
       - uses: actions/checkout@v4
-
-      - uses: actions/setup-python@v5
         with:
-          python-version: '3.11'
+          ref: ${{ github.event.workflow_run.head_branch }}
 
-      - name: Install Python dependencies
-        run: make install
-
-      - name: Assemble portfolio for preview
-        run: >
-          python engine/assemble.py
-          --products-dir products/
-          --computed-dir computed/
-          --dimensions config/dimensions.yaml
-          --drift-history drift-history.json
-          --output public/portfolio.json
+      - name: Download compute-metrics artifacts (fresh medals)
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          run-id: ${{ github.event.workflow_run.id }}
+          name: engine-artifacts
 
       - uses: actions/setup-node@v4
         with:
@@ -51,6 +45,7 @@ jobs:
       - name: Build UI
         run: npm run build
         working-directory: ui
+        # Vite copies ../public/ (containing fresh portfolio.json from artifacts) into dist/
 
       - name: Deploy PR preview
         uses: rossjrw/pr-preview-action@v1
@@ -59,17 +54,3 @@ jobs:
           preview-branch: gh-pages
           umbrella-dir: pr-preview
           action: deploy
-
-  cleanup-preview:
-    name: Clean up PR preview
-    runs-on: ubuntu-latest
-    if: github.event.action == 'closed' && github.event.pull_request.head.repo.full_name == github.repository
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Remove PR preview
-        uses: rossjrw/pr-preview-action@v1
-        with:
-          preview-branch: gh-pages
-          umbrella-dir: pr-preview
-          action: remove
