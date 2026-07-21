@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-20T20:49:55.562979+00:00",
+  "generated_at": "2026-07-21T02:24:52.756585+00:00",
   "products": [
     {
       "id": "12-factor",
@@ -2824,14 +2824,6 @@
         {
           "product_id": "indico-indico",
           "excluded_from_parent_medal": false
-        },
-        {
-          "product_id": "indico-gtrkiller-statsd-prometheus-exporter",
-          "excluded_from_parent_medal": false
-        },
-        {
-          "product_id": "indico-celery-prometheus-exporter",
-          "excluded_from_parent_medal": false
         }
       ],
       "context_refs": [
@@ -2884,22 +2876,6 @@
               "applicability": "insufficient_data",
               "metrics": {},
               "excluded_from_parent_medal": false
-            },
-            {
-              "product_id": "indico-gtrkiller-statsd-prometheus-exporter",
-              "repo": "canonical/indico-operator",
-              "medal": "unrated",
-              "applicability": "insufficient_data",
-              "metrics": {},
-              "excluded_from_parent_medal": false
-            },
-            {
-              "product_id": "indico-celery-prometheus-exporter",
-              "repo": "canonical/indico-operator",
-              "medal": "unrated",
-              "applicability": "insufficient_data",
-              "metrics": {},
-              "excluded_from_parent_medal": false
             }
           ]
         },
@@ -2912,22 +2888,6 @@
           "composition": [
             {
               "product_id": "indico-indico",
-              "repo": "canonical/indico-operator",
-              "medal": "unrated",
-              "applicability": "insufficient_data",
-              "metrics": {},
-              "excluded_from_parent_medal": false
-            },
-            {
-              "product_id": "indico-gtrkiller-statsd-prometheus-exporter",
-              "repo": "canonical/indico-operator",
-              "medal": "unrated",
-              "applicability": "insufficient_data",
-              "metrics": {},
-              "excluded_from_parent_medal": false
-            },
-            {
-              "product_id": "indico-celery-prometheus-exporter",
               "repo": "canonical/indico-operator",
               "medal": "unrated",
               "applicability": "insufficient_data",
@@ -2950,22 +2910,6 @@
               "applicability": "insufficient_data",
               "metrics": {},
               "excluded_from_parent_medal": false
-            },
-            {
-              "product_id": "indico-gtrkiller-statsd-prometheus-exporter",
-              "repo": "canonical/indico-operator",
-              "medal": "unrated",
-              "applicability": "not_applicable",
-              "metrics": {},
-              "excluded_from_parent_medal": false
-            },
-            {
-              "product_id": "indico-celery-prometheus-exporter",
-              "repo": "canonical/indico-operator",
-              "medal": "unrated",
-              "applicability": "not_applicable",
-              "metrics": {},
-              "excluded_from_parent_medal": false
             }
           ]
         },
@@ -2983,22 +2927,6 @@
               "applicability": "insufficient_data",
               "metrics": {},
               "excluded_from_parent_medal": false
-            },
-            {
-              "product_id": "indico-gtrkiller-statsd-prometheus-exporter",
-              "repo": "canonical/indico-operator",
-              "medal": "unrated",
-              "applicability": "insufficient_data",
-              "metrics": {},
-              "excluded_from_parent_medal": false
-            },
-            {
-              "product_id": "indico-celery-prometheus-exporter",
-              "repo": "canonical/indico-operator",
-              "medal": "unrated",
-              "applicability": "insufficient_data",
-              "metrics": {},
-              "excluded_from_parent_medal": false
             }
           ]
         },
@@ -3011,22 +2939,6 @@
           "composition": [
             {
               "product_id": "indico-indico",
-              "repo": "canonical/indico-operator",
-              "medal": "unrated",
-              "applicability": "insufficient_data",
-              "metrics": {},
-              "excluded_from_parent_medal": false
-            },
-            {
-              "product_id": "indico-gtrkiller-statsd-prometheus-exporter",
-              "repo": "canonical/indico-operator",
-              "medal": "unrated",
-              "applicability": "insufficient_data",
-              "metrics": {},
-              "excluded_from_parent_medal": false
-            },
-            {
-              "product_id": "indico-celery-prometheus-exporter",
               "repo": "canonical/indico-operator",
               "medal": "unrated",
               "applicability": "insufficient_data",
@@ -6088,7 +6000,7 @@
       "documentation_url": "",
       "source": {
         "repo": "canonical/backup-operators",
-        "subpath": null
+        "subpath": "bacula_server_operator"
       },
       "composed_of": null,
       "context_refs": [],
@@ -6151,7 +6063,7 @@
       "documentation_url": "",
       "source": {
         "repo": "canonical/backup-operators",
-        "subpath": null
+        "subpath": "bacula_fd_operator"
       },
       "composed_of": null,
       "context_refs": [],
@@ -6214,7 +6126,7 @@
       "documentation_url": "",
       "source": {
         "repo": "canonical/backup-operators",
-        "subpath": null
+        "subpath": "backup_integrator_operator"
       },
       "composed_of": null,
       "context_refs": [],
@@ -6277,7 +6189,7 @@
       "documentation_url": "",
       "source": {
         "repo": "canonical/backup-operators",
-        "subpath": null
+        "subpath": "charmed_bacula_server"
       },
       "composed_of": null,
       "context_refs": [],
@@ -6718,7 +6630,7 @@
       "documentation_url": "",
       "source": {
         "repo": "canonical/content-cache-operator",
-        "subpath": null
+        "subpath": "content-cache"
       },
       "composed_of": null,
       "context_refs": [],
@@ -6781,7 +6693,7 @@
       "documentation_url": "",
       "source": {
         "repo": "canonical/content-cache-operator",
-        "subpath": null
+        "subpath": "content-cache-backends-config"
       },
       "composed_of": null,
       "context_refs": [],
@@ -7033,7 +6945,7 @@
       "documentation_url": "",
       "source": {
         "repo": "canonical/dns-operators",
-        "subpath": null
+        "subpath": "bind-operator"
       },
       "composed_of": null,
       "context_refs": [],
@@ -7096,7 +7008,7 @@
       "documentation_url": "",
       "source": {
         "repo": "canonical/dns-operators",
-        "subpath": null
+        "subpath": "dns-policy-operator"
       },
       "composed_of": null,
       "context_refs": [],
@@ -7159,7 +7071,7 @@
       "documentation_url": "",
       "source": {
         "repo": "canonical/dns-operators",
-        "subpath": null
+        "subpath": "dns-integrator-operator"
       },
       "composed_of": null,
       "context_refs": [],
@@ -7222,7 +7134,7 @@
       "documentation_url": "",
       "source": {
         "repo": "canonical/dns-operators",
-        "subpath": null
+        "subpath": "dns-resolver-operator"
       },
       "composed_of": null,
       "context_refs": [],
@@ -7285,7 +7197,7 @@
       "documentation_url": "",
       "source": {
         "repo": "canonical/dns-operators",
-        "subpath": null
+        "subpath": "dns-secondary-operator"
       },
       "composed_of": null,
       "context_refs": [],
@@ -7348,7 +7260,7 @@
       "documentation_url": "",
       "source": {
         "repo": "canonical/dns-operators",
-        "subpath": null
+        "subpath": "charmed-bind"
       },
       "composed_of": null,
       "context_refs": [],
@@ -7411,7 +7323,7 @@
       "documentation_url": "",
       "source": {
         "repo": "canonical/dns-operators",
-        "subpath": null
+        "subpath": "charmed-dns-policy"
       },
       "composed_of": null,
       "context_refs": [],
@@ -7474,7 +7386,7 @@
       "documentation_url": "",
       "source": {
         "repo": "canonical/falco-operators",
-        "subpath": null
+        "subpath": "falco-operator"
       },
       "composed_of": null,
       "context_refs": [],
@@ -7537,7 +7449,7 @@
       "documentation_url": "",
       "source": {
         "repo": "canonical/falco-operators",
-        "subpath": null
+        "subpath": "falcosidekick-k8s-operator"
       },
       "composed_of": null,
       "context_refs": [],
@@ -8407,132 +8319,6 @@
       }
     },
     {
-      "id": "indico-gtrkiller-statsd-prometheus-exporter",
-      "product_type": "snap",
-      "name": "indico-gtrkiller-statsd-prometheus-exporter",
-      "description": "",
-      "lifecycle": "stable",
-      "target_medal": "silver",
-      "current_medal": "unrated",
-      "squad": "",
-      "is_portfolio_entry": false,
-      "documentation_url": "",
-      "source": {
-        "repo": "canonical/indico-operator",
-        "subpath": null
-      },
-      "composed_of": null,
-      "context_refs": [],
-      "parent_product_ids": [
-        "indico"
-      ],
-      "dimensions": {
-        "test_verification": {
-          "medal": "unrated",
-          "target": "silver",
-          "applicability": "insufficient_data",
-          "metrics": {},
-          "drift": null,
-          "composition": null
-        },
-        "documentation": {
-          "medal": "unrated",
-          "target": "silver",
-          "applicability": "insufficient_data",
-          "metrics": {},
-          "drift": null,
-          "composition": null
-        },
-        "substrate_compat": {
-          "medal": "unrated",
-          "target": "silver",
-          "applicability": "not_applicable",
-          "metrics": {},
-          "drift": null,
-          "composition": null
-        },
-        "security_ssdlc": {
-          "medal": "unrated",
-          "target": "silver",
-          "applicability": "insufficient_data",
-          "metrics": {},
-          "drift": null,
-          "composition": null
-        },
-        "support_engagement": {
-          "medal": "unrated",
-          "target": "silver",
-          "applicability": "insufficient_data",
-          "metrics": {},
-          "drift": null,
-          "composition": null
-        }
-      }
-    },
-    {
-      "id": "indico-celery-prometheus-exporter",
-      "product_type": "snap",
-      "name": "indico-celery-prometheus-exporter",
-      "description": "",
-      "lifecycle": "stable",
-      "target_medal": "silver",
-      "current_medal": "unrated",
-      "squad": "",
-      "is_portfolio_entry": false,
-      "documentation_url": "",
-      "source": {
-        "repo": "canonical/indico-operator",
-        "subpath": null
-      },
-      "composed_of": null,
-      "context_refs": [],
-      "parent_product_ids": [
-        "indico"
-      ],
-      "dimensions": {
-        "test_verification": {
-          "medal": "unrated",
-          "target": "silver",
-          "applicability": "insufficient_data",
-          "metrics": {},
-          "drift": null,
-          "composition": null
-        },
-        "documentation": {
-          "medal": "unrated",
-          "target": "silver",
-          "applicability": "insufficient_data",
-          "metrics": {},
-          "drift": null,
-          "composition": null
-        },
-        "substrate_compat": {
-          "medal": "unrated",
-          "target": "silver",
-          "applicability": "not_applicable",
-          "metrics": {},
-          "drift": null,
-          "composition": null
-        },
-        "security_ssdlc": {
-          "medal": "unrated",
-          "target": "silver",
-          "applicability": "insufficient_data",
-          "metrics": {},
-          "drift": null,
-          "composition": null
-        },
-        "support_engagement": {
-          "medal": "unrated",
-          "target": "silver",
-          "applicability": "insufficient_data",
-          "metrics": {},
-          "drift": null,
-          "composition": null
-        }
-      }
-    },
-    {
       "id": "jenkins-jenkins-k8s",
       "product_type": "charm",
       "name": "jenkins-jenkins-k8s",
@@ -8734,7 +8520,7 @@
       "documentation_url": "",
       "source": {
         "repo": "canonical/mailserver-operators",
-        "subpath": null
+        "subpath": "dovecot-charm"
       },
       "composed_of": null,
       "context_refs": [],
@@ -8797,7 +8583,7 @@
       "documentation_url": "",
       "source": {
         "repo": "canonical/mailserver-operators",
-        "subpath": null
+        "subpath": "postfix-relay-operator"
       },
       "composed_of": null,
       "context_refs": [],
@@ -8860,7 +8646,7 @@
       "documentation_url": "",
       "source": {
         "repo": "canonical/mailserver-operators",
-        "subpath": null
+        "subpath": "postfix-relay-configurator-operator"
       },
       "composed_of": null,
       "context_refs": [],
@@ -8923,7 +8709,7 @@
       "documentation_url": "",
       "source": {
         "repo": "canonical/mailserver-operators",
-        "subpath": null
+        "subpath": "opendkim-operator"
       },
       "composed_of": null,
       "context_refs": [],
@@ -8986,7 +8772,7 @@
       "documentation_url": "",
       "source": {
         "repo": "canonical/mailserver-operators",
-        "subpath": null
+        "subpath": "opendkim-snap"
       },
       "composed_of": null,
       "context_refs": [],
@@ -10183,7 +9969,7 @@
       "documentation_url": "",
       "source": {
         "repo": "canonical/github-runner-operators",
-        "subpath": null
+        "subpath": "charms/planner-operator"
       },
       "composed_of": null,
       "context_refs": [],
@@ -10246,7 +10032,7 @@
       "documentation_url": "",
       "source": {
         "repo": "canonical/github-runner-operators",
-        "subpath": null
+        "subpath": "charms/webhook-gateway-operator"
       },
       "composed_of": null,
       "context_refs": [],
