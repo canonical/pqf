@@ -27,7 +27,6 @@ concurrency:
 
 permissions:
   contents: write            # needed for the commit-artifacts job
-  actions: write             # needed for trigger-preview to dispatch workflow_dispatch
 
 jobs:
 
@@ -176,21 +175,47 @@ jobs:
             drift-history.json
           retention-days: 1
 
-  # ── 4. Trigger PR preview with fresh artifacts ──────────────────────────────
-  trigger-preview:
+  # ── 4. Build and deploy PR preview ─────────────────────────────────────────
+  build-preview:
     needs: run-engine
-    if: github.event_name == 'pull_request'
+    if: github.event_name == 'pull_request' && github.repository == 'canonical/pqf'
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
     steps:
-      - name: Trigger PR preview workflow with fresh artifacts
-        run: |
-          gh workflow run preview.yml \
-            --repo ${{ github.repository }} \
-            --ref ${{ github.head_ref }} \
-            -f run_id=${{ github.run_id }} \
-            -f pr_number=${{ github.event.pull_request.number }}
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref }}
+
+      - name: Download engine artifacts (fresh medals)
+        uses: actions/download-artifact@v4
+        with:
+          name: engine-artifacts
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: ui/package-lock.json
+
+      - name: Install UI dependencies
+        run: npm install
+        working-directory: ui
+
+      - name: Build UI
+        run: npm run build
+        working-directory: ui
+        # Vite copies ../public/ (containing fresh portfolio.json from artifacts) into dist/
+
+      - name: Deploy PR preview
+        uses: rossjrw/pr-preview-action@v1
+        with:
+          source-dir: ./ui/dist
+          preview-branch: gh-pages
+          umbrella-dir: pr-preview
+          action: deploy
+          pr-number: ${{ github.event.pull_request.number }}
 
   # ── 5. Commit artifacts back to main ────────────────────────────────────────
   commit-artifacts:
