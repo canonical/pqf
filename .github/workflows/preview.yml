@@ -4,13 +4,19 @@ on:
   workflow_run:
     workflows: [Compute Metrics]
     types: [completed]
+  workflow_dispatch:
+    inputs:
+      run_id:
+        description: 'compute-metrics run ID (leave empty to use latest PR compute-metrics)'
+        required: false
+        type: string
 
 permissions:
   contents: read
   pull-requests: write
 
 concurrency:
-  group: gh-pages-preview-${{ github.event.workflow_run.head_branch }}
+  group: gh-pages-preview-${{ github.event.workflow_run.head_branch || github.ref_name }}
   cancel-in-progress: false
 
 jobs:
@@ -18,18 +24,19 @@ jobs:
     name: Build and deploy PR preview
     runs-on: ubuntu-latest
     if: |
-      github.event.workflow_run.conclusion == 'success' &&
-      github.event.workflow_run.event == 'pull_request'
+      (github.event.workflow_run.conclusion == 'success' &&
+       github.event.workflow_run.event == 'pull_request') ||
+      github.event_name == 'workflow_dispatch'
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: ${{ github.event.workflow_run.head_branch }}
+          ref: ${{ github.event.workflow_run.head_branch || github.ref_name }}
 
       - name: Download compute-metrics artifacts (fresh medals)
         uses: actions/download-artifact@v4
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          run-id: ${{ github.event.workflow_run.id }}
+          run-id: ${{ github.event.workflow_run.id || inputs.run_id }}
           name: engine-artifacts
 
       - uses: actions/setup-node@v4
