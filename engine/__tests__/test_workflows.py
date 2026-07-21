@@ -118,6 +118,23 @@ def test_deploy_pages_only_runs_for_ui_changes_and_skips_mixed_commits() -> None
     assert deploy_job["needs"] == "detect-scope"
     assert deploy_job["if"] == "needs.detect-scope.outputs.data_changed != 'true'"
 
+    pages_checkout = next(
+        step for step in deploy_job["steps"] if step.get("name") == "Check out current Pages data"
+    )
+    assert pages_checkout["uses"] == "actions/checkout@v4"
+    assert pages_checkout["with"]["ref"] == "gh-pages"
+    assert pages_checkout["with"]["path"] == ".gh-pages-data"
+
+    sync_step = next(
+        step for step in deploy_job["steps"] if step.get("name") == "Sync deployed public data"
+    )
+    assert "cp .gh-pages-data/portfolio.json public/portfolio.json" in sync_step["run"]
+    assert "cp -R .gh-pages-data/badges public/badges" in sync_step["run"]
+
     names = step_names(deploy_job)
+    assert "Check out current Pages data" in names
+    assert "Sync deployed public data" in names
     assert "Build UI" in names
     assert "Deploy to GitHub Pages" in names
+
+    assert names.index("Sync deployed public data") < names.index("Build UI")

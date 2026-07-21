@@ -49,6 +49,21 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Check out current Pages data
+        uses: actions/checkout@v4
+        with:
+          ref: gh-pages
+          path: .gh-pages-data
+          fetch-depth: 1
+          persist-credentials: false
+
+      - name: Sync deployed public data
+        run: |
+          rm -f public/portfolio.json
+          rm -rf public/badges
+          cp .gh-pages-data/portfolio.json public/portfolio.json
+          cp -R .gh-pages-data/badges public/badges
+
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
