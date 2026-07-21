@@ -59,6 +59,7 @@ jobs:
         run: |
           python scorers/test_verification/scorer.py \
             --product-yaml products/${{ matrix.product }}.yaml \
+            --products-dir products/ \
             > /tmp/scorers/${{ matrix.product }}/test_verification.json
 
       - name: Run documentation scorer
@@ -68,6 +69,7 @@ jobs:
         run: |
           python scorers/documentation/scorer.py \
             --product-yaml products/${{ matrix.product }}.yaml \
+            --products-dir products/ \
             > /tmp/scorers/${{ matrix.product }}/documentation.json
 
       - name: Run substrate_compat scorer
@@ -76,6 +78,7 @@ jobs:
         run: |
           python scorers/substrate_compat/scorer.py \
             --product-yaml products/${{ matrix.product }}.yaml \
+            --products-dir products/ \
             > /tmp/scorers/${{ matrix.product }}/substrate_compat.json
 
       - name: Run security_ssdlc scorer
@@ -84,6 +87,7 @@ jobs:
         run: |
           python scorers/security_ssdlc/scorer.py \
             --product-yaml products/${{ matrix.product }}.yaml \
+            --products-dir products/ \
             > /tmp/scorers/${{ matrix.product }}/security_ssdlc.json
 
       - name: Run support_engagement scorer
@@ -92,6 +96,7 @@ jobs:
         run: |
           python scorers/support_engagement/scorer.py \
             --product-yaml products/${{ matrix.product }}.yaml \
+            --products-dir products/ \
             > /tmp/scorers/${{ matrix.product }}/support_engagement.json
 
       - name: Merge scorer outputs into computed/${{ matrix.product }}.json

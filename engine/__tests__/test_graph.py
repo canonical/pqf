@@ -1,6 +1,6 @@
 import pytest
 
-from engine.graph import build_graph, resolve_leaf_units
+from engine.graph import build_graph, resolve_leaf_units, resolve_leaf_units_for
 from engine.models import ProductType
 
 ROOT_WITH_INLINE = {
@@ -132,3 +132,46 @@ def test_inline_missing_source_raises():
     }
     with pytest.raises(ValueError, match="missing required 'source'"):
         build_graph([bad_root])
+
+
+def test_resolve_leaf_units_for_returns_only_leaves_of_root():
+    # discourse uses ref: to postgresql-k8s (shared leaf)
+    # resolve_leaf_units_for should return only postgresql-k8s for discourse
+    graph = build_graph([STANDALONE_LEAF, ROOT_WITH_REF])
+    units = resolve_leaf_units_for(graph, "discourse")
+    assert len(units) == 1
+    assert units[0].product_id == "postgresql-k8s"
+
+
+def test_resolve_leaf_units_for_excludes_leaves_from_other_products():
+    # matrix has inline synapse; discourse refs postgresql-k8s
+    # scoring matrix should not include postgresql-k8s
+    graph = build_graph([ROOT_WITH_INLINE, STANDALONE_LEAF, ROOT_WITH_REF])
+    matrix_units = resolve_leaf_units_for(graph, "matrix")
+    matrix_ids = [u.product_id for u in matrix_units]
+    assert "synapse" in matrix_ids
+    assert "postgresql-k8s" not in matrix_ids
+
+
+def test_resolve_leaf_units_for_shared_leaf_appears_for_each_consumer():
+    # Both discourse and a second product can ref the same standalone leaf.
+    second_consumer = {
+        "id": "other",
+        "product_type": "root",
+        "name": "Other",
+        "lifecycle": "stable",
+        "target_medal": "bronze",
+        "ownership": {"squad": "emea"},
+        "composed_of": [{"ref": "postgresql-k8s"}],
+    }
+    graph = build_graph([STANDALONE_LEAF, ROOT_WITH_REF, second_consumer])
+    discourse_units = resolve_leaf_units_for(graph, "discourse")
+    other_units = resolve_leaf_units_for(graph, "other")
+    assert any(u.product_id == "postgresql-k8s" for u in discourse_units)
+    assert any(u.product_id == "postgresql-k8s" for u in other_units)
+
+
+def test_resolve_leaf_units_for_unknown_root_raises():
+    graph = build_graph([ROOT_WITH_INLINE])
+    with pytest.raises(ValueError, match="not found in graph"):
+        resolve_leaf_units_for(graph, "nonexistent")

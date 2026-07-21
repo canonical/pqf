@@ -127,15 +127,15 @@ PRODUCT ?= $(error PRODUCT is required. Usage: make score PRODUCT=matrix)
 score: _require-github-token _require-openrouter-key
 	@echo "Scoring product: $(PRODUCT)"
 	@mkdir -p $(SCORE_DIR)/$(PRODUCT)
-	$(PYTHON) scorers/test_verification/scorer.py --product-yaml products/$(PRODUCT).yaml \
+	$(PYTHON) scorers/test_verification/scorer.py --product-yaml products/$(PRODUCT).yaml --products-dir products/ \
 		> $(SCORE_DIR)/$(PRODUCT)/test_verification.json
-	$(PYTHON) scorers/documentation/scorer.py --product-yaml products/$(PRODUCT).yaml \
+	$(PYTHON) scorers/documentation/scorer.py --product-yaml products/$(PRODUCT).yaml --products-dir products/ \
 		> $(SCORE_DIR)/$(PRODUCT)/documentation.json
-	$(PYTHON) scorers/substrate_compat/scorer.py --product-yaml products/$(PRODUCT).yaml \
+	$(PYTHON) scorers/substrate_compat/scorer.py --product-yaml products/$(PRODUCT).yaml --products-dir products/ \
 		> $(SCORE_DIR)/$(PRODUCT)/substrate_compat.json
-	$(PYTHON) scorers/security_ssdlc/scorer.py --product-yaml products/$(PRODUCT).yaml \
+	$(PYTHON) scorers/security_ssdlc/scorer.py --product-yaml products/$(PRODUCT).yaml --products-dir products/ \
 		> $(SCORE_DIR)/$(PRODUCT)/security_ssdlc.json
-	$(PYTHON) scorers/support_engagement/scorer.py --product-yaml products/$(PRODUCT).yaml \
+	$(PYTHON) scorers/support_engagement/scorer.py --product-yaml products/$(PRODUCT).yaml --products-dir products/ \
 		> $(SCORE_DIR)/$(PRODUCT)/support_engagement.json
 	@echo ""
 	@echo "Results in $(SCORE_DIR)/$(PRODUCT)/"
@@ -144,22 +144,22 @@ score: _require-github-token _require-openrouter-key
 score-no-llm: _require-github-token
 	@echo "Scoring product: $(PRODUCT) (LLM checks skipped — diataxis/style will be 0/false)"
 	@mkdir -p $(SCORE_DIR)/$(PRODUCT)
-	$(PYTHON) scorers/test_verification/scorer.py --product-yaml products/$(PRODUCT).yaml \
+	$(PYTHON) scorers/test_verification/scorer.py --product-yaml products/$(PRODUCT).yaml --products-dir products/ \
 		> $(SCORE_DIR)/$(PRODUCT)/test_verification.json
-	OPENROUTER_API_KEY= $(PYTHON) scorers/documentation/scorer.py --product-yaml products/$(PRODUCT).yaml \
+	OPENROUTER_API_KEY= $(PYTHON) scorers/documentation/scorer.py --product-yaml products/$(PRODUCT).yaml --products-dir products/ \
 		> $(SCORE_DIR)/$(PRODUCT)/documentation.json
-	$(PYTHON) scorers/substrate_compat/scorer.py --product-yaml products/$(PRODUCT).yaml \
+	$(PYTHON) scorers/substrate_compat/scorer.py --product-yaml products/$(PRODUCT).yaml --products-dir products/ \
 		> $(SCORE_DIR)/$(PRODUCT)/substrate_compat.json
-	$(PYTHON) scorers/security_ssdlc/scorer.py --product-yaml products/$(PRODUCT).yaml \
+	$(PYTHON) scorers/security_ssdlc/scorer.py --product-yaml products/$(PRODUCT).yaml --products-dir products/ \
 		> $(SCORE_DIR)/$(PRODUCT)/security_ssdlc.json
-	$(PYTHON) scorers/support_engagement/scorer.py --product-yaml products/$(PRODUCT).yaml \
+	$(PYTHON) scorers/support_engagement/scorer.py --product-yaml products/$(PRODUCT).yaml --products-dir products/ \
 		> $(SCORE_DIR)/$(PRODUCT)/support_engagement.json
 	@echo ""
 	@echo "Results in $(SCORE_DIR)/$(PRODUCT)/"
 	@for f in $(SCORE_DIR)/$(PRODUCT)/*.json; do echo "  $$f:"; cat $$f | $(PYTHON) -m json.tool --indent 2; echo ""; done
 
 score-docs: _require-github-token _require-openrouter-key
-	$(PYTHON) scorers/documentation/scorer.py --product-yaml products/$(PRODUCT).yaml
+	$(PYTHON) scorers/documentation/scorer.py --product-yaml products/$(PRODUCT).yaml --products-dir products/
 
 # ── Score all products and rebuild portfolio.json ─────────────────────────────
 # Discovers all product YAMLs in products/, scores each one, merges the raw

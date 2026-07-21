@@ -9,13 +9,19 @@ from pathlib import Path
 
 import yaml
 
-from engine.graph import build_graph, resolve_leaf_units
+from engine.graph import build_graph, resolve_leaf_units_for
 from scorers.documentation.logic import compute_metrics
+
+
+def _load_all_products(products_dir: Path) -> list[dict]:
+    return [yaml.safe_load(f.read_text()) for f in sorted(products_dir.glob("*.yaml"))]
 
 
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--product-yaml", required=True)
+    parser.add_argument("--products-dir", default=None,
+                        help="Directory containing all product YAMLs (needed to resolve ref: entries).")
     parser.add_argument(
         "--model",
         default=None,
@@ -27,9 +33,14 @@ def main() -> int:
     openrouter_api_key = os.environ.get("OPENROUTER_API_KEY", "")
     model = args.model or os.environ.get("OPENROUTER_MODEL", "anthropic/claude-sonnet-4.5")
 
-    product = yaml.safe_load(Path(args.product_yaml).read_text())
-    graph = build_graph([product])
-    units = resolve_leaf_units(graph)
+    product_path = Path(args.product_yaml)
+    product = yaml.safe_load(product_path.read_text())
+    product_id = product["id"]
+
+    products_dir = Path(args.products_dir) if args.products_dir else product_path.parent
+    all_products = _load_all_products(products_dir)
+    graph = build_graph(all_products)
+    units = resolve_leaf_units_for(graph, product_id)
 
     results = {}
     for unit in units:

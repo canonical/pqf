@@ -157,3 +157,29 @@ def resolve_leaf_units(graph: ProductGraph) -> list[EvaluationUnit]:
         for node in graph.nodes.values()
         if node.product_type in (ProductType.CHARM, ProductType.SNAP)
     ]
+
+
+def resolve_leaf_units_for(graph: ProductGraph, root_product_id: str) -> list[EvaluationUnit]:
+    """Return EvaluationUnits for leaves that belong to the given root product.
+
+    This is the per-product scorer variant: when the full product graph is
+    loaded (so that ref: entries resolve correctly), only the leaves whose
+    parent_ids include root_product_id should be scored by that product's job.
+    """
+    root = graph.nodes.get(root_product_id)
+    if root is None:
+        raise ValueError(f"Product {root_product_id!r} not found in graph.")
+    leaf_ids = {edge.product_id for edge in root.composed_of}
+    return [
+        EvaluationUnit(
+            product_id=node.id,
+            product_type=node.product_type,
+            repo=node.source_repo or "",
+            subpath=node.source_subpath,
+            allure_report_url=node.allure_report_url,
+            documentation_url=node.documentation_url,
+            target_medal=node.target_medal,
+        )
+        for node in graph.nodes.values()
+        if node.id in leaf_ids and node.product_type in (ProductType.CHARM, ProductType.SNAP)
+    ]
