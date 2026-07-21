@@ -172,12 +172,12 @@ jobs:
   # ── 4. Commit artifacts back to main ────────────────────────────────────────
   commit-artifacts:
     needs: run-engine
-    if: github.ref == 'refs/heads/main'
+    if: github.event_name != 'schedule'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: main
+          ref: ${{ github.ref }}
           token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Download engine artifacts
