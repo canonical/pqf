@@ -22,12 +22,30 @@ def test_compute_metrics_deploys_production_from_engine_artifacts() -> None:
     assert "workflow_dispatch" in on, "expected 'workflow_dispatch' trigger at workflow level"
 
     push = on.get("push", {})
+    assert push["branches"] == ["main"]
     paths = push.get("paths", [])
-    for pattern in ["products/**", "config/**", "scorers/**", "engine/**"]:
+    for pattern in [
+        "products/**",
+        "config/**",
+        "scorers/**",
+        "!scorers/**/__tests__/**",
+        "engine/**",
+        "!engine/__tests__/**",
+    ]:
         assert pattern in paths, f"push.paths must include '{pattern}'"
 
     pull_request = on.get("pull_request", {})
     assert "closed" in pull_request.get("types", []), "pull_request trigger must include 'closed'"
+    pr_paths = pull_request.get("paths", [])
+    for pattern in [
+        "products/**",
+        "config/**",
+        "scorers/**",
+        "!scorers/**/__tests__/**",
+        "engine/**",
+        "!engine/__tests__/**",
+    ]:
+        assert pattern in pr_paths, f"pull_request.paths must include '{pattern}'"
 
     assert "deploy-production" in jobs
     assert "commit-artifacts" not in jobs
@@ -97,6 +115,15 @@ def test_compute_metrics_deploys_production_from_engine_artifacts() -> None:
     assert dl_step["with"]["name"] == "engine-artifacts"
 
     assert "github.event.action != 'closed'" in preview_if
+
+    needs_rescore = next(
+        step
+        for step in jobs["compute-metrics"]["steps"]
+        if step.get("name") == "Check if product needs rescoring"
+    )
+    assert "grep -Ev" in needs_rescore["run"]
+    assert "engine/__tests__/" in needs_rescore["run"]
+    assert "scorers/.*/__tests__/" in needs_rescore["run"]
 
     preview_deploy_step = next(
         step for step in preview["steps"] if step.get("name") == "Deploy PR preview"
