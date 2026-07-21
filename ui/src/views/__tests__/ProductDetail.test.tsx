@@ -281,6 +281,31 @@ describe('ProductDetail', () => {
     expect(screen.queryByRole('button', { name: /components/i })).not.toBeInTheDocument()
   })
 
+  it('leaf product shows GitHub repo link in header', () => {
+    wrap('synapse')
+    const link = screen.getByRole('link', { name: 'GitHub ↗' })
+    expect(link).toHaveAttribute('href', 'https://github.com/canonical/synapse-operator')
+  })
+
+  it('leaf product with subpath links to subpath in GitHub', () => {
+    const portfolioWithSubpath: Portfolio = {
+      ...mockPortfolio,
+      products: [
+        mockPortfolio.products[0],
+        { ...mockPortfolio.products[1], source: { repo: 'canonical/monorepo', subpath: 'my-charm' } },
+      ],
+    }
+    mockWith(portfolioWithSubpath)
+    wrap('synapse')
+    const link = screen.getByRole('link', { name: 'GitHub ↗' })
+    expect(link).toHaveAttribute('href', 'https://github.com/canonical/monorepo/tree/main/my-charm')
+  })
+
+  it('product without source does not show GitHub link', () => {
+    wrap('matrix')
+    expect(screen.queryByRole('link', { name: 'GitHub ↗' })).not.toBeInTheDocument()
+  })
+
   it('leaf product shows Part of chip', () => {
     wrap('synapse')
     expect(screen.getByText('Part of:')).toBeInTheDocument()

@@ -81,11 +81,22 @@ export default function ProductDetail() {
                 <p className="u-text--muted" style={{ margin: 0 }}>{product.description}</p>
               )}
             </div>
-            {product.documentation_url && (
-              <a href={product.documentation_url} target="_blank" rel="noreferrer" className="p-button--neutral is-small">
-                Docs ↗
-              </a>
-            )}
+            <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+              {product.source?.repo && (
+                <a
+                  href={`https://github.com/${product.source.repo}${product.source.subpath ? `/tree/main/${product.source.subpath}` : ''}`}
+                  target="_blank" rel="noreferrer"
+                  className="p-button--neutral is-small"
+                >
+                  GitHub ↗
+                </a>
+              )}
+              {product.documentation_url && (
+                <a href={product.documentation_url} target="_blank" rel="noreferrer" className="p-button--neutral is-small">
+                  Docs ↗
+                </a>
+              )}
+            </div>
           </div>
           <hr style={{ margin: '1rem 0' }} />
 
