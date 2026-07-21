@@ -28,10 +28,13 @@ composed_of:
   source:
     repo: canonical/httprequest-lego-provider
   target_medal: gold
+- id: httprequest-lego-provider-nginx-ingress-integrator
+  product_type: charm
+  source:
+    repo: canonical/nginx-ingress-integrator-operator
+  target_medal: gold
 documentation_url: https://charmhub.io/httprequest-lego-provider
 context_refs:
-- label: Nginx Ingress Integrator
-  repo: canonical/nginx-ingress-integrator-operator
 - label: Httprequest Lego Provider
   repo: canonical/httprequest-lego-provider
 - label: Postgresql K8S

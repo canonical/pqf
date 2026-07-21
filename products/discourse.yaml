@@ -19,10 +19,13 @@ composed_of:
   source:
     repo: canonical/discourse-k8s-operator
   target_medal: silver
+- id: discourse-nginx-ingress-integrator
+  product_type: charm
+  source:
+    repo: canonical/nginx-ingress-integrator-operator
+  target_medal: silver
 documentation_url: https://charmhub.io/discourse-k8s
 context_refs:
-- label: Nginx Ingress Integrator
-  repo: canonical/nginx-ingress-integrator-operator
 - label: Postgresql K8S
   repo: canonical/postgresql-k8s-operator
 - label: Redis K8S
