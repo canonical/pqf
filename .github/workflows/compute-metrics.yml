@@ -6,13 +6,18 @@ on:
     - cron: '0 2 * * *'    # nightly at 02:00 UTC
   workflow_dispatch:         # manual trigger
   push:
-    branches:
-      - main                 # only run on main, not PR branches
     paths:
       - 'products/**'        # re-run when a product YAML changes
       - 'config/**'          # re-run when dimension config changes
       - 'scorers/**'         # re-run when scorer logic changes
       - 'engine/**'          # re-run when assembly logic changes
+
+# Cancel any in-progress run on the same branch when a new push arrives.
+# This prevents N sequential LLM runs when multiple commits land quickly.
+# The nightly schedule run is never cancelled (unique group per run_id).
+concurrency:
+  group: compute-metrics-${{ github.ref }}-${{ github.event_name == 'schedule' && github.run_id || 'push' }}
+  cancel-in-progress: ${{ github.event_name != 'schedule' }}
 
 permissions:
   contents: write            # needed for the commit-artifacts job
