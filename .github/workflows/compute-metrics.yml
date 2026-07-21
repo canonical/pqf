@@ -255,31 +255,38 @@ jobs:
           action: deploy
           pr-number: ${{ github.event.pull_request.number }}
 
-  # ── 5. Commit artifacts back to main ────────────────────────────────────────
-  commit-artifacts:
+  # ── 5. Build and deploy production site from fresh engine artifacts ───────────
+  deploy-production:
     needs: run-engine
-    if: github.event_name == 'push'
+    if: github.event_name != 'pull_request' && github.repository == 'canonical/pqf'
     runs-on: ubuntu-latest
-    continue-on-error: true  # Don't fail the workflow if branch protection rejects unsigned commits
     steps:
       - uses: actions/checkout@v4
-        with:
-          ref: ${{ github.ref }}
-          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Download engine artifacts
         uses: actions/download-artifact@v4
         with:
           name: engine-artifacts
 
-      - name: Commit and push artifacts
-        run: |
-          git config user.name  "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add computed/ public/ drift-history.json
-          if git diff --cached --quiet; then
-            echo "No changes to commit."
-          else
-            git commit -m "chore: update computed metrics and portfolio [skip ci]"
-            git push
-          fi
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: ui/package-lock.json
+
+      - name: Install UI dependencies
+        run: npm install
+        working-directory: ui
+
+      - name: Build UI
+        run: npm run build
+        working-directory: ui
+        # Vite copies ../public/ (downloaded from engine-artifacts) into dist/
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ui/dist
+          destination_dir: .
+          keep_files: true
