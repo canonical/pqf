@@ -58,3 +58,28 @@ def test_compute_metrics_deploys_production_from_engine_artifacts() -> None:
         step for step in deploy_job["steps"] if step.get("name") == "Deploy to GitHub Pages"
     )
     assert deploy_step["uses"] == "peaceiris/actions-gh-pages@v4"
+
+    # ---- PR preview path must remain artifact-driven ----
+    assert "build-preview" in jobs, "expected 'build-preview' job for PR previews"
+    preview = jobs["build-preview"]
+    assert preview["needs"] == "run-engine"
+    # Only run on PRs in canonical/pqf (the real repo)
+    preview_if = preview.get("if", "")
+    assert "github.event_name == 'pull_request'" in preview_if
+    assert "github.repository == 'canonical/pqf'" in preview_if
+
+    preview_names = step_names(preview)
+    # Step name includes extra context in YAML; check substring for robustness
+    assert any("Download engine artifacts" in n for n in preview_names), "preview must download engine-artifacts"
+    assert "Build UI" in preview_names, "preview must build the UI"
+
+    # Verify ordering: download occurs before build in preview job
+    idx_dl = next(i for i, n in enumerate(preview_names) if "Download engine artifacts" in n)
+    idx_build_preview = preview_names.index("Build UI")
+    assert idx_dl < idx_build_preview, "preview must download engine artifacts before building UI"
+
+    dl_step = next(
+        step for step in preview["steps"] if "Download engine artifacts" in step.get("name", "")
+    )
+    # Confirm it downloads the named artifact
+    assert dl_step["with"]["name"] == "engine-artifacts"
