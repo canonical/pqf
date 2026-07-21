@@ -26,8 +26,17 @@ def test_compute_metrics_deploys_production_from_engine_artifacts() -> None:
     for pattern in ["products/**", "config/**", "scorers/**", "engine/**"]:
         assert pattern in paths, f"push.paths must include '{pattern}'"
 
+    pull_request = on.get("pull_request", {})
+    assert "closed" in pull_request.get("types", []), "pull_request trigger must include 'closed'"
+
     assert "deploy-production" in jobs
     assert "commit-artifacts" not in jobs
+
+    closed_pr_guard = "github.event_name != 'pull_request' || github.event.action != 'closed'"
+    for job_name in ["discover-products", "compute-metrics", "run-engine"]:
+        assert jobs[job_name]["if"] == closed_pr_guard, (
+            f"{job_name} must be skipped for pull_request.closed cleanup-only runs"
+        )
 
     deploy_job = jobs["deploy-production"]
     assert deploy_job["needs"] == "run-engine"
@@ -86,6 +95,24 @@ def test_compute_metrics_deploys_production_from_engine_artifacts() -> None:
     )
     # Confirm it downloads the named artifact
     assert dl_step["with"]["name"] == "engine-artifacts"
+
+    assert "github.event.action != 'closed'" in preview_if
+
+    assert "cleanup-preview" in jobs, "expected 'cleanup-preview' job for closed PRs"
+    cleanup = jobs["cleanup-preview"]
+    cleanup_if = cleanup.get("if", "")
+    assert "github.event_name == 'pull_request'" in cleanup_if
+    assert "github.event.action == 'closed'" in cleanup_if
+    assert "github.repository == 'canonical/pqf'" in cleanup_if
+
+    cleanup_step = next(
+        step for step in cleanup["steps"] if step.get("name") == "Remove PR preview"
+    )
+    assert cleanup_step["uses"] == "rossjrw/pr-preview-action@v1"
+    assert cleanup_step["with"]["action"] == "remove"
+    assert cleanup_step["with"]["preview-branch"] == "gh-pages"
+    assert cleanup_step["with"]["umbrella-dir"] == "pr-preview"
+    assert cleanup_step["with"]["pr-number"] == "${{ github.event.pull_request.number }}"
 
 
 def test_deploy_pages_only_runs_for_ui_changes_and_skips_mixed_commits() -> None:
