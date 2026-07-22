@@ -62,3 +62,24 @@ def test_workflow_files_returns_name_and_text_pairs():
         status=200,
     )
     assert workflow_files("canonical/example", "gh-token") == [("ci.yaml", "name: CI\n")]
+
+
+@responses.activate
+def test_github_token_is_sent_in_authorization_header():
+    seen = []
+
+    def callback(request):
+        # record whether the Authorization header contains the expected token scheme
+        auth = request.headers.get("Authorization")
+        if auth == "token gh-token":
+            seen.append(True)
+        return (200, {}, '{"name": "README.md"}')
+
+    responses.add_callback(
+        responses.GET,
+        "https://api.github.com/repos/canonical/example/contents/README.md",
+        callback=callback,
+    )
+
+    assert repo_file_exists("canonical/example", "README.md", "gh-token") is True
+    assert seen == [True]
