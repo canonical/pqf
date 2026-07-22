@@ -47,22 +47,34 @@ def _any_file_exists(
     return any(_file_exists(unit, path, github_token) for path in paths)
 
 
+def _name_matches(name: str, needle: str) -> bool:
+    """Return True when the needle appears as a discrete token or phrase in the check-run name.
+
+    Uses a conservative regex that requires non-alphanumeric boundaries around the needle
+    to avoid accidental partial matches (e.g. "lint" matching "super-linter-job").
+    """
+    name = name.lower()
+    needle = needle.lower()
+    pattern = rf"(^|[^a-z0-9]){re.escape(needle)}([^a-z0-9]|$)"
+    return re.search(pattern, name) is not None
+
+
 def _check_run_passed(check_runs: list[dict[str, Any]], *needles: str) -> bool:
-    lowered_needles = tuple(needle.lower() for needle in needles)
     for check in check_runs:
         name = str(check.get("name", "")).lower()
         conclusion = str(check.get("conclusion", "")).lower()
-        if any(needle in name for needle in lowered_needles):
-            return conclusion == "success"
+        for needle in needles:
+            if _name_matches(name, needle):
+                return conclusion == "success"
     return False
 
 
 def _check_run_exists(check_runs: list[dict[str, Any]], *needles: str) -> bool:
-    lowered_needles = tuple(needle.lower() for needle in needles)
     for check in check_runs:
         name = str(check.get("name", "")).lower()
-        if any(needle in name for needle in lowered_needles):
-            return True
+        for needle in needles:
+            if _name_matches(name, needle):
+                return True
     return False
 
 
@@ -92,23 +104,20 @@ def _contributing_meets_structure(unit: EvaluationUnit, github_token: str | None
 
 
 def _documentation_workflows_passing(check_runs: list[dict[str, Any]]) -> bool:
-    # Require that the core documentation checks (lint, style, links) are present and passing.
-    # If a docs build check is present, it must also pass; otherwise the build check is optional.
-    lint_present = _check_run_exists(check_runs, "docs lint", "markdownlint", "lint")
-    lint_passed = _check_run_passed(check_runs, "docs lint", "markdownlint", "lint")
+    # Require that the core documentation checks (lint, style, links, build) are present and passing.
+    # Use explicit needles to avoid accidental matches with unrelated jobs.
+    lint_present = _check_run_exists(check_runs, "docs lint", "markdownlint")
+    lint_passed = _check_run_passed(check_runs, "docs lint", "markdownlint")
 
-    style_present = _check_run_exists(check_runs, "vale", "style")
-    style_passed = _check_run_passed(check_runs, "vale", "style")
+    style_present = _check_run_exists(check_runs, "vale", "style guide")
+    style_passed = _check_run_passed(check_runs, "vale", "style guide")
 
-    links_present = _check_run_exists(
-        check_runs, "link check", "link-check", "broken links", "links"
-    )
-    links_passed = _check_run_passed(
-        check_runs, "link check", "link-check", "broken links", "links"
-    )
+    links_present = _check_run_exists(check_runs, "link check", "linkcheck", "docs links")
+    links_passed = _check_run_passed(check_runs, "link check", "linkcheck", "docs links")
 
+    # Require docs build to be present AND passing
     build_present = _check_run_exists(check_runs, "docs build", "documentation build", "build docs")
-    build_passed = True if not build_present else _check_run_passed(
+    build_passed = _check_run_passed(
         check_runs,
         "docs build",
         "documentation build",
@@ -122,6 +131,7 @@ def _documentation_workflows_passing(check_runs: list[dict[str, Any]]) -> bool:
         and style_passed
         and links_present
         and links_passed
+        and build_present
         and build_passed
     )
 
