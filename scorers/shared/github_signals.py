@@ -17,7 +17,7 @@ def build_github_session(github_token: str | None) -> requests.Session:
         }
     )
     if github_token:
-        session.headers["Authorization"] = f"******"
+        session.headers["Authorization"] = f"Bearer {github_token}"
     return session
 
 
