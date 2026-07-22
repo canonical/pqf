@@ -170,3 +170,14 @@ def test_returns_defaults_when_repo_empty():
         "codeql_enabled": False,
         "branch_protection_required_checks": False,
     }
+
+
+def test_dimensions_yaml_mentions_new_ssdlc_metrics():
+    import yaml
+    from pathlib import Path
+
+    data = yaml.safe_load(Path("config/dimensions.yaml").read_text())
+    outputs = data["dimensions"]["security_ssdlc"]["outputs"]
+    assert "renovate_enabled" in outputs
+    assert "canonical_repo_automation_registered" in outputs
+    assert "sast_workflow_present" in outputs

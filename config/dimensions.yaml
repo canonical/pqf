@@ -5,177 +5,64 @@
 dimensions:
 
   test_verification:
-    label: "Test Verification"
-    description: "Measures the breadth and reliability of automated test coverage across the product's component repositories."
-    scorer: scorers/test_verification/scorer.py
-    applies_to:
-      product_types: [charm, snap]
-    aggregation: worst_in_scope
     outputs:
-      coverage_pct:
-        type: number
-        range: "0–100"
-        label: "Coverage"
-        description: "Percentage of source lines covered by automated tests, averaged across foundational components."
-      stability_pct:
-        type: number
-        range: "0–100"
-        label: "Stability"
-        description: "Percentage of CI runs that passed over the last 30 days."
-      latest_build_passing:
-        type: boolean
-        label: "Latest build passing"
-        description: "Whether the most recent CI run on the default branch is green."
-      uses_ops_testing:
-        type: boolean
-        label: "Uses ops.testing (no Harness)"
-        description: "No references to the deprecated ops.testing Harness class found in test files. Checks via GitHub Search API."
-      uses_jubilant:
-        type: boolean
-        label: "Uses Jubilant"
-        description: "Integration tests import the Jubilant framework. Canonical standard for charm integration testing."
+      coverage_pct: {type: number, range: "0–100", label: "Coverage", description: "Percentage of automated test checks passing in the latest Allure summary."}
+      stability_pct: {type: number, range: "0–100", label: "Stability", description: "Percentage of non-broken, non-failed checks in the latest Allure summary."}
+      latest_build_passing: {type: boolean, label: "Latest build passing", description: "Whether the latest published test summary has zero failed and broken checks."}
+      integration_test_evidence_present: {type: boolean, label: "Integration test evidence", description: "Repository contains deterministic evidence that integration tests exist and run in CI."}
+      uses_ops_testing: {type: boolean, label: "Uses ops.testing (no Harness)", description: "No deprecated Harness usage detected via code search."}
+      uses_jubilant: {type: boolean, label: "Uses Jubilant", description: "Integration tests import Jubilant."}
     medals:
-      bronze:
-        - coverage_pct >= 70
-        - latest_build_passing == true
-      silver:
-        - coverage_pct >= 80
-        - stability_pct >= 85
-      gold:
-        - coverage_pct >= 90
-        - stability_pct >= 98
+      bronze: ["coverage_pct >= 70", "latest_build_passing == true"]
+      silver: ["coverage_pct >= 80", "stability_pct >= 85", "integration_test_evidence_present == true"]
+      gold: ["coverage_pct >= 90", "stability_pct >= 98", "integration_test_evidence_present == true"]
 
   documentation:
-    label: "Documentation"
-    description: "Evaluates the completeness and quality of product documentation against the Diátaxis framework and Canonical style guide."
-    scorer: scorers/documentation/scorer.py
-    applies_to:
-      product_types: [charm, snap]
-    aggregation: worst_in_scope
     outputs:
-      has_readme:
-        type: boolean
-        label: "README present"
-        description: "A README.md exists in the primary component repository."
-      has_contributing:
-        type: boolean
-        label: "CONTRIBUTING present"
-        description: "A CONTRIBUTING.md guide exists, helping contributors get started."
-      has_security:
-        type: boolean
-        label: "SECURITY present"
-        description: "A SECURITY.md file exists with vulnerability disclosure instructions."
-      diataxis_coverage:
-        type: number
-        range: "0–4"
-        label: "Diátaxis coverage"
-        description: "Number of Diátaxis doc types present (tutorial, how-to, reference, explanation). Scored by LLM analysis of the docs folder."
-        ai_assisted: true
-      style_linter_passing:
-        type: boolean
-        label: "Style linter passing"
-        description: "Documentation passes the Canonical Vale style linter with no errors."
-        ai_assisted: true
-      links_passing:
-        type: boolean
-        label: "Links passing"
-        description: "All hyperlinks in documentation resolve without HTTP errors. Informational only — link checks are enforced separately by CI."
-        informational: true
+      readme_meets_structure: {type: boolean, label: "README meets structure", description: "README differs from the single-charm template and contains required sections. Uses canonical/platform-engineering-charm-template and canonical/backup-operators to distinguish repo types."}
+      contributing_meets_structure: {type: boolean, label: "CONTRIBUTING meets structure", description: "CONTRIBUTING differs from template and contains required contribution and governance sections."}
+      has_security: {type: boolean, label: "SECURITY present", description: "SECURITY.md exists in the primary repository."}
+      documentation_workflows_passing: {type: boolean, label: "Documentation workflows passing", description: "Documentation-specific CI workflows (lint, link-check, build) are present and passing on default branch."}
+      diataxis_coverage: {type: number, range: "0–4", label: "Diátaxis coverage", description: "Deterministic count of Diátaxis doc types present (tutorial, how-to, reference, explanation)."}
+      tutorial_tested: {type: boolean, label: "Tutorial tested", description: "Documentation includes a tutorial with automated verification (CI or Playwright) demonstrating it runs end-to-end."}
+      uses_rtd_hosting: {type: boolean, label: "Uses RTD hosting", description: "Documentation points at a Read the Docs host."}
+      recent_release_notes_present: {type: boolean, label: "Recent release notes present", description: "Release notes are present and follow the documented release-notes process (see canonical/platform-engineering-docs/docs/engineering-practices/documentation/charm-release-notes)."}
     medals:
-      bronze:
-        - has_readme == true
-        - has_contributing == true
-        - has_security == true
-      silver:
-        - diataxis_coverage >= 4
-      gold:
-        - style_linter_passing == true
-        - diataxis_coverage == 4
+      bronze: ["readme_meets_structure == true", "contributing_meets_structure == true", "has_security == true", "documentation_workflows_passing == true"]
+      silver: ["readme_meets_structure == true", "contributing_meets_structure == true", "has_security == true", "documentation_workflows_passing == true", "diataxis_coverage == 4", "tutorial_tested == true"]
+      gold: ["readme_meets_structure == true", "contributing_meets_structure == true", "has_security == true", "documentation_workflows_passing == true", "diataxis_coverage == 4", "tutorial_tested == true", "uses_rtd_hosting == true", "recent_release_notes_present == true"]
 
   substrate_compat:
-    label: "Substrate Compatibility"
-    description: "Checks that the product supports current and next-generation Juju and Charmed Kubernetes versions."
-    scorer: scorers/substrate_compat/scorer.py
-    applies_to:
-      product_types: [charm]
-    aggregation: worst_in_scope
     outputs:
-      supports_juju_3:
-        type: boolean
-        label: "Juju 3 support"
-        description: "The product's charms declare compatibility with Juju 3.x in their metadata."
-      supports_juju_4:
-        type: boolean
-        label: "Juju 4 support"
-        description: "The product's charms declare compatibility with Juju 4.x (next-gen)."
-      supports_ck8s:
-        type: boolean
-        label: "Charmed K8s support"
-        description: "The product is tested and documented for Charmed Kubernetes deployments."
+      supports_juju_3: {type: boolean, label: "Juju 3 support", description: "Workflow or metadata evidence declares Juju 3 support."}
+      supports_juju_4: {type: boolean, label: "Juju 4 support", description: "Workflow or metadata evidence declares Juju 4 support."}
+      substrate_test_evidence_present: {type: boolean, label: "Substrate test evidence", description: "Workflow evidence shows declared Juju/substrate targets are exercised in CI."}
+      uses_canonical_k8s: {type: boolean, label: "Uses Canonical K8s", description: "Workflow evidence references Canonical K8s."}
     medals:
-      silver:
-        - supports_juju_3 == true
-      gold:
-        - supports_juju_4 == true
-        - supports_ck8s == true
+      bronze: ["supports_juju_3 == true"]
+      silver: ["supports_juju_3 == true", "substrate_test_evidence_present == true"]
+      gold: ["supports_juju_4 == true", "substrate_test_evidence_present == true"]
 
   security_ssdlc:
-    label: "Security / SSDLC"
-    description: "Verifies that the product follows the Secure Software Development Lifecycle practices mandated by Canonical's PSQF security baseline."
-    scorer: scorers/security_ssdlc/scorer.py
-    applies_to:
-      product_types: [charm, snap]
-    aggregation: worst_in_scope
     outputs:
-      dependabot_enabled:
-        type: boolean
-        label: "Dependabot enabled"
-        description: "A .github/dependabot.yml file is present in at least one foundational component repository, enabling automated dependency updates."
-      codeql_enabled:
-        type: boolean
-        label: "CodeQL enabled"
-        description: "At least one foundational repository has a GitHub Actions workflow that references github/codeql-action, enabling static analysis."
-      branch_protection_required_checks:
-        type: boolean
-        label: "Branch protection with required checks"
-        description: "The default branch has at least one required status check configured in branch protection rules, preventing merging of broken code."
+      renovate_enabled: {type: boolean, label: "Renovate enabled", description: "Repository is configured for Renovate updates."}
+      canonical_repo_automation_registered: {type: boolean, label: "Canonical repo automation registered", description: "Repository is onboarded in canonical-repo-automation."}
+      branch_protection_required_checks: {type: boolean, label: "Branch protection with required checks", description: "Default branch has required checks configured."}
+      sast_workflow_present: {type: boolean, label: "SAST workflow present", description: "Repository exposes an existing static security analysis workflow."}
+      cve_tracking_process_present: {type: boolean, label: "CVE tracking process present", description: "Repository exposes a CVE or security maintenance process marker."}
     medals:
-      silver:
-        - dependabot_enabled == true
-      gold:
-        - dependabot_enabled == true
-        - codeql_enabled == true
+      bronze: ["canonical_repo_automation_registered == true", "branch_protection_required_checks == true"]
+      silver: ["canonical_repo_automation_registered == true", "branch_protection_required_checks == true", "renovate_enabled == true", "sast_workflow_present == true"]
+      gold: ["canonical_repo_automation_registered == true", "branch_protection_required_checks == true", "renovate_enabled == true", "sast_workflow_present == true"]
 
   support_engagement:
-    label: "Support Engagement"
-    description: "Measures how responsive the product team is to community and customer issues and pull requests."
-    scorer: scorers/support_engagement/scorer.py
-    applies_to:
-      product_types: [charm, snap]
-    aggregation: worst_in_scope
     outputs:
-      avg_triage_days:
-        type: number
-        range: "≥ 0 days"
-        label: "Avg. triage time"
-        description: "Average number of days between issue creation and first team response or label, over the last 90 days."
-      avg_pr_review_days:
-        type: number
-        range: "≥ 0 days"
-        label: "Avg. PR review time"
-        description: "Average number of days between PR opening and first review, over the last 90 days."
-      has_squad_topic:
-        type: boolean
-        label: "Squad GitHub topic"
-        description: "The primary component repository has a GitHub topic matching 'squad-*', enabling automated ownership discovery and routing."
-      has_jira_sync:
-        type: boolean
-        label: "Jira sync configured"
-        description: "A .github/.jira_sync_config.yaml file exists in the primary component repository, enabling GitHub-to-Jira issue synchronisation."
+      avg_triage_days: {type: number, range: "≥ 0 days", label: "Avg. triage time", description: "Average days from issue creation to first non-author response."}
+      avg_pr_review_days: {type: number, range: "≥ 0 days", label: "Avg. PR review time", description: "Average days from PR opening to first submitted review."}
+      response_coverage_rate: {type: number, range: "0–100", label: "Response coverage", description: "Percentage of recent issues and PRs that received a first response within the measurement window."}
+      ownership_signal: {type: boolean, label: "Ownership signal", description: "Repository exposes clear ownership through a squad topic."}
+      has_jira_sync: {type: boolean, label: "Jira sync configured", description: "Repository has GitHub-to-Jira sync configuration."}
     medals:
-      silver:
-        - avg_triage_days <= 5
-        - avg_pr_review_days <= 7
-      gold:
-        - avg_triage_days <= 2
-        - avg_pr_review_days <= 3
+      bronze: ["avg_triage_days <= 5", "avg_pr_review_days <= 7", "ownership_signal == true"]
+      silver: ["avg_triage_days <= 3", "avg_pr_review_days <= 5", "response_coverage_rate >= 80", "ownership_signal == true"]
+      gold: ["avg_triage_days <= 2", "avg_pr_review_days <= 3", "response_coverage_rate >= 90", "ownership_signal == true"]
