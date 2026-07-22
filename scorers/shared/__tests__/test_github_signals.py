@@ -43,6 +43,24 @@ def test_search_code_count_returns_total_count():
 
 
 @responses.activate
+def test_search_code_count_retries_anonymously_on_auth_error():
+    # First attempt with token returns 403 (visibility/auth related),
+    # second (anonymous) attempt succeeds with the count.
+    responses.add(
+        responses.GET,
+        "https://api.github.com/search/code",
+        status=403,
+    )
+    responses.add(
+        responses.GET,
+        "https://api.github.com/search/code",
+        json={"total_count": 2},
+        status=200,
+    )
+    assert search_code_count("repo:canonical/example import jubilant", "gh-token") == 2
+
+
+@responses.activate
 def test_workflow_files_returns_name_and_text_pairs():
     responses.add(
         responses.GET,

@@ -77,11 +77,20 @@ def workflow_files(owner_repo: str, github_token: str | None) -> list[tuple[str,
 
 
 def search_code_count(query: str, github_token: str | None) -> int:
-    response = build_github_session(github_token).get(
+    # Use same authenticated -> anonymous retry behavior as github_get for public repos.
+    session = build_github_session(github_token)
+    response = session.get(
         f"{_GITHUB_API}/search/code",
         params={"q": query, "per_page": 1},
         timeout=15,
     )
+    if github_token and response.status_code in {401, 403, 404}:
+        # Retry anonymously
+        response = build_github_session(None).get(
+            f"{_GITHUB_API}/search/code",
+            params={"q": query, "per_page": 1},
+            timeout=15,
+        )
     if not response.ok:
         return 0
     return int(response.json().get("total_count", 0))
