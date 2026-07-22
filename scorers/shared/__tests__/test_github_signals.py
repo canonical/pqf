@@ -5,6 +5,7 @@ from scorers.shared.github_signals import (
     repo_topics,
     search_code_count,
     workflow_files,
+    default_branch_check_runs,
 )
 
 
@@ -83,3 +84,27 @@ def test_github_token_is_sent_in_authorization_header():
 
     assert repo_file_exists("canonical/example", "README.md", "gh-token") is True
     assert seen == [True]
+
+
+@responses.activate
+def test_default_branch_check_runs_returns_check_runs():
+    responses.add(
+        responses.GET,
+        "https://api.github.com/repos/canonical/example",
+        json={"default_branch": "main"},
+        status=200,
+    )
+    responses.add(
+        responses.GET,
+        "https://api.github.com/repos/canonical/example/branches/main",
+        json={"commit": {"sha": "abc123"}},
+        status=200,
+    )
+    responses.add(
+        responses.GET,
+        "https://api.github.com/repos/canonical/example/commits/abc123/check-runs",
+        json={"check_runs": [{"name": "ci", "conclusion": "success"}]},
+        status=200,
+    )
+
+    assert default_branch_check_runs("canonical/example", "gh-token") == [{"name": "ci", "conclusion": "success"}]

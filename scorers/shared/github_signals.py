@@ -25,8 +25,6 @@ def github_get(url: str, github_token: str | None, *, accept: str | None = None)
     session = build_github_session(github_token)
     headers = {"Accept": accept} if accept else None
     response = session.get(url, headers=headers, timeout=15)
-    if github_token and response.status_code in {401, 403, 404}:
-        response = build_github_session(None).get(url, headers=headers, timeout=15)
     return response
 
 
