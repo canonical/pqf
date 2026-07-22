@@ -77,7 +77,7 @@ dimensions:
     medals:
       bronze: ["canonical_repo_automation_registered == true", "branch_protection_required_checks == true"]
       silver: ["canonical_repo_automation_registered == true", "branch_protection_required_checks == true", "renovate_enabled == true", "sast_workflow_present == true"]
-      gold: ["canonical_repo_automation_registered == true", "branch_protection_required_checks == true", "renovate_enabled == true", "sast_workflow_present == true"]
+      gold: ["canonical_repo_automation_registered == true", "branch_protection_required_checks == true", "renovate_enabled == true", "sast_workflow_present == true", "cve_tracking_process_present == true"]
 
   support_engagement:
     label: "Support engagement"
