@@ -67,6 +67,20 @@ def test_compute_metrics_detects_documentation_signals(mocker):
         "recent_release_notes_present": True,
     }
 
+    # Generic CI names like 'playwright' alone should NOT count as tutorial tests
+    mocker.patch(
+        "scorers.documentation.logic.default_branch_check_runs",
+        return_value=[
+            {"name": "docs lint", "conclusion": "success"},
+            {"name": "vale", "conclusion": "success"},
+            {"name": "link check", "conclusion": "success"},
+            {"name": "docs build", "conclusion": "success"},
+            {"name": "playwright", "conclusion": "success"},
+        ],
+    )
+    result2 = compute_metrics(UNIT, "gh-token", "or-key", model="openrouter/test-model")
+    assert result2["tutorial_tested"] is False
+
 
 def test_compute_metrics_defaults_signals_when_repo_signals_missing(mocker):
     unit = EvaluationUnit(

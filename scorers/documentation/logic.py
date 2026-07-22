@@ -104,8 +104,8 @@ def _contributing_meets_structure(unit: EvaluationUnit, github_token: str | None
 
 
 def _documentation_workflows_passing(check_runs: list[dict[str, Any]]) -> bool:
-    # Require that the core documentation checks (lint, style, links, build) are present and passing.
-    # Use explicit needles to avoid accidental matches with unrelated jobs.
+    # Require core documentation checks (lint, style, links, build) to be present
+    # and passing. Use explicit needles to avoid accidental matches with unrelated jobs.
     lint_present = _check_run_exists(check_runs, "docs lint", "markdownlint")
     lint_passed = _check_run_passed(check_runs, "docs lint", "markdownlint")
 
@@ -159,19 +159,16 @@ def _tutorial_tested(
         ("docs/tutorial.md", "docs/tutorial/README.md", "tutorial.md", "docs/getting-started.md"),
         github_token,
     )
-    # Support CI-based tutorial verification beyond Playwright/e2e naming by matching
-    # a broader but deterministic set of substrings commonly used for tutorial tests.
+    # Require explicit tutorial-oriented check names; avoid generic qualifiers like 'e2e'.
+    # This prevents false positives from generic CI job names; only explicit needles allowed.
     tutorial_tested = _check_run_passed(
         check_runs,
         "tutorial",
-        "playwright",
-        "e2e",
-        "docs test",
-        "docs-test",
-        "documentation test",
         "tutorial-test",
-        "integration test",
-        "integration-test",
+        "docs tutorial",
+        "docs-test",
+        "docs test",
+        "documentation test",
     )
     return tutorial_present and tutorial_tested
 
