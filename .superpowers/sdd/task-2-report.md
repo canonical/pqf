@@ -53,3 +53,32 @@ Next steps
 
 - The config now contains the correct output and medals per Task 2, but must be augmented with the standard dimension metadata (label, description, scorer, applies_to, aggregation) so engine.validate passes.
 
+Fix applied
+
+- Added required dimension metadata fields (label, description, scorer, applies_to, aggregation) to all five dimensions in config/dimensions.yaml.
+- Scorer paths reused from existing repo: scorers/test_verification/scorer.py, scorers/documentation/scorer.py, scorers/substrate_compat/scorer.py, scorers/security_ssdlc/scorer.py, scorers/support_engagement/scorer.py.
+- Applies_to choices:
+  - test_verification: ["charm","snap"]
+  - documentation: ["charm","snap"]
+  - substrate_compat: ["charm"]
+  - security_ssdlc: ["charm","snap"]
+  - support_engagement: ["root","charm","snap"]
+- aggregation: set to "worst_in_scope" for all dimensions.
+
+Validation & tests
+
+- Focused pytest: scorers/security_ssdlc/__tests__/test_logic.py -k dimensions_yaml_mentions_new_ssdlc_metrics -> PASSED (1 test)
+- make validate -> PASSED (All files valid)
+
+Commit
+
+- Created commit: 0d936f1 feat(rubric): add required dimension metadata (label, description, scorer, applies_to, aggregation)
+
+Concerns
+
+- Downstream scorers still emit older metric keys (e.g., dependabot_enabled/codeql_enabled) in public artifacts; scorers need updating to produce the new security_ssdlc metrics to make computed outputs consistent with the new rubric.
+
+Report file path
+
+.superpowers/sdd/task-2-report.md
+
