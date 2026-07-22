@@ -91,19 +91,38 @@ def _contributing_meets_structure(unit: EvaluationUnit, github_token: str | None
 
 
 def _documentation_workflows_passing(check_runs: list[dict[str, Any]]) -> bool:
+    # Require that the core documentation checks (lint, style, links) are present and passing.
+    # If a docs build check is present, it must also pass; otherwise the build check is optional.
+    lint_present = _check_run_exists(check_runs, "docs lint", "markdownlint", "lint")
     lint_passed = _check_run_passed(check_runs, "docs lint", "markdownlint", "lint")
+
+    style_present = _check_run_exists(check_runs, "vale", "style")
     style_passed = _check_run_passed(check_runs, "vale", "style")
+
+    links_present = _check_run_exists(
+        check_runs, "link check", "link-check", "broken links", "links"
+    )
     links_passed = _check_run_passed(
         check_runs, "link check", "link-check", "broken links", "links"
     )
+
     build_present = _check_run_exists(check_runs, "docs build", "documentation build", "build docs")
-    build_passed = not build_present or _check_run_passed(
+    build_passed = True if not build_present else _check_run_passed(
         check_runs,
         "docs build",
         "documentation build",
         "build docs",
     )
-    return lint_passed and style_passed and links_passed and build_passed
+
+    return (
+        lint_present
+        and lint_passed
+        and style_present
+        and style_passed
+        and links_present
+        and links_passed
+        and build_passed
+    )
 
 
 def _diataxis_coverage(unit: EvaluationUnit, github_token: str | None) -> int:
@@ -129,7 +148,20 @@ def _tutorial_tested(
         ("docs/tutorial.md", "docs/tutorial/README.md", "tutorial.md", "docs/getting-started.md"),
         github_token,
     )
-    tutorial_tested = _check_run_passed(check_runs, "playwright", "tutorial", "e2e")
+    # Support CI-based tutorial verification beyond Playwright/e2e naming by matching
+    # a broader but deterministic set of substrings commonly used for tutorial tests.
+    tutorial_tested = _check_run_passed(
+        check_runs,
+        "tutorial",
+        "playwright",
+        "e2e",
+        "docs test",
+        "docs-test",
+        "documentation test",
+        "tutorial-test",
+        "integration test",
+        "integration-test",
+    )
     return tutorial_present and tutorial_tested
 
 
