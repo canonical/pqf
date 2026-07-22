@@ -17,13 +17,20 @@ def test_compute_metrics_detects_documentation_signals(mocker):
             "README.md",
             "CONTRIBUTING.md",
             "SECURITY.md",
-            ".github/release-drafter.yml",
             "docs/release-notes.md",
             "docs/tutorial.md",
             "docs/how-to.md",
             "docs/reference.md",
             "docs/explanation.md",
         },
+    )
+    # Mock GitHub releases: two non-draft releases with bodies
+    mocker.patch(
+        "scorers.documentation.logic.repo_releases",
+        return_value=[
+            {"tag_name": "v1.1.0", "draft": False, "body": "Release notes for v1.1.0"},
+            {"tag_name": "v1.0.0", "draft": False, "body": "Initial release notes"},
+        ],
     )
     mocker.patch(
         "scorers.documentation.logic.repo_file_text",
@@ -71,6 +78,7 @@ def test_compute_metrics_defaults_signals_when_repo_signals_missing(mocker):
     mocker.patch("scorers.documentation.logic.repo_file_exists", return_value=False)
     mocker.patch("scorers.documentation.logic.repo_file_text", return_value="")
     mocker.patch("scorers.documentation.logic.default_branch_check_runs", return_value=[])
+    mocker.patch("scorers.documentation.logic.repo_releases", return_value=[])
 
     result = compute_metrics(unit, "gh-token", "")
 

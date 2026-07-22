@@ -115,3 +115,14 @@ def default_branch_check_runs(owner_repo: str, github_token: str | None) -> list
     if not checks_response.ok:
         return []
     return checks_response.json().get("check_runs", [])
+
+
+def repo_releases(owner_repo: str, github_token: str | None) -> list[dict[str, Any]]:
+    """Return releases for a repository using the GitHub Releases API.
+
+    Falls back to anonymous request if an authenticated request fails due to visibility.
+    """
+    response = github_get(f"{_GITHUB_API}/repos/{owner_repo}/releases", github_token)
+    if not response.ok:
+        return []
+    return response.json()

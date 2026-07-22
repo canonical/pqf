@@ -9,6 +9,7 @@ from scorers.shared.github_signals import (
     default_branch_check_runs,
     repo_file_exists,
     repo_file_text,
+    repo_releases,
 )
 
 _PROMPTS_DIR = Path(__file__).parent / "prompts"
@@ -176,21 +177,28 @@ def _uses_rtd_hosting(unit: EvaluationUnit, github_token: str | None) -> bool:
 
 
 def _recent_release_notes_present(unit: EvaluationUnit, github_token: str | None) -> bool:
-    process_markers = (
-        ".github/release-drafter.yml",
-        ".github/release.yml",
-        "towncrier.toml",
-    )
-    release_note_files = (
-        "CHANGELOG.md",
-        "changelog.md",
-        "docs/changelog.md",
-        "docs/release-notes.md",
-        "release-notes.md",
-    )
-    if not _any_file_exists(unit, process_markers, github_token):
+    """
+    Determine whether recent releases have release notes.
+
+    Deterministic approach:
+    - Query repository releases via the GitHub API (repo_releases)
+    - Inspect the last two non-draft releases
+    - Return True if both have a non-empty 'body' field (release notes)
+    - Return False if fewer than two non-draft releases exist or their bodies are empty
+    """
+    releases = repo_releases(unit.repo, github_token)
+    if not releases:
         return False
-    return _any_file_exists(unit, release_note_files, github_token)
+    # Filter out draft releases and take the first two
+    non_draft = [r for r in releases if not r.get("draft", False)]
+    if len(non_draft) < 2:
+        return False
+    recent_two = non_draft[:2]
+    for rel in recent_two:
+        body = str(rel.get("body", "") or "").strip()
+        if not body:
+            return False
+    return True
 
 
 def compute_metrics(
