@@ -25,6 +25,10 @@ def github_get(url: str, github_token: str | None, *, accept: str | None = None)
     session = build_github_session(github_token)
     headers = {"Accept": accept} if accept else None
     response = session.get(url, headers=headers, timeout=15)
+    # If we tried with a token but got an auth/visibility-related error,
+    # retry anonymously (some repos being scored are public)
+    if github_token and response.status_code in {401, 403, 404}:
+        response = build_github_session(None).get(url, headers=headers, timeout=15)
     return response
 
 
@@ -67,6 +71,8 @@ def workflow_files(owner_repo: str, github_token: str | None) -> list[tuple[str,
         if not name.endswith((".yml", ".yaml")):
             continue
         results.append((name, repo_file_text(owner_repo, f".github/workflows/{name}", github_token)))
+    # Sort by filename for deterministic output
+    results.sort(key=lambda t: t[0])
     return results
 
 
