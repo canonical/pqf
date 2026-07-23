@@ -10,8 +10,7 @@ in the local dashboard — without waiting for a nightly CI run.
 
 - `make install` and `make install-ui` done
 - `gh` CLI installed and authenticated (`gh auth login`)
-- `OPENROUTER_API_KEY` — **optional**; only needed for the AI-powered documentation
-  checks (`diataxis_coverage`, `style_linter_passing`). All other scorers work without it.
+- `OPENROUTER_API_KEY` — optional; currently unused by local scoring contracts.
 
 `GITHUB_TOKEN` is auto-populated from `gh auth token` — you don't need to export it manually.
 
@@ -52,7 +51,7 @@ make dev                 ← Vite dev server reads public/portfolio.json
 # Without LLM (recommended for local dev — fast, no API key needed):
 make score-all-no-llm
 
-# With LLM (requires OPENROUTER_API_KEY — produces full AI doc scores):
+# With LLM key exported (same deterministic outputs today):
 make score-all
 ```
 
@@ -79,7 +78,7 @@ make score-no-llm PRODUCT=matrix   # runs all scorers, saves to .pqf-score/matri
 make _merge PRODUCT=matrix         # → computed/matrix.json
 make _assemble                     # → public/portfolio.json
 
-# Or with LLM:
+# Or with key exported:
 make score PRODUCT=matrix
 make _merge PRODUCT=matrix
 make _assemble
@@ -102,16 +101,19 @@ are evaluated by `assemble.py`, so `make _assemble` alone picks them up from the
 
 ---
 
-## What the AI doc checks produce when skipped
+## Documentation scoring without LLM
 
-When `OPENROUTER_API_KEY` is not set (or with `score-no-llm`), the documentation scorer
-sets `diataxis_coverage: 0` and `style_linter_passing: false`. All other documentation
-metrics (`has_readme`, `has_contributing`, `has_security`, `links_passing`) still run
-normally via the GitHub API.
+`score-no-llm` and `score` currently produce the same documentation outputs. The
+documentation scorer is fully deterministic and emits:
 
-This means:
-- Bronze documentation medal still reflects real data
-- Silver/gold documentation medal will appear unearned locally unless you provide an LLM key
+- `readme_meets_structure`
+- `contributing_meets_structure`
+- `has_security`
+- `documentation_workflows_passing`
+- `diataxis_coverage`
+- `tutorial_tested`
+- `uses_rtd_hosting`
+- `recent_release_notes_present`
 
 ---
 
@@ -120,6 +122,6 @@ This means:
 | Variable | Required | Source | Notes |
 |----------|----------|--------|-------|
 | `GITHUB_TOKEN` | Yes | Auto: `gh auth token` | All scorers use this for GitHub API calls |
-| `OPENROUTER_API_KEY` | No | Manual export | Only needed for AI documentation checks |
+| `OPENROUTER_API_KEY` | No | Manual export | Reserved for future AI-assisted checks |
 | `OPENROUTER_MODEL` | No | Optional | Override the OpenRouter model (default: `anthropic/claude-sonnet-4.5`) |
 | `LLM_MODEL` | No | Optional | Override model for either backend |
