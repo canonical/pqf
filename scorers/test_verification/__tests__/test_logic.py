@@ -18,11 +18,22 @@ UNIT_NO_ALLURE = EvaluationUnit(
 )
 
 
-def test_returns_zeros_when_no_allure_url():
+def test_returns_unmeasurable_when_no_allure_url_and_no_github_token():
     result = compute_metrics(UNIT_NO_ALLURE)
-    assert result["coverage_pct"] == 0
-    assert result["stability_pct"] == 0
-    assert result["latest_build_passing"] is False
+    assert result["coverage_pct"] is None
+    assert result["stability_pct"] is None
+    assert result["latest_build_passing"] is None
+
+
+def test_latest_build_passing_falls_back_to_default_branch_checks_when_allure_missing(mocker):
+    mocker.patch(
+        "scorers.test_verification.logic.default_branch_check_runs",
+        return_value=[
+            {"name": "ci / test", "conclusion": "success", "completed_at": "2026-07-23T00:00:00Z"}
+        ],
+    )
+    result = compute_metrics(UNIT_NO_ALLURE, "gh-token")
+    assert result["latest_build_passing"] is True
 
 
 @resp_lib.activate

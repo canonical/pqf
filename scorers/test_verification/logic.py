@@ -5,7 +5,11 @@ import requests
 from engine.models import EvaluationUnit
 
 # Reuse shared helpers for GitHub interactions
-from scorers.shared.github_signals import search_code_count, workflow_files
+from scorers.shared.github_signals import (
+    default_branch_check_runs,
+    search_code_count,
+    workflow_files,
+)
 
 
 def _uses_ops_testing(repos: list[str], github_token: str | None) -> bool:
@@ -39,15 +43,32 @@ def _integration_test_evidence_present(owner_repo: str, github_token: str | None
     return False
 
 
+def _latest_default_branch_check_success(owner_repo: str, github_token: str | None) -> bool | None:
+    """Return latest terminal check-run status on the default branch head."""
+    runs = default_branch_check_runs(owner_repo, github_token)
+    terminal = [
+        run
+        for run in runs
+        if (run.get("conclusion") or "").lower() in {"success", "failure", "cancelled", "timed_out"}
+    ]
+    if not terminal:
+        return None
+    latest = max(
+        terminal,
+        key=lambda run: str(run.get("completed_at") or run.get("started_at") or ""),
+    )
+    return (latest.get("conclusion") or "").lower() == "success"
+
+
 def compute_metrics(unit: EvaluationUnit, github_token: str | None = None) -> dict[str, Any]:
     """
     Fetch test metrics from the evaluation unit's Allure report URL.
     Checks uses_ops_testing and uses_jubilant against unit.repo.
     Also detects integration test evidence from workflows and code search.
     """
-    coverage_pct = 0
-    stability_pct = 0
-    latest_build_passing = False
+    coverage_pct: int | None = None
+    stability_pct: int | None = None
+    latest_build_passing: bool | None = None
 
     url = unit.allure_report_url.strip()
     if url:
@@ -63,6 +84,8 @@ def compute_metrics(unit: EvaluationUnit, github_token: str | None = None) -> di
             coverage_pct = round(passed / total * 100)
             stability_pct = round((total - failed - broken) / total * 100)
             latest_build_passing = failed == 0 and broken == 0
+    elif github_token and unit.repo:
+        latest_build_passing = _latest_default_branch_check_success(unit.repo, github_token)
 
     uses_ops = False
     uses_jub = False
