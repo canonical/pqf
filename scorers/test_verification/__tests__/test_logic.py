@@ -64,7 +64,14 @@ def test_uses_jubilant_true_when_jubilant_found(mocker):
 def _allure_response(total, passed, failed, broken):
     class R:
         def __init__(self, total, passed, failed, broken):
-            self._j = {"statistic": {"total": total, "passed": passed, "failed": failed, "broken": broken}}
+            self._j = {
+                "statistic": {
+                    "total": total,
+                    "passed": passed,
+                    "failed": failed,
+                    "broken": broken,
+                }
+            }
             self.status_code = 200
             self.ok = True
 
@@ -78,7 +85,10 @@ def _allure_response(total, passed, failed, broken):
 
 
 def test_compute_metrics_detects_integration_test_evidence(mocker):
-    mocker.patch("scorers.test_verification.logic.requests.get", return_value=_allure_response(10, 9, 1, 0))
+    mocker.patch(
+        "scorers.test_verification.logic.requests.get",
+        return_value=_allure_response(10, 9, 1, 0),
+    )
     mocker.patch(
         "scorers.test_verification.logic.workflow_files",
         return_value=[
@@ -94,8 +104,14 @@ def test_compute_metrics_detects_integration_test_evidence(mocker):
 
 
 def test_compute_metrics_defaults_integration_evidence_to_false_without_workflow_match(mocker):
-    mocker.patch("scorers.test_verification.logic.requests.get", return_value=_allure_response(10, 10, 0, 0))
-    mocker.patch("scorers.test_verification.logic.workflow_files", return_value=[("ci.yaml", "jobs:\n  unit:\n    steps:\n      - run: pytest\n")])
+    mocker.patch(
+        "scorers.test_verification.logic.requests.get",
+        return_value=_allure_response(10, 10, 0, 0),
+    )
+    mocker.patch(
+        "scorers.test_verification.logic.workflow_files",
+        return_value=[("ci.yaml", "jobs:\n  unit:\n    steps:\n      - run: pytest\n")],
+    )
     mocker.patch("scorers.test_verification.logic.search_code_count", side_effect=[0, 0])
 
     result = compute_metrics(UNIT, "gh-token")

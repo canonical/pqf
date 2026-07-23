@@ -70,7 +70,7 @@ def compute_metrics(unit: EvaluationUnit, github_token: str | None = None) -> di
     if github_token and unit.repo:
         uses_ops = _uses_ops_testing([unit.repo], github_token)
         uses_jub = _uses_jubilant([unit.repo], github_token)
-        # integration evidence: either workflow mentions integration tests or code search finds integration markers
+        # Integration evidence combines workflow markers and code-search signals.
         integration_evidence = _integration_test_evidence_present(unit.repo, github_token)
 
     return {
