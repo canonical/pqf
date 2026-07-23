@@ -150,7 +150,7 @@ describe('ProductDetail', () => {
 
   it('shows dimension row', () => {
     wrap('matrix')
-    expect(screen.getByText('test verification')).toBeInTheDocument()
+    expect(screen.getAllByRole('link', { name: 'test verification' }).length).toBeGreaterThan(0)
   })
 
   it('renders squad as a linked GitHub team badge', () => {
@@ -163,7 +163,8 @@ describe('ProductDetail', () => {
   it('removes the target column from the dimensions table and shows target thresholds in evidence', () => {
     wrap('matrix')
 
-    const table = screen.getByRole('table')
+    const dimensionsCard = screen.getByRole('heading', { name: 'Dimensions' }).closest('.p-card') as HTMLElement
+    const table = dimensionsCard.querySelector('table') as HTMLTableElement
     expect(within(table).queryByRole('columnheader', { name: 'Target' })).not.toBeInTheDocument()
     expect(within(table).getByRole('columnheader', { name: 'Current' })).toBeInTheDocument()
     expect(within(table).getByRole('columnheader', { name: 'Drift' })).toBeInTheDocument()
@@ -211,19 +212,26 @@ describe('ProductDetail', () => {
     expect(screen.getByText(/External dependencies/i)).toBeInTheDocument()
   })
 
+  it('renders dependency heatmap with dimension medal cells for sub-products', () => {
+    wrap('matrix')
+    expect(screen.getByRole('columnheader', { name: /sub-product/i })).toBeInTheDocument()
+    expect(screen.getByRole('columnheader', { name: /test verification/i })).toBeInTheDocument()
+    expect(screen.getAllByRole('link', { name: 'Synapse Charm' }).length).toBeGreaterThan(0)
+  })
+
   it('balances dependency row widths toward product and repo content', () => {
     wrap('matrix')
 
-    const productLink = screen.getByRole('link', { name: 'Synapse Charm' })
-    const row = productLink.parentElement?.parentElement
-    const repoLink = screen.getByRole('link', { name: /canonical\/synapse-operator/i })
+    const dependenciesCard = screen.getByRole('heading', { name: 'Dependencies' }).closest('.p-card') as HTMLElement
+    const repoLink = within(dependenciesCard).getByRole('link', { name: /canonical\/synapse-operator/i })
+    const row = repoLink.parentElement?.parentElement
 
     expect(row).not.toBeNull()
     expect(row).toHaveStyle({
       display: 'grid',
       gridTemplateColumns: 'auto minmax(0, 1.1fr) auto minmax(14rem, 0.9fr)',
     })
-    expect(productLink.parentElement).toHaveStyle({ minWidth: '0' })
+    expect(row?.children[1]).toHaveStyle({ minWidth: '0' })
     expect(repoLink.parentElement).toHaveStyle({ minWidth: '0' })
     expect(repoLink).toHaveStyle({
       display: 'block',

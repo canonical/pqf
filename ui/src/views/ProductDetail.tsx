@@ -6,6 +6,7 @@ import DriftChip from '../components/DriftChip'
 import MetricsList from '../components/MetricsList'
 import RootMetricsList from '../components/RootMetricsList'
 import LoadingSpinner from '../components/LoadingSpinner'
+import { buildGroupedProducts } from '../lib/groupedPortfolioView'
 
 const SQUAD_TEAMS: Record<string, { label: string; url: string }> = {
   americas: { label: 'AMER', url: 'https://github.com/orgs/canonical/teams/platform-engineering-amer' },
@@ -52,6 +53,9 @@ export default function ProductDetail() {
   const hasDependencies =
     (product.composed_of && product.composed_of.length > 0) ||
     product.context_refs.length > 0
+  const groupedProducts = buildGroupedProducts(portfolio)
+  const productGroup = groupedProducts.find(group => group.root.id === product.id)
+  const dependencyDimensions = Object.keys(portfolio.dimensions_meta)
 
   return (
     <div className="row" style={{ paddingTop: '1.5rem' }}>
@@ -248,6 +252,44 @@ export default function ProductDetail() {
         {hasDependencies && (
           <div className="p-card u-sv3">
             <h2 className="p-heading--4" style={{ marginBottom: '1rem' }}>Dependencies</h2>
+
+            {isRoot && productGroup && productGroup.leaves.length > 0 && (
+              <div style={{ marginBottom: '1rem', overflowX: 'auto' }}>
+                <table style={{ tableLayout: 'fixed', width: '100%', borderCollapse: 'collapse' }}>
+                  <thead>
+                    <tr style={{ borderBottom: '1px solid #d9d9d9' }}>
+                      <th style={{ padding: '0.5rem 0.75rem', textAlign: 'left', fontSize: '0.75rem', fontWeight: 600, textTransform: 'uppercase', color: '#666' }}>
+                        Sub-product
+                      </th>
+                      {dependencyDimensions.map(dim => (
+                        <th
+                          key={dim}
+                          style={{ padding: '0.5rem 0.75rem', textAlign: 'left', fontSize: '0.75rem', fontWeight: 600, textTransform: 'uppercase', color: '#666' }}
+                        >
+                          {portfolio.dimensions_meta[dim]?.label ?? dim.replace(/_/g, ' ')}
+                        </th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {productGroup.leaves.map((leaf, idx) => (
+                      <tr key={leaf.id} style={{ borderBottom: '1px solid #e5e5e5', background: idx % 2 === 0 ? '#fafafa' : '#fff' }}>
+                        <td style={{ padding: '0.75rem', verticalAlign: 'top' }}>
+                          <Link to={`/products/${leaf.id}`} style={{ fontWeight: 500 }}>
+                            {leaf.name}
+                          </Link>
+                        </td>
+                        {dependencyDimensions.map(dim => (
+                          <td key={dim} style={{ padding: '0.75rem', verticalAlign: 'top' }}>
+                            <MedalBadge medal={leaf.dimensions[dim]?.medal ?? 'unrated'} size="small" />
+                          </td>
+                        ))}
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
 
             {/* Sub-products — primary, table-style aligned rows with medals */}
             {product.composed_of && product.composed_of.length > 0 && (
