@@ -222,16 +222,29 @@ def _uses_rtd_hosting(unit: EvaluationUnit, github_token: str | None) -> bool:
     readme = _file_text(unit, "README.md", github_token).lower()
     if not readme:
         return False
-    # Explicit RTD URLs (readthedocs.io/.org/.hosted.com)
-    if re.search(r'https?://[^")\s]*readthedocs\.(?:io|org|hosted\.com)', readme):
+    # Explicit RTD URLs (readthedocs.io/.org/.hosted.com/hosted)
+    rtd_url_regex = (
+        r'https?://[^")\s]*'
+        r"(?:readthedocs\.io|readthedocs\.org|readthedocs-hosted\.com)"
+    )
+    if re.search(rtd_url_regex, readme):
         return True
     # Explicit badge alt text referencing 'read the docs'
     if "alt=\"read the docs\"" in readme or "alt='read the docs'" in readme:
         return True
-    # Markdown or HTML images with a src that includes readthedocs domains
-    if re.search(r'!\[[^\]]*\]\([^\)]*readthedocs\.[a-z]{2,6}[^\)]*\)', readme):
+    # Markdown images with a src that includes readthedocs domains
+    md_badge_regex = (
+        r"!\[[^\]]*\]\([^\)]*"
+        r"(?:readthedocs\.io|readthedocs\.org|readthedocs-hosted\.com)"
+        r"[^\)]*\)"
+    )
+    if re.search(md_badge_regex, readme):
         return True
-    img_regex = r'<img[^>]+src=["\']\S*readthedocs\.(?:io|org|hosted\.com)\S*["\']'
+    img_regex = (
+        r'<img[^>]+src=["\']\S*'
+        r"(?:readthedocs\.io|readthedocs\.org|readthedocs-hosted\.com)"
+        r'\S*["\']'
+    )
     if re.search(img_regex, readme):
         return True
     return False

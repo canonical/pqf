@@ -243,3 +243,29 @@ def test_uses_rtd_hosting_requires_explicit_signal(mocker):
 
     result = compute_metrics(unit, "gh-token", "or-key")
     assert result["uses_rtd_hosting"] is False
+
+
+def test_uses_rtd_hosting_detects_rtd_hosted_patterns(mocker):
+    """Detect common readthedocs-hosted.com badge/image and URL patterns."""
+    unit = EvaluationUnit(
+        product_id="matrix",
+        product_type=ProductType.CHARM,
+        repo="canonical/synapse-operator",
+        documentation_url="",
+    )
+    mocker.patch("scorers.documentation.logic.repo_file_exists", return_value=True)
+    # README contains a variety of explicit RTD-hosted URLs and badges
+    mocker.patch(
+        "scorers.documentation.logic.repo_file_text",
+        return_value=(
+            "![Documentation Status](https://canonical.synapse.readthedocs-hosted.com/_static/readthedocs-badge.svg)\n"
+            "Visit the docs: https://canonical.synapse.readthedocs-hosted.com/\n"
+            "<img src=\"https://readthedocs.io/projects/myproj/badge/icon\" "
+            "alt=\"Read the Docs\" />\n"
+        ),
+    )
+    mocker.patch("scorers.documentation.logic.default_branch_check_runs", return_value=[])
+    mocker.patch("scorers.documentation.logic.repo_releases", return_value=[])
+
+    result = compute_metrics(unit, "gh-token", "or-key")
+    assert result["uses_rtd_hosting"] is True
