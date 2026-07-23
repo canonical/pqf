@@ -87,7 +87,9 @@ export default function DimensionDetail() {
                 {Object.entries(meta.outputs).map(([key, out], idx) => (
                   <tr key={key} style={{ borderBottom: '1px solid #e5e5e5', background: idx % 2 === 0 ? '#fafafa' : '#fff' }}>
                     <td style={{ padding: '0.75rem', verticalAlign: 'top' }}>
-                      <strong style={{ display: 'block' }}>{out.label}</strong>
+                      <Link to={`/dimensions/${id}/metrics/${key}`} style={{ fontWeight: 600, display: 'block' }}>
+                        {out.label}
+                      </Link>
                       <code style={{ fontSize: '0.75rem', color: '#666' }}>{key}</code>
                     </td>
                     <td style={{ padding: '0.75rem', verticalAlign: 'top', fontSize: '0.875rem' }}>
