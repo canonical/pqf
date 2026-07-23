@@ -502,8 +502,6 @@ git commit -m "feat: add condition evaluator (eval_condition)"
 
 ### Task 4: Rubric Evaluator
 
-- NOTE: Applied focused fixes to documentation scorer (docs workflows latest-conclusion and RTD hosting heuristics) in scorers/documentation/logic.py. Tests updated accordingly.
-
 **Files:**
 - Modify: `engine/rubric.py` (add `evaluate_rubric`)
 - Modify: `engine/__tests__/test_rubric.py` (add `evaluate_rubric` tests)
