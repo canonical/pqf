@@ -17,6 +17,8 @@ jobs:
     if: github.repository == 'canonical/pqf'
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v4
+
       - name: Remove PR preview
         uses: rossjrw/pr-preview-action@v1
         with:
