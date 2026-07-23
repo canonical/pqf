@@ -174,9 +174,9 @@ def _tutorial_tested(
         github_token,
     )
     # Require that a check-run name indicates BOTH tutorial context AND a test/verification intent.
-    # Use deterministic string logic: a single check name must match one tutorial needle AND one
-    # execution-intent needle (e.g., 'test', 'tests', 'e2e', 'verification'). This avoids false
-    # positives from names like 'tutorial build' or generic CI names without test intent.
+    # Evaluate the latest matching check-run conclusion (by completed_at/started_at, fallback to
+    # list order) rather than accepting the first success we encounter. If the latest matching
+    # tutorial-test run failed, the metric should be False.
     tutorial_needles = (
         "tutorial",
         "tutorials",
@@ -184,24 +184,37 @@ def _tutorial_tested(
     )
     intent_needles = ("test", "tests", "e2e", "verification", "verify", "validation", "validate")
 
-    for check in check_runs:
+    latest_key = None
+    latest_conclusion: str | None = None
+    for idx, check in enumerate(check_runs):
         name = str(check.get("name", "")).lower()
         conclusion = str(check.get("conclusion", "")).lower()
-        if conclusion != "success":
-            continue
         has_tutorial = any(_name_matches(name, t) for t in tutorial_needles)
         has_intent = any(_name_matches(name, i) for i in intent_needles)
-        if has_tutorial and has_intent:
-            return tutorial_present
-    return False
+        if not (has_tutorial and has_intent):
+            continue
+        # Prefer completed_at, then started_at. These are ISO timestamps
+        # and compare lexicographically. Fall back to the list index for
+        # deterministic ordering when timestamps are missing.
+        ts = check.get("completed_at") or check.get("started_at") or ""
+        key = (str(ts), idx)
+        if latest_key is None or key > latest_key:
+            latest_key = key
+            latest_conclusion = conclusion
+    if latest_conclusion is None:
+        return False
+    # Only count as tested if the latest matching run concluded successfully
+    # and a tutorial file exists in the repository.
+    return (latest_conclusion == "success") and tutorial_present
 
 
 def _uses_rtd_hosting(unit: EvaluationUnit, github_token: str | None) -> bool:
     """Tightly detect ReadTheDocs hosting.
 
-    Require either the documentation_url points at a readthedocs domain, or the
-    README contains an explicit ReadTheDocs URL or badge/image referencing the
-    readthedocs domains. This avoids incidental textual mentions.
+    Require an explicit ReadTheDocs signal only: either the documentation_url points at
+    a readthedocs domain, the README contains an explicit RTD URL, or the README includes
+    a Read the Docs badge/image with an alt or src referencing readthedocs domains. Avoid
+    generic textual mentions that could be false positives.
     """
     doc_url = (unit.documentation_url or "").lower()
     if any(token in doc_url for token in ("readthedocs", "readthedocs-hosted.com")):
@@ -209,13 +222,17 @@ def _uses_rtd_hosting(unit: EvaluationUnit, github_token: str | None) -> bool:
     readme = _file_text(unit, "README.md", github_token).lower()
     if not readme:
         return False
-    # Look for explicit RTD URLs (readthedocs.io/org/hosted.com) or badges mentioning Read the Docs
+    # Explicit RTD URLs (readthedocs.io/.org/.hosted.com)
     if re.search(r'https?://[^")\s]*readthedocs\.(?:io|org|hosted\.com)', readme):
         return True
+    # Explicit badge alt text referencing 'read the docs'
     if "alt=\"read the docs\"" in readme or "alt='read the docs'" in readme:
         return True
-    # Image URLs commonly embed 'readthedocs' in the src
-    if "readthedocs" in readme and ("http" in readme or "![" in readme):
+    # Markdown or HTML images with a src that includes readthedocs domains
+    if re.search(r'!\[[^\]]*\]\([^\)]*readthedocs\.[a-z]{2,6}[^\)]*\)', readme):
+        return True
+    img_regex = r'<img[^>]+src=["\']\S*readthedocs\.(?:io|org|hosted\.com)\S*["\']'
+    if re.search(img_regex, readme):
         return True
     return False
 

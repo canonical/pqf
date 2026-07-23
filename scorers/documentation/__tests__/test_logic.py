@@ -163,3 +163,83 @@ def test_documentation_workflows_use_latest_conclusion(mocker):
 
     result = compute_metrics(UNIT, "gh-token", "or-key")
     assert result["documentation_workflows_passing"] is False
+
+
+def test_tutorial_tested_uses_latest_conclusion(mocker):
+    """The tutorial_tested metric should reflect the latest matching check-run conclusion.
+
+    If an earlier run succeeded but a later matching tutorial-test run failed, the metric
+    must be False. Conversely, a later success should set it True.
+    """
+    mocker.patch(
+        "scorers.documentation.logic.repo_file_exists",
+        side_effect=lambda repo, path, token: path
+        in {
+            "README.md",
+            "docs/tutorial.md",
+        },
+    )
+    mocker.patch("scorers.documentation.logic.repo_file_text", return_value="# Docs")
+    mocker.patch("scorers.documentation.logic.repo_releases", return_value=[])
+
+    # Later failure should make metric False
+    mocker.patch(
+        "scorers.documentation.logic.default_branch_check_runs",
+        return_value=[
+            {
+                "name": "tutorial tests",
+                "conclusion": "success",
+                "completed_at": "2026-01-01T00:00:00Z",
+            },
+            {
+                "name": "tutorial tests",
+                "conclusion": "failure",
+                "completed_at": "2026-01-02T00:00:00Z",
+            },
+        ],
+    )
+    result = compute_metrics(UNIT, "gh-token", "or-key")
+    assert result["tutorial_tested"] is False
+
+    # Later success should make metric True
+    mocker.patch(
+        "scorers.documentation.logic.default_branch_check_runs",
+        return_value=[
+            {
+                "name": "tutorial tests",
+                "conclusion": "failure",
+                "completed_at": "2026-01-01T00:00:00Z",
+            },
+            {
+                "name": "tutorial tests",
+                "conclusion": "success",
+                "completed_at": "2026-01-02T00:00:00Z",
+            },
+        ],
+    )
+    result = compute_metrics(UNIT, "gh-token", "or-key")
+    assert result["tutorial_tested"] is True
+
+
+def test_uses_rtd_hosting_requires_explicit_signal(mocker):
+    """Ensure generic textual mentions don't trigger RTD hosting detection."""
+    unit = EvaluationUnit(
+        product_id="matrix",
+        product_type=ProductType.CHARM,
+        repo="canonical/synapse-operator",
+        documentation_url="",
+    )
+    mocker.patch("scorers.documentation.logic.repo_file_exists", return_value=True)
+    # README contains a generic mention but no URL or badge
+    mocker.patch(
+        "scorers.documentation.logic.repo_file_text",
+        return_value=(
+            "This project mentions ReadTheDocs in the README but provides no URL or badge: "
+            "ReadTheDocs is great"
+        ),
+    )
+    mocker.patch("scorers.documentation.logic.default_branch_check_runs", return_value=[])
+    mocker.patch("scorers.documentation.logic.repo_releases", return_value=[])
+
+    result = compute_metrics(unit, "gh-token", "or-key")
+    assert result["uses_rtd_hosting"] is False
