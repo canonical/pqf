@@ -159,18 +159,27 @@ def _tutorial_tested(
         ("docs/tutorial.md", "docs/tutorial/README.md", "tutorial.md", "docs/getting-started.md"),
         github_token,
     )
-    # Require explicit tutorial-oriented check names; avoid generic qualifiers like 'e2e'.
-    # This prevents false positives from generic CI job names; only explicit needles allowed.
-    tutorial_tested = _check_run_passed(
-        check_runs,
+    # Require that a check-run name indicates BOTH tutorial context AND a test/verification intent.
+    # Use deterministic string logic: a single check name must match one tutorial needle AND one
+    # execution-intent needle (e.g., 'test', 'tests', 'e2e', 'verification'). This avoids false
+    # positives from names like 'tutorial build' or generic CI names without test intent.
+    tutorial_needles = (
         "tutorial",
-        "tutorial-test",
+        "tutorials",
         "docs tutorial",
-        "docs-test",
-        "docs test",
-        "documentation test",
     )
-    return tutorial_present and tutorial_tested
+    intent_needles = ("test", "tests", "e2e", "verification", "verify", "validation", "validate")
+
+    for check in check_runs:
+        name = str(check.get("name", "")).lower()
+        conclusion = str(check.get("conclusion", "")).lower()
+        if conclusion != "success":
+            continue
+        has_tutorial = any(_name_matches(name, t) for t in tutorial_needles)
+        has_intent = any(_name_matches(name, i) for i in intent_needles)
+        if has_tutorial and has_intent:
+            return tutorial_present
+    return False
 
 
 def _uses_rtd_hosting(unit: EvaluationUnit, github_token: str | None) -> bool:

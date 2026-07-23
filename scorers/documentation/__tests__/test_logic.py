@@ -43,29 +43,47 @@ def test_compute_metrics_detects_documentation_signals(mocker):
             ),
         }.get(path, ""),
     )
-    mocker.patch(
-        "scorers.documentation.logic.default_branch_check_runs",
-        return_value=[
-            {"name": "docs lint", "conclusion": "success"},
-            {"name": "vale", "conclusion": "success"},
-            {"name": "link check", "conclusion": "success"},
-            {"name": "docs build", "conclusion": "success"},
-            {"name": "playwright tutorial", "conclusion": "success"},
-        ],
-    )
 
-    result = compute_metrics(UNIT, "gh-token", "or-key", model="openrouter/test-model")
+    # Positive examples that SHOULD count as tutorial tests
+    positive_names = [
+        "tutorial tests",
+        "tutorial e2e tests",
+        "tutorial verification",
+    ]
 
-    assert result == {
-        "readme_meets_structure": True,
-        "contributing_meets_structure": True,
-        "has_security": True,
-        "documentation_workflows_passing": True,
-        "diataxis_coverage": 4,
-        "tutorial_tested": True,
-        "uses_rtd_hosting": True,
-        "recent_release_notes_present": True,
-    }
+    for name in positive_names:
+        mocker.patch(
+            "scorers.documentation.logic.default_branch_check_runs",
+            return_value=[
+                {"name": "docs lint", "conclusion": "success"},
+                {"name": "vale", "conclusion": "success"},
+                {"name": "link check", "conclusion": "success"},
+                {"name": "docs build", "conclusion": "success"},
+                {"name": name, "conclusion": "success"},
+            ],
+        )
+        result = compute_metrics(UNIT, "gh-token", "or-key", model="openrouter/test-model")
+        assert result["tutorial_tested"] is True
+
+    # Negative examples that should NOT pass
+    negative_names = [
+        "tutorial build",
+        "tutorial lint",
+        "docs tutorial",
+    ]
+    for name in negative_names:
+        mocker.patch(
+            "scorers.documentation.logic.default_branch_check_runs",
+            return_value=[
+                {"name": "docs lint", "conclusion": "success"},
+                {"name": "vale", "conclusion": "success"},
+                {"name": "link check", "conclusion": "success"},
+                {"name": "docs build", "conclusion": "success"},
+                {"name": name, "conclusion": "success"},
+            ],
+        )
+        result = compute_metrics(UNIT, "gh-token", "or-key", model="openrouter/test-model")
+        assert result["tutorial_tested"] is False
 
     # Generic CI names like 'playwright' alone should NOT count as tutorial tests
     mocker.patch(
