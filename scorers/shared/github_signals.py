@@ -32,7 +32,7 @@ def github_get(
     response = session.get(url, headers=headers, timeout=15)
     # If we tried with a token but got an auth/visibility-related error,
     # retry anonymously (some repos being scored are public)
-    if github_token and response.status_code in {401, 403}:
+    if github_token and response.status_code in {401, 403, 404}:
         response = build_github_session(None).get(url, headers=headers, timeout=15)
     return response
 
@@ -91,7 +91,7 @@ def search_code_count(query: str, github_token: str | None) -> int:
         params={"q": query, "per_page": 1},
         timeout=15,
     )
-    if github_token and response.status_code in {401, 403}:
+    if github_token and response.status_code in {401, 403, 404}:
         # Retry anonymously
         response = build_github_session(None).get(
             f"{_GITHUB_API}/search/code",
