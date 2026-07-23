@@ -124,3 +124,42 @@ def test_compute_metrics_defaults_signals_when_repo_signals_missing(mocker):
         "uses_rtd_hosting": False,
         "recent_release_notes_present": False,
     }
+
+
+def test_documentation_workflows_use_latest_conclusion(mocker):
+    """Ensure workflow pass/fail is determined by the latest conclusion per check-family.
+
+    We simulate multiple check-runs with the same name where a later run fails and expect
+    the overall documentation_workflows_passing to be False.
+    """
+    mocker.patch(
+        "scorers.documentation.logic.repo_file_exists",
+        side_effect=lambda repo, path, token: path
+        in {
+            "README.md",
+            "CONTRIBUTING.md",
+            "SECURITY.md",
+            "docs/tutorial.md",
+            "docs/how-to.md",
+            "docs/reference.md",
+            "docs/explanation.md",
+        },
+    )
+    mocker.patch("scorers.documentation.logic.repo_file_text", return_value="# Docs")
+    mocker.patch("scorers.documentation.logic.repo_releases", return_value=[])
+    mocker.patch(
+        "scorers.documentation.logic.default_branch_check_runs",
+        return_value=[
+            {"name": "docs lint", "conclusion": "success", "completed_at": "2026-01-01T00:00:00Z"},
+            {"name": "docs lint", "conclusion": "failure", "completed_at": "2026-01-02T00:00:00Z"},
+            {"name": "vale", "conclusion": "success", "completed_at": "2026-01-01T00:00:00Z"},
+            {"name": "vale", "conclusion": "success", "completed_at": "2026-01-02T00:00:00Z"},
+            {"name": "link check", "conclusion": "success", "completed_at": "2026-01-01T00:00:00Z"},
+            {"name": "link check", "conclusion": "success", "completed_at": "2026-01-02T00:00:00Z"},
+            {"name": "docs build", "conclusion": "success", "completed_at": "2026-01-01T00:00:00Z"},
+            {"name": "docs build", "conclusion": "failure", "completed_at": "2026-01-02T00:00:00Z"},
+        ],
+    )
+
+    result = compute_metrics(UNIT, "gh-token", "or-key")
+    assert result["documentation_workflows_passing"] is False

@@ -60,13 +60,27 @@ def _name_matches(name: str, needle: str) -> bool:
 
 
 def _check_run_passed(check_runs: list[dict[str, Any]], *needles: str) -> bool:
-    for check in check_runs:
+    """Return True if the latest check-run matching any of the needles has a 'success' conclusion.
+
+    Uses completed_at or started_at timestamps when present to pick the latest run within a
+    check-family. If timestamps are missing, falls back to the last occurrence in the
+    provided list for deterministic behavior.
+    """
+    latest_key = None
+    latest_conclusion: str | None = None
+    for idx, check in enumerate(check_runs):
         name = str(check.get("name", "")).lower()
         conclusion = str(check.get("conclusion", "")).lower()
         for needle in needles:
             if _name_matches(name, needle):
-                return conclusion == "success"
-    return False
+                # Prefer completed_at, then started_at; these are ISO timestamps and
+                # compare lexicographically. Fall back to index to be deterministic.
+                ts = check.get("completed_at") or check.get("started_at") or ""
+                key = (str(ts), idx)
+                if latest_key is None or key > latest_key:
+                    latest_key = key
+                    latest_conclusion = conclusion
+    return (latest_conclusion or "") == "success"
 
 
 def _check_run_exists(check_runs: list[dict[str, Any]], *needles: str) -> bool:
@@ -183,13 +197,27 @@ def _tutorial_tested(
 
 
 def _uses_rtd_hosting(unit: EvaluationUnit, github_token: str | None) -> bool:
-    doc_url = unit.documentation_url.lower()
+    """Tightly detect ReadTheDocs hosting.
+
+    Require either the documentation_url points at a readthedocs domain, or the
+    README contains an explicit ReadTheDocs URL or badge/image referencing the
+    readthedocs domains. This avoids incidental textual mentions.
+    """
+    doc_url = (unit.documentation_url or "").lower()
+    if any(token in doc_url for token in ("readthedocs", "readthedocs-hosted.com")):
+        return True
     readme = _file_text(unit, "README.md", github_token).lower()
-    return (
-        "readthedocs" in doc_url
-        or "readthedocs-hosted.com" in doc_url
-        or "readthedocs" in readme
-    )
+    if not readme:
+        return False
+    # Look for explicit RTD URLs (readthedocs.io/org/hosted.com) or badges mentioning Read the Docs
+    if re.search(r'https?://[^")\s]*readthedocs\.(?:io|org|hosted\.com)', readme):
+        return True
+    if "alt=\"read the docs\"" in readme or "alt='read the docs'" in readme:
+        return True
+    # Image URLs commonly embed 'readthedocs' in the src
+    if "readthedocs" in readme and ("http" in readme or "![" in readme):
+        return True
+    return False
 
 
 def _recent_release_notes_present(unit: EvaluationUnit, github_token: str | None) -> bool:
