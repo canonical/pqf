@@ -8,6 +8,7 @@ const ProductsExplorer = lazy(() => import('./views/ProductsExplorer'))
 const ProductDetail = lazy(() => import('./views/ProductDetail'))
 const DimensionsOverview = lazy(() => import('./views/DimensionsOverview'))
 const DimensionDetail = lazy(() => import('./views/DimensionDetail'))
+const MetricDistribution = lazy(() => import('./views/MetricDistribution'))
 const About = lazy(() => import('./views/About'))
 
 export default function App() {
@@ -22,6 +23,7 @@ export default function App() {
             <Route path="/products/:id" element={<ProductDetail />} />
             <Route path="/dimensions" element={<DimensionsOverview />} />
             <Route path="/dimensions/:id" element={<DimensionDetail />} />
+            <Route path="/dimensions/:dimensionId/metrics/:metricKey" element={<MetricDistribution />} />
             <Route path="/about" element={<About />} />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>

@@ -150,7 +150,7 @@ describe('ProductDetail', () => {
 
   it('shows dimension row', () => {
     wrap('matrix')
-    expect(screen.getByText('test verification')).toBeInTheDocument()
+    expect(screen.getAllByRole('link', { name: 'test verification' }).length).toBeGreaterThan(0)
   })
 
   it('renders squad as a linked GitHub team badge', () => {
@@ -163,7 +163,8 @@ describe('ProductDetail', () => {
   it('removes the target column from the dimensions table and shows target thresholds in evidence', () => {
     wrap('matrix')
 
-    const table = screen.getByRole('table')
+    const dimensionsCard = screen.getByRole('heading', { name: 'Dimensions' }).closest('.p-card') as HTMLElement
+    const table = dimensionsCard.querySelector('table') as HTMLTableElement
     expect(within(table).queryByRole('columnheader', { name: 'Target' })).not.toBeInTheDocument()
     expect(within(table).getByRole('columnheader', { name: 'Current' })).toBeInTheDocument()
     expect(within(table).getByRole('columnheader', { name: 'Drift' })).toBeInTheDocument()
@@ -176,11 +177,9 @@ describe('ProductDetail', () => {
     expect(row).toHaveTextContent('Build passing')
   })
 
-  it('renders GitHub repo link for context ref', () => {
+  it('renders linked product from context refs', () => {
     wrap('matrix')
-    const links = screen.getAllByRole('link', { name: /synapse-operator/i })
-    expect(links.length).toBeGreaterThan(0)
-    expect(links[0]).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: 'Synapse Operator' })).toBeInTheDocument()
   })
 
   it('shows 404 message for unknown product', () => {
@@ -198,11 +197,10 @@ describe('ProductDetail', () => {
     expect(componentLinks.length).toBeGreaterThan(0)
   })
 
-  it('root product shows unified Dependencies card with sub-products and context refs', () => {
+  it('root product shows unified Dependencies card with context refs only', () => {
     wrap('matrix')
     expect(screen.getByRole('heading', { name: 'Dependencies' })).toBeInTheDocument()
-    // sub-products section present
-    expect(screen.getByText(/Sub-products/i)).toBeInTheDocument()
+    expect(screen.queryByText(/Sub-products/i)).not.toBeInTheDocument()
     // synapse-operator is a known PQF product → "Also scored by this team"
     expect(screen.getByText('Synapse Operator')).toBeInTheDocument()
     expect(screen.getByText(/Also scored by this team/i)).toBeInTheDocument()
@@ -211,26 +209,13 @@ describe('ProductDetail', () => {
     expect(screen.getByText(/External dependencies/i)).toBeInTheDocument()
   })
 
-  it('balances dependency row widths toward product and repo content', () => {
+  it('renders dependency heatmap with dimension medal cells for sub-products', () => {
     wrap('matrix')
-
-    const productLink = screen.getByRole('link', { name: 'Synapse Charm' })
-    const row = productLink.parentElement?.parentElement
-    const repoLink = screen.getByRole('link', { name: /canonical\/synapse-operator/i })
-
-    expect(row).not.toBeNull()
-    expect(row).toHaveStyle({
-      display: 'grid',
-      gridTemplateColumns: 'auto minmax(0, 1.1fr) auto minmax(14rem, 0.9fr)',
-    })
-    expect(productLink.parentElement).toHaveStyle({ minWidth: '0' })
-    expect(repoLink.parentElement).toHaveStyle({ minWidth: '0' })
-    expect(repoLink).toHaveStyle({
-      display: 'block',
-      overflow: 'hidden',
-      textOverflow: 'ellipsis',
-      whiteSpace: 'nowrap',
-    })
+    expect(screen.getByRole('columnheader', { name: /sub-product/i })).toBeInTheDocument()
+    expect(screen.getByRole('columnheader', { name: /type/i })).toBeInTheDocument()
+    expect(screen.getByRole('columnheader', { name: /test verification/i })).toBeInTheDocument()
+    expect(screen.getAllByRole('link', { name: 'Synapse Charm' }).length).toBeGreaterThan(0)
+    expect(screen.getByText('charm')).toBeInTheDocument()
   })
 
   it('root product evidence shows metric values from composition', () => {

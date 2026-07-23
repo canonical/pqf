@@ -47,6 +47,7 @@ def test_compute_metrics_deploys_production_from_engine_artifacts() -> None:
         "!scorers/**/__tests__/**",
         "engine/**",
         "!engine/__tests__/**",
+        "ui/**",
     ]:
         assert pattern in pr_paths, f"pull_request.paths must include '{pattern}'"
 

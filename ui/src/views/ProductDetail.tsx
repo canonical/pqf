@@ -6,6 +6,7 @@ import DriftChip from '../components/DriftChip'
 import MetricsList from '../components/MetricsList'
 import RootMetricsList from '../components/RootMetricsList'
 import LoadingSpinner from '../components/LoadingSpinner'
+import { buildGroupedProducts } from '../lib/groupedPortfolioView'
 
 const SQUAD_TEAMS: Record<string, { label: string; url: string }> = {
   americas: { label: 'AMER', url: 'https://github.com/orgs/canonical/teams/platform-engineering-amer' },
@@ -52,6 +53,9 @@ export default function ProductDetail() {
   const hasDependencies =
     (product.composed_of && product.composed_of.length > 0) ||
     product.context_refs.length > 0
+  const groupedProducts = buildGroupedProducts(portfolio)
+  const productGroup = groupedProducts.find(group => group.root.id === product.id)
+  const dependencyDimensions = Object.keys(portfolio.dimensions_meta)
 
   return (
     <div className="row" style={{ paddingTop: '1.5rem' }}>
@@ -249,47 +253,51 @@ export default function ProductDetail() {
           <div className="p-card u-sv3">
             <h2 className="p-heading--4" style={{ marginBottom: '1rem' }}>Dependencies</h2>
 
-            {/* Sub-products — primary, table-style aligned rows with medals */}
-            {product.composed_of && product.composed_of.length > 0 && (
-              <div>
-                <p style={{ fontSize: '0.7rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.06em', color: '#333', margin: '0 0 0.6rem' }}>
-                  Sub-products
-                </p>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem' }}>
-                  {product.composed_of.map(c => {
-                    const leaf = portfolio.products.find(p => p.id === c.product_id)
-                    return (
-                      <div key={c.product_id}
-                        style={{ display: 'grid', gridTemplateColumns: 'auto minmax(0, 1.1fr) auto minmax(14rem, 0.9fr)', alignItems: 'center', gap: '0.75rem' }}>
-                        {leaf?.current_medal ? (
-                          <MedalBadge medal={leaf.current_medal} size="small" />
-                        ) : (
-                          <span style={{ fontSize: '0.75rem', color: '#999', textAlign: 'center', width: '24px' }}>—</span>
-                        )}
-                        <div style={{ minWidth: 0 }}>
-                          <Link to={`/products/${c.product_id}`} style={{ fontWeight: 500, display: 'block', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                            {leaf?.name ?? c.product_id}
+            {isRoot && productGroup && productGroup.leaves.length > 0 && (
+              <div style={{ marginBottom: '1rem', overflowX: 'auto' }}>
+                <table style={{ tableLayout: 'fixed', width: '100%', borderCollapse: 'collapse' }}>
+                  <thead>
+                    <tr style={{ borderBottom: '1px solid #d9d9d9' }}>
+                      <th style={{ padding: '0.5rem 0.75rem', textAlign: 'left', fontSize: '0.75rem', fontWeight: 600, textTransform: 'uppercase', color: '#666' }}>
+                        Sub-product
+                      </th>
+                      <th
+                        style={{ width: '7rem', padding: '0.5rem 0.75rem', textAlign: 'left', fontSize: '0.75rem', fontWeight: 600, textTransform: 'uppercase', color: '#666' }}
+                      >
+                        Type
+                      </th>
+                      {dependencyDimensions.map(dim => (
+                        <th
+                          key={dim}
+                          style={{ padding: '0.5rem 0.75rem', textAlign: 'left', fontSize: '0.75rem', fontWeight: 600, textTransform: 'uppercase', color: '#666' }}
+                        >
+                          {portfolio.dimensions_meta[dim]?.label ?? dim.replace(/_/g, ' ')}
+                        </th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {productGroup.leaves.map((leaf, idx) => (
+                      <tr key={leaf.id} style={{ borderBottom: '1px solid #e5e5e5', background: idx % 2 === 0 ? '#fafafa' : '#fff' }}>
+                        <td style={{ padding: '0.75rem', verticalAlign: 'top' }}>
+                          <Link to={`/products/${leaf.id}`} style={{ fontWeight: 500 }}>
+                            {leaf.name}
                           </Link>
-                        </div>
-                        {leaf?.product_type ? (
-                          <div style={{ minWidth: 0 }}>
-                            <span className="p-label--information" style={{ fontSize: '0.7rem', whiteSpace: 'nowrap' }}>
-                              {leaf.product_type}
-                            </span>
-                          </div>
-                        ) : <span />}
-                        {leaf?.source?.repo ? (
-                          <div style={{ minWidth: 0 }}>
-                            <a href={`https://github.com/${leaf.source.repo}`} target="_blank" rel="noreferrer"
-                              style={{ display: 'block', fontSize: '0.8rem', color: '#666', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                              {leaf.source.repo} ↗
-                            </a>
-                          </div>
-                        ) : <span />}
-                      </div>
-                    )
-                  })}
-                </div>
+                        </td>
+                        <td style={{ width: '7rem', padding: '0.75rem', verticalAlign: 'top' }}>
+                          <span className="p-label--information" style={{ fontSize: '0.7rem', whiteSpace: 'nowrap' }}>
+                            {leaf.product_type}
+                          </span>
+                        </td>
+                        {dependencyDimensions.map(dim => (
+                          <td key={dim} style={{ padding: '0.75rem', verticalAlign: 'top' }}>
+                            <MedalBadge medal={leaf.dimensions[dim]?.medal ?? 'unrated'} size="small" />
+                          </td>
+                        ))}
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
               </div>
             )}
 

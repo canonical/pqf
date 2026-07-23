@@ -1,8 +1,10 @@
+import { Fragment } from 'react'
 import { useParams, Link } from 'react-router'
 import { usePortfolio } from '../hooks/usePortfolio'
 import MedalBadge from '../components/MedalBadge'
 import LoadingSpinner from '../components/LoadingSpinner'
 import type { DriftInfo, Medal } from '../types'
+import { buildDimensionGroupedRows } from '../lib/groupedPortfolioView'
 
 const MEDAL_ORDER: Record<Medal, number> = { gold: 3, silver: 2, bronze: 1, unrated: 0 }
 const TIER_LABELS = ['gold', 'silver', 'bronze'] as const
@@ -44,10 +46,9 @@ export default function DimensionDetail() {
     )
   }
 
-  const productsWithDim = portfolio.products
-    .filter(p => p.dimensions[id!])
+  const groupedProductScores = buildDimensionGroupedRows(portfolio, id!)
     .sort((a, b) =>
-      MEDAL_ORDER[b.dimensions[id!].medal] - MEDAL_ORDER[a.dimensions[id!].medal]
+      MEDAL_ORDER[b.root.entry.medal] - MEDAL_ORDER[a.root.entry.medal]
     )
 
   return (
@@ -86,7 +87,9 @@ export default function DimensionDetail() {
                 {Object.entries(meta.outputs).map(([key, out], idx) => (
                   <tr key={key} style={{ borderBottom: '1px solid #e5e5e5', background: idx % 2 === 0 ? '#fafafa' : '#fff' }}>
                     <td style={{ padding: '0.75rem', verticalAlign: 'top' }}>
-                      <strong style={{ display: 'block' }}>{out.label}</strong>
+                      <Link to={`/dimensions/${id}/metrics/${key}`} style={{ fontWeight: 600, display: 'block' }}>
+                        {out.label}
+                      </Link>
                       <code style={{ fontSize: '0.75rem', color: '#666' }}>{key}</code>
                     </td>
                     <td style={{ padding: '0.75rem', verticalAlign: 'top', fontSize: '0.875rem' }}>
@@ -197,22 +200,43 @@ export default function DimensionDetail() {
                 </tr>
               </thead>
               <tbody>
-                {productsWithDim.map((product, idx) => {
-                  const entry = product.dimensions[id!]
-                  return (
-                    <tr key={product.id} style={{ borderBottom: '1px solid #e5e5e5', background: idx % 2 === 0 ? '#fafafa' : '#fff' }}>
+                {groupedProductScores.map((group, groupIdx) => (
+                  <Fragment key={group.root.product.id}>
+                    <tr
+                      style={{
+                        borderBottom: '1px solid #e5e5e5',
+                        background: groupIdx % 2 === 0 ? '#fafafa' : '#fff',
+                      }}
+                    >
                       <td style={{ padding: '0.75rem', verticalAlign: 'top' }}>
-                        <Link to={`/products/${product.id}`} style={{ fontWeight: 500 }}>{product.name}</Link>
+                        <Link to={`/products/${group.root.product.id}`} style={{ fontWeight: 600 }}>
+                          {group.root.product.name}
+                        </Link>
                       </td>
                       <td style={{ padding: '0.75rem', verticalAlign: 'top' }}>
-                        <MedalBadge medal={entry.medal} size="small" />
+                        <MedalBadge medal={group.root.entry.medal} size="small" />
                       </td>
                       <td style={{ padding: '0.75rem', verticalAlign: 'top' }}>
-                        {renderDriftDeadline(entry.drift)}
+                        {renderDriftDeadline(group.root.entry.drift)}
                       </td>
                     </tr>
-                  )
-                })}
+                    {group.leaves.map((leaf) => (
+                      <tr key={leaf.product.id} style={{ borderBottom: '1px solid #e5e5e5', background: '#fff' }}>
+                        <td style={{ padding: '0.75rem', verticalAlign: 'top' }}>
+                          <Link to={`/products/${leaf.product.id}`} style={{ fontWeight: 500 }}>
+                            ↳ {leaf.product.name}
+                          </Link>
+                        </td>
+                        <td style={{ padding: '0.75rem', verticalAlign: 'top' }}>
+                          <MedalBadge medal={leaf.entry.medal} size="small" />
+                        </td>
+                        <td style={{ padding: '0.75rem', verticalAlign: 'top' }}>
+                          {leaf.entry.drift ? renderDriftDeadline(leaf.entry.drift) : <span style={{ color: '#999' }}>—</span>}
+                        </td>
+                      </tr>
+                    ))}
+                  </Fragment>
+                ))}
               </tbody>
             </table>
           </div>
