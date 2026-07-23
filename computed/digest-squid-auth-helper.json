@@ -1,20 +1,20 @@
 {
-  "product_id": "mattermost",
-  "computed_at": "2026-07-23T14:23:04.081947+00:00",
+  "product_id": "digest-squid-auth-helper",
+  "computed_at": "2026-07-23T14:02:05.849108+00:00",
   "leaf_metrics": {
-    "mattermost-charm": {
+    "digest-squid-auth-helper-charm": {
       "test_verification": {
         "coverage_pct": 0,
         "stability_pct": 0,
         "latest_build_passing": false,
-        "integration_test_evidence_present": false,
-        "uses_ops_testing": true,
+        "integration_test_evidence_present": true,
+        "uses_ops_testing": false,
         "uses_jubilant": false
       },
       "documentation": {
         "readme_meets_structure": false,
         "contributing_meets_structure": false,
-        "has_security": false,
+        "has_security": true,
         "documentation_workflows_passing": false,
         "diataxis_coverage": 0,
         "tutorial_tested": false,
@@ -28,18 +28,18 @@
         "uses_canonical_k8s": false
       },
       "security_ssdlc": {
-        "renovate_enabled": false,
+        "renovate_enabled": true,
         "canonical_repo_automation_registered": false,
-        "branch_protection_required_checks": true,
-        "sast_workflow_present": false,
-        "cve_tracking_process_present": false
+        "branch_protection_required_checks": false,
+        "sast_workflow_present": true,
+        "cve_tracking_process_present": true
       },
       "support_engagement": {
-        "avg_triage_days": 406.1,
-        "avg_pr_review_days": 0.0,
-        "response_coverage_rate": 9.1,
+        "avg_triage_days": 569.3,
+        "avg_pr_review_days": 1.3,
+        "response_coverage_rate": 85.7,
         "ownership_signal": true,
-        "has_jira_sync": false
+        "has_jira_sync": true
       }
     }
   }

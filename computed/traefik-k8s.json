@@ -1,15 +1,15 @@
 {
-  "product_id": "mattermost",
-  "computed_at": "2026-07-23T14:23:04.081947+00:00",
+  "product_id": "traefik-k8s",
+  "computed_at": "2026-07-23T14:27:05.032924+00:00",
   "leaf_metrics": {
-    "mattermost-charm": {
+    "traefik-k8s-charm": {
       "test_verification": {
         "coverage_pct": 0,
         "stability_pct": 0,
         "latest_build_passing": false,
         "integration_test_evidence_present": false,
-        "uses_ops_testing": true,
-        "uses_jubilant": false
+        "uses_ops_testing": false,
+        "uses_jubilant": true
       },
       "documentation": {
         "readme_meets_structure": false,
@@ -28,16 +28,16 @@
         "uses_canonical_k8s": false
       },
       "security_ssdlc": {
-        "renovate_enabled": false,
+        "renovate_enabled": true,
         "canonical_repo_automation_registered": false,
         "branch_protection_required_checks": true,
         "sast_workflow_present": false,
         "cve_tracking_process_present": false
       },
       "support_engagement": {
-        "avg_triage_days": 406.1,
+        "avg_triage_days": 9.2,
         "avg_pr_review_days": 0.0,
-        "response_coverage_rate": 9.1,
+        "response_coverage_rate": 30.0,
         "ownership_signal": true,
         "has_jira_sync": false
       }

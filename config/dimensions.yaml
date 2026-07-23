@@ -19,7 +19,6 @@ dimensions:
       uses_ops_testing: {type: boolean, label: "Uses ops.testing (no Harness)", description: "No deprecated Harness usage detected via code search."}
       uses_jubilant: {type: boolean, label: "Uses Jubilant", description: "Integration tests import Jubilant."}
     medals:
-      bronze: ["coverage_pct >= 70", "latest_build_passing == true"]
       silver: ["coverage_pct >= 80", "stability_pct >= 85", "integration_test_evidence_present == true"]
       gold: ["coverage_pct >= 90", "stability_pct >= 98", "integration_test_evidence_present == true"]
 
@@ -40,7 +39,6 @@ dimensions:
       uses_rtd_hosting: {type: boolean, label: "Uses RTD hosting", description: "Documentation points at a Read the Docs host."}
       recent_release_notes_present: {type: boolean, label: "Recent release notes present", description: "Release notes are present and follow the documented release-notes process (see canonical/platform-engineering-docs/docs/engineering-practices/documentation/charm-release-notes)."}
     medals:
-      bronze: ["readme_meets_structure == true", "contributing_meets_structure == true", "has_security == true", "documentation_workflows_passing == true"]
       silver: ["readme_meets_structure == true", "contributing_meets_structure == true", "has_security == true", "documentation_workflows_passing == true", "diataxis_coverage == 4", "tutorial_tested == true"]
       gold: ["readme_meets_structure == true", "contributing_meets_structure == true", "has_security == true", "documentation_workflows_passing == true", "diataxis_coverage == 4", "tutorial_tested == true", "uses_rtd_hosting == true", "recent_release_notes_present == true"]
 
@@ -57,7 +55,6 @@ dimensions:
       substrate_test_evidence_present: {type: boolean, label: "Substrate test evidence", description: "Workflow evidence shows declared Juju/substrate targets are exercised in CI."}
       uses_canonical_k8s: {type: boolean, label: "Uses Canonical K8s", description: "Workflow evidence references Canonical K8s."}
     medals:
-      bronze: ["supports_juju_3 == true"]
       silver: ["supports_juju_3 == true", "substrate_test_evidence_present == true"]
       gold: ["supports_juju_4 == true", "substrate_test_evidence_present == true"]
 
@@ -75,9 +72,8 @@ dimensions:
       sast_workflow_present: {type: boolean, label: "SAST workflow present", description: "Repository exposes an existing static security analysis workflow."}
       cve_tracking_process_present: {type: boolean, label: "CVE tracking process present", description: "Repository exposes a CVE or security maintenance process marker."}
     medals:
-      bronze: ["canonical_repo_automation_registered == true", "branch_protection_required_checks == true"]
-      silver: ["canonical_repo_automation_registered == true", "branch_protection_required_checks == true", "renovate_enabled == true", "sast_workflow_present == true"]
-      gold: ["canonical_repo_automation_registered == true", "branch_protection_required_checks == true", "renovate_enabled == true", "sast_workflow_present == true", "cve_tracking_process_present == true"]
+      silver: ["branch_protection_required_checks == true", "renovate_enabled == true"]
+      gold: ["branch_protection_required_checks == true", "renovate_enabled == true", "sast_workflow_present == true", "cve_tracking_process_present == true"]
 
   support_engagement:
     label: "Support engagement"
@@ -93,6 +89,6 @@ dimensions:
       ownership_signal: {type: boolean, label: "Ownership signal", description: "Repository exposes clear ownership through a squad topic."}
       has_jira_sync: {type: boolean, label: "Jira sync configured", description: "Repository has GitHub-to-Jira sync configuration."}
     medals:
-      bronze: ["avg_triage_days <= 5", "avg_pr_review_days <= 7", "ownership_signal == true"]
+      bronze: ["ownership_signal == true"]
       silver: ["avg_triage_days <= 3", "avg_pr_review_days <= 5", "response_coverage_rate >= 80", "ownership_signal == true"]
       gold: ["avg_triage_days <= 2", "avg_pr_review_days <= 3", "response_coverage_rate >= 90", "ownership_signal == true"]

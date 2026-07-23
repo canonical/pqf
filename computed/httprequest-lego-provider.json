@@ -1,13 +1,13 @@
 {
-  "product_id": "mattermost",
-  "computed_at": "2026-07-23T14:23:04.081947+00:00",
+  "product_id": "httprequest-lego-provider",
+  "computed_at": "2026-07-23T14:16:16.206665+00:00",
   "leaf_metrics": {
-    "mattermost-charm": {
+    "httprequest-lego-provider-charm": {
       "test_verification": {
         "coverage_pct": 0,
         "stability_pct": 0,
         "latest_build_passing": false,
-        "integration_test_evidence_present": false,
+        "integration_test_evidence_present": true,
         "uses_ops_testing": true,
         "uses_jubilant": false
       },
@@ -28,18 +28,18 @@
         "uses_canonical_k8s": false
       },
       "security_ssdlc": {
-        "renovate_enabled": false,
+        "renovate_enabled": true,
         "canonical_repo_automation_registered": false,
         "branch_protection_required_checks": true,
         "sast_workflow_present": false,
         "cve_tracking_process_present": false
       },
       "support_engagement": {
-        "avg_triage_days": 406.1,
-        "avg_pr_review_days": 0.0,
-        "response_coverage_rate": 9.1,
+        "avg_triage_days": 310.5,
+        "avg_pr_review_days": 0.7,
+        "response_coverage_rate": 85.7,
         "ownership_signal": true,
-        "has_jira_sync": false
+        "has_jira_sync": true
       }
     }
   }

@@ -1,37 +1,44 @@
 {
   "product_id": "discourse",
-  "computed_at": "2026-07-17T18:47:07.479484+00:00",
+  "computed_at": "2026-07-23T14:02:43.101291+00:00",
   "leaf_metrics": {
     "discourse-k8s": {
       "test_verification": {
         "coverage_pct": 83,
         "stability_pct": 92,
         "latest_build_passing": false,
+        "integration_test_evidence_present": false,
         "uses_ops_testing": false,
         "uses_jubilant": true
       },
       "documentation": {
-        "has_readme": true,
-        "has_contributing": true,
+        "readme_meets_structure": false,
+        "contributing_meets_structure": false,
         "has_security": true,
-        "diataxis_coverage": 2,
-        "style_linter_passing": true,
-        "links_passing": false
+        "documentation_workflows_passing": false,
+        "diataxis_coverage": 1,
+        "tutorial_tested": false,
+        "uses_rtd_hosting": false,
+        "recent_release_notes_present": false
       },
       "substrate_compat": {
         "supports_juju_3": false,
         "supports_juju_4": false,
-        "supports_ck8s": false
+        "substrate_test_evidence_present": false,
+        "uses_canonical_k8s": false
       },
       "security_ssdlc": {
-        "dependabot_enabled": false,
-        "codeql_enabled": false,
-        "branch_protection_required_checks": true
+        "renovate_enabled": true,
+        "canonical_repo_automation_registered": false,
+        "branch_protection_required_checks": true,
+        "sast_workflow_present": false,
+        "cve_tracking_process_present": true
       },
       "support_engagement": {
         "avg_triage_days": 292.8,
-        "avg_pr_review_days": 2.2,
-        "has_squad_topic": true,
+        "avg_pr_review_days": 1.5,
+        "response_coverage_rate": 93.8,
+        "ownership_signal": true,
         "has_jira_sync": true
       }
     }
