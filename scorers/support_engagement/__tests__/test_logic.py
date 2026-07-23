@@ -5,6 +5,7 @@ from engine.models import EvaluationUnit, ProductType
 from scorers.support_engagement.logic import (
     _has_jira_sync,
     _has_squad_topic,
+    _paginate_json_array,
     compute_metrics,
 )
 
@@ -116,7 +117,8 @@ def test_avg_triage_days_computed_correctly():
     result = compute_metrics(UNIT, "token")
     assert result["avg_triage_days"] == 3.0  # (2 + 4) / 2
     assert result["avg_pr_review_days"] == 1.0
-    assert result["has_squad_topic"] is True
+    assert result["response_coverage_rate"] == 100.0
+    assert result["ownership_signal"] is True
     assert result["has_jira_sync"] is True
 
 
@@ -140,7 +142,8 @@ def test_returns_zero_when_no_issues():
     result = compute_metrics(UNIT, "token")
     assert result["avg_triage_days"] == 0.0
     assert result["avg_pr_review_days"] == 0.0
-    assert result["has_squad_topic"] is False
+    assert result["response_coverage_rate"] == 0.0
+    assert result["ownership_signal"] is False
     assert result["has_jira_sync"] is False
 
 
@@ -172,7 +175,8 @@ def test_skips_pr_issues_in_issue_list():
     _mock_repo_metadata("canonical/synapse-operator")
     result = compute_metrics(UNIT, "token")
     assert result["avg_triage_days"] == 0.0
-    assert result["has_squad_topic"] is False
+    assert result["response_coverage_rate"] == 0.0
+    assert result["ownership_signal"] is False
     assert result["has_jira_sync"] is False
 
 
@@ -209,7 +213,8 @@ def test_zero_when_issue_has_no_comments():
     _mock_repo_metadata("canonical/synapse-operator")
     result = compute_metrics(UNIT, "token")
     assert result["avg_triage_days"] == 0.0
-    assert result["has_squad_topic"] is False
+    assert result["response_coverage_rate"] == 0.0
+    assert result["ownership_signal"] is False
     assert result["has_jira_sync"] is False
 
 
@@ -246,7 +251,8 @@ def test_returns_zeros_when_no_repo():
     assert result == {
         "avg_triage_days": 0.0,
         "avg_pr_review_days": 0.0,
-        "has_squad_topic": False,
+        "response_coverage_rate": 0,
+        "ownership_signal": False,
         "has_jira_sync": False,
     }
 
@@ -276,7 +282,8 @@ def test_pr_review_zero_when_no_reviews():
     _mock_repo_metadata("canonical/synapse-operator")
     result = compute_metrics(UNIT, "token")
     assert result["avg_pr_review_days"] == 0.0
-    assert result["has_squad_topic"] is False
+    assert result["response_coverage_rate"] == 0.0
+    assert result["ownership_signal"] is False
     assert result["has_jira_sync"] is False
 
 
@@ -313,7 +320,8 @@ def test_single_repo_triage_days():
     _mock_repo_metadata("canonical/synapse-operator")
     result = compute_metrics(UNIT, "token")
     assert result["avg_triage_days"] == 2.0
-    assert result["has_squad_topic"] is False
+    assert result["response_coverage_rate"] == 100.0
+    assert result["ownership_signal"] is False
     assert result["has_jira_sync"] is False
 
 
@@ -349,5 +357,63 @@ def test_excludes_prs_outside_90day_window():
     result = compute_metrics(UNIT, "token")
     # Only PR #2 should be considered (PR #1 is outside 90-day window)
     assert result["avg_pr_review_days"] == 1.0
-    assert result["has_squad_topic"] is False
+    assert result["response_coverage_rate"] == 100.0
+    assert result["ownership_signal"] is False
     assert result["has_jira_sync"] is False
+
+
+@responses.activate
+def test_pr_reviews_ignore_null_submitted_at():
+    responses.add(
+        responses.GET,
+        f"{_GITHUB_API}/repos/canonical/synapse-operator/issues",
+        json=[],
+        status=200,
+        match_querystring=False,
+    )
+    responses.add(
+        responses.GET,
+        f"{_GITHUB_API}/repos/canonical/synapse-operator/pulls",
+        json=[{"number": 30, "created_at": "2026-06-01T00:00:00Z"}],
+        status=200,
+        match_querystring=False,
+    )
+    responses.add(
+        responses.GET,
+        f"{_GITHUB_API}/repos/canonical/synapse-operator/pulls/30/reviews",
+        json=[{"submitted_at": None}, {"submitted_at": "2026-06-02T00:00:00Z"}],
+        status=200,
+    )
+    _mock_repo_metadata("canonical/synapse-operator")
+    result = compute_metrics(UNIT, "token")
+    assert result["avg_pr_review_days"] == 1.0
+    assert result["response_coverage_rate"] == 100.0
+
+
+def test_paginate_json_array_fetches_all_pages():
+    class _Resp:
+        def __init__(self, ok, payload):
+            self.ok = ok
+            self._payload = payload
+
+        def json(self):
+            return self._payload
+
+    class _Session:
+        def __init__(self):
+            self.calls = 0
+
+        def get(self, url, params, timeout):
+            self.calls += 1
+            if self.calls == 1:
+                return _Resp(True, [{"id": i} for i in range(100)])
+            return _Resp(True, [{"id": 100}])
+
+    session = _Session()
+    items = _paginate_json_array(
+        session,
+        "https://api.github.com/repos/canonical/synapse-operator/issues",
+        {"state": "all", "per_page": 100},
+    )
+    assert len(items) == 101
+    assert session.calls == 2

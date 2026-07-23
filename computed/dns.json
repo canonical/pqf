@@ -1,20 +1,20 @@
 {
-  "product_id": "matrix",
-  "computed_at": "2026-07-23T14:22:51.204168+00:00",
+  "product_id": "dns",
+  "computed_at": "2026-07-23T14:07:53.432934+00:00",
   "leaf_metrics": {
-    "saml-integrator": {
+    "bind": {
       "test_verification": {
         "coverage_pct": 0,
         "stability_pct": 0,
         "latest_build_passing": false,
         "integration_test_evidence_present": true,
         "uses_ops_testing": false,
-        "uses_jubilant": false
+        "uses_jubilant": true
       },
       "documentation": {
         "readme_meets_structure": false,
         "contributing_meets_structure": false,
-        "has_security": true,
+        "has_security": false,
         "documentation_workflows_passing": false,
         "diataxis_coverage": 0,
         "tutorial_tested": false,
@@ -32,24 +32,64 @@
         "canonical_repo_automation_registered": false,
         "branch_protection_required_checks": true,
         "sast_workflow_present": false,
-        "cve_tracking_process_present": false
+        "cve_tracking_process_present": true
       },
       "support_engagement": {
-        "avg_triage_days": 381.4,
-        "avg_pr_review_days": 0.0,
-        "response_coverage_rate": 12.5,
+        "avg_triage_days": 517.8,
+        "avg_pr_review_days": 4.6,
+        "response_coverage_rate": 79.1,
         "ownership_signal": true,
-        "has_jira_sync": false
+        "has_jira_sync": true
       }
     },
-    "synapse": {
+    "dns-policy": {
       "test_verification": {
         "coverage_pct": 0,
-        "stability_pct": 100,
-        "latest_build_passing": true,
+        "stability_pct": 0,
+        "latest_build_passing": false,
         "integration_test_evidence_present": true,
         "uses_ops_testing": false,
-        "uses_jubilant": false
+        "uses_jubilant": true
+      },
+      "documentation": {
+        "readme_meets_structure": false,
+        "contributing_meets_structure": false,
+        "has_security": false,
+        "documentation_workflows_passing": false,
+        "diataxis_coverage": 0,
+        "tutorial_tested": false,
+        "uses_rtd_hosting": true,
+        "recent_release_notes_present": false
+      },
+      "substrate_compat": {
+        "supports_juju_3": false,
+        "supports_juju_4": false,
+        "substrate_test_evidence_present": false,
+        "uses_canonical_k8s": false
+      },
+      "security_ssdlc": {
+        "renovate_enabled": true,
+        "canonical_repo_automation_registered": false,
+        "branch_protection_required_checks": true,
+        "sast_workflow_present": false,
+        "cve_tracking_process_present": true
+      },
+      "support_engagement": {
+        "avg_triage_days": 517.8,
+        "avg_pr_review_days": 4.6,
+        "response_coverage_rate": 79.1,
+        "ownership_signal": true,
+        "has_jira_sync": true
+      }
+    },
+    "dns-integrator": {
+      "test_verification": {
+        "coverage_pct": 0,
+        "stability_pct": 0,
+        "latest_build_passing": false,
+        "integration_test_evidence_present": true,
+        "uses_ops_testing": false,
+        "uses_jubilant": true
       },
       "documentation": {
         "readme_meets_structure": false,
@@ -72,24 +112,24 @@
         "canonical_repo_automation_registered": false,
         "branch_protection_required_checks": true,
         "sast_workflow_present": false,
-        "cve_tracking_process_present": false
+        "cve_tracking_process_present": true
       },
       "support_engagement": {
-        "avg_triage_days": 729.2,
-        "avg_pr_review_days": 0.0,
-        "response_coverage_rate": 2.0,
+        "avg_triage_days": 517.8,
+        "avg_pr_review_days": 4.6,
+        "response_coverage_rate": 79.1,
         "ownership_signal": true,
-        "has_jira_sync": false
+        "has_jira_sync": true
       }
     },
-    "draupnir": {
+    "dns-resolver": {
       "test_verification": {
         "coverage_pct": 0,
         "stability_pct": 0,
         "latest_build_passing": false,
-        "integration_test_evidence_present": false,
-        "uses_ops_testing": true,
-        "uses_jubilant": false
+        "integration_test_evidence_present": true,
+        "uses_ops_testing": false,
+        "uses_jubilant": true
       },
       "documentation": {
         "readme_meets_structure": false,
@@ -112,24 +152,24 @@
         "canonical_repo_automation_registered": false,
         "branch_protection_required_checks": true,
         "sast_workflow_present": false,
-        "cve_tracking_process_present": false
+        "cve_tracking_process_present": true
       },
       "support_engagement": {
-        "avg_triage_days": 85.4,
-        "avg_pr_review_days": 0.0,
-        "response_coverage_rate": 50.0,
+        "avg_triage_days": 517.8,
+        "avg_pr_review_days": 4.6,
+        "response_coverage_rate": 79.1,
         "ownership_signal": true,
-        "has_jira_sync": false
+        "has_jira_sync": true
       }
     },
-    "mjolnir": {
+    "dns-secondary": {
       "test_verification": {
         "coverage_pct": 0,
         "stability_pct": 0,
         "latest_build_passing": false,
-        "integration_test_evidence_present": false,
-        "uses_ops_testing": true,
-        "uses_jubilant": false
+        "integration_test_evidence_present": true,
+        "uses_ops_testing": false,
+        "uses_jubilant": true
       },
       "documentation": {
         "readme_meets_structure": false,
@@ -152,137 +192,17 @@
         "canonical_repo_automation_registered": false,
         "branch_protection_required_checks": true,
         "sast_workflow_present": false,
-        "cve_tracking_process_present": false
+        "cve_tracking_process_present": true
       },
       "support_engagement": {
-        "avg_triage_days": 317.8,
-        "avg_pr_review_days": 0.0,
-        "response_coverage_rate": 50.0,
+        "avg_triage_days": 517.8,
+        "avg_pr_review_days": 4.6,
+        "response_coverage_rate": 79.1,
         "ownership_signal": true,
-        "has_jira_sync": false
+        "has_jira_sync": true
       }
     },
-    "mas-cli": {
-      "test_verification": {
-        "coverage_pct": 0,
-        "stability_pct": 0,
-        "latest_build_passing": false,
-        "integration_test_evidence_present": false,
-        "uses_ops_testing": true,
-        "uses_jubilant": false
-      },
-      "documentation": {
-        "readme_meets_structure": false,
-        "contributing_meets_structure": false,
-        "has_security": false,
-        "documentation_workflows_passing": false,
-        "diataxis_coverage": 0,
-        "tutorial_tested": false,
-        "uses_rtd_hosting": false,
-        "recent_release_notes_present": false
-      },
-      "substrate_compat": {
-        "supports_juju_3": false,
-        "supports_juju_4": false,
-        "substrate_test_evidence_present": false,
-        "uses_canonical_k8s": false
-      },
-      "security_ssdlc": {
-        "renovate_enabled": true,
-        "canonical_repo_automation_registered": false,
-        "branch_protection_required_checks": true,
-        "sast_workflow_present": false,
-        "cve_tracking_process_present": false
-      },
-      "support_engagement": {
-        "avg_triage_days": 94.0,
-        "avg_pr_review_days": 0.0,
-        "response_coverage_rate": 25.0,
-        "ownership_signal": true,
-        "has_jira_sync": false
-      }
-    },
-    "matrix-appservice-irc": {
-      "test_verification": {
-        "coverage_pct": 0,
-        "stability_pct": 0,
-        "latest_build_passing": false,
-        "integration_test_evidence_present": false,
-        "uses_ops_testing": true,
-        "uses_jubilant": false
-      },
-      "documentation": {
-        "readme_meets_structure": false,
-        "contributing_meets_structure": false,
-        "has_security": false,
-        "documentation_workflows_passing": false,
-        "diataxis_coverage": 0,
-        "tutorial_tested": false,
-        "uses_rtd_hosting": false,
-        "recent_release_notes_present": false
-      },
-      "substrate_compat": {
-        "supports_juju_3": false,
-        "supports_juju_4": false,
-        "substrate_test_evidence_present": false,
-        "uses_canonical_k8s": false
-      },
-      "security_ssdlc": {
-        "renovate_enabled": false,
-        "canonical_repo_automation_registered": false,
-        "branch_protection_required_checks": true,
-        "sast_workflow_present": false,
-        "cve_tracking_process_present": false
-      },
-      "support_engagement": {
-        "avg_triage_days": 278.8,
-        "avg_pr_review_days": 0.0,
-        "response_coverage_rate": 50.0,
-        "ownership_signal": true,
-        "has_jira_sync": false
-      }
-    },
-    "synapse-stats-exporter": {
-      "test_verification": {
-        "coverage_pct": 0,
-        "stability_pct": 0,
-        "latest_build_passing": false,
-        "integration_test_evidence_present": false,
-        "uses_ops_testing": true,
-        "uses_jubilant": false
-      },
-      "documentation": {
-        "readme_meets_structure": false,
-        "contributing_meets_structure": false,
-        "has_security": false,
-        "documentation_workflows_passing": false,
-        "diataxis_coverage": 0,
-        "tutorial_tested": false,
-        "uses_rtd_hosting": false,
-        "recent_release_notes_present": false
-      },
-      "substrate_compat": {
-        "supports_juju_3": false,
-        "supports_juju_4": false,
-        "substrate_test_evidence_present": false,
-        "uses_canonical_k8s": false
-      },
-      "security_ssdlc": {
-        "renovate_enabled": false,
-        "canonical_repo_automation_registered": false,
-        "branch_protection_required_checks": false,
-        "sast_workflow_present": false,
-        "cve_tracking_process_present": false
-      },
-      "support_engagement": {
-        "avg_triage_days": 0.0,
-        "avg_pr_review_days": 0.0,
-        "response_coverage_rate": 0.0,
-        "ownership_signal": true,
-        "has_jira_sync": false
-      }
-    },
-    "maubot": {
+    "charmed-bind": {
       "test_verification": {
         "coverage_pct": 0,
         "stability_pct": 0,
@@ -308,21 +228,21 @@
         "uses_canonical_k8s": false
       },
       "security_ssdlc": {
-        "renovate_enabled": false,
+        "renovate_enabled": true,
         "canonical_repo_automation_registered": false,
         "branch_protection_required_checks": true,
         "sast_workflow_present": false,
-        "cve_tracking_process_present": false
+        "cve_tracking_process_present": true
       },
       "support_engagement": {
-        "avg_triage_days": 355.8,
-        "avg_pr_review_days": 0.0,
-        "response_coverage_rate": 8.3,
+        "avg_triage_days": 517.8,
+        "avg_pr_review_days": 4.6,
+        "response_coverage_rate": 79.1,
         "ownership_signal": true,
-        "has_jira_sync": false
+        "has_jira_sync": true
       }
     },
-    "irc-bridge": {
+    "charmed-dns-policy": {
       "test_verification": {
         "coverage_pct": 0,
         "stability_pct": 0,
@@ -348,18 +268,18 @@
         "uses_canonical_k8s": false
       },
       "security_ssdlc": {
-        "renovate_enabled": false,
+        "renovate_enabled": true,
         "canonical_repo_automation_registered": false,
         "branch_protection_required_checks": true,
         "sast_workflow_present": false,
-        "cve_tracking_process_present": false
+        "cve_tracking_process_present": true
       },
       "support_engagement": {
-        "avg_triage_days": 0.0,
-        "avg_pr_review_days": 0.0,
-        "response_coverage_rate": 0.0,
+        "avg_triage_days": 517.8,
+        "avg_pr_review_days": 4.6,
+        "response_coverage_rate": 79.1,
         "ownership_signal": true,
-        "has_jira_sync": false
+        "has_jira_sync": true
       }
     }
   }

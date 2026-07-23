@@ -128,33 +128,35 @@ This split means the core scoring logic can be tested exhaustively without netwo
 
 ### AI-assisted scoring
 
-Some metrics cannot be reliably computed with deterministic rules — for example, assessing whether a README covers all four [Diátaxis](https://diataxis.fr/) documentation types, or whether writing style meets Canonical guidelines. These are marked `ai_assisted: true` in `dimensions.yaml` and evaluated by an LLM via [OpenRouter](https://openrouter.ai/).
+Today, production medal-gating metrics are deterministic. We still keep an OpenRouter
+integration path available for future informational checks, but current contracts do not
+require LLM responses to compute medals.
 
 **How it works:**
 
 1. `scorer.py` reads `OPENROUTER_API_KEY` from the environment and passes it to `logic.py`.
 2. `logic.py` creates an OpenAI-compatible client pointed at `https://openrouter.ai/api/v1`.
 3. A prompt file in `scorers/{dim}/prompts/` defines the system prompt. The product's relevant content (e.g. README text) is passed as the user message.
-4. The LLM returns a structured JSON response which is parsed directly into metric values.
-5. If `OPENROUTER_API_KEY` is not set, the scorer falls back to `0`/`False` defaults — so the pipeline never fails in environments without the key.
+4. If/when an AI metric is enabled, the LLM returns a structured JSON response parsed into metric values.
+5. If `OPENROUTER_API_KEY` is not set, scorers continue with deterministic metrics so the pipeline never fails in environments without the key.
 
-**Prompt files** live at `scorers/{dim}/prompts/{metric_name}.md`. Each prompt instructs the model to return a specific JSON schema. Example from `documentation/prompts/diataxis_check.md`:
+**Prompt files** live at `scorers/{dim}/prompts/{metric_name}.md` for dimensions that enable AI assistance.
 
 ```
 You are a technical documentation reviewer...
-Return ONLY valid JSON: {"diataxis_coverage": <integer 0–4>}
+Return ONLY valid JSON: {"<metric_name>": <value>}
 ```
 
 **Current AI-assisted metrics:**
 
 | Dimension | Metric | What the LLM evaluates |
 |-----------|--------|------------------------|
-| `documentation` | `diataxis_coverage` | How many of the 4 Diátaxis doc types are present in the README |
-| `documentation` | `style_linter_passing` | Whether writing style meets Canonical documentation guidelines |
+| _None enabled for medal gating_ | _n/a_ | Deterministic metrics are used for all current dimensions |
 
 **Default model:** `anthropic/claude-sonnet-4-5` (configurable via `OPENROUTER_MODEL` env var).
 
-**In the UI:** AI-assisted metrics display a ✦ AI badge in the dimension detail Metrics table so users know the value is LLM-derived rather than deterministic.
+**In the UI:** If AI-assisted metrics are enabled, they display a ✦ AI badge in the
+dimension detail Metrics table so users know the value is LLM-derived.
 
 ### `dimensions.yaml` as the single config knob
 

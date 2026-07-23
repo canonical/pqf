@@ -1,15 +1,15 @@
 {
-  "product_id": "wazuh",
-  "computed_at": "2026-07-23T14:28:17.182447+00:00",
+  "product_id": "falco",
+  "computed_at": "2026-07-23T14:08:58.380162+00:00",
   "leaf_metrics": {
-    "wazuh-server": {
+    "falco-charm": {
       "test_verification": {
-        "coverage_pct": 100,
-        "stability_pct": 100,
-        "latest_build_passing": true,
+        "coverage_pct": 0,
+        "stability_pct": 0,
+        "latest_build_passing": false,
         "integration_test_evidence_present": false,
         "uses_ops_testing": true,
-        "uses_jubilant": false
+        "uses_jubilant": true
       },
       "documentation": {
         "readme_meets_structure": false,
@@ -32,64 +32,24 @@
         "canonical_repo_automation_registered": false,
         "branch_protection_required_checks": true,
         "sast_workflow_present": false,
-        "cve_tracking_process_present": false
-      },
-      "support_engagement": {
-        "avg_triage_days": 392.8,
-        "avg_pr_review_days": 0.0,
-        "response_coverage_rate": 3.1,
-        "ownership_signal": true,
-        "has_jira_sync": false
-      }
-    },
-    "wazuh-indexer": {
-      "test_verification": {
-        "coverage_pct": 0,
-        "stability_pct": 0,
-        "latest_build_passing": false,
-        "integration_test_evidence_present": false,
-        "uses_ops_testing": true,
-        "uses_jubilant": false
-      },
-      "documentation": {
-        "readme_meets_structure": false,
-        "contributing_meets_structure": false,
-        "has_security": false,
-        "documentation_workflows_passing": false,
-        "diataxis_coverage": 1,
-        "tutorial_tested": false,
-        "uses_rtd_hosting": false,
-        "recent_release_notes_present": false
-      },
-      "substrate_compat": {
-        "supports_juju_3": false,
-        "supports_juju_4": false,
-        "substrate_test_evidence_present": false,
-        "uses_canonical_k8s": false
-      },
-      "security_ssdlc": {
-        "renovate_enabled": false,
-        "canonical_repo_automation_registered": false,
-        "branch_protection_required_checks": true,
-        "sast_workflow_present": false,
-        "cve_tracking_process_present": false
+        "cve_tracking_process_present": true
       },
       "support_engagement": {
         "avg_triage_days": 0.0,
-        "avg_pr_review_days": 0.0,
-        "response_coverage_rate": 40.0,
+        "avg_pr_review_days": 3.7,
+        "response_coverage_rate": 81.2,
         "ownership_signal": true,
-        "has_jira_sync": false
+        "has_jira_sync": true
       }
     },
-    "wazuh-dashboard": {
+    "falcosidekick-k8s": {
       "test_verification": {
         "coverage_pct": 0,
         "stability_pct": 0,
         "latest_build_passing": false,
         "integration_test_evidence_present": false,
         "uses_ops_testing": true,
-        "uses_jubilant": false
+        "uses_jubilant": true
       },
       "documentation": {
         "readme_meets_structure": false,
@@ -108,18 +68,18 @@
         "uses_canonical_k8s": false
       },
       "security_ssdlc": {
-        "renovate_enabled": false,
+        "renovate_enabled": true,
         "canonical_repo_automation_registered": false,
         "branch_protection_required_checks": true,
         "sast_workflow_present": false,
-        "cve_tracking_process_present": false
+        "cve_tracking_process_present": true
       },
       "support_engagement": {
         "avg_triage_days": 0.0,
-        "avg_pr_review_days": 0.0,
-        "response_coverage_rate": 0.0,
+        "avg_pr_review_days": 3.7,
+        "response_coverage_rate": 81.2,
         "ownership_signal": true,
-        "has_jira_sync": false
+        "has_jira_sync": true
       }
     }
   }

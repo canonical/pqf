@@ -1,38 +1,45 @@
 {
   "product_id": "wordpress-k8s",
-  "computed_at": "2026-07-17T18:47:07.820309+00:00",
+  "computed_at": "2026-07-23T14:28:45.341222+00:00",
   "leaf_metrics": {
-    "wordpress-k8s": {
+    "wordpress-k8s-charm": {
       "test_verification": {
         "coverage_pct": 0,
         "stability_pct": 100,
         "latest_build_passing": true,
-        "uses_ops_testing": false,
+        "integration_test_evidence_present": false,
+        "uses_ops_testing": true,
         "uses_jubilant": false
       },
       "documentation": {
-        "has_readme": true,
-        "has_contributing": true,
-        "has_security": true,
-        "diataxis_coverage": 3,
-        "style_linter_passing": true,
-        "links_passing": false
+        "readme_meets_structure": false,
+        "contributing_meets_structure": false,
+        "has_security": false,
+        "documentation_workflows_passing": false,
+        "diataxis_coverage": 0,
+        "tutorial_tested": false,
+        "uses_rtd_hosting": false,
+        "recent_release_notes_present": false
       },
       "substrate_compat": {
-        "supports_juju_3": true,
+        "supports_juju_3": false,
         "supports_juju_4": false,
-        "supports_ck8s": false
+        "substrate_test_evidence_present": false,
+        "uses_canonical_k8s": false
       },
       "security_ssdlc": {
-        "dependabot_enabled": false,
-        "codeql_enabled": false,
-        "branch_protection_required_checks": true
+        "renovate_enabled": false,
+        "canonical_repo_automation_registered": false,
+        "branch_protection_required_checks": true,
+        "sast_workflow_present": false,
+        "cve_tracking_process_present": false
       },
       "support_engagement": {
         "avg_triage_days": 735.1,
-        "avg_pr_review_days": 6.6,
-        "has_squad_topic": true,
-        "has_jira_sync": true
+        "avg_pr_review_days": 0.0,
+        "response_coverage_rate": 5.6,
+        "ownership_signal": true,
+        "has_jira_sync": false
       }
     }
   }

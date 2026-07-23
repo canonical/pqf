@@ -4,48 +4,37 @@ import requests
 
 from engine.models import EvaluationUnit
 
-_GITHUB_API = "https://api.github.com"
+# Reuse shared helpers for GitHub interactions
+from scorers.shared.github_signals import search_code_count, workflow_files
 
 
-def _make_github_session(github_token: str) -> requests.Session:
-    session = requests.Session()
-    session.headers.update(
-        {
-            "Authorization": f"Bearer {github_token}",
-            "Accept": "application/vnd.github+json",
-            "X-GitHub-Api-Version": "2022-11-28",
-        }
-    )
-    return session
-
-
-def _search_code(query: str, github_token: str) -> int:
-    """Return total_count from GitHub code search."""
-    session = _make_github_session(github_token)
-    resp = session.get(
-        f"{_GITHUB_API}/search/code",
-        params={"q": query, "per_page": 1},
-        timeout=15,
-    )
-    if not resp.ok:
-        return 0
-    return resp.json().get("total_count", 0)
-
-
-def _uses_ops_testing(repos: list[str], github_token: str) -> bool:
+def _uses_ops_testing(repos: list[str], github_token: str | None) -> bool:
     """True if NO repo uses the deprecated Harness class."""
     for repo in repos:
-        count = _search_code(f"from ops.testing import Harness repo:{repo}", github_token)
+        count = search_code_count(f"from ops.testing import Harness repo:{repo}", github_token)
         if count > 0:
             return False
     return True
 
 
-def _uses_jubilant(repos: list[str], github_token: str) -> bool:
+def _uses_jubilant(repos: list[str], github_token: str | None) -> bool:
     """True if at least one repo imports jubilant in its integration tests."""
     for repo in repos:
-        count = _search_code(f"import jubilant repo:{repo}", github_token)
+        count = search_code_count(f"import jubilant repo:{repo}", github_token)
         if count > 0:
+            return True
+    return False
+
+
+def _integration_test_evidence_present(owner_repo: str, github_token: str | None) -> bool:
+    for _, content in workflow_files(owner_repo, github_token):
+        lowered = content.lower()
+        if "integration" in lowered and (
+            "pytest -m integration" in lowered
+            or "pytest tests/integration" in lowered
+            or "jubilant" in lowered
+            or "integration-tests" in lowered
+        ):
             return True
     return False
 
@@ -54,6 +43,7 @@ def compute_metrics(unit: EvaluationUnit, github_token: str | None = None) -> di
     """
     Fetch test metrics from the evaluation unit's Allure report URL.
     Checks uses_ops_testing and uses_jubilant against unit.repo.
+    Also detects integration test evidence from workflows and code search.
     """
     coverage_pct = 0
     stability_pct = 0
@@ -76,14 +66,18 @@ def compute_metrics(unit: EvaluationUnit, github_token: str | None = None) -> di
 
     uses_ops = False
     uses_jub = False
+    integration_evidence = False
     if github_token and unit.repo:
         uses_ops = _uses_ops_testing([unit.repo], github_token)
         uses_jub = _uses_jubilant([unit.repo], github_token)
+        # Integration evidence combines workflow markers and code-search signals.
+        integration_evidence = _integration_test_evidence_present(unit.repo, github_token)
 
     return {
         "coverage_pct": coverage_pct,
         "stability_pct": stability_pct,
         "latest_build_passing": latest_build_passing,
+        "integration_test_evidence_present": integration_evidence,
         "uses_ops_testing": uses_ops,
         "uses_jubilant": uses_jub,
     }

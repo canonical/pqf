@@ -5,11 +5,13 @@ JSON. Uses a temp file for computed data so the test is independent of whatever
 CI may have committed to computed/matrix.json.
 
 Fixture metric values and expected medals:
-  test_verification: silver  (coverage 87 >= 80, stability 94 >= 85; 87 < 90 → not gold)
-  documentation:     bronze  (has all files + links_passing, but diataxis 3 < 4 → not silver)
-  substrate_compat:  silver  (supports_juju_3=true; juju_4+ck8s false → not gold)
-  security_ssdlc:    silver  (dependabot_enabled=true; codeql_enabled=false → not gold)
-  support_engagement: silver (triage 3 <= 5; pr_review 6 <= 7; both > gold threshold)
+  test_verification: silver  (coverage 87 >= 80, stability 94 >= 85, integration evidence present)
+  documentation:     bronze  (core docs structure/workflow pass; diataxis 3 < 4 → not silver)
+  substrate_compat:  silver  (
+      supports_juju_3=true and substrate test evidence present; juju_4 false
+  )
+  security_ssdlc:    silver  (automation + protection + renovate + sast true; cve tracking false)
+  support_engagement: silver (triage 3 <= 3; pr_review 4 <= 5; coverage >= 80; ownership true)
 
 Overall current_medal: bronze (documentation pulls it down)
 Target: gold (restored from the existing PQF product definition)
@@ -31,27 +33,37 @@ _FIXTURE_COMPUTED = {
             "coverage_pct": 87,
             "stability_pct": 94,
             "latest_build_passing": True,
+            "integration_test_evidence_present": True,
         },
         "documentation": {
-            "has_readme": True,
-            "has_contributing": True,
+            "readme_meets_structure": True,
+            "contributing_meets_structure": True,
             "has_security": True,
+            "documentation_workflows_passing": True,
             "diataxis_coverage": 3,
-            "style_linter_passing": True,
-            "links_passing": True,
+            "tutorial_tested": False,
+            "uses_rtd_hosting": False,
+            "recent_release_notes_present": False,
         },
         "substrate_compat": {
             "supports_juju_3": True,
             "supports_juju_4": False,
-            "supports_ck8s": False,
+            "substrate_test_evidence_present": True,
+            "uses_canonical_k8s": False,
         },
         "security_ssdlc": {
-            "dependabot_enabled": True,
-            "codeql_enabled": False,
+            "renovate_enabled": True,
+            "canonical_repo_automation_registered": True,
+            "branch_protection_required_checks": True,
+            "sast_workflow_present": True,
+            "cve_tracking_process_present": False,
         },
         "support_engagement": {
             "avg_triage_days": 3.0,
-            "avg_pr_review_days": 6.0,
+            "avg_pr_review_days": 4.0,
+            "response_coverage_rate": 85,
+            "ownership_signal": True,
+            "has_jira_sync": False,
         },
     },
 }

@@ -1,48 +1,8 @@
 {
-  "product_id": "jenkins",
-  "computed_at": "2026-07-23T14:18:20.443165+00:00",
+  "product_id": "content-cache",
+  "computed_at": "2026-07-23T14:01:43.829980+00:00",
   "leaf_metrics": {
-    "jenkins-k8s": {
-      "test_verification": {
-        "coverage_pct": 0,
-        "stability_pct": 100,
-        "latest_build_passing": true,
-        "integration_test_evidence_present": true,
-        "uses_ops_testing": false,
-        "uses_jubilant": true
-      },
-      "documentation": {
-        "readme_meets_structure": false,
-        "contributing_meets_structure": false,
-        "has_security": true,
-        "documentation_workflows_passing": false,
-        "diataxis_coverage": 0,
-        "tutorial_tested": false,
-        "uses_rtd_hosting": false,
-        "recent_release_notes_present": false
-      },
-      "substrate_compat": {
-        "supports_juju_3": true,
-        "supports_juju_4": false,
-        "substrate_test_evidence_present": true,
-        "uses_canonical_k8s": false
-      },
-      "security_ssdlc": {
-        "renovate_enabled": true,
-        "canonical_repo_automation_registered": false,
-        "branch_protection_required_checks": true,
-        "sast_workflow_present": false,
-        "cve_tracking_process_present": true
-      },
-      "support_engagement": {
-        "avg_triage_days": 92.4,
-        "avg_pr_review_days": 1.1,
-        "response_coverage_rate": 72.7,
-        "ownership_signal": true,
-        "has_jira_sync": true
-      }
-    },
-    "jenkins-agent-k8s": {
+    "content-cache-charm": {
       "test_verification": {
         "coverage_pct": 0,
         "stability_pct": 0,
@@ -54,7 +14,7 @@
       "documentation": {
         "readme_meets_structure": false,
         "contributing_meets_structure": false,
-        "has_security": true,
+        "has_security": false,
         "documentation_workflows_passing": false,
         "diataxis_coverage": 0,
         "tutorial_tested": false,
@@ -62,9 +22,9 @@
         "recent_release_notes_present": false
       },
       "substrate_compat": {
-        "supports_juju_3": true,
+        "supports_juju_3": false,
         "supports_juju_4": false,
-        "substrate_test_evidence_present": true,
+        "substrate_test_evidence_present": false,
         "uses_canonical_k8s": false
       },
       "security_ssdlc": {
@@ -75,26 +35,26 @@
         "cve_tracking_process_present": true
       },
       "support_engagement": {
-        "avg_triage_days": 693.0,
-        "avg_pr_review_days": 3.4,
-        "response_coverage_rate": 100.0,
+        "avg_triage_days": 101.6,
+        "avg_pr_review_days": 0.6,
+        "response_coverage_rate": 75.0,
         "ownership_signal": true,
         "has_jira_sync": true
       }
     },
-    "jenkins-agent": {
+    "content-cache-backends-config": {
       "test_verification": {
         "coverage_pct": 0,
         "stability_pct": 0,
         "latest_build_passing": false,
         "integration_test_evidence_present": true,
         "uses_ops_testing": false,
-        "uses_jubilant": true
+        "uses_jubilant": false
       },
       "documentation": {
         "readme_meets_structure": false,
         "contributing_meets_structure": false,
-        "has_security": true,
+        "has_security": false,
         "documentation_workflows_passing": false,
         "diataxis_coverage": 0,
         "tutorial_tested": false,
@@ -102,9 +62,9 @@
         "recent_release_notes_present": false
       },
       "substrate_compat": {
-        "supports_juju_3": true,
+        "supports_juju_3": false,
         "supports_juju_4": false,
-        "substrate_test_evidence_present": true,
+        "substrate_test_evidence_present": false,
         "uses_canonical_k8s": false
       },
       "security_ssdlc": {
@@ -115,9 +75,9 @@
         "cve_tracking_process_present": true
       },
       "support_engagement": {
-        "avg_triage_days": 104.9,
-        "avg_pr_review_days": 1.8,
-        "response_coverage_rate": 92.3,
+        "avg_triage_days": 101.6,
+        "avg_pr_review_days": 0.6,
+        "response_coverage_rate": 75.0,
         "ownership_signal": true,
         "has_jira_sync": true
       }

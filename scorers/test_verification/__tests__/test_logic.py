@@ -52,10 +52,67 @@ def test_build_failing_when_failures_present():
 
 
 def test_uses_ops_testing_true_when_no_harness(mocker):
-    mocker.patch("scorers.test_verification.logic._search_code", return_value=0)
+    mocker.patch("scorers.test_verification.logic.search_code_count", return_value=0)
     assert _uses_ops_testing(["canonical/synapse-operator"], "token") is True
 
 
 def test_uses_jubilant_true_when_jubilant_found(mocker):
-    mocker.patch("scorers.test_verification.logic._search_code", return_value=1)
+    mocker.patch("scorers.test_verification.logic.search_code_count", return_value=1)
     assert _uses_jubilant(["canonical/synapse-operator"], "token") is True
+
+
+def _allure_response(total, passed, failed, broken):
+    class R:
+        def __init__(self, total, passed, failed, broken):
+            self._j = {
+                "statistic": {
+                    "total": total,
+                    "passed": passed,
+                    "failed": failed,
+                    "broken": broken,
+                }
+            }
+            self.status_code = 200
+            self.ok = True
+
+        def json(self):
+            return self._j
+
+        def raise_for_status(self):
+            return None
+
+    return R(total, passed, failed, broken)
+
+
+def test_compute_metrics_detects_integration_test_evidence(mocker):
+    mocker.patch(
+        "scorers.test_verification.logic.requests.get",
+        return_value=_allure_response(10, 9, 1, 0),
+    )
+    mocker.patch(
+        "scorers.test_verification.logic.workflow_files",
+        return_value=[
+            ("ci.yaml", "jobs:\n  integration:\n    steps:\n      - run: pytest -m integration\n"),
+        ],
+    )
+    mocker.patch("scorers.test_verification.logic.search_code_count", side_effect=[0, 1])
+
+    result = compute_metrics(UNIT, "gh-token")
+    assert result["integration_test_evidence_present"] is True
+    assert result["uses_ops_testing"] is True
+    assert result["uses_jubilant"] is True
+
+
+def test_compute_metrics_defaults_integration_evidence_to_false_without_workflow_match(mocker):
+    mocker.patch(
+        "scorers.test_verification.logic.requests.get",
+        return_value=_allure_response(10, 10, 0, 0),
+    )
+    mocker.patch(
+        "scorers.test_verification.logic.workflow_files",
+        return_value=[("ci.yaml", "jobs:\n  unit:\n    steps:\n      - run: pytest\n")],
+    )
+    mocker.patch("scorers.test_verification.logic.search_code_count", side_effect=[0, 0])
+
+    result = compute_metrics(UNIT, "gh-token")
+    assert result["integration_test_evidence_present"] is False

@@ -52,23 +52,41 @@ def compute_metrics(unit: EvaluationUnit, github_token: str) -> dict[str, Any]:
 
     supports_juju_3: any workflow matches juju-channel:.*3/stable
     supports_juju_4: any workflow matches juju-channel:.*4/stable
-    supports_ck8s:   any workflow contains use-canonical-k8s: true
+    uses_canonical_k8s: any workflow contains use-canonical-k8s: true
     """
     supports_juju_3 = False
     supports_juju_4 = False
-    supports_ck8s = False
+    uses_canonical_k8s = False
+    substrate_test_evidence_present = False
 
     if unit.repo:
         for content in _fetch_workflow_contents(unit.repo, github_token):
+            lowered = content.lower()
+            has_integration_signal = any(
+                token in lowered
+                for token in (
+                    "integration_test",
+                    "integration tests",
+                    "pytest -m integration",
+                    "tox -e integration",
+                )
+            )
+            has_substrate_target_signal = False
             if re.search(r"juju-channel:.*3/stable", content):
                 supports_juju_3 = True
+                has_substrate_target_signal = True
             if re.search(r"juju-channel:.*4/stable", content):
                 supports_juju_4 = True
-            if "use-canonical-k8s: true" in content:
-                supports_ck8s = True
+                has_substrate_target_signal = True
+            if "use-canonical-k8s: true" in lowered:
+                uses_canonical_k8s = True
+                has_substrate_target_signal = True
+            if has_integration_signal and has_substrate_target_signal:
+                substrate_test_evidence_present = True
 
     return {
         "supports_juju_3": supports_juju_3,
         "supports_juju_4": supports_juju_4,
-        "supports_ck8s": supports_ck8s,
+        "substrate_test_evidence_present": substrate_test_evidence_present,
+        "uses_canonical_k8s": uses_canonical_k8s,
     }
