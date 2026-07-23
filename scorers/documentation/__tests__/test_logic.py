@@ -269,3 +269,67 @@ def test_uses_rtd_hosting_detects_rtd_hosted_patterns(mocker):
 
     result = compute_metrics(unit, "gh-token", "or-key")
     assert result["uses_rtd_hosting"] is True
+
+
+def test_template_like_readme_and_contributing_fail(mocker):
+    """Template-like README or CONTRIBUTING should NOT pass structure checks."""
+    mocker.patch(
+        "scorers.documentation.logic.repo_file_exists",
+        side_effect=lambda repo, path, token: path in {"README.md", "CONTRIBUTING.md"},
+    )
+    mocker.patch(
+        "scorers.documentation.logic.repo_file_text",
+        side_effect=lambda repo, path, token: {
+            "README.md": "# Project\n\n{{ cookiecutter.project_name }}\n\n## Overview\n",
+            "CONTRIBUTING.md": "# Contributing\n\n<!-- TODO: replace this file -->\n",
+        }.get(path, ""),
+    )
+    mocker.patch("scorers.documentation.logic.default_branch_check_runs", return_value=[])
+    mocker.patch("scorers.documentation.logic.repo_releases", return_value=[])
+
+    result = compute_metrics(UNIT, "gh-token", "or-key")
+    assert result["readme_meets_structure"] is False
+    assert result["contributing_meets_structure"] is False
+
+
+def test_release_notes_require_process_marker(mocker):
+    """If releases have bodies but no process marker file, the metric should be False."""
+    # No known marker files present
+    mocker.patch(
+        "scorers.documentation.logic.repo_file_exists",
+        return_value=False,
+    )
+    # Two non-draft releases with bodies
+    mocker.patch(
+        "scorers.documentation.logic.repo_releases",
+        return_value=[
+            {"tag_name": "v1.2.0", "draft": False, "body": "Notes for v1.2.0"},
+            {"tag_name": "v1.1.0", "draft": False, "body": "Notes for v1.1.0"},
+        ],
+    )
+    mocker.patch("scorers.documentation.logic.repo_file_text", return_value="")
+    mocker.patch("scorers.documentation.logic.default_branch_check_runs", return_value=[])
+
+    result = compute_metrics(UNIT, "gh-token", "or-key")
+    assert result["recent_release_notes_present"] is False
+
+
+def test_release_notes_with_marker_and_bodies_pass(mocker):
+    """Process marker + latest two non-draft releases with bodies should pass."""
+    # Simulate presence of a known marker file
+    def exists(repo, path, token):
+        return path in {"docs/release-notes.md", "README.md"}
+
+    mocker.patch("scorers.documentation.logic.repo_file_exists", side_effect=exists)
+    mocker.patch(
+        "scorers.documentation.logic.repo_releases",
+        return_value=[
+            {"tag_name": "v2.0.0", "draft": False, "body": "Notes for v2.0.0"},
+            {"tag_name": "v1.9.0", "draft": False, "body": "Notes for v1.9.0"},
+        ],
+    )
+    mocker.patch("scorers.documentation.logic.repo_file_text", return_value="")
+    mocker.patch("scorers.documentation.logic.default_branch_check_runs", return_value=[])
+
+    result = compute_metrics(UNIT, "gh-token", "or-key")
+    assert result["recent_release_notes_present"] is True

@@ -92,9 +92,43 @@ def _check_run_exists(check_runs: list[dict[str, Any]], *needles: str) -> bool:
     return False
 
 
+def _contains_template_markers(text: str) -> bool:
+    """Detect common template placeholders or unresolved instruction comments.
+
+    Conservative deterministic checks for cookiecutter/templating markers and
+    obvious "replace me"/TODO comments used by repository templates.
+    """
+    if not text:
+        return False
+    lower = text.lower()
+    # Common templating placeholders
+    if "{{" in text and "}}" in text:
+        return True
+    if "cookiecutter" in lower:
+        return True
+    # Explicit replace/todo markers frequently left from templates
+    templates = [
+        "replace_me",
+        "project_name",
+        "todo",
+        "fixme",
+        "<!-- todo",
+        "<!-- replace",
+        "[//]: #",
+        "this project was generated",
+    ]
+    for t in templates:
+        if t in lower:
+            return True
+    return False
+
+
 def _readme_meets_structure(unit: EvaluationUnit, github_token: str | None) -> bool:
     readme = _file_text(unit, "README.md", github_token)
     if not readme.strip():
+        return False
+    # Fail if the README looks like an unrendered template or contains placeholders
+    if _contains_template_markers(readme):
         return False
     required_groups = (
         ("overview", "about", "summary"),
@@ -107,6 +141,9 @@ def _readme_meets_structure(unit: EvaluationUnit, github_token: str | None) -> b
 def _contributing_meets_structure(unit: EvaluationUnit, github_token: str | None) -> bool:
     contributing = _file_text(unit, "CONTRIBUTING.md", github_token)
     if not contributing.strip():
+        return False
+    # Fail if the contributing file looks like an unrendered template or contains placeholders
+    if _contains_template_markers(contributing):
         return False
     required_groups = (
         ("contributing",),
@@ -252,14 +289,27 @@ def _uses_rtd_hosting(unit: EvaluationUnit, github_token: str | None) -> bool:
 
 def _recent_release_notes_present(unit: EvaluationUnit, github_token: str | None) -> bool:
     """
-    Determine whether recent releases have release notes.
+    Determine whether recent releases have release notes and a documented process.
 
     Deterministic approach:
+    - Require a deterministic process evidence marker file (one of a known set)
     - Query repository releases via the GitHub API (repo_releases)
     - Inspect the last two non-draft releases
-    - Return True if both have a non-empty 'body' field (release notes)
-    - Return False if fewer than two non-draft releases exist or their bodies are empty
+    - Return True if process marker exists and both releases have a non-empty 'body'
     """
+    # Known deterministic marker files that indicate a release-notes process exists
+    marker_paths = (
+        "docs/release-notes.md",
+        "docs/release-notes/README.md",
+        ".github/release-notes.md",
+        "RELEASE_NOTES.md",
+        "docs/releasing.md",
+        ".github/release-process.md",
+    )
+    # Require process evidence marker
+    if not _any_file_exists(unit, marker_paths, github_token):
+        return False
+
     releases = repo_releases(unit.repo, github_token)
     if not releases:
         return False
