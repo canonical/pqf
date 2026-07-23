@@ -21,11 +21,35 @@ const mockPortfolio: Portfolio = {
       current_medal: 'bronze',
       squad: 'americas',
       is_portfolio_entry: true,
-      composed_of: [],
+      composed_of: [{ product_id: 'synapse', excluded_from_parent_medal: false }],
       context_refs: [],
       parent_product_ids: [],
       dimensions: {
         documentation: { medal: 'bronze', target: 'gold', drift: null, metrics: {}, applicability: 'scored', composition: [] },
+      },
+    },
+    {
+      id: 'synapse',
+      product_type: 'charm',
+      name: 'Synapse Charm',
+      lifecycle: 'stable',
+      target_medal: 'gold',
+      current_medal: 'silver',
+      squad: '',
+      is_portfolio_entry: false,
+      composed_of: null,
+      context_refs: [],
+      parent_product_ids: ['matrix'],
+      source: { repo: 'canonical/synapse-operator', subpath: null },
+      dimensions: {
+        documentation: {
+          medal: 'silver',
+          target: 'gold',
+          drift: null,
+          metrics: {},
+          applicability: 'scored',
+          composition: null,
+        },
       },
     },
     {
@@ -166,9 +190,15 @@ describe('DimensionDetail', () => {
     expect(screen.queryByRole('columnheader', { name: 'Target' })).not.toBeInTheDocument()
     expect(screen.getByRole('columnheader', { name: 'Drift / Deadline' })).toBeInTheDocument()
     expect(screen.getByRole('link', { name: 'Matrix (Synapse)' })).toBeInTheDocument()
-    expect(screen.getByText('✓')).toBeInTheDocument()
+    expect(screen.getAllByText('✓').length).toBeGreaterThan(0)
     expect(screen.getByText(/🟡 Remediating · 2027-06-30/)).toBeInTheDocument()
     expect(screen.getByText(/🔴 Overdue · 2026-06-30/)).toBeInTheDocument()
+  })
+
+  it('renders product scores grouped by root with nested leaf rows', () => {
+    wrap('documentation')
+    expect(screen.getByRole('link', { name: 'Matrix (Synapse)' })).toBeInTheDocument()
+    expect(screen.getByText('↳ Synapse Charm')).toBeInTheDocument()
   })
 
   it('shows not found for unknown dimension', () => {
