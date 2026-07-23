@@ -195,6 +195,8 @@ def test_cleanup_preview_workflow_runs_only_on_pr_close() -> None:
     on = workflow.get("on") or workflow.get(True) or {}
     pull_request = on.get("pull_request", {})
     assert pull_request.get("types") == ["closed"]
+    workflow_dispatch = on.get("workflow_dispatch", {})
+    assert "pr_number" in workflow_dispatch.get("inputs", {})
 
     jobs = workflow["jobs"]
     assert "cleanup-preview" in jobs
@@ -206,5 +208,7 @@ def test_cleanup_preview_workflow_runs_only_on_pr_close() -> None:
     assert step["with"]["action"] == "remove"
     assert step["with"]["preview-branch"] == "gh-pages"
     assert step["with"]["umbrella-dir"] == "pr-preview"
-    assert step["with"]["pr-number"] == "${{ github.event.pull_request.number }}"
+    assert step["with"]["pr-number"] == (
+        "${{ github.event.pull_request.number || inputs.pr_number }}"
+    )
     assert step["with"]["comment"] is False
