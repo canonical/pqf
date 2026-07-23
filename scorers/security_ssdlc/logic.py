@@ -58,10 +58,19 @@ def _has_cve_tracking_process(owner_repo: str, github_token: str) -> bool:
         ".github/security-advisory.md",
         "SECURITY.md",
     )
-    if not any(repo_file_exists(owner_repo, path, github_token) for path in marker_files):
+    existing_markers = [
+        path for path in marker_files if repo_file_exists(owner_repo, path, github_token)
+    ]
+    if not existing_markers:
         return False
-    security_text = repo_file_text(owner_repo, "SECURITY.md", github_token).lower()
-    return "cve" in security_text or "vulnerability" in security_text
+    for marker in existing_markers:
+        marker_text = repo_file_text(owner_repo, marker, github_token).lower()
+        if any(token in marker_text for token in ("cve", "vulnerability", "security update")):
+            return True
+        # Marker presence outside SECURITY.md is itself meaningful process evidence.
+        if marker != "SECURITY.md":
+            return True
+    return False
 
 
 def compute_metrics(unit: EvaluationUnit, github_token: str) -> dict[str, Any]:

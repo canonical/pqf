@@ -5,6 +5,7 @@ from engine.models import EvaluationUnit, ProductType
 from scorers.support_engagement.logic import (
     _has_jira_sync,
     _has_squad_topic,
+    _paginate_json_array,
     compute_metrics,
 )
 
@@ -359,3 +360,60 @@ def test_excludes_prs_outside_90day_window():
     assert result["response_coverage_rate"] == 100.0
     assert result["ownership_signal"] is False
     assert result["has_jira_sync"] is False
+
+
+@responses.activate
+def test_pr_reviews_ignore_null_submitted_at():
+    responses.add(
+        responses.GET,
+        f"{_GITHUB_API}/repos/canonical/synapse-operator/issues",
+        json=[],
+        status=200,
+        match_querystring=False,
+    )
+    responses.add(
+        responses.GET,
+        f"{_GITHUB_API}/repos/canonical/synapse-operator/pulls",
+        json=[{"number": 30, "created_at": "2026-06-01T00:00:00Z"}],
+        status=200,
+        match_querystring=False,
+    )
+    responses.add(
+        responses.GET,
+        f"{_GITHUB_API}/repos/canonical/synapse-operator/pulls/30/reviews",
+        json=[{"submitted_at": None}, {"submitted_at": "2026-06-02T00:00:00Z"}],
+        status=200,
+    )
+    _mock_repo_metadata("canonical/synapse-operator")
+    result = compute_metrics(UNIT, "token")
+    assert result["avg_pr_review_days"] == 1.0
+    assert result["response_coverage_rate"] == 100.0
+
+
+def test_paginate_json_array_fetches_all_pages():
+    class _Resp:
+        def __init__(self, ok, payload):
+            self.ok = ok
+            self._payload = payload
+
+        def json(self):
+            return self._payload
+
+    class _Session:
+        def __init__(self):
+            self.calls = 0
+
+        def get(self, url, params, timeout):
+            self.calls += 1
+            if self.calls == 1:
+                return _Resp(True, [{"id": i} for i in range(100)])
+            return _Resp(True, [{"id": 100}])
+
+    session = _Session()
+    items = _paginate_json_array(
+        session,
+        "https://api.github.com/repos/canonical/synapse-operator/issues",
+        {"state": "all", "per_page": 100},
+    )
+    assert len(items) == 101
+    assert session.calls == 2

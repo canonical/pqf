@@ -32,7 +32,7 @@ def github_get(
     response = session.get(url, headers=headers, timeout=15)
     # If we tried with a token but got an auth/visibility-related error,
     # retry anonymously (some repos being scored are public)
-    if github_token and response.status_code in {401, 403, 404}:
+    if github_token and response.status_code in {401, 403}:
         response = build_github_session(None).get(url, headers=headers, timeout=15)
     return response
 
@@ -91,7 +91,7 @@ def search_code_count(query: str, github_token: str | None) -> int:
         params={"q": query, "per_page": 1},
         timeout=15,
     )
-    if github_token and response.status_code in {401, 403, 404}:
+    if github_token and response.status_code in {401, 403}:
         # Retry anonymously
         response = build_github_session(None).get(
             f"{_GITHUB_API}/search/code",
@@ -119,14 +119,32 @@ def default_branch_check_runs(
     if not head_sha:
         return []
     url = f"{_GITHUB_API}/repos/{owner_repo}/commits/{head_sha}/check-runs"
-    checks_response = github_get(
-        url,
-        github_token,
-        accept="application/vnd.github+json",
-    )
-    if not checks_response.ok:
-        return []
-    return checks_response.json().get("check_runs", [])
+    headers = {"Accept": "application/vnd.github+json"}
+    runs: list[dict[str, Any]] = []
+    page = 1
+    while True:
+        session = build_github_session(github_token)
+        checks_response = session.get(
+            url,
+            headers=headers,
+            params={"per_page": 100, "page": page},
+            timeout=15,
+        )
+        if github_token and checks_response.status_code in {401, 403}:
+            checks_response = build_github_session(None).get(
+                url,
+                headers=headers,
+                params={"per_page": 100, "page": page},
+                timeout=15,
+            )
+        if not checks_response.ok:
+            return runs
+        page_runs = checks_response.json().get("check_runs", [])
+        runs.extend(page_runs)
+        if len(page_runs) < 100:
+            break
+        page += 1
+    return runs
 
 
 def repo_releases(owner_repo: str, github_token: str | None) -> list[dict[str, Any]]:

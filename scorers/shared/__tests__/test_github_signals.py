@@ -1,11 +1,11 @@
 import responses
 
 from scorers.shared.github_signals import (
+    default_branch_check_runs,
     repo_file_exists,
     repo_topics,
     search_code_count,
     workflow_files,
-    default_branch_check_runs,
 )
 
 
@@ -121,8 +121,47 @@ def test_default_branch_check_runs_returns_check_runs():
     responses.add(
         responses.GET,
         "https://api.github.com/repos/canonical/example/commits/abc123/check-runs",
+        match=[responses.matchers.query_param_matcher({"per_page": "100", "page": "1"})],
         json={"check_runs": [{"name": "ci", "conclusion": "success"}]},
         status=200,
     )
 
-    assert default_branch_check_runs("canonical/example", "gh-token") == [{"name": "ci", "conclusion": "success"}]
+    assert default_branch_check_runs("canonical/example", "gh-token") == [
+        {"name": "ci", "conclusion": "success"}
+    ]
+
+
+@responses.activate
+def test_default_branch_check_runs_paginates_all_pages():
+    responses.add(
+        responses.GET,
+        "https://api.github.com/repos/canonical/example",
+        json={"default_branch": "main"},
+        status=200,
+    )
+    responses.add(
+        responses.GET,
+        "https://api.github.com/repos/canonical/example/branches/main",
+        json={"commit": {"sha": "abc123"}},
+        status=200,
+    )
+    page1_runs = [{"name": f"ci-{i}", "conclusion": "success"} for i in range(100)]
+    responses.add(
+        responses.GET,
+        "https://api.github.com/repos/canonical/example/commits/abc123/check-runs",
+        match=[responses.matchers.query_param_matcher({"per_page": "100", "page": "1"})],
+        json={"check_runs": page1_runs},
+        status=200,
+    )
+    responses.add(
+        responses.GET,
+        "https://api.github.com/repos/canonical/example/commits/abc123/check-runs",
+        match=[responses.matchers.query_param_matcher({"per_page": "100", "page": "2"})],
+        json={"check_runs": [{"name": "docs", "conclusion": "success"}]},
+        status=200,
+    )
+
+    runs = default_branch_check_runs("canonical/example", "gh-token")
+    assert len(runs) == 101
+    assert runs[0]["name"] == "ci-0"
+    assert runs[-1]["name"] == "docs"

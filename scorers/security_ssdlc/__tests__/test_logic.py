@@ -93,6 +93,25 @@ def test_compute_metrics_falls_back_to_false_when_signals_absent(mocker):
     }
 
 
+def test_cve_tracking_detects_non_security_marker(mocker):
+    mocker.patch(
+        "scorers.security_ssdlc.logic.repo_file_exists",
+        side_effect=lambda repo, path, token: path == "docs/cve.md",
+    )
+    mocker.patch("scorers.security_ssdlc.logic.repo_file_text", return_value="")
+    mocker.patch("scorers.security_ssdlc.logic.search_code_count", return_value=0)
+    mocker.patch("scorers.security_ssdlc.logic.workflow_files", return_value=[])
+    mocker.patch(
+        "scorers.security_ssdlc.logic.github_get",
+        side_effect=[
+            _Response(True, {"default_branch": "main"}),
+            _Response(True, {"required_status_checks": {}}),
+        ],
+    )
+    result = compute_metrics(UNIT, "token")
+    assert result["cve_tracking_process_present"] is True
+
+
 def test_returns_defaults_when_repo_empty():
     result = compute_metrics(UNIT_EMPTY, "token")
     assert result == {
