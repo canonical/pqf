@@ -12,17 +12,19 @@ UNIT = EvaluationUnit(
 def test_compute_metrics_detects_documentation_signals(mocker):
     mocker.patch(
         "scorers.documentation.logic.repo_file_exists",
-        side_effect=lambda repo, path, token: path
-        in {
-            "README.md",
-            "CONTRIBUTING.md",
-            "SECURITY.md",
-            "docs/release-notes.md",
-            "docs/tutorial.md",
-            "docs/how-to.md",
-            "docs/reference.md",
-            "docs/explanation.md",
-        },
+        side_effect=lambda repo, path, token: (
+            path
+            in {
+                "README.md",
+                "CONTRIBUTING.md",
+                "SECURITY.md",
+                "docs/release-notes.md",
+                "docs/tutorial.md",
+                "docs/how-to.md",
+                "docs/reference.md",
+                "docs/explanation.md",
+            }
+        ),
     )
     # Mock GitHub releases: two non-draft releases with bodies
     mocker.patch(
@@ -35,9 +37,7 @@ def test_compute_metrics_detects_documentation_signals(mocker):
     mocker.patch(
         "scorers.documentation.logic.repo_file_text",
         side_effect=lambda repo, path, token: {
-            "README.md": (
-                "# Synapse\n\n## Overview\n\n## Getting started\n\n## Support\n"
-            ),
+            "README.md": ("# Synapse\n\n## Overview\n\n## Getting started\n\n## Support\n"),
             "CONTRIBUTING.md": (
                 "# Contributing\n\n## Development\n\n## Testing\n\n## Governance\n"
             ),
@@ -134,16 +134,18 @@ def test_documentation_workflows_use_latest_conclusion(mocker):
     """
     mocker.patch(
         "scorers.documentation.logic.repo_file_exists",
-        side_effect=lambda repo, path, token: path
-        in {
-            "README.md",
-            "CONTRIBUTING.md",
-            "SECURITY.md",
-            "docs/tutorial.md",
-            "docs/how-to.md",
-            "docs/reference.md",
-            "docs/explanation.md",
-        },
+        side_effect=lambda repo, path, token: (
+            path
+            in {
+                "README.md",
+                "CONTRIBUTING.md",
+                "SECURITY.md",
+                "docs/tutorial.md",
+                "docs/how-to.md",
+                "docs/reference.md",
+                "docs/explanation.md",
+            }
+        ),
     )
     mocker.patch("scorers.documentation.logic.repo_file_text", return_value="# Docs")
     mocker.patch("scorers.documentation.logic.repo_releases", return_value=[])
@@ -169,8 +171,9 @@ def test_documentation_workflows_do_not_require_style_check(mocker):
     """Lint + links + docs build should be sufficient for this contract."""
     mocker.patch(
         "scorers.documentation.logic.repo_file_exists",
-        side_effect=lambda repo, path, token: path
-        in {"README.md", "CONTRIBUTING.md", "SECURITY.md"},
+        side_effect=lambda repo, path, token: (
+            path in {"README.md", "CONTRIBUTING.md", "SECURITY.md"}
+        ),
     )
     mocker.patch(
         "scorers.documentation.logic.repo_file_text",
@@ -201,11 +204,13 @@ def test_tutorial_tested_uses_latest_conclusion(mocker):
     """
     mocker.patch(
         "scorers.documentation.logic.repo_file_exists",
-        side_effect=lambda repo, path, token: path
-        in {
-            "README.md",
-            "docs/tutorial.md",
-        },
+        side_effect=lambda repo, path, token: (
+            path
+            in {
+                "README.md",
+                "docs/tutorial.md",
+            }
+        ),
     )
     mocker.patch("scorers.documentation.logic.repo_file_text", return_value="# Docs")
     mocker.patch("scorers.documentation.logic.repo_releases", return_value=[])
@@ -288,8 +293,8 @@ def test_uses_rtd_hosting_detects_rtd_hosted_patterns(mocker):
         return_value=(
             "![Documentation Status](https://canonical.synapse.readthedocs-hosted.com/_static/readthedocs-badge.svg)\n"
             "Visit the docs: https://canonical.synapse.readthedocs-hosted.com/\n"
-            "<img src=\"https://readthedocs.io/projects/myproj/badge/icon\" "
-            "alt=\"Read the Docs\" />\n"
+            '<img src="https://readthedocs.io/projects/myproj/badge/icon" '
+            'alt="Read the Docs" />\n'
         ),
     )
     mocker.patch("scorers.documentation.logic.default_branch_check_runs", return_value=[])
@@ -344,6 +349,7 @@ def test_release_notes_require_process_marker(mocker):
 
 def test_release_notes_with_marker_and_bodies_pass(mocker):
     """Process marker + latest two non-draft releases with bodies should pass."""
+
     # Simulate presence of a known marker file
     def exists(repo, path, token):
         return path in {"docs/release-notes.md", "README.md"}

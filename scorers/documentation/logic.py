@@ -262,7 +262,7 @@ def _uses_rtd_hosting(unit: EvaluationUnit, github_token: str | None) -> bool:
     if re.search(rtd_url_regex, readme):
         return True
     # Explicit badge alt text referencing 'read the docs'
-    if "alt=\"read the docs\"" in readme or "alt='read the docs'" in readme:
+    if 'alt="read the docs"' in readme or "alt='read the docs'" in readme:
         return True
     # Markdown images with a src that includes readthedocs domains
     md_badge_regex = (
