@@ -261,6 +261,11 @@ export default function ProductDetail() {
                       <th style={{ padding: '0.5rem 0.75rem', textAlign: 'left', fontSize: '0.75rem', fontWeight: 600, textTransform: 'uppercase', color: '#666' }}>
                         Sub-product
                       </th>
+                      <th
+                        style={{ width: '7rem', padding: '0.5rem 0.75rem', textAlign: 'left', fontSize: '0.75rem', fontWeight: 600, textTransform: 'uppercase', color: '#666' }}
+                      >
+                        Type
+                      </th>
                       {dependencyDimensions.map(dim => (
                         <th
                           key={dim}
@@ -279,6 +284,11 @@ export default function ProductDetail() {
                             {leaf.name}
                           </Link>
                         </td>
+                        <td style={{ width: '7rem', padding: '0.75rem', verticalAlign: 'top' }}>
+                          <span className="p-label--information" style={{ fontSize: '0.7rem', whiteSpace: 'nowrap' }}>
+                            {leaf.product_type}
+                          </span>
+                        </td>
                         {dependencyDimensions.map(dim => (
                           <td key={dim} style={{ padding: '0.75rem', verticalAlign: 'top' }}>
                             <MedalBadge medal={leaf.dimensions[dim]?.medal ?? 'unrated'} size="small" />
@@ -288,50 +298,6 @@ export default function ProductDetail() {
                     ))}
                   </tbody>
                 </table>
-              </div>
-            )}
-
-            {/* Sub-products — primary, table-style aligned rows with medals */}
-            {product.composed_of && product.composed_of.length > 0 && (
-              <div>
-                <p style={{ fontSize: '0.7rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.06em', color: '#333', margin: '0 0 0.6rem' }}>
-                  Sub-products
-                </p>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem' }}>
-                  {product.composed_of.map(c => {
-                    const leaf = portfolio.products.find(p => p.id === c.product_id)
-                    return (
-                      <div key={c.product_id}
-                        style={{ display: 'grid', gridTemplateColumns: 'auto minmax(0, 1.1fr) auto minmax(14rem, 0.9fr)', alignItems: 'center', gap: '0.75rem' }}>
-                        {leaf?.current_medal ? (
-                          <MedalBadge medal={leaf.current_medal} size="small" />
-                        ) : (
-                          <span style={{ fontSize: '0.75rem', color: '#999', textAlign: 'center', width: '24px' }}>—</span>
-                        )}
-                        <div style={{ minWidth: 0 }}>
-                          <Link to={`/products/${c.product_id}`} style={{ fontWeight: 500, display: 'block', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                            {leaf?.name ?? c.product_id}
-                          </Link>
-                        </div>
-                        {leaf?.product_type ? (
-                          <div style={{ minWidth: 0 }}>
-                            <span className="p-label--information" style={{ fontSize: '0.7rem', whiteSpace: 'nowrap' }}>
-                              {leaf.product_type}
-                            </span>
-                          </div>
-                        ) : <span />}
-                        {leaf?.source?.repo ? (
-                          <div style={{ minWidth: 0 }}>
-                            <a href={`https://github.com/${leaf.source.repo}`} target="_blank" rel="noreferrer"
-                              style={{ display: 'block', fontSize: '0.8rem', color: '#666', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                              {leaf.source.repo} ↗
-                            </a>
-                          </div>
-                        ) : <span />}
-                      </div>
-                    )
-                  })}
-                </div>
               </div>
             )}
 

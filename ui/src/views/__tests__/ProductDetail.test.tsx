@@ -177,11 +177,9 @@ describe('ProductDetail', () => {
     expect(row).toHaveTextContent('Build passing')
   })
 
-  it('renders GitHub repo link for context ref', () => {
+  it('renders linked product from context refs', () => {
     wrap('matrix')
-    const links = screen.getAllByRole('link', { name: /synapse-operator/i })
-    expect(links.length).toBeGreaterThan(0)
-    expect(links[0]).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: 'Synapse Operator' })).toBeInTheDocument()
   })
 
   it('shows 404 message for unknown product', () => {
@@ -199,11 +197,10 @@ describe('ProductDetail', () => {
     expect(componentLinks.length).toBeGreaterThan(0)
   })
 
-  it('root product shows unified Dependencies card with sub-products and context refs', () => {
+  it('root product shows unified Dependencies card with context refs only', () => {
     wrap('matrix')
     expect(screen.getByRole('heading', { name: 'Dependencies' })).toBeInTheDocument()
-    // sub-products section present
-    expect(screen.getByText(/Sub-products/i)).toBeInTheDocument()
+    expect(screen.queryByText(/Sub-products/i)).not.toBeInTheDocument()
     // synapse-operator is a known PQF product → "Also scored by this team"
     expect(screen.getByText('Synapse Operator')).toBeInTheDocument()
     expect(screen.getByText(/Also scored by this team/i)).toBeInTheDocument()
@@ -215,30 +212,10 @@ describe('ProductDetail', () => {
   it('renders dependency heatmap with dimension medal cells for sub-products', () => {
     wrap('matrix')
     expect(screen.getByRole('columnheader', { name: /sub-product/i })).toBeInTheDocument()
+    expect(screen.getByRole('columnheader', { name: /type/i })).toBeInTheDocument()
     expect(screen.getByRole('columnheader', { name: /test verification/i })).toBeInTheDocument()
     expect(screen.getAllByRole('link', { name: 'Synapse Charm' }).length).toBeGreaterThan(0)
-  })
-
-  it('balances dependency row widths toward product and repo content', () => {
-    wrap('matrix')
-
-    const dependenciesCard = screen.getByRole('heading', { name: 'Dependencies' }).closest('.p-card') as HTMLElement
-    const repoLink = within(dependenciesCard).getByRole('link', { name: /canonical\/synapse-operator/i })
-    const row = repoLink.parentElement?.parentElement
-
-    expect(row).not.toBeNull()
-    expect(row).toHaveStyle({
-      display: 'grid',
-      gridTemplateColumns: 'auto minmax(0, 1.1fr) auto minmax(14rem, 0.9fr)',
-    })
-    expect(row?.children[1]).toHaveStyle({ minWidth: '0' })
-    expect(repoLink.parentElement).toHaveStyle({ minWidth: '0' })
-    expect(repoLink).toHaveStyle({
-      display: 'block',
-      overflow: 'hidden',
-      textOverflow: 'ellipsis',
-      whiteSpace: 'nowrap',
-    })
+    expect(screen.getByText('charm')).toBeInTheDocument()
   })
 
   it('root product evidence shows metric values from composition', () => {
