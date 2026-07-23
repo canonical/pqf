@@ -14,6 +14,7 @@ REPO_ROOT = Path(__file__).resolve().parents[2]
 if str(REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(REPO_ROOT))
 
+
 def _load_all_products(products_dir: Path) -> list[dict]:
     return [yaml.safe_load(f.read_text()) for f in sorted(products_dir.glob("*.yaml"))]
 
