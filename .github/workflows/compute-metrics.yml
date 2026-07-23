@@ -23,6 +23,7 @@ on:
       - '!scorers/**/__tests__/**'
       - 'engine/**'
       - '!engine/__tests__/**'
+      - 'ui/**'
 
 # Cancel any in-progress run on the same branch when a new push arrives.
 # This prevents N sequential LLM runs when multiple commits land quickly.
