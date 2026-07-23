@@ -35,7 +35,10 @@ def test_compute_metrics_deploys_production_from_engine_artifacts() -> None:
         assert pattern in paths, f"push.paths must include '{pattern}'"
 
     pull_request = on.get("pull_request", {})
-    assert "closed" in pull_request.get("types", []), "pull_request trigger must include 'closed'"
+    assert pull_request.get("types", []) == ["opened", "reopened", "synchronize"], (
+        "pull_request trigger should only include active PR events; "
+        "closed PR cleanup is in a separate workflow"
+    )
     pr_paths = pull_request.get("paths", [])
     for pattern in [
         "products/**",
@@ -49,12 +52,6 @@ def test_compute_metrics_deploys_production_from_engine_artifacts() -> None:
 
     assert "deploy-production" in jobs
     assert "commit-artifacts" not in jobs
-
-    closed_pr_guard = "github.event_name != 'pull_request' || github.event.action != 'closed'"
-    for job_name in ["discover-products", "compute-metrics", "run-engine"]:
-        assert jobs[job_name]["if"] == closed_pr_guard, (
-            f"{job_name} must be skipped for pull_request.closed cleanup-only runs"
-        )
 
     deploy_job = jobs["deploy-production"]
     assert deploy_job["needs"] == "run-engine"
@@ -70,7 +67,9 @@ def test_compute_metrics_deploys_production_from_engine_artifacts() -> None:
     names = step_names(deploy_job)
     assert "Download engine artifacts" in names
     assert "Build UI" in names
-    assert "Deploy to GitHub Pages" in names
+    assert "Deploy to GitHub Pages (attempt 1)" in names
+    assert "Wait before deploy retry" in names
+    assert "Deploy to GitHub Pages (retry)" in names
 
     # Verify ordering: Download engine artifacts must come before Build UI
     idx_artifacts = names.index("Download engine artifacts")
@@ -83,9 +82,12 @@ def test_compute_metrics_deploys_production_from_engine_artifacts() -> None:
     assert artifact_step["with"]["name"] == "engine-artifacts"
 
     deploy_step = next(
-        step for step in deploy_job["steps"] if step.get("name") == "Deploy to GitHub Pages"
+        step
+        for step in deploy_job["steps"]
+        if step.get("name") == "Deploy to GitHub Pages (attempt 1)"
     )
     assert deploy_step["uses"] == "peaceiris/actions-gh-pages@v4"
+    assert deploy_step["continue-on-error"] is True
 
     # ---- PR preview path must remain artifact-driven ----
     assert "build-preview" in jobs, "expected 'build-preview' job for PR previews"
@@ -130,22 +132,7 @@ def test_compute_metrics_deploys_production_from_engine_artifacts() -> None:
     )
     assert preview_deploy_step["with"]["comment"] is False
 
-    assert "cleanup-preview" in jobs, "expected 'cleanup-preview' job for closed PRs"
-    cleanup = jobs["cleanup-preview"]
-    cleanup_if = cleanup.get("if", "")
-    assert "github.event_name == 'pull_request'" in cleanup_if
-    assert "github.event.action == 'closed'" in cleanup_if
-    assert "github.repository == 'canonical/pqf'" in cleanup_if
-
-    cleanup_step = next(
-        step for step in cleanup["steps"] if step.get("name") == "Remove PR preview"
-    )
-    assert cleanup_step["uses"] == "rossjrw/pr-preview-action@v1"
-    assert cleanup_step["with"]["action"] == "remove"
-    assert cleanup_step["with"]["preview-branch"] == "gh-pages"
-    assert cleanup_step["with"]["umbrella-dir"] == "pr-preview"
-    assert cleanup_step["with"]["pr-number"] == "${{ github.event.pull_request.number }}"
-    assert cleanup_step["with"]["comment"] is False
+    assert "cleanup-preview" not in jobs, "cleanup moved to dedicated cleanup-preview workflow"
 
 
 def test_deploy_pages_only_runs_for_ui_changes_and_skips_mixed_commits() -> None:
@@ -195,6 +182,29 @@ def test_deploy_pages_only_runs_for_ui_changes_and_skips_mixed_commits() -> None
     assert "Check out current Pages data" in names
     assert "Sync deployed public data" in names
     assert "Build UI" in names
-    assert "Deploy to GitHub Pages" in names
+    assert "Deploy to GitHub Pages (attempt 1)" in names
+    assert "Wait before deploy retry" in names
+    assert "Deploy to GitHub Pages (retry)" in names
 
     assert names.index("Sync deployed public data") < names.index("Build UI")
+
+
+def test_cleanup_preview_workflow_runs_only_on_pr_close() -> None:
+    workflow = load_workflow(".github/workflows/cleanup-preview.yml")
+
+    on = workflow.get("on") or workflow.get(True) or {}
+    pull_request = on.get("pull_request", {})
+    assert pull_request.get("types") == ["closed"]
+
+    jobs = workflow["jobs"]
+    assert "cleanup-preview" in jobs
+    cleanup = jobs["cleanup-preview"]
+    assert cleanup.get("if") == "github.repository == 'canonical/pqf'"
+
+    step = next(step for step in cleanup["steps"] if step.get("name") == "Remove PR preview")
+    assert step["uses"] == "rossjrw/pr-preview-action@v1"
+    assert step["with"]["action"] == "remove"
+    assert step["with"]["preview-branch"] == "gh-pages"
+    assert step["with"]["umbrella-dir"] == "pr-preview"
+    assert step["with"]["pr-number"] == "${{ github.event.pull_request.number }}"
+    assert step["with"]["comment"] is False
