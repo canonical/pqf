@@ -165,6 +165,34 @@ def test_documentation_workflows_use_latest_conclusion(mocker):
     assert result["documentation_workflows_passing"] is False
 
 
+def test_documentation_workflows_do_not_require_style_check(mocker):
+    """Lint + links + docs build should be sufficient for this contract."""
+    mocker.patch(
+        "scorers.documentation.logic.repo_file_exists",
+        side_effect=lambda repo, path, token: path
+        in {"README.md", "CONTRIBUTING.md", "SECURITY.md"},
+    )
+    mocker.patch(
+        "scorers.documentation.logic.repo_file_text",
+        side_effect=lambda repo, path, token: {
+            "README.md": "# Docs\n\n## Overview\n\n## Getting started\n\n## Support\n",
+            "CONTRIBUTING.md": "# Contributing\n\n## Development\n\n## Testing\n\n## Governance\n",
+        }.get(path, ""),
+    )
+    mocker.patch("scorers.documentation.logic.repo_releases", return_value=[])
+    mocker.patch(
+        "scorers.documentation.logic.default_branch_check_runs",
+        return_value=[
+            {"name": "docs lint", "conclusion": "success"},
+            {"name": "link check", "conclusion": "success"},
+            {"name": "docs build", "conclusion": "success"},
+        ],
+    )
+
+    result = compute_metrics(UNIT, "gh-token", "or-key")
+    assert result["documentation_workflows_passing"] is True
+
+
 def test_tutorial_tested_uses_latest_conclusion(mocker):
     """The tutorial_tested metric should reflect the latest matching check-run conclusion.
 
@@ -333,3 +361,41 @@ def test_release_notes_with_marker_and_bodies_pass(mocker):
 
     result = compute_metrics(UNIT, "gh-token", "or-key")
     assert result["recent_release_notes_present"] is True
+
+
+def test_release_notes_uses_latest_two_by_release_timestamp(mocker):
+    """Latest two non-draft releases should be selected by published_at ordering."""
+    mocker.patch(
+        "scorers.documentation.logic.repo_file_exists",
+        side_effect=lambda repo, path, token: path in {"docs/release-notes.md", "README.md"},
+    )
+    mocker.patch("scorers.documentation.logic.repo_file_text", return_value="")
+    mocker.patch("scorers.documentation.logic.default_branch_check_runs", return_value=[])
+    # Intentionally unsorted: older successful notes first, newest missing notes last.
+    mocker.patch(
+        "scorers.documentation.logic.repo_releases",
+        return_value=[
+            {
+                "tag_name": "v1.0.0",
+                "draft": False,
+                "published_at": "2025-01-01T00:00:00Z",
+                "body": "old notes",
+            },
+            {
+                "tag_name": "v2.0.0",
+                "draft": False,
+                "published_at": "2026-01-02T00:00:00Z",
+                "body": "",
+            },
+            {
+                "tag_name": "v1.9.0",
+                "draft": False,
+                "published_at": "2026-01-01T00:00:00Z",
+                "body": "notes",
+            },
+        ],
+    )
+
+    result = compute_metrics(UNIT, "gh-token", "or-key")
+    # Should fail because latest two are v2.0.0 + v1.9.0 and v2.0.0 has empty notes.
+    assert result["recent_release_notes_present"] is False

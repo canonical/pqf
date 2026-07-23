@@ -116,7 +116,8 @@ def test_avg_triage_days_computed_correctly():
     result = compute_metrics(UNIT, "token")
     assert result["avg_triage_days"] == 3.0  # (2 + 4) / 2
     assert result["avg_pr_review_days"] == 1.0
-    assert result["has_squad_topic"] is True
+    assert result["response_coverage_rate"] == 100.0
+    assert result["ownership_signal"] is True
     assert result["has_jira_sync"] is True
 
 
@@ -140,7 +141,8 @@ def test_returns_zero_when_no_issues():
     result = compute_metrics(UNIT, "token")
     assert result["avg_triage_days"] == 0.0
     assert result["avg_pr_review_days"] == 0.0
-    assert result["has_squad_topic"] is False
+    assert result["response_coverage_rate"] == 0.0
+    assert result["ownership_signal"] is False
     assert result["has_jira_sync"] is False
 
 
@@ -172,7 +174,8 @@ def test_skips_pr_issues_in_issue_list():
     _mock_repo_metadata("canonical/synapse-operator")
     result = compute_metrics(UNIT, "token")
     assert result["avg_triage_days"] == 0.0
-    assert result["has_squad_topic"] is False
+    assert result["response_coverage_rate"] == 0.0
+    assert result["ownership_signal"] is False
     assert result["has_jira_sync"] is False
 
 
@@ -209,7 +212,8 @@ def test_zero_when_issue_has_no_comments():
     _mock_repo_metadata("canonical/synapse-operator")
     result = compute_metrics(UNIT, "token")
     assert result["avg_triage_days"] == 0.0
-    assert result["has_squad_topic"] is False
+    assert result["response_coverage_rate"] == 0.0
+    assert result["ownership_signal"] is False
     assert result["has_jira_sync"] is False
 
 
@@ -246,7 +250,8 @@ def test_returns_zeros_when_no_repo():
     assert result == {
         "avg_triage_days": 0.0,
         "avg_pr_review_days": 0.0,
-        "has_squad_topic": False,
+        "response_coverage_rate": 0,
+        "ownership_signal": False,
         "has_jira_sync": False,
     }
 
@@ -276,7 +281,8 @@ def test_pr_review_zero_when_no_reviews():
     _mock_repo_metadata("canonical/synapse-operator")
     result = compute_metrics(UNIT, "token")
     assert result["avg_pr_review_days"] == 0.0
-    assert result["has_squad_topic"] is False
+    assert result["response_coverage_rate"] == 0.0
+    assert result["ownership_signal"] is False
     assert result["has_jira_sync"] is False
 
 
@@ -313,7 +319,8 @@ def test_single_repo_triage_days():
     _mock_repo_metadata("canonical/synapse-operator")
     result = compute_metrics(UNIT, "token")
     assert result["avg_triage_days"] == 2.0
-    assert result["has_squad_topic"] is False
+    assert result["response_coverage_rate"] == 100.0
+    assert result["ownership_signal"] is False
     assert result["has_jira_sync"] is False
 
 
@@ -349,5 +356,6 @@ def test_excludes_prs_outside_90day_window():
     result = compute_metrics(UNIT, "token")
     # Only PR #2 should be considered (PR #1 is outside 90-day window)
     assert result["avg_pr_review_days"] == 1.0
-    assert result["has_squad_topic"] is False
+    assert result["response_coverage_rate"] == 100.0
+    assert result["ownership_signal"] is False
     assert result["has_jira_sync"] is False

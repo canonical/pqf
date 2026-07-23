@@ -155,13 +155,10 @@ def _contributing_meets_structure(unit: EvaluationUnit, github_token: str | None
 
 
 def _documentation_workflows_passing(check_runs: list[dict[str, Any]]) -> bool:
-    # Require core documentation checks (lint, style, links, build) to be present
+    # Require core documentation checks (lint, links, build) to be present
     # and passing. Use explicit needles to avoid accidental matches with unrelated jobs.
     lint_present = _check_run_exists(check_runs, "docs lint", "markdownlint")
     lint_passed = _check_run_passed(check_runs, "docs lint", "markdownlint")
-
-    style_present = _check_run_exists(check_runs, "vale", "style guide")
-    style_passed = _check_run_passed(check_runs, "vale", "style guide")
 
     links_present = _check_run_exists(check_runs, "link check", "linkcheck", "docs links")
     links_passed = _check_run_passed(check_runs, "link check", "linkcheck", "docs links")
@@ -178,8 +175,6 @@ def _documentation_workflows_passing(check_runs: list[dict[str, Any]]) -> bool:
     return (
         lint_present
         and lint_passed
-        and style_present
-        and style_passed
         and links_present
         and links_passed
         and build_present
@@ -313,8 +308,18 @@ def _recent_release_notes_present(unit: EvaluationUnit, github_token: str | None
     releases = repo_releases(unit.repo, github_token)
     if not releases:
         return False
-    # Filter out draft releases and take the first two
+    # Filter out draft releases and sort explicitly so "latest two" is deterministic.
     non_draft = [r for r in releases if not r.get("draft", False)]
+    non_draft.sort(
+        key=lambda r: str(
+            r.get("published_at")
+            or r.get("created_at")
+            or r.get("released_at")
+            or r.get("tag_name")
+            or ""
+        ),
+        reverse=True,
+    )
     if len(non_draft) < 2:
         return False
     recent_two = non_draft[:2]

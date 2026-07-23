@@ -89,7 +89,8 @@ def test_detects_juju3_from_workflow():
     result = compute_metrics(UNIT, "token")
     assert result["supports_juju_3"] is True
     assert result["supports_juju_4"] is False
-    assert result["supports_ck8s"] is False
+    assert result["substrate_test_evidence_present"] is True
+    assert result["uses_canonical_k8s"] is False
 
 
 @responses.activate
@@ -106,7 +107,8 @@ def test_detects_ck8s_from_workflow():
     _mock_workflows_dir("canonical/synapse-operator", ["integration.yaml"])
     _mock_workflow_file("canonical/synapse-operator", "integration.yaml", _JUJU4_CK8S_WORKFLOW)
     result = compute_metrics(UNIT, "token")
-    assert result["supports_ck8s"] is True
+    assert result["uses_canonical_k8s"] is True
+    assert result["substrate_test_evidence_present"] is True
 
 
 @responses.activate
@@ -114,7 +116,12 @@ def test_generic_workflow_sets_no_flags():
     _mock_workflows_dir("canonical/synapse-operator", ["ci.yaml"])
     _mock_workflow_file("canonical/synapse-operator", "ci.yaml", _GENERIC_WORKFLOW)
     result = compute_metrics(UNIT, "token")
-    assert result == {"supports_juju_3": False, "supports_juju_4": False, "supports_ck8s": False}
+    assert result == {
+        "supports_juju_3": False,
+        "supports_juju_4": False,
+        "substrate_test_evidence_present": False,
+        "uses_canonical_k8s": False,
+    }
 
 
 @responses.activate
@@ -125,9 +132,19 @@ def test_missing_workflows_dir_returns_false():
         status=404,
     )
     result = compute_metrics(UNIT, "token")
-    assert result == {"supports_juju_3": False, "supports_juju_4": False, "supports_ck8s": False}
+    assert result == {
+        "supports_juju_3": False,
+        "supports_juju_4": False,
+        "substrate_test_evidence_present": False,
+        "uses_canonical_k8s": False,
+    }
 
 
 def test_returns_defaults_when_repo_empty():
     result = compute_metrics(UNIT_EMPTY, "token")
-    assert result == {"supports_juju_3": False, "supports_juju_4": False, "supports_ck8s": False}
+    assert result == {
+        "supports_juju_3": False,
+        "supports_juju_4": False,
+        "substrate_test_evidence_present": False,
+        "uses_canonical_k8s": False,
+    }

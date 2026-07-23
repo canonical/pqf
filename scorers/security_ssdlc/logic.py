@@ -1,59 +1,26 @@
-import base64
 from typing import Any
 
-import requests
-
 from engine.models import EvaluationUnit
+from scorers.shared.github_signals import (
+    github_get,
+    repo_file_exists,
+    repo_file_text,
+    search_code_count,
+    workflow_files,
+)
 
 _GITHUB_API = "https://api.github.com"
 
 
-def _make_github_session(github_token: str) -> requests.Session:
-    session = requests.Session()
-    session.headers.update(
-        {
-            "Authorization": f"Bearer {github_token}",
-            "Accept": "application/vnd.github+json",
-            "X-GitHub-Api-Version": "2022-11-28",
-        }
-    )
-    return session
-
-
-def _fetch_workflow_contents(owner_repo: str, github_token: str) -> list[str]:
-    """Fetch text contents of all workflow YAML files in .github/workflows/."""
-    session = _make_github_session(github_token)
-    list_resp = session.get(
-        f"{_GITHUB_API}/repos/{owner_repo}/contents/.github/workflows",
-        timeout=15,
-    )
-    if not list_resp.ok:
-        return []
-    contents = []
-    for entry in list_resp.json():
-        if entry.get("type") != "file":
-            continue
-        name = entry.get("name", "")
-        if not (name.endswith(".yml") or name.endswith(".yaml")):
-            continue
-        file_resp = session.get(entry["url"], timeout=15)
-        if file_resp.ok:
-            data = file_resp.json()
-            raw = base64.b64decode(data.get("content", "")).decode("utf-8", errors="replace")
-            contents.append(raw)
-    return contents
-
-
 def _has_branch_protection_required_checks(owner_repo: str, github_token: str) -> bool:
     """Return True if the default branch has ≥1 required status check."""
-    session = _make_github_session(github_token)
-    repo_resp = session.get(f"{_GITHUB_API}/repos/{owner_repo}", timeout=15)
+    repo_resp = github_get(f"{_GITHUB_API}/repos/{owner_repo}", github_token)
     if not repo_resp.ok:
         return False
     default_branch = repo_resp.json().get("default_branch", "main")
-    prot_resp = session.get(
+    prot_resp = github_get(
         f"{_GITHUB_API}/repos/{owner_repo}/branches/{default_branch}/protection",
-        timeout=15,
+        github_token,
     )
     if not prot_resp.ok:
         return False
@@ -64,34 +31,74 @@ def _has_branch_protection_required_checks(owner_repo: str, github_token: str) -
     return len(contexts) > 0 or len(strict_checks) > 0
 
 
+def _has_sast_workflow(owner_repo: str, github_token: str) -> bool:
+    for _, content in workflow_files(owner_repo, github_token):
+        lowered = content.lower()
+        if any(
+            token in lowered
+            for token in (
+                "github/codeql-action",
+                "semgrep",
+                "bandit",
+                "trivy",
+                "grype",
+                "snyk",
+                "osv-scanner",
+            )
+        ):
+            return True
+    return False
+
+
+def _has_cve_tracking_process(owner_repo: str, github_token: str) -> bool:
+    marker_files = (
+        "docs/cve.md",
+        "docs/cve/README.md",
+        "docs/security-updates.md",
+        ".github/security-advisory.md",
+        "SECURITY.md",
+    )
+    if not any(repo_file_exists(owner_repo, path, github_token) for path in marker_files):
+        return False
+    security_text = repo_file_text(owner_repo, "SECURITY.md", github_token).lower()
+    return "cve" in security_text or "vulnerability" in security_text
+
+
 def compute_metrics(unit: EvaluationUnit, github_token: str) -> dict[str, Any]:
     """
-    Check GitHub Security features for the evaluation unit's repo.
-
-    dependabot_enabled: .github/dependabot.yml exists in the repo
-    codeql_enabled:     any workflow references github/codeql-action
+    Check SSDLC signals for the evaluation unit's repo.
     """
-    dependabot_enabled = False
-    codeql_enabled = False
+    renovate_enabled = False
+    canonical_repo_automation_registered = False
+    sast_workflow_present = False
+    cve_tracking_process_present = False
 
     if unit.repo:
-        session = _make_github_session(github_token)
-        dependabot_resp = session.get(
-            f"{_GITHUB_API}/repos/{unit.repo}/contents/.github/dependabot.yml",
-            timeout=15,
+        renovate_enabled = any(
+            repo_file_exists(unit.repo, path, github_token)
+            for path in (
+                ".github/renovate.json",
+                ".github/renovate.json5",
+                "renovate.json",
+                "renovate.json5",
+            )
         )
-        if dependabot_resp.status_code == 200:
-            dependabot_enabled = True
-        for content in _fetch_workflow_contents(unit.repo, github_token):
-            if "github/codeql-action" in content:
-                codeql_enabled = True
+        if not renovate_enabled:
+            renovate_enabled = search_code_count(f"repo:{unit.repo} renovate", github_token) > 0
+
+        automation_query = f'repo:canonical/canonical-repo-automation "{unit.repo}"'
+        canonical_repo_automation_registered = search_code_count(automation_query, github_token) > 0
+        sast_workflow_present = _has_sast_workflow(unit.repo, github_token)
+        cve_tracking_process_present = _has_cve_tracking_process(unit.repo, github_token)
 
     branch_protection = (
         _has_branch_protection_required_checks(unit.repo, github_token) if unit.repo else False
     )
 
     return {
-        "dependabot_enabled": dependabot_enabled,
-        "codeql_enabled": codeql_enabled,
+        "renovate_enabled": renovate_enabled,
+        "canonical_repo_automation_registered": canonical_repo_automation_registered,
         "branch_protection_required_checks": branch_protection,
+        "sast_workflow_present": sast_workflow_present,
+        "cve_tracking_process_present": cve_tracking_process_present,
     }
