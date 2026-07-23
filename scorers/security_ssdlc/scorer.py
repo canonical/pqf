@@ -9,15 +9,19 @@ from pathlib import Path
 
 import yaml
 
-from engine.graph import build_graph, resolve_leaf_units_for
-from scorers.security_ssdlc.logic import compute_metrics
-
+# Ensure local repo modules are imported when running this file directly.
+REPO_ROOT = Path(__file__).resolve().parents[2]
+if str(REPO_ROOT) not in sys.path:
+    sys.path.insert(0, str(REPO_ROOT))
 
 def _load_all_products(products_dir: Path) -> list[dict]:
     return [yaml.safe_load(f.read_text()) for f in sorted(products_dir.glob("*.yaml"))]
 
 
 def main() -> int:
+    from engine.graph import build_graph, resolve_leaf_units_for
+    from scorers.security_ssdlc.logic import compute_metrics
+
     parser = argparse.ArgumentParser()
     parser.add_argument("--product-yaml", required=True)
     parser.add_argument(
