@@ -21,7 +21,12 @@ def build_github_session(github_token: str | None) -> requests.Session:
     return session
 
 
-def github_get(url: str, github_token: str | None, *, accept: str | None = None) -> requests.Response:
+def github_get(
+    url: str,
+    github_token: str | None,
+    *,
+    accept: str | None = None,
+) -> requests.Response:
     session = build_github_session(github_token)
     headers = {"Accept": accept} if accept else None
     response = session.get(url, headers=headers, timeout=15)
@@ -60,7 +65,8 @@ def repo_topics(owner_repo: str, github_token: str | None) -> list[str]:
 
 
 def workflow_files(owner_repo: str, github_token: str | None) -> list[tuple[str, str]]:
-    listing = github_get(f"{_GITHUB_API}/repos/{owner_repo}/contents/.github/workflows", github_token)
+    url = f"{_GITHUB_API}/repos/{owner_repo}/contents/.github/workflows"
+    listing = github_get(url, github_token)
     if not listing.ok:
         return []
     results: list[tuple[str, str]] = []
@@ -70,7 +76,8 @@ def workflow_files(owner_repo: str, github_token: str | None) -> list[tuple[str,
         name = entry.get("name", "")
         if not name.endswith((".yml", ".yaml")):
             continue
-        results.append((name, repo_file_text(owner_repo, f".github/workflows/{name}", github_token)))
+        file_text = repo_file_text(owner_repo, f".github/workflows/{name}", github_token)
+        results.append((name, file_text))
     # Sort by filename for deterministic output
     results.sort(key=lambda t: t[0])
     return results
@@ -96,19 +103,24 @@ def search_code_count(query: str, github_token: str | None) -> int:
     return int(response.json().get("total_count", 0))
 
 
-def default_branch_check_runs(owner_repo: str, github_token: str | None) -> list[dict[str, Any]]:
+def default_branch_check_runs(
+    owner_repo: str,
+    github_token: str | None,
+) -> list[dict[str, Any]]:
     repo_response = github_get(f"{_GITHUB_API}/repos/{owner_repo}", github_token)
     if not repo_response.ok:
         return []
     branch = repo_response.json().get("default_branch", "main")
-    branch_response = github_get(f"{_GITHUB_API}/repos/{owner_repo}/branches/{branch}", github_token)
+    url = f"{_GITHUB_API}/repos/{owner_repo}/branches/{branch}"
+    branch_response = github_get(url, github_token)
     if not branch_response.ok:
         return []
     head_sha = branch_response.json().get("commit", {}).get("sha", "")
     if not head_sha:
         return []
+    url = f"{_GITHUB_API}/repos/{owner_repo}/commits/{head_sha}/check-runs"
     checks_response = github_get(
-        f"{_GITHUB_API}/repos/{owner_repo}/commits/{head_sha}/check-runs",
+        url,
         github_token,
         accept="application/vnd.github+json",
     )
