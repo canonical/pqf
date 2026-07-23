@@ -15,7 +15,7 @@ on:
       - 'engine/**'          # re-run when assembly logic changes
       - '!engine/__tests__/**'
   pull_request:
-    types: [opened, reopened, synchronize, closed]
+    types: [opened, reopened, synchronize]
     paths:
       - 'products/**'
       - 'config/**'
@@ -272,25 +272,6 @@ jobs:
           pr-number: ${{ github.event.pull_request.number }}
           comment: false
 
-  cleanup-preview:
-    if: >
-      github.event_name == 'pull_request' &&
-      github.event.action == 'closed' &&
-      github.repository == 'canonical/pqf'
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-      pull-requests: write
-    steps:
-      - name: Remove PR preview
-        uses: rossjrw/pr-preview-action@v1
-        with:
-          preview-branch: gh-pages
-          umbrella-dir: pr-preview
-          action: remove
-          pr-number: ${{ github.event.pull_request.number }}
-          comment: false
-
   # ── 5. Build and deploy production site from fresh engine artifacts ───────────
   deploy-production:
     needs: run-engine
@@ -321,7 +302,22 @@ jobs:
         working-directory: ui
         # Vite copies ../public/ (downloaded from engine-artifacts) into dist/
 
-      - name: Deploy to GitHub Pages
+      - name: Deploy to GitHub Pages (attempt 1)
+        id: deploy_pages_attempt_1
+        continue-on-error: true
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ui/dist
+          destination_dir: .
+          keep_files: true
+
+      - name: Wait before deploy retry
+        if: steps.deploy_pages_attempt_1.outcome == 'failure'
+        run: sleep 30
+
+      - name: Deploy to GitHub Pages (retry)
+        if: steps.deploy_pages_attempt_1.outcome == 'failure'
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
