@@ -3,9 +3,6 @@ name: Deploy to GitHub Pages
 on:
   push:
     branches: [main]
-    paths:
-      - 'ui/**'
-      - '.github/workflows/deploy-pages.yml'
 
 permissions:
   contents: write
@@ -15,36 +12,7 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  detect-scope:
-    runs-on: ubuntu-latest
-    outputs:
-      data_changed: ${{ steps.scope.outputs.data_changed }}
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - id: scope
-        name: Detect data-affecting changes
-        run: |
-          before="${{ github.event.before }}"
-          if [ "$before" = "0000000000000000000000000000000000000000" ]; then
-            # For initial commit events, diff against the empty tree object so changes
-            # introduced by the root commit are detected. Compute an empty-tree object id.
-            base="$(git hash-object -t tree /dev/null)"
-          else
-            base="$before"
-          fi
-
-          if git diff --name-only "$base" "${{ github.sha }}" -- products/ config/ scorers/ engine/ | grep -q .; then
-            echo "data_changed=true" >> "$GITHUB_OUTPUT"
-          else
-            echo "data_changed=false" >> "$GITHUB_OUTPUT"
-          fi
-
   deploy:
-    needs: detect-scope
-    if: needs.detect-scope.outputs.data_changed != 'true'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4

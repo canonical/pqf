@@ -141,29 +141,14 @@ def test_deploy_pages_only_runs_for_ui_changes_and_skips_mixed_commits() -> None
     on = workflow.get("on") or workflow.get(True) or {}
     push = on.get("push", {})
     assert push["branches"] == ["main"]
-    assert push["paths"] == ["ui/**", ".github/workflows/deploy-pages.yml"]
+    assert "paths" not in push
 
     jobs = workflow["jobs"]
-    assert "detect-scope" in jobs
-
-    detect_scope = jobs["detect-scope"]
-    detect_step = next(
-        step
-        for step in detect_scope["steps"]
-        if step.get("name") == "Detect data-affecting changes"
-    )
-    # The detect step must handle the all-zero "before" (initial commit) case by
-    # diffing against the empty tree object instead of the root commit.
-    assert "0000000000000000000000000000000000000000" in detect_step["run"]
-    assert "git hash-object -t tree" in detect_step["run"]
-    assert '"$base"' in detect_step["run"]
-    assert "git diff --name-only" in detect_step["run"]
-    assert "products/ config/ scorers/ engine/" in detect_step["run"]
-    assert detect_scope["outputs"]["data_changed"] == "${{ steps.scope.outputs.data_changed }}"
+    assert "detect-scope" not in jobs
 
     deploy_job = jobs["deploy"]
-    assert deploy_job["needs"] == "detect-scope"
-    assert deploy_job["if"] == "needs.detect-scope.outputs.data_changed != 'true'"
+    assert "needs" not in deploy_job
+    assert "if" not in deploy_job
 
     pages_checkout = next(
         step for step in deploy_job["steps"] if step.get("name") == "Check out current Pages data"
