@@ -1,7 +1,11 @@
 import yaml
 
 from engine.models import EvaluationUnit, ProductType
-from scorers.security_ssdlc.logic import _has_branch_protection_required_checks, compute_metrics
+from scorers.security_ssdlc.logic import (
+    _has_branch_protection_required_checks,
+    _is_registered_in_repo_automation,
+    compute_metrics,
+)
 
 
 class _Response:
@@ -36,6 +40,59 @@ def test_branch_protection_required_checks_true(mocker):
     assert _has_branch_protection_required_checks("canonical/test-repo", "token") is True
 
 
+def test_repo_automation_registration_reads_from_authoritative_list(mocker):
+    registration_path = (
+        "groups/is/platform-engineering/repos/saml-integrator-operator/inputs.hcl"
+    )
+    mocker.patch(
+        "scorers.security_ssdlc.logic.github_get",
+        side_effect=[
+            _Response(True, {"default_branch": "main"}),
+            _Response(
+                True,
+                {
+                    "tree": [
+                        {
+                            "type": "blob",
+                            "path": registration_path,
+                        }
+                    ]
+                },
+            ),
+        ],
+    )
+    mocker.patch(
+        "scorers.security_ssdlc.logic.repo_file_text",
+        return_value="canonical/saml-integrator-operator\n",
+    )
+    assert _is_registered_in_repo_automation("canonical/saml-integrator-operator", "token") is True
+
+
+def test_repo_automation_registration_returns_false_when_repo_file_missing(mocker):
+    registration_path = (
+        "groups/is/platform-engineering/repos/saml-integrator-operator/inputs.hcl"
+    )
+    mocker.patch(
+        "scorers.security_ssdlc.logic.github_get",
+        side_effect=[
+            _Response(True, {"default_branch": "main"}),
+            _Response(
+                True,
+                {
+                    "tree": [
+                        {
+                            "type": "blob",
+                            "path": registration_path,
+                        }
+                    ]
+                },
+            ),
+        ],
+    )
+    mocker.patch("scorers.security_ssdlc.logic.repo_file_text", return_value="")
+    assert _is_registered_in_repo_automation("canonical/saml-integrator-operator", "token") is False
+
+
 def test_compute_metrics_detects_new_ssdlc_signals(mocker):
     mocker.patch(
         "scorers.security_ssdlc.logic.repo_file_exists",
@@ -46,8 +103,8 @@ def test_compute_metrics_detects_new_ssdlc_signals(mocker):
         return_value="We track CVEs and vulnerability disclosures.",
     )
     mocker.patch(
-        "scorers.security_ssdlc.logic.search_code_count",
-        side_effect=lambda query, token: 1 if "canonical-repo-automation" in query else 0,
+        "scorers.security_ssdlc.logic._is_registered_in_repo_automation",
+        return_value=True,
     )
     mocker.patch(
         "scorers.security_ssdlc.logic.workflow_files",
@@ -75,6 +132,10 @@ def test_compute_metrics_falls_back_to_false_when_signals_absent(mocker):
     mocker.patch("scorers.security_ssdlc.logic.repo_file_exists", return_value=False)
     mocker.patch("scorers.security_ssdlc.logic.repo_file_text", return_value="")
     mocker.patch("scorers.security_ssdlc.logic.search_code_count", return_value=0)
+    mocker.patch(
+        "scorers.security_ssdlc.logic._is_registered_in_repo_automation",
+        return_value=False,
+    )
     mocker.patch("scorers.security_ssdlc.logic.workflow_files", return_value=[])
     mocker.patch(
         "scorers.security_ssdlc.logic.github_get",
@@ -100,6 +161,10 @@ def test_cve_tracking_detects_non_security_marker(mocker):
     )
     mocker.patch("scorers.security_ssdlc.logic.repo_file_text", return_value="")
     mocker.patch("scorers.security_ssdlc.logic.search_code_count", return_value=0)
+    mocker.patch(
+        "scorers.security_ssdlc.logic._is_registered_in_repo_automation",
+        return_value=False,
+    )
     mocker.patch("scorers.security_ssdlc.logic.workflow_files", return_value=[])
     mocker.patch(
         "scorers.security_ssdlc.logic.github_get",

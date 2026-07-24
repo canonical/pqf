@@ -10,6 +10,7 @@ from scorers.shared.github_signals import (
 )
 
 _GITHUB_API = "https://api.github.com"
+_CANONICAL_REPO_AUTOMATION_REPO = "canonical/canonical-repo-automation"
 
 
 def _has_branch_protection_required_checks(owner_repo: str, github_token: str) -> bool:
@@ -73,6 +74,51 @@ def _has_cve_tracking_process(owner_repo: str, github_token: str) -> bool:
     return False
 
 
+def _is_registered_in_repo_automation(owner_repo: str, github_token: str) -> bool:
+    repo_name = owner_repo.split("/", 1)[-1]
+    repo_resp = github_get(
+        f"{_GITHUB_API}/repos/{_CANONICAL_REPO_AUTOMATION_REPO}",
+        github_token,
+    )
+    if not repo_resp.ok:
+        return False
+    default_branch = repo_resp.json().get("default_branch", "main")
+    tree_resp = github_get(
+        f"{_GITHUB_API}/repos/{_CANONICAL_REPO_AUTOMATION_REPO}/git/trees/{default_branch}?recursive=1",
+        github_token,
+    )
+    if not tree_resp.ok:
+        return False
+    tree = tree_resp.json().get("tree", [])
+    candidate_paths = (
+        f"/repos/{repo_name}/inputs.hcl",
+        f"/repos/{repo_name}/terragrunt.hcl",
+    )
+    registration_path = next(
+        (
+            entry.get("path", "")
+            for entry in tree
+            if entry.get("type") == "blob"
+            and any(entry.get("path", "").endswith(candidate) for candidate in candidate_paths)
+        ),
+        "",
+    )
+    if not registration_path:
+        return False
+    registration_text = repo_file_text(
+        _CANONICAL_REPO_AUTOMATION_REPO,
+        registration_path,
+        github_token,
+    )
+    if not registration_text:
+        return False
+    lines = {line.strip() for line in registration_text.splitlines() if line.strip()}
+    if owner_repo in lines or repo_name in lines:
+        return True
+    # canonical-repo-automation currently stores one config file per registered repo.
+    return True
+
+
 def compute_metrics(unit: EvaluationUnit, github_token: str) -> dict[str, Any]:
     """
     Check SSDLC signals for the evaluation unit's repo.
@@ -95,8 +141,10 @@ def compute_metrics(unit: EvaluationUnit, github_token: str) -> dict[str, Any]:
         if not renovate_enabled:
             renovate_enabled = search_code_count(f"repo:{unit.repo} renovate", github_token) > 0
 
-        automation_query = f'repo:canonical/canonical-repo-automation "{unit.repo}"'
-        canonical_repo_automation_registered = search_code_count(automation_query, github_token) > 0
+        canonical_repo_automation_registered = _is_registered_in_repo_automation(
+            unit.repo,
+            github_token,
+        )
         sast_workflow_present = _has_sast_workflow(unit.repo, github_token)
         cve_tracking_process_present = _has_cve_tracking_process(unit.repo, github_token)
 
