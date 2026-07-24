@@ -126,6 +126,45 @@ jobs:
           pytest -m integration
 """
 
+_FOLDED_CK8S_WORKFLOW = """\
+name: Integration Tests
+on: [push]
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - run: >-
+          juju bootstrap
+          microk8s
+      - run: pytest -m integration
+"""
+
+_FOLDED_INTEGRATION_WORKFLOW = """\
+name: Integration Tests
+on: [push]
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - run: juju bootstrap microk8s
+      - run: >-
+          pytest -m
+          integration
+"""
+
+_QUOTED_HEREDOC_TEXT_WORKFLOW = """\
+name: Integration Tests
+on: [push]
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - run: juju bootstrap microk8s
+      - run: |-
+          echo "<<EOF"
+          pytest -m integration
+"""
+
 _SCRIPT_TEXT_JUJU4_WORKFLOW = """\
 name: CI
 on: [push]
@@ -297,6 +336,45 @@ def test_detects_canonical_k8s_alias_from_bootstrap_command():
     _mock_workflows_dir("canonical/synapse-operator", ["integration.yaml"])
     _mock_workflow_file(
         "canonical/synapse-operator", "integration.yaml", _CANONICAL_K8S_ALIAS_WORKFLOW
+    )
+    result = compute_metrics(UNIT, "token")
+    assert result["supports_juju_3"] is False
+    assert result["supports_juju_4"] is False
+    assert result["uses_canonical_k8s"] is True
+    assert result["substrate_test_evidence_present"] is True
+
+
+@responses.activate
+def test_detects_canonical_k8s_from_folded_run_block():
+    _mock_workflows_dir("canonical/synapse-operator", ["integration.yaml"])
+    _mock_workflow_file(
+        "canonical/synapse-operator", "integration.yaml", _FOLDED_CK8S_WORKFLOW
+    )
+    result = compute_metrics(UNIT, "token")
+    assert result["supports_juju_3"] is False
+    assert result["supports_juju_4"] is False
+    assert result["uses_canonical_k8s"] is True
+    assert result["substrate_test_evidence_present"] is True
+
+
+@responses.activate
+def test_detects_integration_from_folded_run_block():
+    _mock_workflows_dir("canonical/synapse-operator", ["integration.yaml"])
+    _mock_workflow_file(
+        "canonical/synapse-operator", "integration.yaml", _FOLDED_INTEGRATION_WORKFLOW
+    )
+    result = compute_metrics(UNIT, "token")
+    assert result["supports_juju_3"] is False
+    assert result["supports_juju_4"] is False
+    assert result["uses_canonical_k8s"] is True
+    assert result["substrate_test_evidence_present"] is True
+
+
+@responses.activate
+def test_quoted_heredoc_text_does_not_hide_following_integration_command():
+    _mock_workflows_dir("canonical/synapse-operator", ["integration.yaml"])
+    _mock_workflow_file(
+        "canonical/synapse-operator", "integration.yaml", _QUOTED_HEREDOC_TEXT_WORKFLOW
     )
     result = compute_metrics(UNIT, "token")
     assert result["supports_juju_3"] is False

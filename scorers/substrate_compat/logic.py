@@ -162,33 +162,116 @@ def _iter_run_commands(content: str):
         indent = len(match.group("indent"))
         inline_value = match.group("value").strip()
         if inline_value and not _is_block_scalar_indicator(inline_value):
-            yield _strip_yaml_inline_comment(inline_value)
+            yield from _iter_shell_commands(_strip_yaml_inline_comment(inline_value))
             continue
 
-        cursor = index + 1
-        heredoc_tag: str | None = None
-        while cursor < len(lines):
-            nested_line = lines[cursor]
-            stripped = nested_line.strip()
-            if not stripped:
-                cursor += 1
+        block_lines, _ = _extract_block_scalar_lines(lines, index + 1, indent)
+        scalar = _normalize_run_block_scalar(inline_value, block_lines)
+        yield from _iter_shell_commands(scalar)
+
+
+def _extract_block_scalar_lines(lines: list[str], start: int, parent_indent: int) -> tuple[list[str], int]:
+    block_lines: list[str] = []
+    cursor = start
+    content_indent: int | None = None
+
+    while cursor < len(lines):
+        nested_line = lines[cursor]
+        stripped = nested_line.strip()
+        nested_indent = len(nested_line) - len(nested_line.lstrip(" \t"))
+        if stripped and nested_indent <= parent_indent:
+            break
+
+        if stripped:
+            if content_indent is None or nested_indent < content_indent:
+                content_indent = nested_indent
+            block_lines.append(nested_line)
+        else:
+            block_lines.append("")
+        cursor += 1
+
+    if content_indent is None:
+        return [], cursor
+
+    dedented_lines = [
+        line[content_indent:] if line else ""
+        for line in block_lines
+    ]
+    return dedented_lines, cursor
+
+
+def _normalize_run_block_scalar(indicator: str, lines: list[str]) -> str:
+    if not lines:
+        return ""
+
+    style = indicator.strip()[0]
+    if style == "|":
+        return "\n".join(lines)
+
+    folded_parts: list[str] = []
+    previous_blank = True
+    for line in lines:
+        if not line:
+            folded_parts.append("\n")
+            previous_blank = True
+            continue
+        if folded_parts and not previous_blank and not folded_parts[-1].endswith("\n"):
+            folded_parts.append(" ")
+        folded_parts.append(line)
+        previous_blank = False
+    return "".join(folded_parts)
+
+
+def _find_unquoted_heredoc_start(command: str) -> str | None:
+    in_single_quote = False
+    in_double_quote = False
+    escaping = False
+
+    for index, char in enumerate(command):
+        if in_double_quote:
+            if escaping:
+                escaping = False
                 continue
-
-            nested_indent = len(nested_line) - len(nested_line.lstrip(" \t"))
-            if nested_indent <= indent:
-                break
-
-            if heredoc_tag is not None:
-                if stripped == heredoc_tag:
-                    heredoc_tag = None
-                cursor += 1
+            if char == "\\":
+                escaping = True
                 continue
+            if char == '"':
+                in_double_quote = False
+            continue
 
-            heredoc_match = _HEREDOC_START_PATTERN.search(stripped)
+        if in_single_quote:
+            if char == "'":
+                in_single_quote = False
+            continue
+
+        if char == '"':
+            in_double_quote = True
+            continue
+        if char == "'":
+            in_single_quote = True
+            continue
+        if char == "<" and command[index : index + 2] == "<<":
+            heredoc_match = _HEREDOC_START_PATTERN.match(command, index)
             if heredoc_match:
-                heredoc_tag = heredoc_match.group("tag")
-            yield stripped
-            cursor += 1
+                return heredoc_match.group("tag")
+    return None
+
+
+def _iter_shell_commands(script: str):
+    heredoc_tag: str | None = None
+
+    for line in script.splitlines():
+        stripped = line.strip()
+        if not stripped:
+            continue
+
+        if heredoc_tag is not None:
+            if stripped == heredoc_tag:
+                heredoc_tag = None
+            continue
+
+        heredoc_tag = _find_unquoted_heredoc_start(stripped)
+        yield stripped
 
 
 def _uses_canonical_k8s(content: str) -> bool:
