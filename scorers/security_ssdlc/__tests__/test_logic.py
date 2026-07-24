@@ -61,36 +61,22 @@ def test_repo_automation_registration_reads_from_authoritative_list(mocker):
             ),
         ],
     )
-    mocker.patch(
-        "scorers.security_ssdlc.logic.repo_file_text",
-        return_value="canonical/saml-integrator-operator\n",
-    )
     assert _is_registered_in_repo_automation("canonical/saml-integrator-operator", "token") is True
 
 
-def test_repo_automation_registration_returns_false_when_repo_file_missing(mocker):
-    registration_path = (
-        "groups/is/platform-engineering/repos/saml-integrator-operator/inputs.hcl"
-    )
+def test_repo_automation_registration_returns_false_when_file_absent(mocker):
     mocker.patch(
         "scorers.security_ssdlc.logic.github_get",
         side_effect=[
             _Response(True, {"default_branch": "main"}),
-            _Response(
-                True,
-                {
-                    "tree": [
-                        {
-                            "type": "blob",
-                            "path": registration_path,
-                        }
-                    ]
-                },
-            ),
+            _Response(True, {"tree": []}),  # no config file in tree
         ],
     )
-    mocker.patch("scorers.security_ssdlc.logic.repo_file_text", return_value="")
     assert _is_registered_in_repo_automation("canonical/saml-integrator-operator", "token") is False
+
+
+def test_repo_automation_registration_returns_false_for_non_canonical_owner(mocker):
+    assert _is_registered_in_repo_automation("thirdparty/some-operator", "token") is False
 
 
 def test_compute_metrics_detects_new_ssdlc_signals(mocker):

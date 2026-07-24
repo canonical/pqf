@@ -75,7 +75,15 @@ def _has_cve_tracking_process(owner_repo: str, github_token: str) -> bool:
 
 
 def _is_registered_in_repo_automation(owner_repo: str, github_token: str) -> bool:
-    repo_name = owner_repo.split("/", 1)[-1]
+    """Return True if canonical-repo-automation manages a config file for owner_repo.
+
+    canonical-repo-automation only manages canonical/* repos. The presence of a
+    per-repo config file (repos/<name>/inputs.hcl or terragrunt.hcl) is the
+    authoritative registration signal.
+    """
+    owner, repo_name = owner_repo.split("/", 1) if "/" in owner_repo else ("", owner_repo)
+    if owner.lower() != "canonical":
+        return False
     repo_resp = github_get(
         f"{_GITHUB_API}/repos/{_CANONICAL_REPO_AUTOMATION_REPO}",
         github_token,
@@ -90,33 +98,15 @@ def _is_registered_in_repo_automation(owner_repo: str, github_token: str) -> boo
     if not tree_resp.ok:
         return False
     tree = tree_resp.json().get("tree", [])
-    candidate_paths = (
-        f"/repos/{repo_name}/inputs.hcl",
-        f"/repos/{repo_name}/terragrunt.hcl",
+    candidate_suffixes = (
+        f"repos/{repo_name}/inputs.hcl",
+        f"repos/{repo_name}/terragrunt.hcl",
     )
-    registration_path = next(
-        (
-            entry.get("path", "")
-            for entry in tree
-            if entry.get("type") == "blob"
-            and any(entry.get("path", "").endswith(candidate) for candidate in candidate_paths)
-        ),
-        "",
+    return any(
+        entry.get("type") == "blob"
+        and any(entry.get("path", "").endswith(suffix) for suffix in candidate_suffixes)
+        for entry in tree
     )
-    if not registration_path:
-        return False
-    registration_text = repo_file_text(
-        _CANONICAL_REPO_AUTOMATION_REPO,
-        registration_path,
-        github_token,
-    )
-    if not registration_text:
-        return False
-    lines = {line.strip() for line in registration_text.splitlines() if line.strip()}
-    if owner_repo in lines or repo_name in lines:
-        return True
-    # canonical-repo-automation currently stores one config file per registered repo.
-    return True
 
 
 def compute_metrics(unit: EvaluationUnit, github_token: str) -> dict[str, Any]:
