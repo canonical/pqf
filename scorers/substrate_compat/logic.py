@@ -52,19 +52,65 @@ def _iter_key_section_lines(content: str, key: str):
             cursor += 1
 
 
+def _normalize_yaml_scalar(value: str) -> str:
+    normalized = value.strip()
+    if normalized.startswith("- "):
+        normalized = normalized[2:].strip()
+    if len(normalized) >= 2 and normalized[0] == normalized[-1] and normalized[0] in {'"', "'"}:
+        normalized = normalized[1:-1].strip()
+    return normalized
+
+
 def _has_juju_channel(content: str, track: str) -> bool:
-    return any(track in line for line in _iter_key_section_lines(content, "juju-channel"))
+    return any(
+        _normalize_yaml_scalar(line) == track
+        for line in _iter_key_section_lines(content, "juju-channel")
+    )
+
+
+def _iter_run_commands(content: str):
+    lines = content.splitlines()
+    pattern = re.compile(r"^(?P<indent>[ \t]*)(?:-\s+)?run:\s*(?P<value>.*)$")
+
+    for index, line in enumerate(lines):
+        match = pattern.match(line)
+        if not match:
+            continue
+
+        indent = len(match.group("indent"))
+        inline_value = match.group("value").strip()
+        if inline_value and inline_value not in {"|", ">"}:
+            yield inline_value
+            continue
+
+        cursor = index + 1
+        while cursor < len(lines):
+            nested_line = lines[cursor]
+            stripped = nested_line.strip()
+            if not stripped:
+                cursor += 1
+                continue
+
+            nested_indent = len(nested_line) - len(nested_line.lstrip(" \t"))
+            if nested_indent <= indent:
+                break
+
+            yield stripped
+            cursor += 1
 
 
 def _uses_canonical_k8s(content: str) -> bool:
-    lowered = content.lower()
-    if "use-canonical-k8s: true" in lowered:
+    if any(
+        _normalize_yaml_scalar(line).lower() == "true"
+        for line in _iter_key_section_lines(content, "use-canonical-k8s")
+    ):
         return True
-    return bool(
-        re.search(
-            r"\bjuju\s+bootstrap\s+(?:microk8s|canonical-kubernetes|ck8s)\b",
-            lowered,
+    return any(
+        re.match(
+            r"^juju\s+bootstrap\s+(?:microk8s|canonical-kubernetes|ck8s)\b",
+            command.strip().lower(),
         )
+        for command in _iter_run_commands(content)
     )
 
 
