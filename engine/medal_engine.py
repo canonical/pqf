@@ -132,7 +132,6 @@ def compute_product(
     """
     Legacy entry point used by assemble.py and __main__.py.
 
-    Computes medals for a single product without applicability filtering.
     Pure function — reads drift_history but never mutates it.
     Call engine.drift_tracker.update_drift_history() separately to persist drift state.
     """
@@ -141,7 +140,15 @@ def compute_product(
 
     for dim_name, dim_config in dimensions_config.get("dimensions", {}).items():
         metrics = computed.get("metrics", {}).get(dim_name, {})
-        dim_medal = evaluate_rubric(metrics, dim_config["medals"])
+        required_metrics = dim_config.get("required_metrics_for_scoring", [])
+        applicability = ApplicabilityOutcome.SCORED
+        if required_metrics and any(metrics.get(metric_name) is None for metric_name in required_metrics):
+            applicability = ApplicabilityOutcome.INSUFFICIENT_DATA
+
+        if applicability != ApplicabilityOutcome.SCORED:
+            dim_medal = Medal.UNRATED
+        else:
+            dim_medal = evaluate_rubric(metrics, dim_config["medals"])
         drift = compute_dimension_drift(
             product["id"], dim_name, dim_medal, target_medal, drift_history
         )
@@ -150,15 +157,11 @@ def compute_product(
             target=target_medal,
             metrics=metrics,
             drift=drift,
+            applicability=applicability,
         )
 
-    if dimension_results:
-        current_medal = min(
-            dimension_results.values(),
-            key=lambda r: MEDAL_RANK[r.medal],
-        ).medal
-    else:
-        current_medal = Medal.UNRATED
+    scored = [r for r in dimension_results.values() if r.applicability == ApplicabilityOutcome.SCORED]
+    current_medal = min(scored, key=lambda r: MEDAL_RANK[r.medal]).medal if scored else Medal.UNRATED
 
     return ProductResult(
         product_id=product["id"],

@@ -20,6 +20,13 @@ DIM_NO_APPLIES_TO = {
     "medals": {"bronze": ["some_metric == true"]},
 }
 
+DIM_WITH_REQUIRED_METRICS = {
+    "applies_to": {"product_types": ["charm"]},
+    "aggregation": "worst_in_scope",
+    "required_metrics_for_scoring": ["coverage_pct", "latest_build_passing"],
+    "medals": {"bronze": ["coverage_pct >= 70", "latest_build_passing == true"]},
+}
+
 
 def _leaf(product_id, medal, applicability=ApplicabilityOutcome.SCORED, excluded=False):
     return LeafDimensionResult(
@@ -78,8 +85,26 @@ def test_leaf_applicability_insufficient_data_when_no_metrics():
     assert outcome == ApplicabilityOutcome.INSUFFICIENT_DATA
 
 
+def test_leaf_applicability_insufficient_data_when_required_metric_is_none():
+    outcome = compute_leaf_applicability(
+        "charm",
+        {"coverage_pct": None, "latest_build_passing": True},
+        DIM_WITH_REQUIRED_METRICS,
+    )
+    assert outcome == ApplicabilityOutcome.INSUFFICIENT_DATA
+
+
 def test_leaf_applicability_scored_when_applicable_with_metrics():
     outcome = compute_leaf_applicability("charm", {"some_metric": True}, DIM_ROOT_EXCLUDED)
+    assert outcome == ApplicabilityOutcome.SCORED
+
+
+def test_leaf_applicability_scored_when_required_metrics_are_present():
+    outcome = compute_leaf_applicability(
+        "charm",
+        {"coverage_pct": 75, "latest_build_passing": True},
+        DIM_WITH_REQUIRED_METRICS,
+    )
     assert outcome == ApplicabilityOutcome.SCORED
 
 
