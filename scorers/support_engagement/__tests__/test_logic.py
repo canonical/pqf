@@ -49,10 +49,20 @@ _COMMENTS_ISSUE_2 = [
 
 _PULLS = [
     {"number": 10, "created_at": "2026-06-01T00:00:00Z"},
+    {"number": 11, "created_at": "2026-06-01T00:00:00Z"},
+    {"number": 12, "created_at": "2026-06-01T00:00:00Z"},
 ]
 
 _REVIEWS_PR_10 = [
     {"submitted_at": "2026-06-02T00:00:00Z", "state": "COMMENTED"},  # 1 day
+]
+
+_REVIEWS_PR_11 = [
+    {"submitted_at": "2026-06-02T00:00:00Z", "state": "COMMENTED"},
+]
+
+_REVIEWS_PR_12 = [
+    {"submitted_at": "2026-06-02T00:00:00Z", "state": "COMMENTED"},
 ]
 
 
@@ -109,6 +119,18 @@ def test_avg_triage_days_computed_correctly():
         json=_REVIEWS_PR_10,
         status=200,
     )
+    responses.add(
+        responses.GET,
+        f"{_GITHUB_API}/repos/canonical/synapse-operator/pulls/11/reviews",
+        json=_REVIEWS_PR_11,
+        status=200,
+    )
+    responses.add(
+        responses.GET,
+        f"{_GITHUB_API}/repos/canonical/synapse-operator/pulls/12/reviews",
+        json=_REVIEWS_PR_12,
+        status=200,
+    )
     _mock_repo_metadata(
         "canonical/synapse-operator",
         topics=["squad-americas", "product-matrix"],
@@ -123,7 +145,7 @@ def test_avg_triage_days_computed_correctly():
 
 
 @responses.activate
-def test_returns_zero_when_no_issues():
+def test_returns_none_when_insufficient_activity():
     responses.add(
         responses.GET,
         f"{_GITHUB_API}/repos/canonical/synapse-operator/issues",
@@ -140,9 +162,9 @@ def test_returns_zero_when_no_issues():
     )
     _mock_repo_metadata("canonical/synapse-operator")
     result = compute_metrics(UNIT, "token")
-    assert result["avg_triage_days"] == 0.0
-    assert result["avg_pr_review_days"] == 0.0
-    assert result["response_coverage_rate"] == 0.0
+    assert result["avg_triage_days"] is None
+    assert result["avg_pr_review_days"] is None
+    assert result["response_coverage_rate"] is None
     assert result["ownership_signal"] is False
     assert result["has_jira_sync"] is False
 
@@ -174,8 +196,8 @@ def test_skips_pr_issues_in_issue_list():
     )
     _mock_repo_metadata("canonical/synapse-operator")
     result = compute_metrics(UNIT, "token")
-    assert result["avg_triage_days"] == 0.0
-    assert result["response_coverage_rate"] == 0.0
+    assert result["avg_triage_days"] is None
+    assert result["response_coverage_rate"] is None
     assert result["ownership_signal"] is False
     assert result["has_jira_sync"] is False
 
@@ -212,8 +234,8 @@ def test_zero_when_issue_has_no_comments():
     )
     _mock_repo_metadata("canonical/synapse-operator")
     result = compute_metrics(UNIT, "token")
-    assert result["avg_triage_days"] == 0.0
-    assert result["response_coverage_rate"] == 0.0
+    assert result["avg_triage_days"] is None
+    assert result["response_coverage_rate"] is None
     assert result["ownership_signal"] is False
     assert result["has_jira_sync"] is False
 
@@ -281,8 +303,8 @@ def test_pr_review_zero_when_no_reviews():
     )
     _mock_repo_metadata("canonical/synapse-operator")
     result = compute_metrics(UNIT, "token")
-    assert result["avg_pr_review_days"] == 0.0
-    assert result["response_coverage_rate"] == 0.0
+    assert result["avg_pr_review_days"] is None
+    assert result["response_coverage_rate"] is None
     assert result["ownership_signal"] is False
     assert result["has_jira_sync"] is False
 
@@ -319,8 +341,8 @@ def test_single_repo_triage_days():
     )
     _mock_repo_metadata("canonical/synapse-operator")
     result = compute_metrics(UNIT, "token")
-    assert result["avg_triage_days"] == 2.0
-    assert result["response_coverage_rate"] == 100.0
+    assert result["avg_triage_days"] is None
+    assert result["response_coverage_rate"] is None
     assert result["ownership_signal"] is False
     assert result["has_jira_sync"] is False
 
@@ -355,9 +377,9 @@ def test_excludes_prs_outside_90day_window():
     )
     _mock_repo_metadata("canonical/synapse-operator")
     result = compute_metrics(UNIT, "token")
-    # Only PR #2 should be considered (PR #1 is outside 90-day window)
-    assert result["avg_pr_review_days"] == 1.0
-    assert result["response_coverage_rate"] == 100.0
+    # Only PR #2 should be considered, leaving an insufficient sample.
+    assert result["avg_pr_review_days"] is None
+    assert result["response_coverage_rate"] is None
     assert result["ownership_signal"] is False
     assert result["has_jira_sync"] is False
 
@@ -386,8 +408,8 @@ def test_pr_reviews_ignore_null_submitted_at():
     )
     _mock_repo_metadata("canonical/synapse-operator")
     result = compute_metrics(UNIT, "token")
-    assert result["avg_pr_review_days"] == 1.0
-    assert result["response_coverage_rate"] == 100.0
+    assert result["avg_pr_review_days"] is None
+    assert result["response_coverage_rate"] is None
 
 
 def test_paginate_json_array_fetches_all_pages():
