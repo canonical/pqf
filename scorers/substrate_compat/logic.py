@@ -163,6 +163,11 @@ def _iter_run_commands(content: str):
             yield from _iter_shell_commands(_normalize_yaml_scalar(inline_value))
             continue
 
+        # Empty inline_value with no block-scalar indicator means run: is a mapping
+        # block (e.g. defaults.run.shell), not a shell command — skip it.
+        if not inline_value:
+            continue
+
         block_lines, _ = _extract_block_scalar_lines(lines, index + 1, indent)
         scalar = _normalize_run_block_scalar(inline_value, block_lines)
         yield from _iter_shell_commands(scalar)

@@ -577,3 +577,30 @@ def test_shell_comment_heredoc_token_does_not_suppress_real_commands():
     assert result["supports_juju_3"] is True
     # pytest -m integration following the comment line must be detected
     assert result["substrate_test_evidence_present"] is True
+
+
+_DEFAULTS_RUN_WORKFLOW = """\
+name: CI
+on: [push]
+defaults:
+  run:
+    shell: bash
+    working-directory: ./scripts
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - with:
+          juju-channel: 3/stable
+      - run: pytest -m integration
+"""
+
+
+@responses.activate
+def test_defaults_run_mapping_does_not_crash():
+    """defaults.run: mapping block must not raise an error."""
+    _mock_workflows_dir("canonical/synapse-operator", ["ci.yaml"])
+    _mock_workflow_file("canonical/synapse-operator", "ci.yaml", _DEFAULTS_RUN_WORKFLOW)
+    result = compute_metrics(UNIT, "token")
+    assert result["supports_juju_3"] is True
+    assert result["substrate_test_evidence_present"] is True
