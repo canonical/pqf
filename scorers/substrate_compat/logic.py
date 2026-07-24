@@ -22,6 +22,52 @@ def _make_github_session(github_token: str) -> requests.Session:
     return session
 
 
+def _iter_key_section_lines(content: str, key: str):
+    lines = content.splitlines()
+    pattern = re.compile(rf"^(?P<indent>[ \t]*){re.escape(key)}:\s*(?P<value>.*)$")
+
+    for index, line in enumerate(lines):
+        match = pattern.match(line)
+        if not match:
+            continue
+
+        indent = len(match.group("indent"))
+        inline_value = match.group("value").strip()
+        if inline_value:
+            yield inline_value
+
+        cursor = index + 1
+        while cursor < len(lines):
+            nested_line = lines[cursor]
+            stripped = nested_line.strip()
+            if not stripped:
+                cursor += 1
+                continue
+
+            nested_indent = len(nested_line) - len(nested_line.lstrip(" \t"))
+            if nested_indent <= indent:
+                break
+
+            yield stripped
+            cursor += 1
+
+
+def _has_juju_channel(content: str, track: str) -> bool:
+    return any(track in line for line in _iter_key_section_lines(content, "juju-channel"))
+
+
+def _uses_canonical_k8s(content: str) -> bool:
+    lowered = content.lower()
+    if "use-canonical-k8s: true" in lowered:
+        return True
+    return bool(
+        re.search(
+            r"\bjuju\s+bootstrap\s+(?:microk8s|canonical-kubernetes|ck8s)\b",
+            lowered,
+        )
+    )
+
+
 def _fetch_workflow_contents(owner_repo: str, github_token: str) -> list[str]:
     """Fetch text contents of all workflow YAML files in .github/workflows/."""
     session = _make_github_session(github_token)
@@ -72,13 +118,13 @@ def compute_metrics(unit: EvaluationUnit, github_token: str) -> dict[str, Any]:
                 )
             )
             has_substrate_target_signal = False
-            if re.search(r"juju-channel:.*3/stable", content):
+            if _has_juju_channel(content, "3/stable"):
                 supports_juju_3 = True
                 has_substrate_target_signal = True
-            if re.search(r"juju-channel:.*4/stable", content):
+            if _has_juju_channel(content, "4/stable"):
                 supports_juju_4 = True
                 has_substrate_target_signal = True
-            if "use-canonical-k8s: true" in lowered:
+            if _uses_canonical_k8s(content):
                 uses_canonical_k8s = True
                 has_substrate_target_signal = True
             if has_integration_signal and has_substrate_target_signal:

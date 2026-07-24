@@ -29,6 +29,32 @@ jobs:
       use-canonical-k8s: true
 """
 
+_MATRIX_JUJU4_WORKFLOW = """\
+name: Integration Tests
+on: [push]
+jobs:
+  test:
+    uses: canonical/operator-workflows/.github/workflows/integration_test.yaml@main
+    strategy:
+      matrix:
+        juju-channel:
+          - 3/stable
+          - 4/stable
+    with:
+      juju-channel: ${{ matrix.juju-channel }}
+"""
+
+_CANONICAL_K8S_ALIAS_WORKFLOW = """\
+name: Integration Tests
+on: [push]
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - run: juju bootstrap microk8s
+      - run: pytest -m integration
+"""
+
 _GENERIC_WORKFLOW = """\
 name: CI
 on: [push]
@@ -107,6 +133,31 @@ def test_detects_ck8s_from_workflow():
     _mock_workflows_dir("canonical/synapse-operator", ["integration.yaml"])
     _mock_workflow_file("canonical/synapse-operator", "integration.yaml", _JUJU4_CK8S_WORKFLOW)
     result = compute_metrics(UNIT, "token")
+    assert result["uses_canonical_k8s"] is True
+    assert result["substrate_test_evidence_present"] is True
+
+
+@responses.activate
+def test_detects_juju4_from_matrix_values():
+    _mock_workflows_dir("canonical/synapse-operator", ["integration.yaml"])
+    _mock_workflow_file(
+        "canonical/synapse-operator", "integration.yaml", _MATRIX_JUJU4_WORKFLOW
+    )
+    result = compute_metrics(UNIT, "token")
+    assert result["supports_juju_3"] is True
+    assert result["supports_juju_4"] is True
+    assert result["substrate_test_evidence_present"] is True
+
+
+@responses.activate
+def test_detects_canonical_k8s_alias_from_bootstrap_command():
+    _mock_workflows_dir("canonical/synapse-operator", ["integration.yaml"])
+    _mock_workflow_file(
+        "canonical/synapse-operator", "integration.yaml", _CANONICAL_K8S_ALIAS_WORKFLOW
+    )
+    result = compute_metrics(UNIT, "token")
+    assert result["supports_juju_3"] is False
+    assert result["supports_juju_4"] is False
     assert result["uses_canonical_k8s"] is True
     assert result["substrate_test_evidence_present"] is True
 
