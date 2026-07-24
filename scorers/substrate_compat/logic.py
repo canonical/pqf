@@ -162,7 +162,7 @@ def _iter_run_commands(content: str):
         indent = len(match.group("indent"))
         inline_value = match.group("value").strip()
         if inline_value and not _is_block_scalar_indicator(inline_value):
-            yield from _iter_shell_commands(_strip_yaml_inline_comment(inline_value))
+            yield from _iter_shell_commands(_normalize_yaml_scalar(inline_value))
             continue
 
         block_lines, _ = _extract_block_scalar_lines(lines, index + 1, indent)
