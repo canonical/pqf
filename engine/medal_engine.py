@@ -142,7 +142,9 @@ def compute_product(
         metrics = computed.get("metrics", {}).get(dim_name, {})
         required_metrics = dim_config.get("required_metrics_for_scoring", [])
         applicability = ApplicabilityOutcome.SCORED
-        if required_metrics and any(metrics.get(metric_name) is None for metric_name in required_metrics):
+        if required_metrics and any(
+            metrics.get(metric_name) is None for metric_name in required_metrics
+        ):
             applicability = ApplicabilityOutcome.INSUFFICIENT_DATA
 
         if applicability != ApplicabilityOutcome.SCORED:
@@ -160,8 +162,12 @@ def compute_product(
             applicability=applicability,
         )
 
-    scored = [r for r in dimension_results.values() if r.applicability == ApplicabilityOutcome.SCORED]
-    current_medal = min(scored, key=lambda r: MEDAL_RANK[r.medal]).medal if scored else Medal.UNRATED
+    scored = [
+        r for r in dimension_results.values() if r.applicability == ApplicabilityOutcome.SCORED
+    ]
+    current_medal = (
+        min(scored, key=lambda r: MEDAL_RANK[r.medal]).medal if scored else Medal.UNRATED
+    )
 
     return ProductResult(
         product_id=product["id"],

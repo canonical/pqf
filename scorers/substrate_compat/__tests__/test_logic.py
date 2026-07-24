@@ -306,9 +306,7 @@ def test_detects_ck8s_from_workflow():
 @responses.activate
 def test_detects_juju4_from_matrix_values():
     _mock_workflows_dir("canonical/synapse-operator", ["integration.yaml"])
-    _mock_workflow_file(
-        "canonical/synapse-operator", "integration.yaml", _MATRIX_JUJU4_WORKFLOW
-    )
+    _mock_workflow_file("canonical/synapse-operator", "integration.yaml", _MATRIX_JUJU4_WORKFLOW)
     result = compute_metrics(UNIT, "token")
     assert result["supports_juju_3"] is True
     assert result["supports_juju_4"] is True
@@ -318,9 +316,7 @@ def test_detects_juju4_from_matrix_values():
 @responses.activate
 def test_detects_juju3_and_juju4_from_matrix_include_entries():
     _mock_workflows_dir("canonical/synapse-operator", ["integration.yaml"])
-    _mock_workflow_file(
-        "canonical/synapse-operator", "integration.yaml", _MATRIX_INCLUDE_WORKFLOW
-    )
+    _mock_workflow_file("canonical/synapse-operator", "integration.yaml", _MATRIX_INCLUDE_WORKFLOW)
     result = compute_metrics(UNIT, "token")
     assert result["supports_juju_3"] is True
     assert result["supports_juju_4"] is True
@@ -330,9 +326,7 @@ def test_detects_juju3_and_juju4_from_matrix_include_entries():
 @responses.activate
 def test_detects_inline_comments_on_juju_channel_and_ck8s():
     _mock_workflows_dir("canonical/synapse-operator", ["integration.yaml"])
-    _mock_workflow_file(
-        "canonical/synapse-operator", "integration.yaml", _INLINE_COMMENTS_WORKFLOW
-    )
+    _mock_workflow_file("canonical/synapse-operator", "integration.yaml", _INLINE_COMMENTS_WORKFLOW)
     result = compute_metrics(UNIT, "token")
     assert result["supports_juju_3"] is False
     assert result["supports_juju_4"] is True
@@ -369,9 +363,7 @@ def test_detects_canonical_k8s_alias_from_bootstrap_command():
 @responses.activate
 def test_detects_canonical_k8s_from_folded_run_block():
     _mock_workflows_dir("canonical/synapse-operator", ["integration.yaml"])
-    _mock_workflow_file(
-        "canonical/synapse-operator", "integration.yaml", _FOLDED_CK8S_WORKFLOW
-    )
+    _mock_workflow_file("canonical/synapse-operator", "integration.yaml", _FOLDED_CK8S_WORKFLOW)
     result = compute_metrics(UNIT, "token")
     assert result["supports_juju_3"] is False
     assert result["supports_juju_4"] is False
@@ -395,9 +387,7 @@ def test_detects_integration_from_folded_run_block():
 @responses.activate
 def test_detects_canonical_k8s_from_quoted_run_scalar():
     _mock_workflows_dir("canonical/synapse-operator", ["integration.yaml"])
-    _mock_workflow_file(
-        "canonical/synapse-operator", "integration.yaml", _QUOTED_CK8S_RUN_WORKFLOW
-    )
+    _mock_workflow_file("canonical/synapse-operator", "integration.yaml", _QUOTED_CK8S_RUN_WORKFLOW)
     result = compute_metrics(UNIT, "token")
     assert result["supports_juju_3"] is False
     assert result["supports_juju_4"] is False

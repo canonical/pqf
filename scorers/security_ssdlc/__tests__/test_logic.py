@@ -41,9 +41,7 @@ def test_branch_protection_required_checks_true(mocker):
 
 
 def test_repo_automation_registration_reads_from_authoritative_list(mocker):
-    registration_path = (
-        "groups/is/platform-engineering/repos/saml-integrator-operator/inputs.hcl"
-    )
+    registration_path = "groups/is/platform-engineering/repos/saml-integrator-operator/inputs.hcl"
     mocker.patch(
         "scorers.security_ssdlc.logic.github_get",
         side_effect=[

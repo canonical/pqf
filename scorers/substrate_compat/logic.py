@@ -28,9 +28,7 @@ def _make_github_session(github_token: str) -> requests.Session:
 
 def _iter_key_section_lines(content: str, key: str):
     lines = content.splitlines()
-    pattern = re.compile(
-        rf"^(?P<indent>[ \t]*)(?:-\s+)?{re.escape(key)}:\s*(?P<value>.*)$"
-    )
+    pattern = re.compile(rf"^(?P<indent>[ \t]*)(?:-\s+)?{re.escape(key)}:\s*(?P<value>.*)$")
     index = 0
     block_scalar_indent: int | None = None
 
@@ -170,7 +168,9 @@ def _iter_run_commands(content: str):
         yield from _iter_shell_commands(scalar)
 
 
-def _extract_block_scalar_lines(lines: list[str], start: int, parent_indent: int) -> tuple[list[str], int]:
+def _extract_block_scalar_lines(
+    lines: list[str], start: int, parent_indent: int
+) -> tuple[list[str], int]:
     block_lines: list[str] = []
     cursor = start
     content_indent: int | None = None
@@ -193,10 +193,7 @@ def _extract_block_scalar_lines(lines: list[str], start: int, parent_indent: int
     if content_indent is None:
         return [], cursor
 
-    dedented_lines = [
-        line[content_indent:] if line else ""
-        for line in block_lines
-    ]
+    dedented_lines = [line[content_indent:] if line else "" for line in block_lines]
     return dedented_lines, cursor
 
 

@@ -23,6 +23,8 @@ import sys
 import tempfile
 from pathlib import Path
 
+import yaml
+
 REPO_ROOT = Path(__file__).parent.parent.parent
 
 _FIXTURE_COMPUTED = {
@@ -114,3 +116,29 @@ def test_cli_computes_expected_medals_for_matrix():
     # No drift history entries yet → drift is null for all
     for dim in dims.values():
         assert dim["drift"] is None
+
+
+def test_dimensions_config_declares_required_metrics_for_scoring_for_each_dimension():
+    dimensions = yaml.safe_load((REPO_ROOT / "config/dimensions.yaml").read_text())
+
+    assert dimensions["dimensions"]["test_verification"]["required_metrics_for_scoring"] == [
+        "latest_build_passing"
+    ]
+    assert dimensions["dimensions"]["documentation"]["required_metrics_for_scoring"] == [
+        "readme_meets_structure",
+        "contributing_meets_structure",
+        "has_security",
+    ]
+    assert dimensions["dimensions"]["substrate_compat"]["required_metrics_for_scoring"] == [
+        "supports_juju_3",
+        "substrate_test_evidence_present",
+    ]
+    assert dimensions["dimensions"]["security_ssdlc"]["required_metrics_for_scoring"] == [
+        "branch_protection_required_checks",
+        "renovate_enabled",
+    ]
+    assert dimensions["dimensions"]["support_engagement"]["required_metrics_for_scoring"] == [
+        "avg_triage_days",
+        "avg_pr_review_days",
+        "response_coverage_rate",
+    ]
