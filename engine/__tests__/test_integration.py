@@ -142,3 +142,15 @@ def test_dimensions_config_declares_required_metrics_for_scoring_for_each_dimens
         "avg_pr_review_days",
         "response_coverage_rate",
     ]
+
+
+def test_required_metrics_for_scoring_are_declared_outputs():
+    dimensions = yaml.safe_load((REPO_ROOT / "config/dimensions.yaml").read_text())["dimensions"]
+
+    for dim_name, dim_cfg in dimensions.items():
+        outputs = set(dim_cfg.get("outputs", {}).keys())
+        required = dim_cfg.get("required_metrics_for_scoring", [])
+        assert set(required).issubset(outputs), (
+            f"{dim_name} has required_metrics_for_scoring not present in outputs: "
+            f"{sorted(set(required) - outputs)}"
+        )
