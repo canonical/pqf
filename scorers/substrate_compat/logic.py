@@ -8,6 +8,10 @@ import requests
 from engine.models import EvaluationUnit
 
 _GITHUB_API = "https://api.github.com"
+_BLOCK_SCALAR_PATTERN = re.compile(
+    r"^(?P<indent>[ \t]*)(?:-\s+)?[^:#]+:\s*[>|][-+0-9]*\s*(?:#.*)?$"
+)
+_HEREDOC_START_PATTERN = re.compile(r"<<-?\s*(['\"]?)(?P<tag>[A-Za-z_][A-Za-z0-9_]*)\1")
 
 
 def _make_github_session(github_token: str) -> requests.Session:
@@ -25,16 +29,35 @@ def _make_github_session(github_token: str) -> requests.Session:
 def _iter_key_section_lines(content: str, key: str):
     lines = content.splitlines()
     pattern = re.compile(rf"^(?P<indent>[ \t]*){re.escape(key)}:\s*(?P<value>.*)$")
+    index = 0
+    block_scalar_indent: int | None = None
 
-    for index, line in enumerate(lines):
+    while index < len(lines):
+        line = lines[index]
+        stripped = line.strip()
+        line_indent = len(line) - len(line.lstrip(" \t"))
+        if block_scalar_indent is not None:
+            if not stripped or line_indent > block_scalar_indent:
+                index += 1
+                continue
+            block_scalar_indent = None
+
         match = pattern.match(line)
         if not match:
+            scalar_match = _BLOCK_SCALAR_PATTERN.match(line)
+            if scalar_match:
+                block_scalar_indent = len(scalar_match.group("indent"))
+            index += 1
             continue
 
         indent = len(match.group("indent"))
         inline_value = match.group("value").strip()
-        if inline_value:
+        if inline_value and inline_value not in {"|", ">"}:
             yield inline_value
+        if inline_value in {"|", ">"}:
+            block_scalar_indent = indent
+            index += 1
+            continue
 
         cursor = index + 1
         while cursor < len(lines):
@@ -48,8 +71,26 @@ def _iter_key_section_lines(content: str, key: str):
             if nested_indent <= indent:
                 break
 
+            scalar_match = _BLOCK_SCALAR_PATTERN.match(nested_line)
+            if scalar_match:
+                scalar_indent = len(scalar_match.group("indent"))
+                cursor += 1
+                while cursor < len(lines):
+                    scalar_line = lines[cursor]
+                    scalar_stripped = scalar_line.strip()
+                    if not scalar_stripped:
+                        cursor += 1
+                        continue
+                    scalar_line_indent = len(scalar_line) - len(scalar_line.lstrip(" \t"))
+                    if scalar_line_indent <= scalar_indent:
+                        break
+                    cursor += 1
+                continue
+
             yield stripped
             cursor += 1
+
+        index += 1
 
 
 def _normalize_yaml_scalar(value: str) -> str:
@@ -84,6 +125,7 @@ def _iter_run_commands(content: str):
             continue
 
         cursor = index + 1
+        heredoc_tag: str | None = None
         while cursor < len(lines):
             nested_line = lines[cursor]
             stripped = nested_line.strip()
@@ -95,6 +137,15 @@ def _iter_run_commands(content: str):
             if nested_indent <= indent:
                 break
 
+            if heredoc_tag is not None:
+                if stripped == heredoc_tag:
+                    heredoc_tag = None
+                cursor += 1
+                continue
+
+            heredoc_match = _HEREDOC_START_PATTERN.search(stripped)
+            if heredoc_match:
+                heredoc_tag = heredoc_match.group("tag")
             yield stripped
             cursor += 1
 
@@ -111,6 +162,24 @@ def _uses_canonical_k8s(content: str) -> bool:
             command.strip().lower(),
         )
         for command in _iter_run_commands(content)
+    )
+
+
+def _has_integration_signal(content: str) -> bool:
+    if any(
+        "integration_test" in _normalize_yaml_scalar(line).lower()
+        for line in _iter_key_section_lines(content, "uses")
+    ):
+        return True
+
+    command_patterns = (
+        r"(^|&&|\|\||;)\s*pytest\s+-m\s+integration\b",
+        r"(^|&&|\|\||;)\s*tox\s+-e\s+integration\b",
+    )
+    return any(
+        re.search(pattern, command.strip().lower())
+        for command in _iter_run_commands(content)
+        for pattern in command_patterns
     )
 
 
@@ -153,16 +222,7 @@ def compute_metrics(unit: EvaluationUnit, github_token: str) -> dict[str, Any]:
 
     if unit.repo:
         for content in _fetch_workflow_contents(unit.repo, github_token):
-            lowered = content.lower()
-            has_integration_signal = any(
-                token in lowered
-                for token in (
-                    "integration_test",
-                    "integration tests",
-                    "pytest -m integration",
-                    "tox -e integration",
-                )
-            )
+            has_integration_signal = _has_integration_signal(content)
             has_substrate_target_signal = False
             if _has_juju_channel(content, "3/stable"):
                 supports_juju_3 = True

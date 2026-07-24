@@ -88,6 +88,30 @@ jobs:
       - run: pytest -m integration
 """
 
+_SCRIPT_TEXT_JUJU4_WORKFLOW = """\
+name: CI
+on: [push]
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          cat <<'EOF'
+          juju-channel: 4/stable
+          EOF
+"""
+
+_NOTE_TEXT_INTEGRATION_WORKFLOW = """\
+name: CI
+on: [push]
+jobs:
+  test:
+    uses: canonical/operator-workflows/.github/workflows/other.yaml@main
+    with:
+      juju-channel: 3/stable
+      note: "pytest -m integration"
+"""
+
 _GENERIC_WORKFLOW = """\
 name: CI
 on: [push]
@@ -233,6 +257,36 @@ def test_echo_does_not_set_canonical_k8s():
     assert result["supports_juju_4"] is False
     assert result["uses_canonical_k8s"] is False
     assert result["substrate_test_evidence_present"] is False
+
+
+@responses.activate
+def test_script_text_does_not_set_juju_channel():
+    _mock_workflows_dir("canonical/synapse-operator", ["ci.yaml"])
+    _mock_workflow_file(
+        "canonical/synapse-operator",
+        "ci.yaml",
+        _SCRIPT_TEXT_JUJU4_WORKFLOW,
+    )
+    result = compute_metrics(UNIT, "token")
+    assert result["supports_juju_3"] is False
+    assert result["supports_juju_4"] is False
+    assert result["substrate_test_evidence_present"] is False
+    assert result["uses_canonical_k8s"] is False
+
+
+@responses.activate
+def test_note_text_does_not_set_integration_evidence():
+    _mock_workflows_dir("canonical/synapse-operator", ["ci.yaml"])
+    _mock_workflow_file(
+        "canonical/synapse-operator",
+        "ci.yaml",
+        _NOTE_TEXT_INTEGRATION_WORKFLOW,
+    )
+    result = compute_metrics(UNIT, "token")
+    assert result["supports_juju_3"] is True
+    assert result["supports_juju_4"] is False
+    assert result["substrate_test_evidence_present"] is False
+    assert result["uses_canonical_k8s"] is False
 
 
 @responses.activate
