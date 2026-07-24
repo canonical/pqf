@@ -530,3 +530,60 @@ def test_returns_defaults_when_repo_empty():
         "substrate_test_evidence_present": False,
         "uses_canonical_k8s": False,
     }
+
+
+_EOF_HYPHEN_HEREDOC_WORKFLOW = """\
+name: CI
+on: [push]
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - with:
+          juju-channel: 3/stable
+        run: |
+          cat <<'EOF-YAML' > payload.yaml
+          pytest -m integration
+          juju bootstrap microk8s
+          EOF-YAML
+          tox -e lint
+"""
+
+_COMMENT_HEREDOC_WORKFLOW = """\
+name: CI
+on: [push]
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - with:
+          juju-channel: 3/stable
+        run: |
+          # <<EOF
+          pytest -m integration
+"""
+
+
+@responses.activate
+def test_heredoc_with_hyphenated_delimiter_skips_payload():
+    """Payload inside cat <<'EOF-YAML'...EOF-YAML must not count as commands."""
+    _mock_workflows_dir("canonical/synapse-operator", ["ci.yaml"])
+    _mock_workflow_file("canonical/synapse-operator", "ci.yaml", _EOF_HYPHEN_HEREDOC_WORKFLOW)
+    result = compute_metrics(UNIT, "token")
+    # juju-channel 3/stable is real config → juju3 true
+    assert result["supports_juju_3"] is True
+    # heredoc payload must NOT produce ck8s or integration evidence
+    assert result["uses_canonical_k8s"] is False
+    # tox -e lint (not integration) is the only real run command → no integration evidence
+    assert result["substrate_test_evidence_present"] is False
+
+
+@responses.activate
+def test_shell_comment_heredoc_token_does_not_suppress_real_commands():
+    """# <<EOF in a shell comment must not enter heredoc mode."""
+    _mock_workflows_dir("canonical/synapse-operator", ["ci.yaml"])
+    _mock_workflow_file("canonical/synapse-operator", "ci.yaml", _COMMENT_HEREDOC_WORKFLOW)
+    result = compute_metrics(UNIT, "token")
+    assert result["supports_juju_3"] is True
+    # pytest -m integration following the comment line must be detected
+    assert result["substrate_test_evidence_present"] is True

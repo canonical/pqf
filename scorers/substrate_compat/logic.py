@@ -11,7 +11,7 @@ _GITHUB_API = "https://api.github.com"
 _BLOCK_SCALAR_PATTERN = re.compile(
     r"^(?P<indent>[ \t]*)(?:-\s+)?[^:#]+:\s*[>|][-+0-9]*\s*(?:#.*)?$"
 )
-_HEREDOC_START_PATTERN = re.compile(r"<<-?\s*(['\"]?)(?P<tag>[A-Za-z_][A-Za-z0-9_]*)\1")
+_HEREDOC_START_PATTERN = re.compile(r"<<-?\s*(['\"]?)(?P<tag>[A-Za-z_][A-Za-z0-9_-]*)\1")
 
 
 def _make_github_session(github_token: str) -> requests.Session:
@@ -270,7 +270,8 @@ def _iter_shell_commands(script: str):
                 heredoc_tag = None
             continue
 
-        heredoc_tag = _find_unquoted_heredoc_start(stripped)
+        if not stripped.startswith("#"):
+            heredoc_tag = _find_unquoted_heredoc_start(stripped)
         yield stripped
 
 
