@@ -28,7 +28,9 @@ def _make_github_session(github_token: str) -> requests.Session:
 
 def _iter_key_section_lines(content: str, key: str):
     lines = content.splitlines()
-    pattern = re.compile(rf"^(?P<indent>[ \t]*){re.escape(key)}:\s*(?P<value>.*)$")
+    pattern = re.compile(
+        rf"^(?P<indent>[ \t]*)(?:-\s+)?{re.escape(key)}:\s*(?P<value>.*)$"
+    )
     index = 0
     block_scalar_indent: int | None = None
 
@@ -52,9 +54,9 @@ def _iter_key_section_lines(content: str, key: str):
 
         indent = len(match.group("indent"))
         inline_value = match.group("value").strip()
-        if inline_value and inline_value not in {"|", ">"}:
+        if inline_value and not _is_block_scalar_indicator(inline_value):
             yield inline_value
-        if inline_value in {"|", ">"}:
+        if _is_block_scalar_indicator(inline_value):
             block_scalar_indent = indent
             index += 1
             continue
@@ -93,10 +95,49 @@ def _iter_key_section_lines(content: str, key: str):
         index += 1
 
 
+def _is_block_scalar_indicator(value: str) -> bool:
+    return bool(re.fullmatch(r"[>|][-+0-9]*", value.strip()))
+
+
+def _strip_yaml_inline_comment(value: str) -> str:
+    in_single_quote = False
+    in_double_quote = False
+    escaping = False
+
+    for index, char in enumerate(value):
+        if in_double_quote:
+            if escaping:
+                escaping = False
+                continue
+            if char == "\\":
+                escaping = True
+                continue
+            if char == '"':
+                in_double_quote = False
+            continue
+
+        if in_single_quote:
+            if char == "'":
+                in_single_quote = False
+            continue
+
+        if char == '"':
+            in_double_quote = True
+            continue
+        if char == "'":
+            in_single_quote = True
+            continue
+        if char == "#":
+            return value[:index].rstrip()
+
+    return value.rstrip()
+
+
 def _normalize_yaml_scalar(value: str) -> str:
     normalized = value.strip()
     if normalized.startswith("- "):
         normalized = normalized[2:].strip()
+    normalized = _strip_yaml_inline_comment(normalized).strip()
     if len(normalized) >= 2 and normalized[0] == normalized[-1] and normalized[0] in {'"', "'"}:
         normalized = normalized[1:-1].strip()
     return normalized
@@ -120,8 +161,8 @@ def _iter_run_commands(content: str):
 
         indent = len(match.group("indent"))
         inline_value = match.group("value").strip()
-        if inline_value and inline_value not in {"|", ">"}:
-            yield inline_value
+        if inline_value and not _is_block_scalar_indicator(inline_value):
+            yield _strip_yaml_inline_comment(inline_value)
             continue
 
         cursor = index + 1
