@@ -8,6 +8,7 @@ from engine.models import EvaluationUnit
 
 _GITHUB_API = "https://api.github.com"
 _LOOKBACK_DAYS = 90
+MIN_SAMPLE = 5
 
 
 def _make_github_session(github_token: str) -> requests.Session:
@@ -190,11 +191,16 @@ def compute_metrics(unit: EvaluationUnit, github_token: str) -> dict[str, Any]:
         filtered_pulls = [p for p in pulls if _parse_dt(p["created_at"]) >= since_dt]
         pr_avg, pr_responded, pr_total = _compute_pr_review_stats(filtered_pulls, session, repo)
 
-    avg_triage = triage_avg
-    avg_pr = pr_avg
     total_items = issue_total + pr_total
     total_responded = issue_responded + pr_responded
-    response_coverage_rate = round((100 * total_responded / total_items), 1) if total_items else 0.0
+    if total_items < MIN_SAMPLE:
+        avg_triage = None
+        avg_pr = None
+        response_coverage_rate = None
+    else:
+        avg_triage = triage_avg
+        avg_pr = pr_avg
+        response_coverage_rate = round((100 * total_responded / total_items), 1)
     squad_topic = _has_squad_topic(repo, session)
     jira_sync = _has_jira_sync(repo, session)
 

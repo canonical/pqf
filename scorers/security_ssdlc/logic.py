@@ -10,6 +10,7 @@ from scorers.shared.github_signals import (
 )
 
 _GITHUB_API = "https://api.github.com"
+_CANONICAL_REPO_AUTOMATION_REPO = "canonical/canonical-repo-automation"
 
 
 def _has_branch_protection_required_checks(owner_repo: str, github_token: str) -> bool:
@@ -73,6 +74,41 @@ def _has_cve_tracking_process(owner_repo: str, github_token: str) -> bool:
     return False
 
 
+def _is_registered_in_repo_automation(owner_repo: str, github_token: str) -> bool:
+    """Return True if canonical-repo-automation manages a config file for owner_repo.
+
+    canonical-repo-automation only manages canonical/* repos. The presence of a
+    per-repo config file (repos/<name>/inputs.hcl or terragrunt.hcl) is the
+    authoritative registration signal.
+    """
+    owner, repo_name = owner_repo.split("/", 1) if "/" in owner_repo else ("", owner_repo)
+    if owner.lower() != "canonical":
+        return False
+    repo_resp = github_get(
+        f"{_GITHUB_API}/repos/{_CANONICAL_REPO_AUTOMATION_REPO}",
+        github_token,
+    )
+    if not repo_resp.ok:
+        return False
+    default_branch = repo_resp.json().get("default_branch", "main")
+    tree_resp = github_get(
+        f"{_GITHUB_API}/repos/{_CANONICAL_REPO_AUTOMATION_REPO}/git/trees/{default_branch}?recursive=1",
+        github_token,
+    )
+    if not tree_resp.ok:
+        return False
+    tree = tree_resp.json().get("tree", [])
+    candidate_suffixes = (
+        f"repos/{repo_name}/inputs.hcl",
+        f"repos/{repo_name}/terragrunt.hcl",
+    )
+    return any(
+        entry.get("type") == "blob"
+        and any(entry.get("path", "").endswith(suffix) for suffix in candidate_suffixes)
+        for entry in tree
+    )
+
+
 def compute_metrics(unit: EvaluationUnit, github_token: str) -> dict[str, Any]:
     """
     Check SSDLC signals for the evaluation unit's repo.
@@ -95,8 +131,10 @@ def compute_metrics(unit: EvaluationUnit, github_token: str) -> dict[str, Any]:
         if not renovate_enabled:
             renovate_enabled = search_code_count(f"repo:{unit.repo} renovate", github_token) > 0
 
-        automation_query = f'repo:canonical/canonical-repo-automation "{unit.repo}"'
-        canonical_repo_automation_registered = search_code_count(automation_query, github_token) > 0
+        canonical_repo_automation_registered = _is_registered_in_repo_automation(
+            unit.repo,
+            github_token,
+        )
         sast_workflow_present = _has_sast_workflow(unit.repo, github_token)
         cve_tracking_process_present = _has_cve_tracking_process(unit.repo, github_token)
 

@@ -14,17 +14,20 @@ from engine.models import (
 
 
 def compute_leaf_applicability(
-    product_type: str,
+    product_type: str | None,
     metrics: dict[str, Any],
     dim_config: dict[str, Any],
 ) -> ApplicabilityOutcome:
     """Determine if this dimension applies to this product type and has data."""
     applies_to_cfg = dim_config.get("applies_to")
-    if applies_to_cfg is not None:
+    if applies_to_cfg is not None and product_type is not None:
         applies_to = applies_to_cfg.get("product_types", [])
         if product_type not in applies_to:
             return ApplicabilityOutcome.NOT_APPLICABLE
     if not metrics:
+        return ApplicabilityOutcome.INSUFFICIENT_DATA
+    required_metrics = dim_config.get("required_metrics_for_scoring", [])
+    if any(metrics.get(metric_name) is None for metric_name in required_metrics):
         return ApplicabilityOutcome.INSUFFICIENT_DATA
     return ApplicabilityOutcome.SCORED
 

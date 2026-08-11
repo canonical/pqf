@@ -72,6 +72,14 @@
           "type": "string",
           "enum": ["worst_in_scope"],
           "description": "How leaf results are aggregated into the root product medal. worst_in_scope: minimum medal among in-scope leaves."
+        },
+        "required_metrics_for_scoring": {
+          "type": "array",
+          "description": "Metric keys that must be present and non-null before this dimension is scoreable. If any are missing, the dimension becomes insufficient_data instead of falling back to bronze/unrated semantics.",
+          "items": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9_]*$"
+          }
         }
       }
     },

@@ -132,7 +132,7 @@ def _readme_meets_structure(unit: EvaluationUnit, github_token: str | None) -> b
         return False
     required_groups = (
         ("overview", "about", "summary"),
-        ("getting started", "quick start", "installation", "install"),
+        ("getting started", "quick start", "quickstart", "installation", "install"),
         ("support", "troubleshooting", "help"),
     )
     return all(_section_present(readme, *group) for group in required_groups)
@@ -157,19 +157,50 @@ def _contributing_meets_structure(unit: EvaluationUnit, github_token: str | None
 def _documentation_workflows_passing(check_runs: list[dict[str, Any]]) -> bool:
     # Require core documentation checks (lint, links, build) to be present
     # and passing. Use explicit needles to avoid accidental matches with unrelated jobs.
-    lint_present = _check_run_exists(check_runs, "docs lint", "markdownlint")
-    lint_passed = _check_run_passed(check_runs, "docs lint", "markdownlint")
+    lint_present = _check_run_exists(
+        check_runs,
+        "docs lint",
+        "markdownlint",
+        "vale",
+        "docs-checks / vale",
+    )
+    lint_passed = _check_run_passed(
+        check_runs,
+        "docs lint",
+        "markdownlint",
+        "vale",
+        "docs-checks / vale",
+    )
 
-    links_present = _check_run_exists(check_runs, "link check", "linkcheck", "docs links")
-    links_passed = _check_run_passed(check_runs, "link check", "linkcheck", "docs links")
+    links_present = _check_run_exists(
+        check_runs,
+        "link check",
+        "linkcheck",
+        "docs links",
+        "docs-checks / linkcheck",
+    )
+    links_passed = _check_run_passed(
+        check_runs,
+        "link check",
+        "linkcheck",
+        "docs links",
+        "docs-checks / linkcheck",
+    )
 
     # Require docs build to be present AND passing
-    build_present = _check_run_exists(check_runs, "docs build", "documentation build", "build docs")
+    build_present = _check_run_exists(
+        check_runs,
+        "docs build",
+        "documentation build",
+        "build docs",
+        "docs-checks / docs build",
+    )
     build_passed = _check_run_passed(
         check_runs,
         "docs build",
         "documentation build",
         "build docs",
+        "docs-checks / docs build",
     )
 
     return (

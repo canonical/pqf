@@ -101,6 +101,34 @@ are evaluated by `assemble.py`, so `make _assemble` alone picks them up from the
 
 ---
 
+## Measurability gates (`required_metrics_for_scoring`)
+
+Each dimension may declare `required_metrics_for_scoring` in `config/dimensions.yaml`.
+This is a list of metric keys that must be present and non-null before PQF will score that
+dimension.
+
+- If every required metric is present, the normal medal rubric runs.
+- If any required metric is missing or `null`, the dimension becomes
+  `insufficient_data` and its medal is forced to `unrated`.
+- Use this for **measurability** checks only — for example, a missing latest test result or
+  a support sample that was too small to calculate averages.
+- Do **not** use it for normal failing values. A measured `false`, `0`, or low percentage
+  should still be scored by the rubric.
+
+Current examples:
+
+- `test_verification` requires `latest_build_passing`
+- `documentation` requires the core documentation presence/structure booleans
+- `substrate_compat` requires a declared Juju support signal plus substrate CI evidence
+- `security_ssdlc` requires branch protection and dependency-update measurability
+- `support_engagement` requires the sampled response metrics that can otherwise be `null`
+
+This means a rubric-only change still needs a full recompute when scorer outputs or nullability
+semantics change, because regenerated `computed/*.json` data may now shift products from
+`scored` to `insufficient_data`.
+
+---
+
 ## Documentation scoring without LLM
 
 `score-no-llm` and `score` currently produce the same documentation outputs. The
