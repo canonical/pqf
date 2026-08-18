@@ -20,6 +20,7 @@
 | [Adding a product](adding-a-product.md) | How to onboard a new product into PQF |
 | [Adding a dimension/scorer](adding-a-dimension.md) | How to create a new quality dimension and scorer |
 | [Running scorers locally](local-scoring.md) | Score products locally and preview changes in the dashboard |
+| [Metric calibration roadmap](metric-calibration-roadmap.md) | Philosophy and remaining phases for scorer/rubric calibration work |
 
 ---
 

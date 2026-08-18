@@ -24,6 +24,17 @@ PQF tracks the quality and compliance state of Canonical Platform Engineering's 
 
 ---
 
+## Metric calibration philosophy
+
+PQF should stay **simple, deterministic, and high-confidence** as it evolves.
+
+- Prefer explicit, explainable metrics over broad heuristics.
+- Support only **sanctioned structural variants** such as monorepo vs non-monorepo, charm vs snap, root/meta vs leaf aggregation context, and equivalent YAML/workflow encodings of the same canonical signal.
+- Treat **measured-low** and **unmeasurable** as different outcomes: a low measured value should score low, while a missing or unreliable signal should become `unrated` / `insufficient_data`.
+- Do not absorb arbitrary repo-by-repo drift into scorer logic when PQF is intentionally trying to drive alignment.
+
+See [AGENTS.md](AGENTS.md) for the detailed scorer/rubric guardrails and [docs/metric-calibration-roadmap.md](docs/metric-calibration-roadmap.md) for the remaining calibration phases.
+
 ## 30-second quickstart
 
 ```bash

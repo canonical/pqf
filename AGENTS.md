@@ -51,6 +51,25 @@ Medal scoring logic: "at or above target" means `MEDAL_ORDER[current] >= MEDAL_O
 
 ---
 
+## Metric calibration philosophy
+
+When changing scorers, rubrics, or scoring semantics, preserve these rules:
+
+- **Keep metrics simple and deterministic.** A metric should stay easy to explain in one sentence.
+- **Separate measured-low from unmeasurable.** `bronze` means the repo was measured and performed poorly. `unrated` / `insufficient_data` means the signal could not be measured confidently.
+- **Support only sanctioned variants.** The allowed variance classes are:
+  - monorepo vs non-monorepo,
+  - charm vs snap,
+  - root/meta product vs leaf aggregation context,
+  - equivalent YAML/workflow encodings of the same canonical signal.
+- **Do not normalize arbitrary team-specific drift.** If a repository differs from the intended standard for no sanctioned reason, prefer flagging that misalignment over adding detector complexity.
+- **Keep gating metrics high-confidence.** Only use `required_metrics_for_scoring` and medal gates for signals we can measure reliably across the fleet.
+- **Prefer tightening standards over broadening heuristics.** If a detector keeps needing special cases, treat that as a design smell and revisit the standard before expanding the logic.
+
+This rule set exists to keep PQF useful for portfolio reasoning: as simple as possible, as high-confidence as possible, and aligned with the standards we want teams to follow.
+
+See also [docs/local-scoring.md](docs/local-scoring.md) for local scoring semantics and [docs/metric-calibration-roadmap.md](docs/metric-calibration-roadmap.md) for the next calibration phases.
+
 ## Makefile — the single source of truth for dev commands
 
 Always use `make` targets. CI uses the same targets.
