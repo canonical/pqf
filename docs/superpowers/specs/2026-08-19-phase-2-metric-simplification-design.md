@@ -55,17 +55,17 @@ Use the stricter ownership model:
 - a charm/snap must be either:
   - part of a root product's `composed_of`, or
   - an inline leaf under a root product.
-- top-level charm/snap product YAMLs without an owning root context are not independently scorable.
+- top-level charm/snap product YAMLs remain scorable as leaf products, but they should not be treated as roots.
 
-For `resolve_leaf_units_for(graph, root_product_id)`, if the product has no `composed_of` leaves that resolve to charm/snap units, the scorer should fail with a clear error rather than silently returning an empty set.
+For `resolve_leaf_units_for(graph, root_product_id)`, if the requested product is a charm/snap with no `composed_of` leaves, the scorer should fall back to that product itself as a single `EvaluationUnit` instead of silently returning an empty set.
 
 This keeps ownership clear and prevents orphan top-level product YAMLs from producing misleading empty scores.
 
 ### 3. `saml-integrator` relationship
 
-`saml-integrator` should be treated as part of another product rather than as a standalone scorable root in this path. The current catalog already reflects this through `matrix`'s `composed_of` reference.
+`saml-integrator` should be treated as part of another product rather than as a root. The current catalog already reflects this through `matrix`'s `composed_of` reference, so matrix composition remains the primary ownership path.
 
-The expected outcome is that `matrix` continues to score `saml-integrator` through composition, while a direct standalone score request for `saml-integrator` is rejected as structurally unsupported unless its ownership model is changed.
+The expected outcome is that `matrix` continues to score `saml-integrator` through composition, while a direct standalone score request for `saml-integrator` still works as a leaf score instead of producing an empty result.
 
 ### 4. Documentation and history
 
@@ -82,7 +82,7 @@ Record the remaining calibration phases in the roadmap document so this simplifi
 The change is correct when:
 - documentation metrics rename cleanly in the scorer, config, and tests,
 - documentation medals no longer depend on workflow gating,
-- standalone top-level charm/snap scoring fails fast with a clear structural error,
+- standalone top-level charm/snap scoring resolves to a real leaf unit instead of an empty result,
 - `matrix` still resolves `saml-integrator` through composition,
 - local scoring produces a more realistic spread after the simplification.
 
@@ -93,4 +93,3 @@ Minimum validation:
 - unit tests for the documentation workflow metric becoming informational,
 - graph/scoring tests for the stricter ownership model,
 - a targeted local score run for `matrix` and `saml-integrator`.
-
