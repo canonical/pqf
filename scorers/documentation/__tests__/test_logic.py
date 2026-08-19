@@ -115,8 +115,8 @@ def test_compute_metrics_defaults_signals_when_repo_signals_missing(mocker):
     result = compute_metrics(unit, "gh-token", "")
 
     assert result == {
-        "readme_meets_structure": False,
-        "contributing_meets_structure": False,
+        "readme_present": False,
+        "contributing_present": False,
         "has_security": False,
         "documentation_workflows_passing": False,
         "diataxis_coverage": 0,
@@ -332,8 +332,7 @@ def test_uses_rtd_hosting_detects_rtd_hosted_patterns(mocker):
     assert result["uses_rtd_hosting"] is True
 
 
-def test_template_like_readme_and_contributing_fail(mocker):
-    """Template-like README or CONTRIBUTING should NOT pass structure checks."""
+def test_readme_and_contributing_presence_only_requires_non_empty_files(mocker):
     mocker.patch(
         "scorers.documentation.logic.repo_file_exists",
         side_effect=lambda repo, path, token: path in {"README.md", "CONTRIBUTING.md"},
@@ -349,26 +348,9 @@ def test_template_like_readme_and_contributing_fail(mocker):
     mocker.patch("scorers.documentation.logic.repo_releases", return_value=[])
 
     result = compute_metrics(UNIT, "gh-token", "or-key")
-    assert result["readme_meets_structure"] is False
-    assert result["contributing_meets_structure"] is False
-
-
-def test_readme_structure_accepts_equivalent_headings(mocker):
-    mocker.patch(
-        "scorers.documentation.logic.repo_file_exists",
-        side_effect=lambda repo, path, token: path == "README.md",
-    )
-    mocker.patch(
-        "scorers.documentation.logic.repo_file_text",
-        side_effect=lambda repo, path, token: {
-            "README.md": "# Project\n\n## Summary\n\n## Quickstart\n\n## Getting help\n",
-        }.get(path, ""),
-    )
-    mocker.patch("scorers.documentation.logic.default_branch_check_runs", return_value=[])
-    mocker.patch("scorers.documentation.logic.repo_releases", return_value=[])
-
-    result = compute_metrics(UNIT, "gh-token", "or-key")
-    assert result["readme_meets_structure"] is True
+    assert result["readme_present"] is True
+    assert result["contributing_present"] is True
+    assert result["has_security"] is False
 
 
 def test_release_notes_require_process_marker(mocker):

@@ -21,18 +21,6 @@ def _scoped_path(unit: EvaluationUnit, path: str) -> str:
     return path
 
 
-def _section_present(text: str, *candidates: str) -> bool:
-    wanted = tuple(candidate.lower() for candidate in candidates)
-    for line in text.splitlines():
-        stripped = line.strip()
-        if not stripped.startswith("#"):
-            continue
-        heading = re.sub(r"\s+", " ", stripped.lstrip("#").strip().lower())
-        if any(candidate in heading for candidate in wanted):
-            return True
-    return False
-
-
 def _file_exists(unit: EvaluationUnit, path: str, github_token: str | None) -> bool:
     return repo_file_exists(unit.repo, _scoped_path(unit, path), github_token)
 
@@ -92,66 +80,12 @@ def _check_run_exists(check_runs: list[dict[str, Any]], *needles: str) -> bool:
     return False
 
 
-def _contains_template_markers(text: str) -> bool:
-    """Detect common template placeholders or unresolved instruction comments.
-
-    Conservative deterministic checks for cookiecutter/templating markers and
-    obvious "replace me"/TODO comments used by repository templates.
-    """
-    if not text:
-        return False
-    lower = text.lower()
-    # Common templating placeholders
-    if "{{" in text and "}}" in text:
-        return True
-    if "cookiecutter" in lower:
-        return True
-    # Explicit replace/todo markers frequently left from templates
-    templates = [
-        "replace_me",
-        "project_name",
-        "todo",
-        "fixme",
-        "<!-- todo",
-        "<!-- replace",
-        "[//]: #",
-        "this project was generated",
-    ]
-    for t in templates:
-        if t in lower:
-            return True
-    return False
+def _readme_present(unit: EvaluationUnit, github_token: str | None) -> bool:
+    return bool(_file_text(unit, "README.md", github_token).strip())
 
 
-def _readme_meets_structure(unit: EvaluationUnit, github_token: str | None) -> bool:
-    readme = _file_text(unit, "README.md", github_token)
-    if not readme.strip():
-        return False
-    # Fail if the README looks like an unrendered template or contains placeholders
-    if _contains_template_markers(readme):
-        return False
-    required_groups = (
-        ("overview", "about", "summary"),
-        ("getting started", "quick start", "quickstart", "installation", "install"),
-        ("support", "troubleshooting", "help"),
-    )
-    return all(_section_present(readme, *group) for group in required_groups)
-
-
-def _contributing_meets_structure(unit: EvaluationUnit, github_token: str | None) -> bool:
-    contributing = _file_text(unit, "CONTRIBUTING.md", github_token)
-    if not contributing.strip():
-        return False
-    # Fail if the contributing file looks like an unrendered template or contains placeholders
-    if _contains_template_markers(contributing):
-        return False
-    required_groups = (
-        ("contributing",),
-        ("development", "local development", "setup"),
-        ("testing", "validation"),
-        ("governance", "review", "code of conduct"),
-    )
-    return all(_section_present(contributing, *group) for group in required_groups)
+def _contributing_present(unit: EvaluationUnit, github_token: str | None) -> bool:
+    return bool(_file_text(unit, "CONTRIBUTING.md", github_token).strip())
 
 
 def _documentation_workflows_passing(check_runs: list[dict[str, Any]]) -> bool:
@@ -370,8 +304,8 @@ def compute_metrics(
     del openrouter_api_key, model
     check_runs = default_branch_check_runs(unit.repo, github_token)
     return {
-        "readme_meets_structure": _readme_meets_structure(unit, github_token),
-        "contributing_meets_structure": _contributing_meets_structure(unit, github_token),
+        "readme_present": _readme_present(unit, github_token),
+        "contributing_present": _contributing_present(unit, github_token),
         "has_security": _file_exists(unit, "SECURITY.md", github_token),
         "documentation_workflows_passing": _documentation_workflows_passing(check_runs),
         "diataxis_coverage": _diataxis_coverage(unit, github_token),

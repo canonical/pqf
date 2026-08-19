@@ -6,7 +6,7 @@ CI may have committed to computed/matrix.json.
 
 Fixture metric values and expected medals:
   test_verification: silver  (coverage 87 >= 80, stability 94 >= 85, integration evidence present)
-  documentation:     bronze  (core docs structure/workflow pass; diataxis 3 < 4 → not silver)
+  documentation:     bronze  (baseline docs presence passes; diataxis 3 < 4 → not silver)
   substrate_compat:  silver  (
       supports_juju_3=true and substrate test evidence present; juju_4 false
   )
@@ -38,8 +38,8 @@ _FIXTURE_COMPUTED = {
             "integration_test_evidence_present": True,
         },
         "documentation": {
-            "readme_meets_structure": True,
-            "contributing_meets_structure": True,
+            "readme_present": True,
+            "contributing_present": True,
             "has_security": True,
             "documentation_workflows_passing": True,
             "diataxis_coverage": 3,
@@ -125,8 +125,8 @@ def test_dimensions_config_declares_required_metrics_for_scoring_for_each_dimens
         "latest_build_passing"
     ]
     assert dimensions["dimensions"]["documentation"]["required_metrics_for_scoring"] == [
-        "readme_meets_structure",
-        "contributing_meets_structure",
+        "readme_present",
+        "contributing_present",
         "has_security",
     ]
     assert dimensions["dimensions"]["substrate_compat"]["required_metrics_for_scoring"] == [

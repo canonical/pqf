@@ -1,6 +1,6 @@
 {
   "product_id": "wordpress-k8s",
-  "computed_at": "2026-07-23T14:28:45.341222+00:00",
+  "computed_at": "2026-08-19T19:52:56.070048+00:00",
   "leaf_metrics": {
     "wordpress-k8s-charm": {
       "test_verification": {
@@ -8,12 +8,12 @@
         "stability_pct": 100,
         "latest_build_passing": true,
         "integration_test_evidence_present": false,
-        "uses_ops_testing": true,
+        "uses_ops_testing": false,
         "uses_jubilant": false
       },
       "documentation": {
-        "readme_meets_structure": false,
-        "contributing_meets_structure": false,
+        "readme_present": false,
+        "contributing_present": false,
         "has_security": false,
         "documentation_workflows_passing": false,
         "diataxis_coverage": 0,
@@ -22,24 +22,24 @@
         "recent_release_notes_present": false
       },
       "substrate_compat": {
-        "supports_juju_3": false,
+        "supports_juju_3": true,
         "supports_juju_4": false,
-        "substrate_test_evidence_present": false,
+        "substrate_test_evidence_present": true,
         "uses_canonical_k8s": false
       },
       "security_ssdlc": {
-        "renovate_enabled": false,
-        "canonical_repo_automation_registered": false,
+        "renovate_enabled": true,
+        "canonical_repo_automation_registered": true,
         "branch_protection_required_checks": true,
-        "sast_workflow_present": false,
-        "cve_tracking_process_present": false
+        "sast_workflow_present": true,
+        "cve_tracking_process_present": true
       },
       "support_engagement": {
-        "avg_triage_days": 735.1,
-        "avg_pr_review_days": 0.0,
-        "response_coverage_rate": 5.6,
+        "avg_triage_days": 367.6,
+        "avg_pr_review_days": 4.9,
+        "response_coverage_rate": 55.6,
         "ownership_signal": true,
-        "has_jira_sync": false
+        "has_jira_sync": true
       }
     }
   }

@@ -26,27 +26,26 @@ dimensions:
 
   documentation:
     label: "Documentation"
-    description: "Repository documentation quality and structure (README, contributing, diátaxis coverage, and docs CI)."
+    description: "Repository documentation baseline presence and maturity signals (README, contributing, diátaxis coverage, and docs CI)."
     scorer: "scorers/documentation/scorer.py"
     applies_to:
       product_types: ["charm", "snap"]
     aggregation: "worst_in_scope"
     required_metrics_for_scoring:
-      - readme_meets_structure
-      - contributing_meets_structure
+      - readme_present
+      - contributing_present
       - has_security
     outputs:
-      readme_meets_structure: {type: boolean, label: "README meets structure", description: "README differs from the single-charm template and contains required sections. Uses canonical/platform-engineering-charm-template and canonical/backup-operators to distinguish repo types."}
-      contributing_meets_structure: {type: boolean, label: "CONTRIBUTING meets structure", description: "CONTRIBUTING differs from template and contains required contribution and governance sections."}
+      readme_present: {type: boolean, label: "README present", description: "README.md exists and is non-empty."}
+      contributing_present: {type: boolean, label: "CONTRIBUTING present", description: "CONTRIBUTING.md exists and is non-empty."}
       has_security: {type: boolean, label: "SECURITY present", description: "SECURITY.md exists in the primary repository."}
-      documentation_workflows_passing: {type: boolean, label: "Documentation workflows passing", description: "Documentation-specific CI workflows (lint, link-check, build) are present and passing on default branch."}
+      documentation_workflows_passing: {type: boolean, label: "Documentation workflows passing", description: "Documentation-specific CI workflows (lint, link-check, build) are present and passing on default branch.", informational: true}
       diataxis_coverage: {type: number, range: "0–4", label: "Diátaxis coverage", description: "Deterministic count of Diátaxis doc types present (tutorial, how-to, reference, explanation)."}
       tutorial_tested: {type: boolean, label: "Tutorial tested", description: "Documentation includes a tutorial with automated verification (CI or Playwright) demonstrating it runs end-to-end."}
       uses_rtd_hosting: {type: boolean, label: "Uses RTD hosting", description: "Documentation points at a Read the Docs host."}
       recent_release_notes_present: {type: boolean, label: "Recent release notes present", description: "Release notes are present and follow the documented release-notes process (see canonical/platform-engineering-docs/docs/engineering-practices/documentation/charm-release-notes)."}
     medals:
-      silver: ["readme_meets_structure == true", "contributing_meets_structure == true", "has_security == true", "documentation_workflows_passing == true", "diataxis_coverage == 4", "tutorial_tested == true"]
-      gold: ["readme_meets_structure == true", "contributing_meets_structure == true", "has_security == true", "documentation_workflows_passing == true", "diataxis_coverage == 4", "tutorial_tested == true", "uses_rtd_hosting == true", "recent_release_notes_present == true"]
+      bronze: ["readme_present == true", "contributing_present == true", "has_security == true"]
 
   substrate_compat:
     label: "Substrate compatibility"
