@@ -2,7 +2,37 @@ repos:
   - repo: local
     hooks:
       - id: pqf-python-lint
+        name: PQF Python (lint)
+        entry: make lint
+        language: system
+        files: \.py$
+        pass_filenames: false
+
       - id: pqf-python-format-check
+        name: PQF Python (format check)
+        entry: make format-check
+        language: system
+        files: \.py$
+        pass_filenames: false
+
       - id: pqf-python-test
+        name: PQF Python (test)
+        entry: make test
+        language: system
+        files: \.py$
+        pass_filenames: false
+
       - id: pqf-ui-build
+        name: PQF UI (type check + build)
+        entry: make build
+        language: system
+        files: ^ui/.*\.(ts|tsx|js|jsx)$
+        pass_filenames: false
+        require_serial: true
+
       - id: pqf-ui-test
+        name: PQF UI (test)
+        entry: make test-ui
+        language: system
+        files: ^ui/.*\.(ts|tsx|js|jsx)$
+        pass_filenames: false

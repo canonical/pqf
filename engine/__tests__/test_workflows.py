@@ -133,8 +133,7 @@ def test_compute_metrics_deploys_production_from_engine_artifacts() -> None:
     )
     # comment key must be absent so the action posts a PR link comment automatically
     assert "comment" not in preview_deploy_step["with"], (
-        "removing 'comment: false' lets the preview action post a PR link comment; "
-        "do not re-add it"
+        "removing 'comment: false' lets the preview action post a PR link comment; do not re-add it"
     )
 
     assert "cleanup-preview" not in jobs, "cleanup moved to dedicated cleanup-preview workflow"
