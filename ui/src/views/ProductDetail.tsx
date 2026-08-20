@@ -53,6 +53,48 @@ function renderDimensionBadge(entry?: { medal: Medal; applicability: Applicabili
       </span>
     )
   }
+  if (entry.applicability === 'insufficient_data') {
+    return (
+      <span
+        style={{
+          backgroundColor: '#666',
+          color: '#fff',
+          borderRadius: '0.25rem',
+          padding: '0.1rem 0.4rem',
+          fontSize: '0.75rem',
+          fontWeight: 600,
+          minWidth: '5.5rem',
+          display: 'inline-flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          whiteSpace: 'nowrap',
+        }}
+      >
+        Insufficient data
+      </span>
+    )
+  }
+  if (entry.medal === 'unrated') {
+    return (
+      <span
+        style={{
+          backgroundColor: '#666',
+          color: '#fff',
+          borderRadius: '0.25rem',
+          padding: '0.1rem 0.4rem',
+          fontSize: '0.75rem',
+          fontWeight: 600,
+          minWidth: '5.5rem',
+          display: 'inline-flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          whiteSpace: 'nowrap',
+        }}
+      >
+        Below minimum
+      </span>
+    )
+  }
   return <MedalBadge medal={entry.medal} size="small" />
 }
 

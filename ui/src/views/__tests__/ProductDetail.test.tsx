@@ -168,6 +168,52 @@ describe('ProductDetail', () => {
     expect(row).toHaveTextContent('N/A')
   })
 
+  it('renders scored unrated dimensions as below minimum', () => {
+    const unratedPortfolio: Portfolio = {
+      ...mockPortfolio,
+      products: [
+        {
+          ...mockPortfolio.products[0],
+          dimensions: {
+            ...mockPortfolio.products[0].dimensions,
+            documentation: {
+              medal: 'unrated',
+              target: 'silver',
+              applicability: 'scored',
+              drift: null,
+              metrics: {
+                readme_present: true,
+                contributing_present: false,
+                has_security: true,
+              },
+              composition: null,
+            },
+          },
+        },
+        mockPortfolio.products[1],
+      ],
+      dimensions_meta: {
+        ...mockPortfolio.dimensions_meta,
+        documentation: {
+          outputs: {
+            readme_present: { label: 'README', description: 'README present', type: 'boolean', range: 'true/false' },
+            contributing_present: { label: 'CONTRIBUTING', description: 'Contribution guide present', type: 'boolean', range: 'true/false' },
+            has_security: { label: 'SECURITY', description: 'Security policy present', type: 'boolean', range: 'true/false' },
+          },
+          medals: {
+            bronze: { criteria: ['readme_present == true', 'contributing_present == true', 'has_security == true'] },
+          },
+        },
+      },
+    }
+    mockWith(unratedPortfolio)
+    wrap('matrix')
+
+    const row = screen.getByRole('link', { name: 'documentation' }).closest('tr')
+    expect(row).not.toBeNull()
+    expect(row).toHaveTextContent('Below minimum')
+  })
+
   it('N/A dimension evidence column shows dash instead of metric values', () => {
     wrap('synapse')
     const row = screen.getByRole('link', { name: 'substrate compat' }).closest('tr')!
