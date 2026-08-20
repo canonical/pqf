@@ -1,6 +1,6 @@
 # engine/__tests__/test_medal_engine.py
 from engine.medal_engine import compute_leaf_product, compute_product
-from engine.models import ApplicabilityOutcome, Medal
+from engine.models import ApplicabilityOutcome, Medal, Status
 
 # Minimal two-dimension config for testing (no applies_to → compute_product only)
 _DIMENSIONS = {
@@ -62,8 +62,11 @@ def test_current_medal_is_lowest_across_dimensions():
     }
     result = compute_product(_PRODUCT, computed, _DIMENSIONS, {})
     assert result.current_medal == Medal.BRONZE
+    assert result.current_status == Status.BRONZE
     assert result.dimensions["test_verification"].medal == Medal.GOLD
+    assert result.dimensions["test_verification"].status == Status.GOLD
     assert result.dimensions["documentation"].medal == Medal.BRONZE
+    assert result.dimensions["documentation"].status == Status.BRONZE
 
 
 def test_all_gold_dimensions_gives_gold_product():
@@ -79,6 +82,7 @@ def test_all_gold_dimensions_gives_gold_product():
     }
     result = compute_product(_PRODUCT, computed, _DIMENSIONS, {})
     assert result.current_medal == Medal.GOLD
+    assert result.current_status == Status.GOLD
 
 
 def test_all_silver_gives_silver_product():
@@ -94,6 +98,7 @@ def test_all_silver_gives_silver_product():
     }
     result = compute_product(_PRODUCT, computed, _DIMENSIONS, {})
     assert result.current_medal == Medal.SILVER
+    assert result.current_status == Status.SILVER
 
 
 def test_missing_dimension_in_computed_treated_as_empty_metrics():
@@ -110,7 +115,9 @@ def test_missing_dimension_in_computed_treated_as_empty_metrics():
     result = compute_product(_PRODUCT, computed, _DIMENSIONS, {})
     # test_verification gets empty metrics → bronze conditions fail → unrated
     assert result.dimensions["test_verification"].medal == Medal.UNRATED
+    assert result.dimensions["test_verification"].status == Status.BELOW_MINIMUM
     assert result.current_medal == Medal.UNRATED
+    assert result.current_status == Status.BELOW_MINIMUM
 
 
 def test_compute_product_required_metric_none_keeps_dimension_unrated():
@@ -129,12 +136,15 @@ def test_compute_product_required_metric_none_keeps_dimension_unrated():
         ApplicabilityOutcome.INSUFFICIENT_DATA
     )
     assert result.dimensions["test_verification"].medal == Medal.UNRATED
+    assert result.dimensions["test_verification"].status == Status.INSUFFICIENT_DATA
     assert result.current_medal == Medal.GOLD
+    assert result.current_status == Status.GOLD
 
 
 def test_entirely_empty_computed_gives_unrated():
     result = compute_product(_PRODUCT, {}, _DIMENSIONS, {})
     assert result.current_medal == Medal.UNRATED
+    assert result.current_status == Status.BELOW_MINIMUM
 
 
 def test_dimension_results_contain_target_medal():
@@ -178,7 +188,9 @@ def test_leaf_product_all_gold():
     }
     result = compute_leaf_product("p", "charm", metrics, _DIMENSIONS_WITH_APPLICABILITY, {}, "gold")
     assert result.current_medal == Medal.GOLD
+    assert result.current_status == Status.GOLD
     assert result.dimensions["test_verification"].applicability == ApplicabilityOutcome.SCORED
+    assert result.dimensions["test_verification"].status == Status.GOLD
 
 
 def test_leaf_product_not_applicable_for_wrong_type():
@@ -189,8 +201,10 @@ def test_leaf_product_not_applicable_for_wrong_type():
     result = compute_leaf_product("p", "root", metrics, _DIMENSIONS_WITH_APPLICABILITY, {}, "gold")
     # "root" not in applies_to → all NOT_APPLICABLE → current_medal UNRATED
     assert result.current_medal == Medal.UNRATED
+    assert result.current_status == Status.NOT_APPLICABLE
     for dim in result.dimensions.values():
         assert dim.applicability == ApplicabilityOutcome.NOT_APPLICABLE
+        assert dim.status == Status.NOT_APPLICABLE
 
 
 def test_leaf_product_insufficient_data_excluded_from_medal():
@@ -204,8 +218,10 @@ def test_leaf_product_insufficient_data_excluded_from_medal():
         == ApplicabilityOutcome.INSUFFICIENT_DATA
     )
     assert result.dimensions["test_verification"].medal == Medal.UNRATED
+    assert result.dimensions["test_verification"].status == Status.INSUFFICIENT_DATA
     # Only scored dimension is documentation (gold) → current_medal is gold
     assert result.current_medal == Medal.GOLD
+    assert result.current_status == Status.GOLD
 
 
 def test_leaf_product_required_metric_none_returns_insufficient_data():
@@ -218,6 +234,7 @@ def test_leaf_product_required_metric_none_returns_insufficient_data():
         result.dimensions["test_verification"].applicability
         == ApplicabilityOutcome.INSUFFICIENT_DATA
     )
+    assert result.dimensions["test_verification"].status == Status.INSUFFICIENT_DATA
     assert result.dimensions["test_verification"].medal == Medal.UNRATED
     assert result.current_medal == Medal.GOLD
 

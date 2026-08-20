@@ -19,6 +19,8 @@ const mockPortfolio: Portfolio = {
       lifecycle: 'stable',
       target_medal: 'gold',
       current_medal: 'bronze',
+      current_status: 'bronze',
+      target_status: 'gold',
       squad: 'americas',
       is_portfolio_entry: true,
       documentation_url: 'https://charmhub.io/synapse',
@@ -32,6 +34,7 @@ const mockPortfolio: Portfolio = {
         test_verification: {
           medal: 'silver',
           target: 'gold',
+          status: 'silver',
           applicability: 'scored',
           drift: null,
           metrics: { coverage_pct: 87, stability_pct: 94, latest_build_passing: true },
@@ -46,6 +49,8 @@ const mockPortfolio: Portfolio = {
       lifecycle: 'stable',
       target_medal: 'gold',
       current_medal: 'bronze',
+      current_status: 'bronze',
+      target_status: 'gold',
       squad: '',
       is_portfolio_entry: false,
       context_refs: [],
@@ -56,6 +61,7 @@ const mockPortfolio: Portfolio = {
         test_verification: {
           medal: 'bronze',
           target: 'gold',
+          status: 'bronze',
           applicability: 'scored',
           drift: null,
           metrics: { coverage_pct: 65, latest_build_passing: true },
@@ -64,6 +70,7 @@ const mockPortfolio: Portfolio = {
         substrate_compat: {
           medal: 'unrated',
           target: 'gold',
+          status: 'not_applicable',
           applicability: 'not_applicable',
           drift: null,
           metrics: { supports_juju_3: false, supports_juju_4: false, supports_ck8s: false },
@@ -106,6 +113,7 @@ function portfolioWithComposition(overrides?: { composition: LeafDimensionResult
           test_verification: {
             medal: 'silver',
             target: 'gold',
+            status: 'silver',
             applicability: 'scored',
             drift: null,
             metrics: { coverage_pct: 87, stability_pct: 94, latest_build_passing: true },
@@ -114,6 +122,7 @@ function portfolioWithComposition(overrides?: { composition: LeafDimensionResult
                 product_id: 'synapse',
                 repo: 'canonical/synapse-operator',
                 medal: 'bronze',
+                status: 'bronze',
                 applicability: 'scored',
                 metrics: { coverage_pct: 65, latest_build_passing: true },
                 excluded_from_parent_medal: false,
@@ -179,6 +188,7 @@ describe('ProductDetail', () => {
             documentation: {
               medal: 'unrated',
               target: 'silver',
+              status: 'below_minimum',
               applicability: 'scored',
               drift: null,
               metrics: {
@@ -223,11 +233,14 @@ describe('ProductDetail', () => {
           id: 'aproxy',
           name: 'Aproxy',
           current_medal: 'unrated',
+          current_status: 'below_minimum',
+          target_status: 'gold',
           dimensions: {
             ...mockPortfolio.products[0].dimensions,
             documentation: {
               medal: 'unrated',
               target: 'silver',
+              status: 'below_minimum',
               applicability: 'scored',
               drift: null,
               metrics: {
@@ -354,6 +367,7 @@ describe('ProductDetail', () => {
             product_id: 'synapse',
             repo: 'canonical/synapse-operator',
             medal: 'bronze',
+            status: 'bronze',
             applicability: 'scored',
             metrics: { coverage_pct: 65, latest_build_passing: true },
             excluded_from_parent_medal: false,
@@ -376,6 +390,7 @@ describe('ProductDetail', () => {
             product_id: 'synapse',
             repo: 'canonical/synapse-operator',
             medal: 'bronze',
+            status: 'bronze',
             applicability: 'scored',
             metrics: { coverage_pct: 65, latest_build_passing: true },
             excluded_from_parent_medal: false,
@@ -384,6 +399,7 @@ describe('ProductDetail', () => {
             product_id: 'saml',
             repo: 'canonical/saml-operator',
             medal: 'gold',
+            status: 'gold',
             applicability: 'scored',
             metrics: { coverage_pct: 90, latest_build_passing: false },
             excluded_from_parent_medal: false,

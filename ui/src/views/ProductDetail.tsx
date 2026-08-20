@@ -6,7 +6,6 @@ import DriftChip from '../components/DriftChip'
 import MetricsList from '../components/MetricsList'
 import RootMetricsList from '../components/RootMetricsList'
 import LoadingSpinner from '../components/LoadingSpinner'
-import type { ApplicabilityOutcome, Medal } from '../types'
 import { buildGroupedProducts } from '../lib/groupedPortfolioView'
 
 const SQUAD_TEAMS: Record<string, { label: string; url: string }> = {
@@ -28,51 +27,6 @@ function parseCriteria(criteria: string[]): Record<string, { operator: string; v
     result[metric] = { operator, value }
   }
   return result
-}
-
-function renderNeutralBadge(label: string) {
-  return (
-    <span
-      style={{
-        backgroundColor: '#666',
-        color: '#fff',
-        borderRadius: '0.25rem',
-        padding: '0.1rem 0.4rem',
-        fontSize: '0.75rem',
-        fontWeight: 600,
-        minWidth: '5.5rem',
-        display: 'inline-flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        whiteSpace: 'nowrap',
-      }}
-    >
-      {label}
-    </span>
-  )
-}
-
-function renderDimensionBadge(entry?: { medal: Medal; applicability: ApplicabilityOutcome }) {
-  if (!entry) return <MedalBadge medal="unrated" size="small" />
-  if (entry.applicability === 'not_applicable') return renderNeutralBadge('N/A')
-  if (entry.applicability === 'insufficient_data') return renderNeutralBadge('Insufficient data')
-  if (entry.medal === 'unrated') return renderNeutralBadge('Below minimum')
-  return <MedalBadge medal={entry.medal} size="small" />
-}
-
-function renderProductBadge(product: { product_type: string; current_medal: Medal; dimensions: Record<string, { medal: Medal; applicability: ApplicabilityOutcome }> }) {
-  if (product.product_type !== 'root' || product.current_medal !== 'unrated') {
-    return <MedalBadge medal={product.current_medal} />
-  }
-
-  const dimensionValues = Object.values(product.dimensions)
-  const hasBelowMinimumDimension = dimensionValues.some(dim => dim.applicability === 'scored' && dim.medal === 'unrated')
-  if (hasBelowMinimumDimension) return renderNeutralBadge('Below minimum')
-
-  const hasInsufficientData = dimensionValues.some(dim => dim.applicability === 'insufficient_data')
-  if (hasInsufficientData) return renderNeutralBadge('Insufficient data')
-
-  return <MedalBadge medal={product.current_medal} />
 }
 
 export default function ProductDetail() {
@@ -157,7 +111,7 @@ export default function ProductDetail() {
               <span className="u-text--muted" style={{ fontSize: '0.75rem', display: 'block', marginBottom: '0.25rem' }}>
                 {isRoot ? 'CURRENT' : 'MEDAL'}
               </span>
-              {renderProductBadge(product)}
+              <MedalBadge medal={product.current_status as any} />
             </div>
             {isRoot && (
               <div>
@@ -265,7 +219,7 @@ export default function ProductDetail() {
                         <Link to={`/dimensions/${dim}`} style={{ fontWeight: 500 }}>{dim.replace(/_/g, ' ')}</Link>
                       </td>
                       <td style={{ padding: '0.75rem', verticalAlign: 'top' }}>
-                        {renderDimensionBadge(entry)}
+                        <MedalBadge medal={entry.status as any} size="small" />
                       </td>
                       <td style={{ padding: '0.75rem', verticalAlign: 'top' }}>
                         {isRoot && <DriftChip drift={entry.drift} />}
@@ -338,7 +292,7 @@ export default function ProductDetail() {
                         </td>
                         {dependencyDimensions.map(dim => (
                           <td key={dim} style={{ padding: '0.75rem', verticalAlign: 'top' }}>
-                            {renderDimensionBadge(leaf.dimensions[dim])}
+                            <MedalBadge medal={leaf.dimensions[dim]?.status as any} size="small" />
                           </td>
                         ))}
                       </tr>

@@ -91,10 +91,18 @@ def test_root_dimension_has_composition(portfolio):
     matrix = next(p for p in portfolio["products"] if p["id"] == "matrix")
     dim = matrix["dimensions"]["test_verification"]
     assert dim["applicability"] == "scored"
+    assert dim["status"] == "bronze"
     assert dim["composition"] is not None
     assert len(dim["composition"]) == 1
     assert dim["composition"][0]["product_id"] == "synapse"
     assert dim["composition"][0]["medal"] == "bronze"  # 75 >= 70
+    assert dim["composition"][0]["status"] == "bronze"
+
+
+def test_root_product_has_current_status(portfolio):
+    matrix = next(p for p in portfolio["products"] if p["id"] == "matrix")
+    assert matrix["current_medal"] == "bronze"
+    assert matrix["current_status"] == "bronze"
 
 
 def test_context_refs_in_portfolio(portfolio):

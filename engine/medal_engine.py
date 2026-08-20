@@ -13,8 +13,44 @@ from engine.models import (
     LeafDimensionResult,
     Medal,
     ProductResult,
+    Status,
 )
 from engine.rubric import evaluate_rubric
+
+
+def _dimension_status(medal: Medal, applicability: ApplicabilityOutcome) -> Status:
+    if applicability == ApplicabilityOutcome.NOT_APPLICABLE:
+        return Status.NOT_APPLICABLE
+    if applicability == ApplicabilityOutcome.INSUFFICIENT_DATA:
+        return Status.INSUFFICIENT_DATA
+    if medal == Medal.UNRATED:
+        return Status.BELOW_MINIMUM
+    return Status(medal.value)
+
+
+def _product_status(dimension_results: dict[str, DimensionResult], current_medal: Medal) -> Status:
+    if current_medal != Medal.UNRATED:
+        return Status(current_medal.value)
+
+    if any(
+        dim.applicability == ApplicabilityOutcome.SCORED and dim.medal == Medal.UNRATED
+        for dim in dimension_results.values()
+    ):
+        return Status.BELOW_MINIMUM
+
+    if any(
+        dim.applicability == ApplicabilityOutcome.INSUFFICIENT_DATA
+        for dim in dimension_results.values()
+    ):
+        return Status.INSUFFICIENT_DATA
+
+    if any(
+        dim.applicability == ApplicabilityOutcome.NOT_APPLICABLE
+        for dim in dimension_results.values()
+    ):
+        return Status.NOT_APPLICABLE
+
+    return Status.INSUFFICIENT_DATA
 
 
 def compute_leaf_product(
@@ -46,6 +82,7 @@ def compute_leaf_product(
             medal=dim_medal,
             target=target,
             applicability=applicability,
+            status=_dimension_status(dim_medal, applicability),
             metrics=metrics,
             drift=drift,
             composition=None,
@@ -62,6 +99,7 @@ def compute_leaf_product(
         product_id=product_id,
         current_medal=current_medal,
         target_medal=target,
+        current_status=_product_status(dimension_results, current_medal),
         dimensions=dimension_results,
     )
 
@@ -98,6 +136,7 @@ def compute_root_product(
                     product_id=edge.product_id,
                     repo=leaf_node.source_repo if leaf_node else "",
                     medal=leaf_dim.medal,
+                    status=leaf_dim.status,
                     applicability=leaf_dim.applicability,
                     metrics=leaf_dim.metrics,
                     excluded_from_parent_medal=edge.excluded_from_parent_medal,
@@ -119,6 +158,7 @@ def compute_root_product(
         product_id=root_id,
         current_medal=current_medal,
         target_medal=target,
+        current_status=_product_status(dimension_results, current_medal),
         dimensions=dimension_results,
     )
 
@@ -157,6 +197,7 @@ def compute_product(
         dimension_results[dim_name] = DimensionResult(
             medal=dim_medal,
             target=target_medal,
+            status=_dimension_status(dim_medal, applicability),
             metrics=metrics,
             drift=drift,
             applicability=applicability,
@@ -173,5 +214,6 @@ def compute_product(
         product_id=product["id"],
         current_medal=current_medal,
         target_medal=target_medal,
+        current_status=_product_status(dimension_results, current_medal),
         dimensions=dimension_results,
     )

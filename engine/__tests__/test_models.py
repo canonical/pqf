@@ -1,4 +1,4 @@
-from engine.models import MEDAL_RANK, DimensionResult, DriftState, Medal, ProductResult
+from engine.models import MEDAL_RANK, DimensionResult, DriftState, Medal, ProductResult, Status
 
 
 def test_medal_values_are_lowercase_strings():
@@ -34,6 +34,7 @@ def test_dimension_result_instantiation():
     dim = DimensionResult(
         medal=Medal.SILVER,
         target=Medal.GOLD,
+        status=Status.SILVER,
         metrics={"coverage_pct": 85},
         drift=None,
     )
@@ -46,6 +47,7 @@ def test_product_result_instantiation():
         product_id="matrix",
         current_medal=Medal.BRONZE,
         target_medal=Medal.GOLD,
+        current_status=Status.BRONZE,
         dimensions={},
     )
     assert result.product_id == "matrix"

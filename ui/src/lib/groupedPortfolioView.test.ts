@@ -15,7 +15,9 @@ const mockPortfolio: Portfolio = {
       name: 'Discourse',
       lifecycle: 'stable',
       target_medal: 'silver',
+      target_status: 'silver',
       current_medal: 'bronze',
+      current_status: 'bronze',
       squad: 'americas',
       is_portfolio_entry: true,
       composed_of: [{ product_id: 'discourse-k8s', excluded_from_parent_medal: false }],
@@ -24,6 +26,7 @@ const mockPortfolio: Portfolio = {
       dimensions: {
         test_verification: {
           medal: 'bronze',
+          status: 'bronze',
           target: 'silver',
           applicability: 'scored',
           drift: null,
@@ -33,6 +36,7 @@ const mockPortfolio: Portfolio = {
               product_id: 'discourse-k8s',
               repo: 'canonical/discourse-k8s-operator',
               medal: 'silver',
+              status: 'silver',
               applicability: 'scored',
               metrics: { coverage_pct: 83, latest_build_passing: true },
               excluded_from_parent_medal: false,
@@ -47,7 +51,9 @@ const mockPortfolio: Portfolio = {
       name: 'Discourse K8s',
       lifecycle: 'stable',
       target_medal: 'silver',
+      target_status: 'silver',
       current_medal: 'silver',
+      current_status: 'silver',
       squad: '',
       is_portfolio_entry: false,
       composed_of: null,
@@ -57,6 +63,7 @@ const mockPortfolio: Portfolio = {
       dimensions: {
         test_verification: {
           medal: 'silver',
+          status: 'silver',
           target: 'silver',
           applicability: 'scored',
           drift: null,

@@ -3,7 +3,7 @@ import { Link } from 'react-router'
 import { usePortfolio } from '../hooks/usePortfolio'
 import MedalBadge from '../components/MedalBadge'
 import LoadingSpinner from '../components/LoadingSpinner'
-import type { DriftInfo, Medal, Product } from '../types'
+import type { DriftInfo, Medal } from '../types'
 
 const MEDAL_ORDER: Record<Medal, number> = { gold: 3, silver: 2, bronze: 1, unrated: 0 }
 const SQUAD_LABELS: Record<string, string> = {
@@ -36,42 +36,6 @@ function DriftIndicator({ drift }: { drift: DriftInfo | null }) {
 
 function squadLabel(squad: string): string {
   return SQUAD_LABELS[squad?.toLowerCase()] ?? squad?.toUpperCase() ?? '—'
-}
-
-
-function renderNeutralBadge(label: string) {
-  return (
-    <span
-      style={{
-        backgroundColor: '#666',
-        color: '#fff',
-        borderRadius: '0.25rem',
-        padding: '0.1rem 0.4rem',
-        fontSize: '0.75rem',
-        fontWeight: 600,
-        minWidth: '5.5rem',
-        display: 'inline-flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        whiteSpace: 'nowrap',
-      }}
-    >
-      {label}
-    </span>
-  )
-}
-
-function renderProductCurrentBadge(product: Product) {
-  if (product.current_medal !== 'unrated') return <MedalBadge medal={product.current_medal} size="small" />
-
-  const dimensions = Object.values(product.dimensions)
-  const hasBelowMinimum = dimensions.some(d => d.applicability === 'scored' && d.medal === 'unrated')
-  if (hasBelowMinimum) return renderNeutralBadge('Below minimum')
-
-  const hasInsufficientData = dimensions.some(d => d.applicability === 'insufficient_data')
-  if (hasInsufficientData) return renderNeutralBadge('Insufficient data')
-
-  return <MedalBadge medal={product.current_medal} size="small" />
 }
 
 export default function Overview() {
@@ -245,7 +209,7 @@ export default function Overview() {
                       </span>
                     </td>
                     <td><MedalBadge medal={product.target_medal} size="small" /></td>
-                    <td>{renderProductCurrentBadge(product)}</td>
+                    <td><MedalBadge medal={product.current_status as any} size="small" /></td>
                     {hasDriftData && <td><DriftIndicator drift={worstDrift} /></td>}
                   </tr>
                 )
@@ -281,7 +245,7 @@ export default function Overview() {
                       const d = product.dimensions[dim]
                       return (
                         <td key={dim}>
-                          {d ? <MedalBadge medal={d.medal} size="small" /> : <span>—</span>}
+                          {d ? <MedalBadge medal={d.status as any} size="small" /> : <span>—</span>}
                         </td>
                       )
                     })}

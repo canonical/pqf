@@ -1,21 +1,29 @@
-import type { Medal } from '../types'
+import type { Medal, Status } from '../types'
 
-const MEDAL_COLOURS: Record<Medal, string> = {
+type BadgeValue = Medal | Status
+
+const MEDAL_COLOURS: Record<BadgeValue, string> = {
   gold: '#C7962F',
   silver: '#8F8F8F',
   bronze: '#9E622A',
   unrated: '#666',
+  below_minimum: '#666',
+  insufficient_data: '#666',
+  not_applicable: '#666',
 }
 
-const MEDAL_LABELS: Record<Medal, string> = {
+const MEDAL_LABELS: Record<BadgeValue, string> = {
   gold: 'Gold',
   silver: 'Silver',
   bronze: 'Bronze',
   unrated: 'Unrated',
+  below_minimum: 'Below minimum',
+  insufficient_data: 'Insufficient data',
+  not_applicable: 'N/A',
 }
 
 interface Props {
-  medal: Medal
+  medal: BadgeValue
   size?: 'small' | 'default'
 }
 
