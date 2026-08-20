@@ -112,6 +112,41 @@ describe('ProductsExplorer', () => {
     expect(screen.getAllByText('Bronze').length).toBeGreaterThan(0)
   })
 
+
+  it('shows below minimum for unrated products with scored failed dimensions', () => {
+    const belowMinimumPortfolio: Portfolio = {
+      ...mockPortfolio,
+      products: [
+        {
+          ...mockPortfolio.products[0],
+          current_medal: 'unrated',
+          dimensions: {
+            documentation: {
+              medal: 'unrated',
+              target: 'gold',
+              applicability: 'scored',
+              drift: null,
+              metrics: {},
+              composition: null,
+            },
+          },
+        },
+        mockPortfolio.products[1],
+        mockPortfolio.products[2],
+      ],
+    }
+
+    vi.mocked(usePortfolio).mockReturnValue({
+      data: belowMinimumPortfolio,
+      isLoading: false,
+      isError: false,
+      error: null,
+    } as ReturnType<typeof usePortfolio>)
+
+    wrap()
+    expect(screen.getByText('Below minimum')).toBeInTheDocument()
+  })
+
   it('shows search input', () => {
     wrap()
     expect(screen.getByRole('searchbox', { name: /search products/i })).toBeInTheDocument()

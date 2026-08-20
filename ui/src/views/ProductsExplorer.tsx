@@ -22,6 +22,42 @@ const MEDAL_LABELS: Record<string, string> = {
   overdue: 'Overdue',
 }
 
+
+function renderNeutralBadge(label: string) {
+  return (
+    <span
+      style={{
+        backgroundColor: '#666',
+        color: '#fff',
+        borderRadius: '0.25rem',
+        padding: '0.1rem 0.4rem',
+        fontSize: '0.75rem',
+        fontWeight: 600,
+        minWidth: '5.5rem',
+        display: 'inline-flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        whiteSpace: 'nowrap',
+      }}
+    >
+      {label}
+    </span>
+  )
+}
+
+function renderProductCurrentBadge(product: Product) {
+  if (product.current_medal !== 'unrated') return <MedalBadge medal={product.current_medal} size="small" />
+
+  const dimensions = Object.values(product.dimensions)
+  const hasBelowMinimum = dimensions.some(d => d.applicability === 'scored' && d.medal === 'unrated')
+  if (hasBelowMinimum) return renderNeutralBadge('Below minimum')
+
+  const hasInsufficientData = dimensions.some(d => d.applicability === 'insufficient_data')
+  if (hasInsufficientData) return renderNeutralBadge('Insufficient data')
+
+  return <MedalBadge medal={product.current_medal} size="small" />
+}
+
 export default function ProductsExplorer() {
   const { data: portfolio, isLoading, isError, error } = usePortfolio()
 
@@ -253,7 +289,7 @@ export default function ProductsExplorer() {
                           </span>
                         </td>
                         <td style={{ padding: '0.65rem 0.75rem', whiteSpace: 'nowrap' }}>
-                          <MedalBadge medal={root.current_medal} size="small" />
+                          {renderProductCurrentBadge(root)}
                         </td>
                         <td style={{ padding: '0.65rem 0.75rem', whiteSpace: 'nowrap' }}>
                           <MedalBadge medal={root.target_medal} size="small" />
@@ -321,7 +357,7 @@ export default function ProductsExplorer() {
                               </span>
                             </td>
                             <td style={{ padding: '0.45rem 0.75rem', whiteSpace: 'nowrap' }}>
-                              <MedalBadge medal={leaf.current_medal} size="small" />
+                              {renderProductCurrentBadge(leaf)}
                             </td>
                             <td style={{ padding: '0.45rem 0.75rem', whiteSpace: 'nowrap', color: '#ccc', fontSize: '0.875rem' }}>—</td>
                             <td style={{ padding: '0.45rem 0.75rem', whiteSpace: 'nowrap', color: '#ccc', fontSize: '0.875rem' }}>—</td>
@@ -365,7 +401,7 @@ export default function ProductsExplorer() {
                       </span>
                     </td>
                     <td style={{ padding: '0.6rem 0.75rem', whiteSpace: 'nowrap' }}>
-                      <MedalBadge medal={p.current_medal} size="small" />
+                      {renderProductCurrentBadge(p)}
                     </td>
                     <td style={{ padding: '0.6rem 0.75rem', whiteSpace: 'nowrap' }}>
                       {p.target_medal ? <MedalBadge medal={p.target_medal} size="small" /> : <span style={{ color: '#ccc' }}>—</span>}

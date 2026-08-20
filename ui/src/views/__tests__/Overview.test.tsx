@@ -96,6 +96,39 @@ describe('Overview', () => {
     expect(medals.length).toBeGreaterThan(0)
   })
 
+
+  it('shows below minimum for unrated products with scored failed dimensions', () => {
+    const belowMinimumPortfolio: Portfolio = {
+      ...mockPortfolio,
+      products: [
+        {
+          ...mockPortfolio.products[0],
+          current_medal: 'unrated',
+          dimensions: {
+            documentation: {
+              medal: 'unrated',
+              target: 'gold',
+              applicability: 'scored',
+              drift: null,
+              metrics: {},
+              composition: null,
+            },
+          },
+        },
+      ],
+    }
+
+    vi.mocked(usePortfolio).mockReturnValue({
+      data: belowMinimumPortfolio,
+      isLoading: false,
+      isError: false,
+      error: null,
+    } as ReturnType<typeof usePortfolio>)
+
+    wrap(<Overview />)
+    expect(screen.getByText('Below minimum')).toBeInTheDocument()
+  })
+
   it('filters by search input', async () => {
     wrap(<Overview />)
     const input = screen.getByRole('searchbox')
