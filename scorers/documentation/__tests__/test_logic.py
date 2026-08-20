@@ -18,7 +18,9 @@ def test_compute_metrics_detects_documentation_signals(mocker):
                 "README.md",
                 "CONTRIBUTING.md",
                 "SECURITY.md",
-                "docs/release-notes.md",
+                "docs/release-notes/common.yaml",
+                "docs/release-notes/releases",
+                "docs/release-notes/template",
                 "docs/tutorial.md",
                 "docs/how-to.md",
                 "docs/reference.md",
@@ -43,49 +45,15 @@ def test_compute_metrics_detects_documentation_signals(mocker):
             ),
         }.get(path, ""),
     )
-
-    # Positive examples that SHOULD count as tutorial tests
-    positive_names = [
-        "tutorial tests",
-        "tutorial e2e tests",
-        "tutorial verification",
-    ]
-
-    for name in positive_names:
-        mocker.patch(
-            "scorers.documentation.logic.default_branch_check_runs",
-            return_value=[
-                {"name": "docs lint", "conclusion": "success"},
-                {"name": "vale", "conclusion": "success"},
-                {"name": "link check", "conclusion": "success"},
-                {"name": "docs build", "conclusion": "success"},
-                {"name": name, "conclusion": "success"},
-            ],
-        )
-        result = compute_metrics(UNIT, "gh-token", "or-key", model="openrouter/test-model")
-        assert result["tutorial_tested"] is True
-
-    # Negative examples that should NOT pass
-    negative_names = [
-        "tutorial build",
-        "tutorial lint",
-        "docs tutorial",
-    ]
-    for name in negative_names:
-        mocker.patch(
-            "scorers.documentation.logic.default_branch_check_runs",
-            return_value=[
-                {"name": "docs lint", "conclusion": "success"},
-                {"name": "vale", "conclusion": "success"},
-                {"name": "link check", "conclusion": "success"},
-                {"name": "docs build", "conclusion": "success"},
-                {"name": name, "conclusion": "success"},
-            ],
-        )
-        result = compute_metrics(UNIT, "gh-token", "or-key", model="openrouter/test-model")
-        assert result["tutorial_tested"] is False
-
-    # Generic CI names like 'playwright' alone should NOT count as tutorial tests
+    mocker.patch(
+        "scorers.documentation.logic.workflow_files",
+        return_value=[
+            (
+                "release-notes.yaml",
+                "uses: canonical/release-notes-automation/.github/workflows/action.yml@main",
+            )
+        ],
+    )
     mocker.patch(
         "scorers.documentation.logic.default_branch_check_runs",
         return_value=[
@@ -93,11 +61,11 @@ def test_compute_metrics_detects_documentation_signals(mocker):
             {"name": "vale", "conclusion": "success"},
             {"name": "link check", "conclusion": "success"},
             {"name": "docs build", "conclusion": "success"},
-            {"name": "playwright", "conclusion": "success"},
         ],
     )
-    result2 = compute_metrics(UNIT, "gh-token", "or-key", model="openrouter/test-model")
-    assert result2["tutorial_tested"] is False
+    result = compute_metrics(UNIT, "gh-token", "or-key", model="openrouter/test-model")
+    assert result["release_notes_process_implemented"] is True
+    assert result["documentation_workflows_passing"] is True
 
 
 def test_compute_metrics_defaults_signals_when_repo_signals_missing(mocker):
@@ -111,6 +79,7 @@ def test_compute_metrics_defaults_signals_when_repo_signals_missing(mocker):
     mocker.patch("scorers.documentation.logic.repo_file_text", return_value="")
     mocker.patch("scorers.documentation.logic.default_branch_check_runs", return_value=[])
     mocker.patch("scorers.documentation.logic.repo_releases", return_value=[])
+    mocker.patch("scorers.documentation.logic.workflow_files", return_value=[])
 
     result = compute_metrics(unit, "gh-token", "")
 
@@ -119,11 +88,14 @@ def test_compute_metrics_defaults_signals_when_repo_signals_missing(mocker):
         "contributing_present": False,
         "has_security": False,
         "documentation_workflows_passing": False,
-        "diataxis_coverage": 0,
-        "tutorial_tested": False,
+        "diataxis_coverage_ai": 0,
         "uses_rtd_hosting": False,
-        "recent_release_notes_present": False,
+        "release_notes_process_implemented": False,
     }
+    # Ensure removed keys are not in result
+    assert "tutorial_tested" not in result
+    assert "recent_release_notes_present" not in result
+    assert "diataxis_coverage" not in result
 
 
 def test_documentation_workflows_use_latest_conclusion(mocker):
@@ -149,6 +121,7 @@ def test_documentation_workflows_use_latest_conclusion(mocker):
     )
     mocker.patch("scorers.documentation.logic.repo_file_text", return_value="# Docs")
     mocker.patch("scorers.documentation.logic.repo_releases", return_value=[])
+    mocker.patch("scorers.documentation.logic.workflow_files", return_value=[])
     mocker.patch(
         "scorers.documentation.logic.default_branch_check_runs",
         return_value=[
@@ -183,6 +156,7 @@ def test_documentation_workflows_do_not_require_style_check(mocker):
         }.get(path, ""),
     )
     mocker.patch("scorers.documentation.logic.repo_releases", return_value=[])
+    mocker.patch("scorers.documentation.logic.workflow_files", return_value=[])
     mocker.patch(
         "scorers.documentation.logic.default_branch_check_runs",
         return_value=[
@@ -211,6 +185,7 @@ def test_docs_workflow_family_names_are_accepted(mocker):
         }.get(path, ""),
     )
     mocker.patch("scorers.documentation.logic.repo_releases", return_value=[])
+    mocker.patch("scorers.documentation.logic.workflow_files", return_value=[])
     mocker.patch(
         "scorers.documentation.logic.default_branch_check_runs",
         return_value=[
@@ -224,62 +199,71 @@ def test_docs_workflow_family_names_are_accepted(mocker):
     assert result["documentation_workflows_passing"] is True
 
 
-def test_tutorial_tested_uses_latest_conclusion(mocker):
-    """The tutorial_tested metric should reflect the latest matching check-run conclusion.
-
-    If an earlier run succeeded but a later matching tutorial-test run failed, the metric
-    must be False. Conversely, a later success should set it True.
-    """
+def test_release_notes_requires_canonical_workflow_and_structure(mocker):
+    """Release notes process requires canonical workflow reference + structure evidence."""
     mocker.patch(
         "scorers.documentation.logic.repo_file_exists",
         side_effect=lambda repo, path, token: (
             path
             in {
-                "README.md",
-                "docs/tutorial.md",
+                "docs/release-notes/common.yaml",
+                "docs/release-notes/releases",
+                "docs/release-notes/template",
             }
         ),
     )
-    mocker.patch("scorers.documentation.logic.repo_file_text", return_value="# Docs")
-    mocker.patch("scorers.documentation.logic.repo_releases", return_value=[])
-
-    # Later failure should make metric False
     mocker.patch(
-        "scorers.documentation.logic.default_branch_check_runs",
+        "scorers.documentation.logic.workflow_files",
         return_value=[
-            {
-                "name": "tutorial tests",
-                "conclusion": "success",
-                "completed_at": "2026-01-01T00:00:00Z",
-            },
-            {
-                "name": "tutorial tests",
-                "conclusion": "failure",
-                "completed_at": "2026-01-02T00:00:00Z",
-            },
+            (
+                "release-notes.yaml",
+                "uses: canonical/release-notes-automation/.github/workflows/action.yml@main",
+            )
         ],
     )
-    result = compute_metrics(UNIT, "gh-token", "or-key")
-    assert result["tutorial_tested"] is False
-
-    # Later success should make metric True
     mocker.patch(
-        "scorers.documentation.logic.default_branch_check_runs",
+        "scorers.documentation.logic.repo_releases",
         return_value=[
-            {
-                "name": "tutorial tests",
-                "conclusion": "failure",
-                "completed_at": "2026-01-01T00:00:00Z",
-            },
-            {
-                "name": "tutorial tests",
-                "conclusion": "success",
-                "completed_at": "2026-01-02T00:00:00Z",
-            },
+            {"tag_name": "v1.1.0", "draft": False, "body": "Release notes for v1.1.0"},
+            {"tag_name": "v1.0.0", "draft": False, "body": "Initial release notes"},
         ],
     )
+    mocker.patch("scorers.documentation.logic.repo_file_text", return_value="")
+    mocker.patch("scorers.documentation.logic.default_branch_check_runs", return_value=[])
+
     result = compute_metrics(UNIT, "gh-token", "or-key")
-    assert result["tutorial_tested"] is True
+    assert result["release_notes_process_implemented"] is True
+
+
+def test_release_notes_fails_without_workflow_reference(mocker):
+    """Release notes requires canonical workflow reference even with structure."""
+    mocker.patch(
+        "scorers.documentation.logic.repo_file_exists",
+        side_effect=lambda repo, path, token: (
+            path
+            in {
+                "docs/release-notes/common.yaml",
+                "docs/release-notes/releases",
+                "docs/release-notes/template",
+            }
+        ),
+    )
+    mocker.patch(
+        "scorers.documentation.logic.workflow_files",
+        return_value=[("ci.yaml", "name: CI\nruns: lint")],
+    )
+    mocker.patch(
+        "scorers.documentation.logic.repo_releases",
+        return_value=[
+            {"tag_name": "v1.1.0", "draft": False, "body": "Release notes for v1.1.0"},
+            {"tag_name": "v1.0.0", "draft": False, "body": "Initial release notes"},
+        ],
+    )
+    mocker.patch("scorers.documentation.logic.repo_file_text", return_value="")
+    mocker.patch("scorers.documentation.logic.default_branch_check_runs", return_value=[])
+
+    result = compute_metrics(UNIT, "gh-token", "or-key")
+    assert result["release_notes_process_implemented"] is False
 
 
 def test_uses_rtd_hosting_requires_explicit_signal(mocker):
@@ -301,6 +285,7 @@ def test_uses_rtd_hosting_requires_explicit_signal(mocker):
     )
     mocker.patch("scorers.documentation.logic.default_branch_check_runs", return_value=[])
     mocker.patch("scorers.documentation.logic.repo_releases", return_value=[])
+    mocker.patch("scorers.documentation.logic.workflow_files", return_value=[])
 
     result = compute_metrics(unit, "gh-token", "or-key")
     assert result["uses_rtd_hosting"] is False
@@ -327,6 +312,7 @@ def test_uses_rtd_hosting_detects_rtd_hosted_patterns(mocker):
     )
     mocker.patch("scorers.documentation.logic.default_branch_check_runs", return_value=[])
     mocker.patch("scorers.documentation.logic.repo_releases", return_value=[])
+    mocker.patch("scorers.documentation.logic.workflow_files", return_value=[])
 
     result = compute_metrics(unit, "gh-token", "or-key")
     assert result["uses_rtd_hosting"] is True
@@ -346,90 +332,9 @@ def test_readme_and_contributing_presence_only_requires_non_empty_files(mocker):
     )
     mocker.patch("scorers.documentation.logic.default_branch_check_runs", return_value=[])
     mocker.patch("scorers.documentation.logic.repo_releases", return_value=[])
+    mocker.patch("scorers.documentation.logic.workflow_files", return_value=[])
 
     result = compute_metrics(UNIT, "gh-token", "or-key")
     assert result["readme_present"] is True
     assert result["contributing_present"] is True
     assert result["has_security"] is False
-
-
-def test_release_notes_require_process_marker(mocker):
-    """If releases have bodies but no process marker file, the metric should be False."""
-    # No known marker files present
-    mocker.patch(
-        "scorers.documentation.logic.repo_file_exists",
-        return_value=False,
-    )
-    # Two non-draft releases with bodies
-    mocker.patch(
-        "scorers.documentation.logic.repo_releases",
-        return_value=[
-            {"tag_name": "v1.2.0", "draft": False, "body": "Notes for v1.2.0"},
-            {"tag_name": "v1.1.0", "draft": False, "body": "Notes for v1.1.0"},
-        ],
-    )
-    mocker.patch("scorers.documentation.logic.repo_file_text", return_value="")
-    mocker.patch("scorers.documentation.logic.default_branch_check_runs", return_value=[])
-
-    result = compute_metrics(UNIT, "gh-token", "or-key")
-    assert result["recent_release_notes_present"] is False
-
-
-def test_release_notes_with_marker_and_bodies_pass(mocker):
-    """Process marker + latest two non-draft releases with bodies should pass."""
-
-    # Simulate presence of a known marker file
-    def exists(repo, path, token):
-        return path in {"docs/release-notes.md", "README.md"}
-
-    mocker.patch("scorers.documentation.logic.repo_file_exists", side_effect=exists)
-    mocker.patch(
-        "scorers.documentation.logic.repo_releases",
-        return_value=[
-            {"tag_name": "v2.0.0", "draft": False, "body": "Notes for v2.0.0"},
-            {"tag_name": "v1.9.0", "draft": False, "body": "Notes for v1.9.0"},
-        ],
-    )
-    mocker.patch("scorers.documentation.logic.repo_file_text", return_value="")
-    mocker.patch("scorers.documentation.logic.default_branch_check_runs", return_value=[])
-
-    result = compute_metrics(UNIT, "gh-token", "or-key")
-    assert result["recent_release_notes_present"] is True
-
-
-def test_release_notes_uses_latest_two_by_release_timestamp(mocker):
-    """Latest two non-draft releases should be selected by published_at ordering."""
-    mocker.patch(
-        "scorers.documentation.logic.repo_file_exists",
-        side_effect=lambda repo, path, token: path in {"docs/release-notes.md", "README.md"},
-    )
-    mocker.patch("scorers.documentation.logic.repo_file_text", return_value="")
-    mocker.patch("scorers.documentation.logic.default_branch_check_runs", return_value=[])
-    # Intentionally unsorted: older successful notes first, newest missing notes last.
-    mocker.patch(
-        "scorers.documentation.logic.repo_releases",
-        return_value=[
-            {
-                "tag_name": "v1.0.0",
-                "draft": False,
-                "published_at": "2025-01-01T00:00:00Z",
-                "body": "old notes",
-            },
-            {
-                "tag_name": "v2.0.0",
-                "draft": False,
-                "published_at": "2026-01-02T00:00:00Z",
-                "body": "",
-            },
-            {
-                "tag_name": "v1.9.0",
-                "draft": False,
-                "published_at": "2026-01-01T00:00:00Z",
-                "body": "notes",
-            },
-        ],
-    )
-
-    result = compute_metrics(UNIT, "gh-token", "or-key")
-    # Should fail because latest two are v2.0.0 + v1.9.0 and v2.0.0 has empty notes.
-    assert result["recent_release_notes_present"] is False

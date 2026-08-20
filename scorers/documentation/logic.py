@@ -10,6 +10,7 @@ from scorers.shared.github_signals import (
     repo_file_exists,
     repo_file_text,
     repo_releases,
+    workflow_files,
 )
 
 _PROMPTS_DIR = Path(__file__).parent / "prompts"
@@ -147,64 +148,6 @@ def _documentation_workflows_passing(check_runs: list[dict[str, Any]]) -> bool:
     )
 
 
-def _diataxis_coverage(unit: EvaluationUnit, github_token: str | None) -> int:
-    categories = (
-        ("docs/tutorial.md", "docs/tutorial/README.md", "tutorial.md", "docs/getting-started.md"),
-        ("docs/how-to.md", "docs/howto.md", "docs/how-to/README.md", "how-to.md"),
-        ("docs/reference.md", "docs/reference/README.md", "reference.md"),
-        (
-            "docs/explanation.md",
-            "docs/explanation/README.md",
-            "docs/architecture.md",
-            "explanation.md",
-        ),
-    )
-    return sum(1 for paths in categories if _any_file_exists(unit, paths, github_token))
-
-
-def _tutorial_tested(
-    unit: EvaluationUnit, github_token: str | None, check_runs: list[dict[str, Any]]
-) -> bool:
-    tutorial_present = _any_file_exists(
-        unit,
-        ("docs/tutorial.md", "docs/tutorial/README.md", "tutorial.md", "docs/getting-started.md"),
-        github_token,
-    )
-    # Require that a check-run name indicates BOTH tutorial context AND a test/verification intent.
-    # Evaluate the latest matching check-run conclusion (by completed_at/started_at, fallback to
-    # list order) rather than accepting the first success we encounter. If the latest matching
-    # tutorial-test run failed, the metric should be False.
-    tutorial_needles = (
-        "tutorial",
-        "tutorials",
-        "docs tutorial",
-    )
-    intent_needles = ("test", "tests", "e2e", "verification", "verify", "validation", "validate")
-
-    latest_key = None
-    latest_conclusion: str | None = None
-    for idx, check in enumerate(check_runs):
-        name = str(check.get("name", "")).lower()
-        conclusion = str(check.get("conclusion", "")).lower()
-        has_tutorial = any(_name_matches(name, t) for t in tutorial_needles)
-        has_intent = any(_name_matches(name, i) for i in intent_needles)
-        if not (has_tutorial and has_intent):
-            continue
-        # Prefer completed_at, then started_at. These are ISO timestamps
-        # and compare lexicographically. Fall back to the list index for
-        # deterministic ordering when timestamps are missing.
-        ts = check.get("completed_at") or check.get("started_at") or ""
-        key = (str(ts), idx)
-        if latest_key is None or key > latest_key:
-            latest_key = key
-            latest_conclusion = conclusion
-    if latest_conclusion is None:
-        return False
-    # Only count as tested if the latest matching run concluded successfully
-    # and a tutorial file exists in the repository.
-    return (latest_conclusion == "success") and tutorial_present
-
-
 def _uses_rtd_hosting(unit: EvaluationUnit, github_token: str | None) -> bool:
     """Tightly detect ReadTheDocs hosting.
 
@@ -247,52 +190,57 @@ def _uses_rtd_hosting(unit: EvaluationUnit, github_token: str | None) -> bool:
     return False
 
 
-def _recent_release_notes_present(unit: EvaluationUnit, github_token: str | None) -> bool:
+def _release_notes_process_implemented(unit: EvaluationUnit, github_token: str | None) -> bool:
     """
-    Determine whether recent releases have release notes and a documented process.
+    Determine whether a canonical release-notes workflow is implemented.
 
-    Deterministic approach:
-    - Require a deterministic process evidence marker file (one of a known set)
-    - Query repository releases via the GitHub API (repo_releases)
-    - Inspect the last two non-draft releases
-    - Return True if process marker exists and both releases have a non-empty 'body'
+    Requires all of:
+    - Release-notes structure files (common.yaml, releases/, template/)
+    - A workflow file that uses canonical/release-notes-automation
+    - At least two non-draft releases with non-empty body
     """
-    # Known deterministic marker files that indicate a release-notes process exists
-    marker_paths = (
-        "docs/release-notes.md",
-        "docs/release-notes/README.md",
-        ".github/release-notes.md",
-        "RELEASE_NOTES.md",
-        "docs/releasing.md",
-        ".github/release-process.md",
+    required_structure = (
+        "docs/release-notes/common.yaml",
+        "docs/release-notes/releases",
+        "docs/release-notes/template",
     )
-    # Require process evidence marker
-    if not _any_file_exists(unit, marker_paths, github_token):
+    has_structure = (
+        _file_exists(unit, required_structure[0], github_token)
+        and _file_exists(unit, required_structure[1], github_token)
+        and _file_exists(unit, required_structure[2], github_token)
+    )
+    if not has_structure:
         return False
 
-    releases = repo_releases(unit.repo, github_token)
-    if not releases:
-        return False
-    # Filter out draft releases and sort explicitly so "latest two" is deterministic.
-    non_draft = [r for r in releases if not r.get("draft", False)]
-    non_draft.sort(
-        key=lambda r: str(
-            r.get("published_at")
-            or r.get("created_at")
-            or r.get("released_at")
-            or r.get("tag_name")
-            or ""
-        ),
-        reverse=True,
+    workflow_texts = [content.lower() for _, content in workflow_files(unit.repo, github_token)]
+    has_generation_workflow = any(
+        "canonical/release-notes-automation/.github/workflows/action.yml" in text
+        for text in workflow_texts
     )
+    if not has_generation_workflow:
+        return False
+
+    non_draft = [r for r in repo_releases(unit.repo, github_token) if not r.get("draft", False)]
     if len(non_draft) < 2:
         return False
-    recent_two = non_draft[:2]
-    for rel in recent_two:
-        body = str(rel.get("body", "") or "").strip()
-        if not body:
-            return False
-    return True
+    latest_two = sorted(
+        non_draft,
+        key=lambda r: str(r.get("published_at") or r.get("created_at") or r.get("tag_name") or ""),
+        reverse=True,
+    )[:2]
+    return all(str(rel.get("body", "")).strip() for rel in latest_two)
+
+
+def _diataxis_coverage_ai(
+    unit: EvaluationUnit,
+    github_token: str | None,
+    openrouter_api_key: str,
+    model: str,
+) -> int:
+    """AI-assisted diataxis coverage assessment (placeholder for Task 3)."""
+    if not openrouter_api_key:
+        return 0
+    return 0
 
 
 def compute_metrics(
@@ -301,15 +249,15 @@ def compute_metrics(
     openrouter_api_key: str,
     model: str = "anthropic/claude-sonnet-4.5",
 ) -> dict[str, Any]:
-    del openrouter_api_key, model
     check_runs = default_branch_check_runs(unit.repo, github_token)
     return {
         "readme_present": _readme_present(unit, github_token),
         "contributing_present": _contributing_present(unit, github_token),
         "has_security": _file_exists(unit, "SECURITY.md", github_token),
         "documentation_workflows_passing": _documentation_workflows_passing(check_runs),
-        "diataxis_coverage": _diataxis_coverage(unit, github_token),
-        "tutorial_tested": _tutorial_tested(unit, github_token, check_runs),
+        "diataxis_coverage_ai": _diataxis_coverage_ai(
+            unit, github_token, openrouter_api_key, model=model
+        ),
         "uses_rtd_hosting": _uses_rtd_hosting(unit, github_token),
-        "recent_release_notes_present": _recent_release_notes_present(unit, github_token),
+        "release_notes_process_implemented": _release_notes_process_implemented(unit, github_token),
     }
