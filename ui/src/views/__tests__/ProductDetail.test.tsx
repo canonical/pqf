@@ -61,6 +61,14 @@ const mockPortfolio: Portfolio = {
           metrics: { coverage_pct: 65, latest_build_passing: true },
           composition: null,
         },
+        substrate_compat: {
+          medal: 'unrated',
+          target: 'gold',
+          applicability: 'not_applicable',
+          drift: null,
+          metrics: {},
+          composition: null,
+        },
       },
     },
   ],
@@ -151,6 +159,13 @@ describe('ProductDetail', () => {
   it('shows dimension row', () => {
     wrap('matrix')
     expect(screen.getAllByRole('link', { name: 'test verification' }).length).toBeGreaterThan(0)
+  })
+
+  it('renders not applicable dimensions as N/A', () => {
+    wrap('synapse')
+    const row = screen.getByRole('link', { name: 'substrate compat' }).closest('tr')
+    expect(row).not.toBeNull()
+    expect(row).toHaveTextContent('N/A')
   })
 
   it('renders squad as a linked GitHub team badge', () => {

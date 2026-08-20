@@ -6,6 +6,7 @@ import DriftChip from '../components/DriftChip'
 import MetricsList from '../components/MetricsList'
 import RootMetricsList from '../components/RootMetricsList'
 import LoadingSpinner from '../components/LoadingSpinner'
+import type { ApplicabilityOutcome, Medal } from '../types'
 import { buildGroupedProducts } from '../lib/groupedPortfolioView'
 
 const SQUAD_TEAMS: Record<string, { label: string; url: string }> = {
@@ -27,6 +28,32 @@ function parseCriteria(criteria: string[]): Record<string, { operator: string; v
     result[metric] = { operator, value }
   }
   return result
+}
+
+function renderDimensionBadge(entry?: { medal: Medal; applicability: ApplicabilityOutcome }) {
+  if (!entry) return <MedalBadge medal="unrated" size="small" />
+  if (entry.applicability === 'not_applicable') {
+    return (
+      <span
+        style={{
+          backgroundColor: '#666',
+          color: '#fff',
+          borderRadius: '0.25rem',
+          padding: '0.1rem 0.4rem',
+          fontSize: '0.75rem',
+          fontWeight: 600,
+          minWidth: '5.5rem',
+          display: 'inline-flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          whiteSpace: 'nowrap',
+        }}
+      >
+        N/A
+      </span>
+    )
+  }
+  return <MedalBadge medal={entry.medal} size="small" />
 }
 
 export default function ProductDetail() {
@@ -220,7 +247,7 @@ export default function ProductDetail() {
                         <Link to={`/dimensions/${dim}`} style={{ fontWeight: 500 }}>{dim.replace(/_/g, ' ')}</Link>
                       </td>
                       <td style={{ padding: '0.75rem', verticalAlign: 'top' }}>
-                        <MedalBadge medal={entry.medal} size="small" />
+                        {renderDimensionBadge(entry)}
                       </td>
                       <td style={{ padding: '0.75rem', verticalAlign: 'top' }}>
                         {isRoot && <DriftChip drift={entry.drift} />}
@@ -291,7 +318,7 @@ export default function ProductDetail() {
                         </td>
                         {dependencyDimensions.map(dim => (
                           <td key={dim} style={{ padding: '0.75rem', verticalAlign: 'top' }}>
-                            <MedalBadge medal={leaf.dimensions[dim]?.medal ?? 'unrated'} size="small" />
+                            {renderDimensionBadge(leaf.dimensions[dim])}
                           </td>
                         ))}
                       </tr>
