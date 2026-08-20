@@ -279,7 +279,7 @@ export default function ProductDetail() {
                   // Bronze criteria establish the minimum bar (rated vs unrated);
                   // target-tier criteria are overlaid so failing metrics show against the actual target.
                   const bronzeCriteria = dimMeta?.medals?.bronze?.criteria ?? []
-                  const targetCriteria = dimMeta?.medals?.[entry.target]?.criteria ?? []
+                  const targetCriteria = dimMeta?.medals?.[entry.target as 'bronze' | 'silver' | 'gold']?.criteria ?? []
                   const thresholds = parseCriteria([...bronzeCriteria, ...targetCriteria])
 
                   return (

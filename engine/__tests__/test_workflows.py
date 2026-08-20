@@ -131,7 +131,11 @@ def test_compute_metrics_deploys_production_from_engine_artifacts() -> None:
     preview_deploy_step = next(
         step for step in preview["steps"] if step.get("name") == "Deploy PR preview"
     )
-    assert preview_deploy_step["with"]["comment"] is False
+    # comment key must be absent so the action posts a PR link comment automatically
+    assert "comment" not in preview_deploy_step["with"], (
+        "removing 'comment: false' lets the preview action post a PR link comment; "
+        "do not re-add it"
+    )
 
     assert "cleanup-preview" not in jobs, "cleanup moved to dedicated cleanup-preview workflow"
 
