@@ -338,3 +338,56 @@ def test_readme_and_contributing_presence_only_requires_non_empty_files(mocker):
     assert result["readme_present"] is True
     assert result["contributing_present"] is True
     assert result["has_security"] is False
+
+
+def test_diataxis_ai_metric_uses_openrouter_result(mocker):
+    """AI Diataxis metric should parse OpenRouter JSON response."""
+    fake_client = mocker.Mock()
+    fake_client.chat.completions.create.return_value = mocker.Mock(
+        choices=[
+            mocker.Mock(
+                message=mocker.Mock(content='{"diataxis_coverage": 3, "reasoning": "has 3 types"}')
+            )
+        ]
+    )
+    mocker.patch("scorers.documentation.logic.OpenAI", return_value=fake_client)
+    mocker.patch("scorers.documentation.logic.repo_file_text", return_value="# Docs")
+    mocker.patch("scorers.documentation.logic.repo_file_exists", return_value=False)
+    mocker.patch("scorers.documentation.logic.repo_releases", return_value=[])
+    mocker.patch("scorers.documentation.logic.default_branch_check_runs", return_value=[])
+    mocker.patch("scorers.documentation.logic.workflow_files", return_value=[])
+
+    result = compute_metrics(UNIT, "gh-token", "or-key", model="openrouter/test-model")
+    assert result["diataxis_coverage_ai"] == 3
+
+
+def test_diataxis_ai_metric_falls_back_to_zero_when_api_key_missing(mocker):
+    """AI Diataxis metric should return 0 when API key is missing."""
+    mocker.patch("scorers.documentation.logic.repo_file_exists", return_value=False)
+    mocker.patch("scorers.documentation.logic.repo_file_text", return_value="")
+    mocker.patch("scorers.documentation.logic.repo_releases", return_value=[])
+    mocker.patch("scorers.documentation.logic.default_branch_check_runs", return_value=[])
+    mocker.patch("scorers.documentation.logic.workflow_files", return_value=[])
+
+    result = compute_metrics(UNIT, "gh-token", "", model="openrouter/test-model")
+    assert result["diataxis_coverage_ai"] == 0
+
+
+def test_diataxis_ai_metric_clamps_to_0_4_range(mocker):
+    """AI Diataxis metric should clamp results to 0-4 range."""
+    fake_client = mocker.Mock()
+    # Test with out-of-range value (should clamp to 4)
+    fake_client.chat.completions.create.return_value = mocker.Mock(
+        choices=[
+            mocker.Mock(message=mocker.Mock(content='{"diataxis_coverage": 10, "reasoning": ""}'))
+        ]
+    )
+    mocker.patch("scorers.documentation.logic.OpenAI", return_value=fake_client)
+    mocker.patch("scorers.documentation.logic.repo_file_text", return_value="# Docs")
+    mocker.patch("scorers.documentation.logic.repo_file_exists", return_value=False)
+    mocker.patch("scorers.documentation.logic.repo_releases", return_value=[])
+    mocker.patch("scorers.documentation.logic.default_branch_check_runs", return_value=[])
+    mocker.patch("scorers.documentation.logic.workflow_files", return_value=[])
+
+    result = compute_metrics(UNIT, "gh-token", "or-key", model="openrouter/test-model")
+    assert result["diataxis_coverage_ai"] == 4

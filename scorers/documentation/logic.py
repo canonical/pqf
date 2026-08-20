@@ -1,8 +1,11 @@
 from __future__ import annotations
 
+import json
 import re
 from pathlib import Path
 from typing import Any
+
+from openai import OpenAI
 
 from engine.models import EvaluationUnit
 from scorers.shared.github_signals import (
@@ -237,10 +240,31 @@ def _diataxis_coverage_ai(
     openrouter_api_key: str,
     model: str,
 ) -> int:
-    """AI-assisted diataxis coverage assessment (placeholder for Task 3)."""
+    """AI-assisted diataxis coverage assessment via OpenRouter.
+
+    Returns 0-4 score indicating Diataxis coverage (tutorials, how-tos, reference, explanation).
+    Falls back to 0 if API key is missing or request fails.
+    """
     if not openrouter_api_key:
         return 0
-    return 0
+
+    prompt = (_PROMPTS_DIR / "diataxis_check.md").read_text()
+    readme = _file_text(unit, "README.md", github_token)
+    docs_index = _file_text(unit, "docs/index.md", github_token)
+    payload = f"{prompt}\n\nRepository context:\nREADME:\n{readme}\n\ndocs/index.md:\n{docs_index}"
+
+    try:
+        client = OpenAI(api_key=openrouter_api_key, base_url="https://openrouter.ai/api/v1")
+        response = client.chat.completions.create(
+            model=model,
+            messages=[{"role": "user", "content": payload}],
+        )
+        raw = response.choices[0].message.content or "{}"
+        parsed = json.loads(raw)
+        value = int(parsed.get("diataxis_coverage", 0))
+        return max(0, min(4, value))
+    except Exception:
+        return 0
 
 
 def compute_metrics(
