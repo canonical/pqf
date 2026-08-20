@@ -81,11 +81,12 @@ dimensions:
       renovate_enabled: {type: boolean, label: "Renovate enabled", description: "Repository is configured for Renovate updates."}
       canonical_repo_automation_registered: {type: boolean, label: "Canonical repo automation registered", description: "Repository is onboarded in canonical-repo-automation."}
       branch_protection_required_checks: {type: boolean, label: "Branch protection with required checks", description: "Default branch has required checks configured."}
+      signed_commits_required: {type: boolean, label: "Signed commits required", description: "Default branch requires commit signatures (GPG or SSH)."}
       sast_workflow_present: {type: boolean, label: "SAST workflow present", description: "Repository exposes an existing static security analysis workflow."}
       cve_tracking_process_present: {type: boolean, label: "CVE tracking process present", description: "Repository exposes a CVE or security maintenance process marker."}
     medals:
-      silver: ["branch_protection_required_checks == true", "renovate_enabled == true"]
-      gold: ["branch_protection_required_checks == true", "renovate_enabled == true", "sast_workflow_present == true", "cve_tracking_process_present == true"]
+      silver: ["branch_protection_required_checks == true", "renovate_enabled == true", "signed_commits_required == true"]
+      gold: ["branch_protection_required_checks == true", "renovate_enabled == true", "signed_commits_required == true", "sast_workflow_present == true", "cve_tracking_process_present == true"]
 
   support_engagement:
     label: "Support engagement"
