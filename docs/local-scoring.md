@@ -118,9 +118,9 @@ dimension.
 Current examples:
 
 - `test_verification` requires `latest_build_passing`
-- `documentation` requires README/CONTRIBUTING/SECURITY presence; workflow evidence stays informational
+- `documentation` requires README/CONTRIBUTING/SECURITY presence (informational metrics like diataxis_coverage_ai and uses_rtd_hosting stay informational)
 - `substrate_compat` requires a declared Juju support signal plus substrate CI evidence
-- `security_ssdlc` requires branch protection and dependency-update measurability
+- `security_ssdlc` requires branch protection and renovate (dependency update measurability)
 - `support_engagement` requires the sampled response metrics that can otherwise be `null`
 
 This means a rubric-only change still needs a full recompute when scorer outputs or nullability
@@ -144,17 +144,29 @@ A good rule of thumb: if explaining a metric now takes a paragraph of exceptions
 
 ## Documentation scoring without LLM
 
-`score-no-llm` and `score` currently produce the same documentation outputs. The
-documentation scorer is fully deterministic and emits:
+`score-no-llm` and `score` currently produce different documentation outputs depending on LLM availability. The
+documentation scorer emits:
 
-- `readme_present`
-- `contributing_present`
-- `has_security`
-- `documentation_workflows_passing`
-- `diataxis_coverage`
-- `tutorial_tested`
-- `uses_rtd_hosting`
-- `recent_release_notes_present`
+- `readme_present` — Deterministic
+- `contributing_present` — Deterministic
+- `has_security` — Deterministic
+- `documentation_workflows_passing` — Deterministic
+- `diataxis_coverage_ai` — AI-assisted via OpenRouter (informational; requires `OPENROUTER_API_KEY`)
+- `uses_rtd_hosting` — Deterministic (informational)
+- `release_notes_process_implemented` — Deterministic
+
+---
+
+## SSDLC scoring
+
+The security_ssdlc scorer is fully deterministic and emits:
+
+- `renovate_enabled` — Detects Renovate configuration files
+- `branch_protection_required_checks` — Requires status checks in default branch protection
+- `signed_commits_required` — Requires GPG/SSH signatures in default branch protection
+- `canonical_repo_automation_registered` — Checks `canonical/canonical-repo-automation` registration
+- `sast_workflow_present` — Detects CodeQL or equivalent SAST workflows
+- `cve_tracking_process_present` — Detects CVE tracking documentation or process markers
 
 ---
 
@@ -163,6 +175,6 @@ documentation scorer is fully deterministic and emits:
 | Variable | Required | Source | Notes |
 |----------|----------|--------|-------|
 | `GITHUB_TOKEN` | Yes | Auto: `gh auth token` | All scorers use this for GitHub API calls |
-| `OPENROUTER_API_KEY` | No | Manual export | Reserved for future AI-assisted checks |
+| `OPENROUTER_API_KEY` | Conditional | Manual export | Required for `documentation` scorer's AI-assisted diataxis_coverage_ai metric; deterministic scoring works without it |
 | `OPENROUTER_MODEL` | No | Optional | Override the OpenRouter model (default: `anthropic/claude-sonnet-4.5`) |
 | `LLM_MODEL` | No | Optional | Override model for either backend |
