@@ -1,0 +1,40 @@
+- id: pqf-python-lint
+  name: PQF Python (lint)
+  entry: make lint
+  language: system
+  types: [python]
+  pass_filenames: false
+  stages: [commit]
+
+- id: pqf-python-format-check
+  name: PQF Python (format check)
+  entry: make format-check
+  language: system
+  types: [python]
+  pass_filenames: false
+  stages: [commit]
+
+- id: pqf-python-test
+  name: PQF Python (test)
+  entry: make test
+  language: system
+  types: [python]
+  pass_filenames: false
+  stages: [commit]
+
+- id: pqf-ui-build
+  name: PQF UI (type check + build)
+  entry: make build
+  language: system
+  types: [typescript, javascript]
+  pass_filenames: false
+  stages: [commit]
+  require_serial: true
+
+- id: pqf-ui-test
+  name: PQF UI (test)
+  entry: make test-ui
+  language: system
+  types: [typescript, javascript]
+  pass_filenames: false
+  stages: [commit]
