@@ -18,14 +18,16 @@ const mockPortfolio: Portfolio = {
       description: 'Chat',
       lifecycle: 'stable',
       target_medal: 'gold',
+      target_status: 'gold',
       current_medal: 'bronze',
+      current_status: 'bronze',
       squad: 'americas',
       is_portfolio_entry: true,
       composed_of: [{ product_id: 'synapse', excluded_from_parent_medal: false }],
       context_refs: [],
       parent_product_ids: [],
       dimensions: {
-        documentation: { medal: 'bronze', target: 'gold', drift: null, metrics: {}, applicability: 'scored', composition: [] },
+        documentation: { medal: 'bronze', status: 'bronze', target: 'gold', drift: null, metrics: {}, applicability: 'scored', composition: [] },
       },
     },
     {
@@ -34,7 +36,9 @@ const mockPortfolio: Portfolio = {
       name: 'Synapse Charm',
       lifecycle: 'stable',
       target_medal: 'gold',
+      target_status: 'gold',
       current_medal: 'silver',
+      current_status: 'silver',
       squad: '',
       is_portfolio_entry: false,
       composed_of: null,
@@ -44,6 +48,7 @@ const mockPortfolio: Portfolio = {
       dimensions: {
         documentation: {
           medal: 'silver',
+          status: 'silver',
           target: 'gold',
           drift: null,
           metrics: {},
@@ -59,7 +64,9 @@ const mockPortfolio: Portfolio = {
       description: 'Management',
       lifecycle: 'stable',
       target_medal: 'gold',
+      target_status: 'gold',
       current_medal: 'silver',
+      current_status: 'silver',
       squad: 'emea',
       is_portfolio_entry: true,
       composed_of: [],
@@ -68,6 +75,7 @@ const mockPortfolio: Portfolio = {
       dimensions: {
         documentation: {
           medal: 'silver',
+          status: 'silver',
           target: 'gold',
           drift: { status: 'remediating', first_seen_at: '2026-06-01T00:00:00Z', deadline: '2027-06-30T00:00:00Z' },
           metrics: {},
@@ -83,7 +91,9 @@ const mockPortfolio: Portfolio = {
       description: 'Streaming',
       lifecycle: 'stable',
       target_medal: 'gold',
+      target_status: 'gold',
       current_medal: 'unrated',
+      current_status: 'below_minimum',
       squad: 'apac',
       is_portfolio_entry: true,
       composed_of: [],
@@ -92,6 +102,7 @@ const mockPortfolio: Portfolio = {
       dimensions: {
         documentation: {
           medal: 'unrated',
+          status: 'below_minimum',
           target: 'gold',
           drift: { status: 'overdue', first_seen_at: '2025-06-01T00:00:00Z', deadline: '2026-06-30T00:00:00Z' },
           metrics: {},

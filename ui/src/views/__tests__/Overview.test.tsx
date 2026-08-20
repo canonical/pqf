@@ -20,16 +20,19 @@ const mockPortfolio: Portfolio = {
       product_type: 'root',
       target_medal: 'gold',
       current_medal: 'bronze',
+      current_status: 'bronze',
+      target_status: 'gold',
       squad: 'americas',
       is_portfolio_entry: true,
       composed_of: null,
       context_refs: [],
       parent_product_ids: [],
       dimensions: {
-        test_verification: { medal: 'silver', target: 'gold', applicability: 'scored', drift: null, metrics: {}, composition: null },
+        test_verification: { medal: 'silver', target: 'gold', status: 'silver', applicability: 'scored', drift: null, metrics: {}, composition: null },
         documentation: {
           medal: 'bronze',
           target: 'gold',
+          status: 'bronze',
           applicability: 'scored',
           drift: { status: 'remediating', first_seen_at: '2026-01-01T00:00:00Z', deadline: '2026-07-01T00:00:00Z' },
           metrics: {},
@@ -46,7 +49,7 @@ const mockPortfolio: Portfolio = {
 
 const rootProduct: Product = {
   id: 'matrix', product_type: 'root', name: 'Matrix', lifecycle: 'stable',
-  target_medal: 'gold', current_medal: 'bronze', squad: 'americas',
+  target_medal: 'gold', current_medal: 'bronze', current_status: 'bronze', target_status: 'gold', squad: 'americas',
   is_portfolio_entry: true, context_refs: [], parent_product_ids: [],
   composed_of: [{ product_id: 'synapse', excluded_from_parent_medal: false }],
   dimensions: {},
@@ -54,7 +57,7 @@ const rootProduct: Product = {
 
 const inlineLeaf: Product = {
   id: 'synapse', product_type: 'charm', name: 'Synapse', lifecycle: 'stable',
-  target_medal: 'gold', current_medal: 'gold', squad: '',
+  target_medal: 'gold', current_medal: 'gold', current_status: 'gold', target_status: 'gold', squad: '',
   is_portfolio_entry: false, context_refs: [], parent_product_ids: ['matrix'],
   composed_of: null, source: { repo: 'canonical/synapse-operator', subpath: null },
   dimensions: {},
@@ -94,6 +97,41 @@ describe('Overview', () => {
     wrap(<Overview />)
     const medals = screen.getAllByText('Bronze')
     expect(medals.length).toBeGreaterThan(0)
+  })
+
+
+  it('shows below minimum for unrated products with scored failed dimensions', () => {
+    const belowMinimumPortfolio: Portfolio = {
+      ...mockPortfolio,
+      products: [
+        {
+          ...mockPortfolio.products[0],
+          current_medal: 'unrated',
+          current_status: 'below_minimum',
+          dimensions: {
+            documentation: {
+              medal: 'unrated',
+              target: 'gold',
+              status: 'below_minimum',
+              applicability: 'scored',
+              drift: null,
+              metrics: {},
+              composition: null,
+            },
+          },
+        },
+      ],
+    }
+
+    vi.mocked(usePortfolio).mockReturnValue({
+      data: belowMinimumPortfolio,
+      isLoading: false,
+      isError: false,
+      error: null,
+    } as ReturnType<typeof usePortfolio>)
+
+    wrap(<Overview />)
+    expect(screen.getAllByText('Below minimum').length).toBeGreaterThan(0)
   })
 
   it('filters by search input', async () => {

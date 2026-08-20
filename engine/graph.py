@@ -178,6 +178,21 @@ def resolve_leaf_units_for(graph: ProductGraph, root_product_id: str) -> list[Ev
     root = graph.nodes.get(root_product_id)
     if root is None:
         raise ValueError(f"Product {root_product_id!r} not found in graph.")
+
+    if root.product_type in (ProductType.CHARM, ProductType.SNAP) and not root.composed_of:
+        target = root.target_medal if root.target_medal is not None else "bronze"
+        return [
+            EvaluationUnit(
+                product_id=root.id,
+                product_type=root.product_type,
+                repo=root.source_repo or "",
+                subpath=root.source_subpath,
+                allure_report_url=root.allure_report_url,
+                documentation_url=root.documentation_url,
+                target_medal=target,
+            )
+        ]
+
     leaf_ids = {edge.product_id for edge in root.composed_of}
     units = []
     for node in graph.nodes.values():

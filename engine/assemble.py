@@ -50,6 +50,7 @@ def _dim_to_dict(dim_result) -> dict:
                 "product_id": lr.product_id,
                 "repo": lr.repo,
                 "medal": lr.medal.value,
+                "status": lr.status.value,
                 "applicability": lr.applicability.value,
                 "metrics": lr.metrics,
                 "excluded_from_parent_medal": lr.excluded_from_parent_medal,
@@ -60,6 +61,7 @@ def _dim_to_dict(dim_result) -> dict:
         "medal": dim_result.medal.value,
         "target": dim_result.target.value,
         "applicability": dim_result.applicability.value,
+        "status": dim_result.status.value,
         "metrics": dim_result.metrics,
         "drift": {
             "status": dim_result.drift.status,
@@ -81,6 +83,7 @@ def _result_to_dict(result, node) -> dict:
         "lifecycle": node.lifecycle,
         "target_medal": result.target_medal.value,
         "current_medal": result.current_medal.value,
+        "current_status": result.current_status.value,
         "squad": node.ownership_squad,
         "is_portfolio_entry": node.is_portfolio_entry,
         "documentation_url": node.documentation_url,

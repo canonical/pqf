@@ -1,19 +1,19 @@
 {
   "product_id": "wireguard",
-  "computed_at": "2026-07-23T14:28:30.200853+00:00",
+  "computed_at": "2026-08-19T19:52:31.763526+00:00",
   "leaf_metrics": {
     "wireguard-gateway": {
       "test_verification": {
-        "coverage_pct": 0,
-        "stability_pct": 0,
-        "latest_build_passing": false,
+        "coverage_pct": null,
+        "stability_pct": null,
+        "latest_build_passing": null,
         "integration_test_evidence_present": false,
         "uses_ops_testing": true,
         "uses_jubilant": true
       },
       "documentation": {
-        "readme_meets_structure": false,
-        "contributing_meets_structure": false,
+        "readme_present": false,
+        "contributing_present": false,
         "has_security": false,
         "documentation_workflows_passing": false,
         "diataxis_coverage": 0,
@@ -22,24 +22,24 @@
         "recent_release_notes_present": false
       },
       "substrate_compat": {
-        "supports_juju_3": false,
-        "supports_juju_4": false,
-        "substrate_test_evidence_present": false,
+        "supports_juju_3": true,
+        "supports_juju_4": true,
+        "substrate_test_evidence_present": true,
         "uses_canonical_k8s": false
       },
       "security_ssdlc": {
         "renovate_enabled": true,
-        "canonical_repo_automation_registered": false,
+        "canonical_repo_automation_registered": true,
         "branch_protection_required_checks": true,
-        "sast_workflow_present": false,
-        "cve_tracking_process_present": false
+        "sast_workflow_present": true,
+        "cve_tracking_process_present": true
       },
       "support_engagement": {
         "avg_triage_days": 0.0,
-        "avg_pr_review_days": 0.0,
-        "response_coverage_rate": 12.5,
+        "avg_pr_review_days": 0.9,
+        "response_coverage_rate": 88.9,
         "ownership_signal": false,
-        "has_jira_sync": false
+        "has_jira_sync": true
       }
     }
   }

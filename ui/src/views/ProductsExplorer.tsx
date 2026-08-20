@@ -253,7 +253,7 @@ export default function ProductsExplorer() {
                           </span>
                         </td>
                         <td style={{ padding: '0.65rem 0.75rem', whiteSpace: 'nowrap' }}>
-                          <MedalBadge medal={root.current_medal} size="small" />
+                          <MedalBadge medal={root.current_status as any} size="small" />
                         </td>
                         <td style={{ padding: '0.65rem 0.75rem', whiteSpace: 'nowrap' }}>
                           <MedalBadge medal={root.target_medal} size="small" />
@@ -321,7 +321,7 @@ export default function ProductsExplorer() {
                               </span>
                             </td>
                             <td style={{ padding: '0.45rem 0.75rem', whiteSpace: 'nowrap' }}>
-                              <MedalBadge medal={leaf.current_medal} size="small" />
+                              <MedalBadge medal={leaf.current_status as any} size="small" />
                             </td>
                             <td style={{ padding: '0.45rem 0.75rem', whiteSpace: 'nowrap', color: '#ccc', fontSize: '0.875rem' }}>—</td>
                             <td style={{ padding: '0.45rem 0.75rem', whiteSpace: 'nowrap', color: '#ccc', fontSize: '0.875rem' }}>—</td>
@@ -365,7 +365,7 @@ export default function ProductsExplorer() {
                       </span>
                     </td>
                     <td style={{ padding: '0.6rem 0.75rem', whiteSpace: 'nowrap' }}>
-                      <MedalBadge medal={p.current_medal} size="small" />
+                      <MedalBadge medal={p.current_status as any} size="small" />
                     </td>
                     <td style={{ padding: '0.6rem 0.75rem', whiteSpace: 'nowrap' }}>
                       {p.target_medal ? <MedalBadge medal={p.target_medal} size="small" /> : <span style={{ color: '#ccc' }}>—</span>}

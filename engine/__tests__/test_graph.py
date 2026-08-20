@@ -142,6 +142,15 @@ def test_resolve_leaf_units_for_returns_only_leaves_of_root():
     assert units[0].product_id == "postgresql-k8s"
 
 
+def test_resolve_leaf_units_for_returns_self_for_top_level_leaf_product():
+    graph = build_graph([STANDALONE_LEAF])
+    units = resolve_leaf_units_for(graph, "postgresql-k8s")
+    assert len(units) == 1
+    assert units[0].product_id == "postgresql-k8s"
+    assert units[0].repo == "canonical/postgresql-k8s-operator"
+    assert units[0].target_medal == "gold"
+
+
 def test_resolve_leaf_units_for_excludes_leaves_from_other_products():
     # matrix has inline synapse; discourse refs postgresql-k8s
     # scoring matrix should not include postgresql-k8s

@@ -209,7 +209,7 @@ export default function Overview() {
                       </span>
                     </td>
                     <td><MedalBadge medal={product.target_medal} size="small" /></td>
-                    <td><MedalBadge medal={product.current_medal} size="small" /></td>
+                    <td><MedalBadge medal={product.current_status as any} size="small" /></td>
                     {hasDriftData && <td><DriftIndicator drift={worstDrift} /></td>}
                   </tr>
                 )
@@ -245,7 +245,7 @@ export default function Overview() {
                       const d = product.dimensions[dim]
                       return (
                         <td key={dim}>
-                          {d ? <MedalBadge medal={d.medal} size="small" /> : <span>—</span>}
+                          {d ? <MedalBadge medal={d.status as any} size="small" /> : <span>—</span>}
                         </td>
                       )
                     })}

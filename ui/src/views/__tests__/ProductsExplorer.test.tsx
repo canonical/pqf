@@ -19,6 +19,8 @@ const mockPortfolio: Portfolio = {
       lifecycle: 'stable',
       target_medal: 'gold',
       current_medal: 'bronze',
+      current_status: 'bronze',
+      target_status: 'gold',
       squad: 'americas',
       is_portfolio_entry: true,
       context_refs: [],
@@ -33,6 +35,8 @@ const mockPortfolio: Portfolio = {
       lifecycle: 'stable',
       target_medal: 'gold',
       current_medal: 'unrated',
+      current_status: 'insufficient_data',
+      target_status: 'gold',
       squad: '',
       is_portfolio_entry: false,
       context_refs: [],
@@ -48,6 +52,8 @@ const mockPortfolio: Portfolio = {
       lifecycle: 'stable',
       target_medal: 'silver',
       current_medal: 'bronze',
+      current_status: 'bronze',
+      target_status: 'silver',
       squad: 'emea',
       is_portfolio_entry: true,
       context_refs: [],
@@ -110,6 +116,43 @@ describe('ProductsExplorer', () => {
   it('shows medal for root product', () => {
     wrap()
     expect(screen.getAllByText('Bronze').length).toBeGreaterThan(0)
+  })
+
+
+  it('shows below minimum for unrated products with scored failed dimensions', () => {
+    const belowMinimumPortfolio: Portfolio = {
+      ...mockPortfolio,
+      products: [
+        {
+          ...mockPortfolio.products[0],
+          current_medal: 'unrated',
+          current_status: 'below_minimum',
+          dimensions: {
+            documentation: {
+              medal: 'unrated',
+              target: 'gold',
+              status: 'below_minimum',
+              applicability: 'scored',
+              drift: null,
+              metrics: {},
+              composition: null,
+            },
+          },
+        },
+        mockPortfolio.products[1],
+        mockPortfolio.products[2],
+      ],
+    }
+
+    vi.mocked(usePortfolio).mockReturnValue({
+      data: belowMinimumPortfolio,
+      isLoading: false,
+      isError: false,
+      error: null,
+    } as ReturnType<typeof usePortfolio>)
+
+    wrap()
+    expect(screen.getByText('Below minimum')).toBeInTheDocument()
   })
 
   it('shows search input', () => {

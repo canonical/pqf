@@ -23,6 +23,7 @@ function leaf(
     product_id: id,
     repo: `canonical/${id}`,
     medal: 'unrated' as const,
+    status: 'below_minimum' as const,
     applicability: 'scored' as const,
     metrics,
     excluded_from_parent_medal: excluded,

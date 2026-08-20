@@ -118,7 +118,7 @@ dimension.
 Current examples:
 
 - `test_verification` requires `latest_build_passing`
-- `documentation` requires the core documentation presence/structure booleans
+- `documentation` requires README/CONTRIBUTING/SECURITY presence; workflow evidence stays informational
 - `substrate_compat` requires a declared Juju support signal plus substrate CI evidence
 - `security_ssdlc` requires branch protection and dependency-update measurability
 - `support_engagement` requires the sampled response metrics that can otherwise be `null`
@@ -147,8 +147,8 @@ A good rule of thumb: if explaining a metric now takes a paragraph of exceptions
 `score-no-llm` and `score` currently produce the same documentation outputs. The
 documentation scorer is fully deterministic and emits:
 
-- `readme_meets_structure`
-- `contributing_meets_structure`
+- `readme_present`
+- `contributing_present`
 - `has_security`
 - `documentation_workflows_passing`
 - `diataxis_coverage`

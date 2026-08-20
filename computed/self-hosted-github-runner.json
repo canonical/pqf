@@ -1,20 +1,20 @@
 {
   "product_id": "self-hosted-github-runner",
-  "computed_at": "2026-07-23T14:26:26.861257+00:00",
+  "computed_at": "2026-08-19T20:12:35.326031+00:00",
   "leaf_metrics": {
     "github-runner": {
       "test_verification": {
-        "coverage_pct": 0,
-        "stability_pct": 0,
+        "coverage_pct": null,
+        "stability_pct": null,
         "latest_build_passing": false,
-        "integration_test_evidence_present": false,
+        "integration_test_evidence_present": true,
         "uses_ops_testing": false,
         "uses_jubilant": true
       },
       "documentation": {
-        "readme_meets_structure": false,
-        "contributing_meets_structure": false,
-        "has_security": false,
+        "readme_present": true,
+        "contributing_present": true,
+        "has_security": true,
         "documentation_workflows_passing": false,
         "diataxis_coverage": 0,
         "tutorial_tested": false,
@@ -29,32 +29,32 @@
       },
       "security_ssdlc": {
         "renovate_enabled": true,
-        "canonical_repo_automation_registered": false,
+        "canonical_repo_automation_registered": true,
         "branch_protection_required_checks": true,
-        "sast_workflow_present": false,
-        "cve_tracking_process_present": false
+        "sast_workflow_present": true,
+        "cve_tracking_process_present": true
       },
       "support_engagement": {
         "avg_triage_days": 732.2,
-        "avg_pr_review_days": 0.0,
-        "response_coverage_rate": 5.3,
+        "avg_pr_review_days": 0.5,
+        "response_coverage_rate": 84.2,
         "ownership_signal": true,
-        "has_jira_sync": false
+        "has_jira_sync": true
       }
     },
     "github-runner-image-builder": {
       "test_verification": {
-        "coverage_pct": 0,
-        "stability_pct": 0,
+        "coverage_pct": null,
+        "stability_pct": null,
         "latest_build_passing": false,
-        "integration_test_evidence_present": false,
+        "integration_test_evidence_present": true,
         "uses_ops_testing": false,
         "uses_jubilant": true
       },
       "documentation": {
-        "readme_meets_structure": false,
-        "contributing_meets_structure": false,
-        "has_security": false,
+        "readme_present": true,
+        "contributing_present": true,
+        "has_security": true,
         "documentation_workflows_passing": false,
         "diataxis_coverage": 0,
         "tutorial_tested": false,
@@ -63,78 +63,38 @@
       },
       "substrate_compat": {
         "supports_juju_3": false,
-        "supports_juju_4": false,
-        "substrate_test_evidence_present": false,
+        "supports_juju_4": true,
+        "substrate_test_evidence_present": true,
         "uses_canonical_k8s": false
       },
       "security_ssdlc": {
         "renovate_enabled": true,
-        "canonical_repo_automation_registered": false,
+        "canonical_repo_automation_registered": true,
         "branch_protection_required_checks": true,
         "sast_workflow_present": false,
-        "cve_tracking_process_present": false
+        "cve_tracking_process_present": true
       },
       "support_engagement": {
         "avg_triage_days": 159.7,
-        "avg_pr_review_days": 0.0,
-        "response_coverage_rate": 15.8,
+        "avg_pr_review_days": 0.9,
+        "response_coverage_rate": 77.8,
         "ownership_signal": true,
-        "has_jira_sync": false
+        "has_jira_sync": true
       }
     },
     "github-runner-webhook-router": {
       "test_verification": {
-        "coverage_pct": 0,
-        "stability_pct": 0,
+        "coverage_pct": null,
+        "stability_pct": null,
         "latest_build_passing": false,
-        "integration_test_evidence_present": false,
+        "integration_test_evidence_present": true,
         "uses_ops_testing": true,
         "uses_jubilant": false
       },
       "documentation": {
-        "readme_meets_structure": false,
-        "contributing_meets_structure": false,
-        "has_security": false,
-        "documentation_workflows_passing": false,
-        "diataxis_coverage": 0,
-        "tutorial_tested": false,
-        "uses_rtd_hosting": false,
-        "recent_release_notes_present": false
-      },
-      "substrate_compat": {
-        "supports_juju_3": false,
-        "supports_juju_4": false,
-        "substrate_test_evidence_present": false,
-        "uses_canonical_k8s": false
-      },
-      "security_ssdlc": {
-        "renovate_enabled": false,
-        "canonical_repo_automation_registered": false,
-        "branch_protection_required_checks": true,
-        "sast_workflow_present": false,
-        "cve_tracking_process_present": false
-      },
-      "support_engagement": {
-        "avg_triage_days": 0.0,
-        "avg_pr_review_days": 0.0,
-        "response_coverage_rate": 0.0,
-        "ownership_signal": true,
-        "has_jira_sync": false
-      }
-    },
-    "tmate-ssh-server": {
-      "test_verification": {
-        "coverage_pct": 0,
-        "stability_pct": 0,
-        "latest_build_passing": false,
-        "integration_test_evidence_present": false,
-        "uses_ops_testing": false,
-        "uses_jubilant": false
-      },
-      "documentation": {
-        "readme_meets_structure": false,
-        "contributing_meets_structure": false,
-        "has_security": false,
+        "readme_present": true,
+        "contributing_present": true,
+        "has_security": true,
         "documentation_workflows_passing": false,
         "diataxis_coverage": 0,
         "tutorial_tested": false,
@@ -150,31 +110,71 @@
       "security_ssdlc": {
         "renovate_enabled": true,
         "canonical_repo_automation_registered": false,
+        "branch_protection_required_checks": true,
+        "sast_workflow_present": true,
+        "cve_tracking_process_present": true
+      },
+      "support_engagement": {
+        "avg_triage_days": null,
+        "avg_pr_review_days": null,
+        "response_coverage_rate": null,
+        "ownership_signal": true,
+        "has_jira_sync": true
+      }
+    },
+    "tmate-ssh-server": {
+      "test_verification": {
+        "coverage_pct": null,
+        "stability_pct": null,
+        "latest_build_passing": true,
+        "integration_test_evidence_present": true,
+        "uses_ops_testing": false,
+        "uses_jubilant": false
+      },
+      "documentation": {
+        "readme_present": true,
+        "contributing_present": true,
+        "has_security": false,
+        "documentation_workflows_passing": false,
+        "diataxis_coverage": 0,
+        "tutorial_tested": false,
+        "uses_rtd_hosting": false,
+        "recent_release_notes_present": false
+      },
+      "substrate_compat": {
+        "supports_juju_3": false,
+        "supports_juju_4": false,
+        "substrate_test_evidence_present": false,
+        "uses_canonical_k8s": false
+      },
+      "security_ssdlc": {
+        "renovate_enabled": true,
+        "canonical_repo_automation_registered": true,
         "branch_protection_required_checks": true,
         "sast_workflow_present": false,
         "cve_tracking_process_present": false
       },
       "support_engagement": {
         "avg_triage_days": 613.0,
-        "avg_pr_review_days": 0.0,
-        "response_coverage_rate": 20.0,
+        "avg_pr_review_days": 4.8,
+        "response_coverage_rate": 80.0,
         "ownership_signal": true,
-        "has_jira_sync": false
+        "has_jira_sync": true
       }
     },
     "repo-policy-compliance": {
       "test_verification": {
-        "coverage_pct": 0,
-        "stability_pct": 0,
+        "coverage_pct": null,
+        "stability_pct": null,
         "latest_build_passing": false,
         "integration_test_evidence_present": false,
         "uses_ops_testing": true,
         "uses_jubilant": false
       },
       "documentation": {
-        "readme_meets_structure": false,
-        "contributing_meets_structure": false,
-        "has_security": false,
+        "readme_present": true,
+        "contributing_present": true,
+        "has_security": true,
         "documentation_workflows_passing": false,
         "diataxis_coverage": 0,
         "tutorial_tested": false,
@@ -188,32 +188,32 @@
         "uses_canonical_k8s": false
       },
       "security_ssdlc": {
-        "renovate_enabled": false,
+        "renovate_enabled": true,
         "canonical_repo_automation_registered": false,
         "branch_protection_required_checks": true,
-        "sast_workflow_present": false,
-        "cve_tracking_process_present": false
+        "sast_workflow_present": true,
+        "cve_tracking_process_present": true
       },
       "support_engagement": {
-        "avg_triage_days": 0.0,
-        "avg_pr_review_days": 0.0,
-        "response_coverage_rate": 0.0,
+        "avg_triage_days": null,
+        "avg_pr_review_days": null,
+        "response_coverage_rate": null,
         "ownership_signal": true,
-        "has_jira_sync": false
+        "has_jira_sync": true
       }
     },
     "github-runner-planner": {
       "test_verification": {
-        "coverage_pct": 0,
-        "stability_pct": 0,
-        "latest_build_passing": false,
+        "coverage_pct": null,
+        "stability_pct": null,
+        "latest_build_passing": true,
         "integration_test_evidence_present": false,
         "uses_ops_testing": true,
-        "uses_jubilant": false
+        "uses_jubilant": true
       },
       "documentation": {
-        "readme_meets_structure": false,
-        "contributing_meets_structure": false,
+        "readme_present": false,
+        "contributing_present": false,
         "has_security": false,
         "documentation_workflows_passing": false,
         "diataxis_coverage": 0,
@@ -228,32 +228,32 @@
         "uses_canonical_k8s": false
       },
       "security_ssdlc": {
-        "renovate_enabled": false,
-        "canonical_repo_automation_registered": false,
+        "renovate_enabled": true,
+        "canonical_repo_automation_registered": true,
         "branch_protection_required_checks": true,
         "sast_workflow_present": false,
-        "cve_tracking_process_present": false
+        "cve_tracking_process_present": true
       },
       "support_engagement": {
         "avg_triage_days": 0.0,
-        "avg_pr_review_days": 0.0,
-        "response_coverage_rate": 1.0,
+        "avg_pr_review_days": 0.4,
+        "response_coverage_rate": 97.2,
         "ownership_signal": true,
-        "has_jira_sync": false
+        "has_jira_sync": true
       }
     },
     "github-runner-webhook-gateway": {
       "test_verification": {
-        "coverage_pct": 0,
-        "stability_pct": 0,
-        "latest_build_passing": false,
+        "coverage_pct": null,
+        "stability_pct": null,
+        "latest_build_passing": true,
         "integration_test_evidence_present": false,
         "uses_ops_testing": true,
-        "uses_jubilant": false
+        "uses_jubilant": true
       },
       "documentation": {
-        "readme_meets_structure": false,
-        "contributing_meets_structure": false,
+        "readme_present": false,
+        "contributing_present": false,
         "has_security": false,
         "documentation_workflows_passing": false,
         "diataxis_coverage": 0,
@@ -268,18 +268,18 @@
         "uses_canonical_k8s": false
       },
       "security_ssdlc": {
-        "renovate_enabled": false,
-        "canonical_repo_automation_registered": false,
+        "renovate_enabled": true,
+        "canonical_repo_automation_registered": true,
         "branch_protection_required_checks": true,
         "sast_workflow_present": false,
-        "cve_tracking_process_present": false
+        "cve_tracking_process_present": true
       },
       "support_engagement": {
         "avg_triage_days": 0.0,
-        "avg_pr_review_days": 0.0,
-        "response_coverage_rate": 1.0,
+        "avg_pr_review_days": 0.4,
+        "response_coverage_rate": 97.2,
         "ownership_signal": true,
-        "has_jira_sync": false
+        "has_jira_sync": true
       }
     }
   }

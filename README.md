@@ -67,3 +67,26 @@ make dev          # → http://localhost:5173
 | `make e2e` | Run Playwright E2E tests |
 | `make audit` | Run pip-audit + npm audit |
 | `make score PRODUCT=<id>` | Score a product locally (needs `GITHUB_TOKEN` + `OPENROUTER_API_KEY`) |
+
+## Pre-commit hooks
+
+To catch linting, formatting, type, and test errors before pushing:
+
+```bash
+# Install pre-commit framework (once)
+pip install pre-commit
+
+# Install git hooks (once per repo clone)
+pre-commit install
+
+# Run manually on all files
+pre-commit run --all-files
+
+# Hooks run automatically on `git commit`
+```
+
+Pre-commit will run:
+- **Python lint + format check + tests** on Python changes
+- **TypeScript type check + build + tests** on UI changes
+
+To skip hooks (discouraged): `git commit --no-verify`

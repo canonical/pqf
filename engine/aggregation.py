@@ -10,7 +10,18 @@ from engine.models import (
     DimensionResult,
     LeafDimensionResult,
     Medal,
+    Status,
 )
+
+
+def _dimension_status(medal: Medal, applicability: ApplicabilityOutcome) -> Status:
+    if applicability == ApplicabilityOutcome.NOT_APPLICABLE:
+        return Status.NOT_APPLICABLE
+    if applicability == ApplicabilityOutcome.INSUFFICIENT_DATA:
+        return Status.INSUFFICIENT_DATA
+    if medal == Medal.UNRATED:
+        return Status.BELOW_MINIMUM
+    return Status(medal.value)
 
 
 def compute_leaf_applicability(
@@ -65,6 +76,7 @@ def aggregate_root_dimension(
             medal=Medal.UNRATED,
             target=target,
             applicability=applicability,
+            status=_dimension_status(Medal.UNRATED, applicability),
             metrics={},
             drift=None,
             composition=list(leaf_results),
@@ -76,6 +88,7 @@ def aggregate_root_dimension(
         medal=worst.medal,
         target=target,
         applicability=ApplicabilityOutcome.SCORED,
+        status=_dimension_status(worst.medal, ApplicabilityOutcome.SCORED),
         metrics={},
         drift=None,  # root drift tracked by assemble.py after full assembly
         composition=list(leaf_results),

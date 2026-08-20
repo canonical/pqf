@@ -19,6 +19,8 @@ const mockPortfolio: Portfolio = {
       lifecycle: 'stable',
       target_medal: 'gold',
       current_medal: 'bronze',
+      current_status: 'bronze',
+      target_status: 'gold',
       squad: 'americas',
       is_portfolio_entry: true,
       documentation_url: 'https://charmhub.io/synapse',
@@ -32,6 +34,7 @@ const mockPortfolio: Portfolio = {
         test_verification: {
           medal: 'silver',
           target: 'gold',
+          status: 'silver',
           applicability: 'scored',
           drift: null,
           metrics: { coverage_pct: 87, stability_pct: 94, latest_build_passing: true },
@@ -46,6 +49,8 @@ const mockPortfolio: Portfolio = {
       lifecycle: 'stable',
       target_medal: 'gold',
       current_medal: 'bronze',
+      current_status: 'bronze',
+      target_status: 'gold',
       squad: '',
       is_portfolio_entry: false,
       context_refs: [],
@@ -56,9 +61,19 @@ const mockPortfolio: Portfolio = {
         test_verification: {
           medal: 'bronze',
           target: 'gold',
+          status: 'bronze',
           applicability: 'scored',
           drift: null,
           metrics: { coverage_pct: 65, latest_build_passing: true },
+          composition: null,
+        },
+        substrate_compat: {
+          medal: 'unrated',
+          target: 'gold',
+          status: 'not_applicable',
+          applicability: 'not_applicable',
+          drift: null,
+          metrics: { supports_juju_3: false, supports_juju_4: false, supports_ck8s: false },
           composition: null,
         },
       },
@@ -98,6 +113,7 @@ function portfolioWithComposition(overrides?: { composition: LeafDimensionResult
           test_verification: {
             medal: 'silver',
             target: 'gold',
+            status: 'silver',
             applicability: 'scored',
             drift: null,
             metrics: { coverage_pct: 87, stability_pct: 94, latest_build_passing: true },
@@ -106,6 +122,7 @@ function portfolioWithComposition(overrides?: { composition: LeafDimensionResult
                 product_id: 'synapse',
                 repo: 'canonical/synapse-operator',
                 medal: 'bronze',
+                status: 'bronze',
                 applicability: 'scored',
                 metrics: { coverage_pct: 65, latest_build_passing: true },
                 excluded_from_parent_medal: false,
@@ -151,6 +168,130 @@ describe('ProductDetail', () => {
   it('shows dimension row', () => {
     wrap('matrix')
     expect(screen.getAllByRole('link', { name: 'test verification' }).length).toBeGreaterThan(0)
+  })
+
+  it('renders not applicable dimensions as N/A', () => {
+    wrap('synapse')
+    const row = screen.getByRole('link', { name: 'substrate compat' }).closest('tr')
+    expect(row).not.toBeNull()
+    expect(row).toHaveTextContent('N/A')
+  })
+
+  it('renders scored unrated dimensions as below minimum', () => {
+    const unratedPortfolio: Portfolio = {
+      ...mockPortfolio,
+      products: [
+        {
+          ...mockPortfolio.products[0],
+          dimensions: {
+            ...mockPortfolio.products[0].dimensions,
+            documentation: {
+              medal: 'unrated',
+              target: 'silver',
+              status: 'below_minimum',
+              applicability: 'scored',
+              drift: null,
+              metrics: {
+                readme_present: true,
+                contributing_present: false,
+                has_security: true,
+              },
+              composition: null,
+            },
+          },
+        },
+        mockPortfolio.products[1],
+      ],
+      dimensions_meta: {
+        ...mockPortfolio.dimensions_meta,
+        documentation: {
+          outputs: {
+            readme_present: { label: 'README', description: 'README present', type: 'boolean', range: 'true/false' },
+            contributing_present: { label: 'CONTRIBUTING', description: 'Contribution guide present', type: 'boolean', range: 'true/false' },
+            has_security: { label: 'SECURITY', description: 'Security policy present', type: 'boolean', range: 'true/false' },
+          },
+          medals: {
+            bronze: { criteria: ['readme_present == true', 'contributing_present == true', 'has_security == true'] },
+          },
+        },
+      },
+    }
+    mockWith(unratedPortfolio)
+    wrap('matrix')
+
+    const row = screen.getByRole('link', { name: 'documentation' }).closest('tr')
+    expect(row).not.toBeNull()
+    expect(row).toHaveTextContent('Below minimum')
+  })
+
+  it('renders root current medal as below minimum when a scored dimension fails bronze', () => {
+    const aproxyLikePortfolio: Portfolio = {
+      ...mockPortfolio,
+      products: [
+        {
+          ...mockPortfolio.products[0],
+          id: 'aproxy',
+          name: 'Aproxy',
+          current_medal: 'unrated',
+          current_status: 'below_minimum',
+          target_status: 'gold',
+          dimensions: {
+            ...mockPortfolio.products[0].dimensions,
+            documentation: {
+              medal: 'unrated',
+              target: 'silver',
+              status: 'below_minimum',
+              applicability: 'scored',
+              drift: null,
+              metrics: {
+                readme_present: true,
+                contributing_present: false,
+                has_security: true,
+              },
+              composition: null,
+            },
+          },
+        },
+        mockPortfolio.products[1],
+      ],
+      dimensions_meta: {
+        ...mockPortfolio.dimensions_meta,
+        documentation: {
+          outputs: {
+            readme_present: { label: 'README', description: 'README present', type: 'boolean', range: 'true/false' },
+            contributing_present: { label: 'CONTRIBUTING', description: 'Contribution guide present', type: 'boolean', range: 'true/false' },
+            has_security: { label: 'SECURITY', description: 'Security policy present', type: 'boolean', range: 'true/false' },
+          },
+          medals: {
+            bronze: { criteria: ['readme_present == true', 'contributing_present == true', 'has_security == true'] },
+          },
+        },
+      },
+    }
+    mockWith(aproxyLikePortfolio)
+    wrap('aproxy')
+
+    const currentBlock = screen.getByText('CURRENT').closest('div')
+    expect(currentBlock).not.toBeNull()
+    expect(within(currentBlock as HTMLElement).getByText('Below minimum')).toBeInTheDocument()
+  })
+
+  it('N/A dimension evidence column shows dash instead of metric values', () => {
+    wrap('synapse')
+    const row = screen.getByRole('link', { name: 'substrate compat' }).closest('tr')!
+    const cells = within(row).getAllByRole('cell')
+    // Evidence column is the 4th cell (index 3)
+    expect(cells[3]).toHaveTextContent('—')
+    // Should NOT render the metric keys from the (non-empty) metrics dict
+    expect(cells[3]).not.toHaveTextContent('Juju 3')
+    expect(cells[3]).not.toHaveTextContent('Juju 4')
+  })
+
+  it('leaf product evidence column shows threshold-colored metrics', () => {
+    wrap('synapse')
+    const row = screen.getByRole('link', { name: 'test verification' }).closest('tr')!
+    // coverage_pct=65, gold threshold=90 → shows "65 / 90"
+    expect(row).toHaveTextContent('65 / 90')
   })
 
   it('renders squad as a linked GitHub team badge', () => {
@@ -226,6 +367,7 @@ describe('ProductDetail', () => {
             product_id: 'synapse',
             repo: 'canonical/synapse-operator',
             medal: 'bronze',
+            status: 'bronze',
             applicability: 'scored',
             metrics: { coverage_pct: 65, latest_build_passing: true },
             excluded_from_parent_medal: false,
@@ -248,6 +390,7 @@ describe('ProductDetail', () => {
             product_id: 'synapse',
             repo: 'canonical/synapse-operator',
             medal: 'bronze',
+            status: 'bronze',
             applicability: 'scored',
             metrics: { coverage_pct: 65, latest_build_passing: true },
             excluded_from_parent_medal: false,
@@ -256,6 +399,7 @@ describe('ProductDetail', () => {
             product_id: 'saml',
             repo: 'canonical/saml-operator',
             medal: 'gold',
+            status: 'gold',
             applicability: 'scored',
             metrics: { coverage_pct: 90, latest_build_passing: false },
             excluded_from_parent_medal: false,
