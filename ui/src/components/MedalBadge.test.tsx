@@ -28,10 +28,10 @@ describe('MedalBadge', () => {
     expect(container.firstChild).toHaveStyle({ backgroundColor: '#C7962F' })
   })
 
-  it('uses a uniform centered width for default and small variants', () => {
+  it('uses centered flex layout with fit-content width', () => {
     const { rerender } = render(<MedalBadge medal="unrated" />)
     expect(screen.getByText('Unrated')).toHaveStyle({
-      minWidth: '5.5rem',
+      minWidth: 'fit-content',
       display: 'inline-flex',
       justifyContent: 'center',
       alignItems: 'center',
@@ -39,7 +39,7 @@ describe('MedalBadge', () => {
 
     rerender(<MedalBadge medal="unrated" size="small" />)
     expect(screen.getByText('Unrated')).toHaveStyle({
-      minWidth: '5.5rem',
+      minWidth: 'fit-content',
       display: 'inline-flex',
       justifyContent: 'center',
       alignItems: 'center',
