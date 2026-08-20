@@ -234,12 +234,11 @@ export default function ProductDetail() {
               <tbody>
                 {Object.entries(product.dimensions).map(([dim, entry], idx) => {
                   const dimMeta = portfolio.dimensions_meta[dim]
-                  const targetTier = product.target_medal
-                  const targetCriteria =
-                    targetTier === 'bronze' || targetTier === 'silver' || targetTier === 'gold'
-                      ? dimMeta?.medals?.[targetTier]?.criteria ?? []
-                      : []
-                  const targetThresholds = parseCriteria(targetCriteria)
+                  // Bronze criteria establish the minimum bar (rated vs unrated);
+                  // target-tier criteria are overlaid so failing metrics show against the actual target.
+                  const bronzeCriteria = dimMeta?.medals?.bronze?.criteria ?? []
+                  const targetCriteria = dimMeta?.medals?.[entry.target]?.criteria ?? []
+                  const thresholds = parseCriteria([...bronzeCriteria, ...targetCriteria])
 
                   return (
                     <tr key={dim} style={{ borderBottom: '1px solid #e5e5e5', background: idx % 2 === 0 ? '#fafafa' : '#fff' }}>
@@ -253,16 +252,18 @@ export default function ProductDetail() {
                         {isRoot && <DriftChip drift={entry.drift} />}
                       </td>
                       <td style={{ padding: '0.75rem', verticalAlign: 'top' }}>
-                        {isRoot && entry.composition && entry.composition.length > 0 ? (
+                        {entry.applicability === 'not_applicable' ? (
+                          <span style={{ color: '#999' }}>—</span>
+                        ) : isRoot && entry.composition && entry.composition.length > 0 ? (
                           <RootMetricsList
                             composition={entry.composition}
-                            thresholds={targetThresholds}
+                            thresholds={thresholds}
                             metaOutputs={dimMeta?.outputs}
                           />
                         ) : (
                           <MetricsList
                             metrics={entry.metrics}
-                            thresholds={isRoot ? targetThresholds : undefined}
+                            thresholds={thresholds}
                             metaOutputs={dimMeta?.outputs}
                           />
                         )}

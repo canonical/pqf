@@ -66,7 +66,7 @@ const mockPortfolio: Portfolio = {
           target: 'gold',
           applicability: 'not_applicable',
           drift: null,
-          metrics: {},
+          metrics: { supports_juju_3: false, supports_juju_4: false, supports_ck8s: false },
           composition: null,
         },
       },
@@ -166,6 +166,24 @@ describe('ProductDetail', () => {
     const row = screen.getByRole('link', { name: 'substrate compat' }).closest('tr')
     expect(row).not.toBeNull()
     expect(row).toHaveTextContent('N/A')
+  })
+
+  it('N/A dimension evidence column shows dash instead of metric values', () => {
+    wrap('synapse')
+    const row = screen.getByRole('link', { name: 'substrate compat' }).closest('tr')!
+    const cells = within(row).getAllByRole('cell')
+    // Evidence column is the 4th cell (index 3)
+    expect(cells[3]).toHaveTextContent('—')
+    // Should NOT render the metric keys from the (non-empty) metrics dict
+    expect(cells[3]).not.toHaveTextContent('Juju 3')
+    expect(cells[3]).not.toHaveTextContent('Juju 4')
+  })
+
+  it('leaf product evidence column shows threshold-colored metrics', () => {
+    wrap('synapse')
+    const row = screen.getByRole('link', { name: 'test verification' }).closest('tr')!
+    // coverage_pct=65, gold threshold=90 → shows "65 / 90"
+    expect(row).toHaveTextContent('65 / 90')
   })
 
   it('renders squad as a linked GitHub team badge', () => {
