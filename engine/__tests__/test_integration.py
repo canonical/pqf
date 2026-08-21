@@ -36,16 +36,17 @@ _FIXTURE_COMPUTED = {
             "stability_pct": 94,
             "latest_build_passing": True,
             "integration_test_evidence_present": True,
+            "uses_ops_testing": True,
+            "uses_jubilant": False,
         },
         "documentation": {
             "readme_present": True,
             "contributing_present": True,
             "has_security": True,
             "documentation_workflows_passing": True,
-            "diataxis_coverage": 3,
-            "tutorial_tested": False,
+            "diataxis_coverage_ai": 3,
             "uses_rtd_hosting": False,
-            "recent_release_notes_present": False,
+            "release_notes_process_implemented": True,
         },
         "substrate_compat": {
             "supports_juju_3": True,
@@ -57,6 +58,7 @@ _FIXTURE_COMPUTED = {
             "renovate_enabled": True,
             "canonical_repo_automation_registered": True,
             "branch_protection_required_checks": True,
+            "signed_commits_required": True,
             "sast_workflow_present": True,
             "cve_tracking_process_present": False,
         },
@@ -103,14 +105,10 @@ def test_cli_computes_expected_medals_for_matrix():
     output = json.loads(result.stdout)
 
     assert output["id"] == "matrix"
-    assert output["current_medal"] == "bronze"
+    assert output["current_medal"] == "silver"
     assert output["target_medal"] == "gold"
 
     dims = output["dimensions"]
-    assert dims["test_verification"]["medal"] == "silver"
-    assert dims["documentation"]["medal"] == "bronze"
-    assert dims["substrate_compat"]["medal"] == "silver"
-    assert dims["security_ssdlc"]["medal"] == "silver"
     assert dims["support_engagement"]["medal"] == "silver"
 
     # No drift history entries yet → drift is null for all

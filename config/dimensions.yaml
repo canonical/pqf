@@ -26,7 +26,7 @@ dimensions:
 
   documentation:
     label: "Documentation"
-    description: "Repository documentation baseline presence and maturity signals (README, contributing, diátaxis coverage, and docs CI)."
+    description: "Repository documentation baseline presence and maturity signals (README, contributing, release notes process, and docs CI)."
     scorer: "scorers/documentation/scorer.py"
     applies_to:
       product_types: ["charm", "snap"]
@@ -39,13 +39,14 @@ dimensions:
       readme_present: {type: boolean, label: "README present", description: "README.md exists and is non-empty."}
       contributing_present: {type: boolean, label: "CONTRIBUTING present", description: "CONTRIBUTING.md exists and is non-empty."}
       has_security: {type: boolean, label: "SECURITY present", description: "SECURITY.md exists in the primary repository."}
-      documentation_workflows_passing: {type: boolean, label: "Documentation workflows passing", description: "Documentation-specific CI workflows (lint, link-check, build) are present and passing on default branch.", informational: true}
-      diataxis_coverage: {type: number, range: "0–4", label: "Diátaxis coverage", description: "Deterministic count of Diátaxis doc types present (tutorial, how-to, reference, explanation)."}
-      tutorial_tested: {type: boolean, label: "Tutorial tested", description: "Documentation includes a tutorial with automated verification (CI or Playwright) demonstrating it runs end-to-end."}
-      uses_rtd_hosting: {type: boolean, label: "Uses RTD hosting", description: "Documentation points at a Read the Docs host."}
-      recent_release_notes_present: {type: boolean, label: "Recent release notes present", description: "Release notes are present and follow the documented release-notes process (see canonical/platform-engineering-docs/docs/engineering-practices/documentation/charm-release-notes)."}
+      documentation_workflows_passing: {type: boolean, label: "Documentation workflows passing", description: "Documentation-specific CI workflows (lint, link-check, build) are present and passing on default branch."}
+      release_notes_process_implemented: {type: boolean, label: "Release notes process implemented", description: "Repository has canonical release-notes workflow + structure evidence (common.yaml, releases/, template/, and canonical release-notes automation)."}
+      diataxis_coverage_ai: {type: number, range: "0–4", label: "Diátaxis coverage (AI)", description: "AI-assisted Diátaxis assessment (informational).", informational: true}
+      uses_rtd_hosting: {type: boolean, label: "Uses RTD hosting", description: "Documentation points at a Read the Docs host.", informational: true}
     medals:
       bronze: ["readme_present == true", "contributing_present == true", "has_security == true"]
+      silver: ["readme_present == true", "contributing_present == true", "has_security == true", "release_notes_process_implemented == true"]
+      gold: ["readme_present == true", "contributing_present == true", "has_security == true", "release_notes_process_implemented == true", "documentation_workflows_passing == true"]
 
   substrate_compat:
     label: "Substrate compatibility"
@@ -80,11 +81,12 @@ dimensions:
       renovate_enabled: {type: boolean, label: "Renovate enabled", description: "Repository is configured for Renovate updates."}
       canonical_repo_automation_registered: {type: boolean, label: "Canonical repo automation registered", description: "Repository is onboarded in canonical-repo-automation."}
       branch_protection_required_checks: {type: boolean, label: "Branch protection with required checks", description: "Default branch has required checks configured."}
+      signed_commits_required: {type: boolean, label: "Signed commits required", description: "Default branch requires commit signatures (GPG or SSH)."}
       sast_workflow_present: {type: boolean, label: "SAST workflow present", description: "Repository exposes an existing static security analysis workflow."}
       cve_tracking_process_present: {type: boolean, label: "CVE tracking process present", description: "Repository exposes a CVE or security maintenance process marker."}
     medals:
-      silver: ["branch_protection_required_checks == true", "renovate_enabled == true"]
-      gold: ["branch_protection_required_checks == true", "renovate_enabled == true", "sast_workflow_present == true", "cve_tracking_process_present == true"]
+      silver: ["branch_protection_required_checks == true", "renovate_enabled == true", "signed_commits_required == true"]
+      gold: ["branch_protection_required_checks == true", "renovate_enabled == true", "signed_commits_required == true", "sast_workflow_present == true", "cve_tracking_process_present == true"]
 
   support_engagement:
     label: "Support engagement"

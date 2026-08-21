@@ -13,6 +13,22 @@ _GITHUB_API = "https://api.github.com"
 _CANONICAL_REPO_AUTOMATION_REPO = "canonical/canonical-repo-automation"
 
 
+def _has_signed_commits_required(owner_repo: str, github_token: str) -> bool:
+    """Return True if default branch requires signed commits in protection rules."""
+    repo_resp = github_get(f"{_GITHUB_API}/repos/{owner_repo}", github_token)
+    if not repo_resp.ok:
+        return False
+    default_branch = repo_resp.json().get("default_branch", "main")
+    prot_resp = github_get(
+        f"{_GITHUB_API}/repos/{owner_repo}/branches/{default_branch}/protection",
+        github_token,
+    )
+    if not prot_resp.ok:
+        return False
+    signatures = prot_resp.json().get("required_signatures", {})
+    return bool(signatures.get("enabled", False))
+
+
 def _has_branch_protection_required_checks(owner_repo: str, github_token: str) -> bool:
     """Return True if the default branch has ≥1 required status check."""
     repo_resp = github_get(f"{_GITHUB_API}/repos/{owner_repo}", github_token)
@@ -117,6 +133,7 @@ def compute_metrics(unit: EvaluationUnit, github_token: str) -> dict[str, Any]:
     canonical_repo_automation_registered = False
     sast_workflow_present = False
     cve_tracking_process_present = False
+    signed_commits_required = False
 
     if unit.repo:
         renovate_enabled = any(
@@ -137,6 +154,7 @@ def compute_metrics(unit: EvaluationUnit, github_token: str) -> dict[str, Any]:
         )
         sast_workflow_present = _has_sast_workflow(unit.repo, github_token)
         cve_tracking_process_present = _has_cve_tracking_process(unit.repo, github_token)
+        signed_commits_required = _has_signed_commits_required(unit.repo, github_token)
 
     branch_protection = (
         _has_branch_protection_required_checks(unit.repo, github_token) if unit.repo else False
@@ -146,6 +164,7 @@ def compute_metrics(unit: EvaluationUnit, github_token: str) -> dict[str, Any]:
         "renovate_enabled": renovate_enabled,
         "canonical_repo_automation_registered": canonical_repo_automation_registered,
         "branch_protection_required_checks": branch_protection,
+        "signed_commits_required": signed_commits_required,
         "sast_workflow_present": sast_workflow_present,
         "cve_tracking_process_present": cve_tracking_process_present,
     }
