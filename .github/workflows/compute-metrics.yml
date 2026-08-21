@@ -264,7 +264,7 @@ jobs:
         # Vite copies ../public/ (containing fresh portfolio.json from artifacts) into dist/
 
       - name: Deploy PR preview
-        uses: rossjrw/pr-preview-action@v1
+        uses: rossjrw/pr-preview-action@v1.7.3
         with:
           source-dir: ./ui/dist
           preview-branch: gh-pages
