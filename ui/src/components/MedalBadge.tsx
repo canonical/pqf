@@ -1,6 +1,6 @@
-import type { Medal, Status } from '../types'
+import type { Medal, Result } from '../types'
 
-type BadgeValue = Medal | Status
+type BadgeValue = Medal | Result
 
 const MEDAL_COLOURS: Record<BadgeValue, string> = {
   gold: '#C7962F',

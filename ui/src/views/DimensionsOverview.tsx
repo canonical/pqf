@@ -2,14 +2,16 @@ import { Link } from 'react-router'
 import { usePortfolio } from '../hooks/usePortfolio'
 import MedalBadge from '../components/MedalBadge'
 import LoadingSpinner from '../components/LoadingSpinner'
-import type { Medal } from '../types'
+import type { Result } from '../types'
 
-const MEDAL_ORDER: Medal[] = ['gold', 'silver', 'bronze', 'unrated']
-const MEDAL_COLOURS: Record<Medal, string> = {
+const RESULT_ORDER_ARRAY: Result[] = ['gold', 'silver', 'bronze', 'below_minimum', 'insufficient_data', 'not_applicable']
+const RESULT_COLOURS: Record<Result, string> = {
   gold: '#c9a227',
   silver: '#757575',
   bronze: '#a0522d',
-  unrated: '#aaaaaa',
+  below_minimum: '#cc7700',
+  insufficient_data: '#999999',
+  not_applicable: '#cccccc',
 }
 
 export default function DimensionsOverview() {
@@ -50,10 +52,10 @@ export default function DimensionsOverview() {
             </thead>
             <tbody>
               {dimensions.map(([id, meta], idx) => {
-                const medalCounts = MEDAL_ORDER.reduce((acc, m) => {
-                  acc[m] = portfolio.products.filter(p => p.dimensions[id]?.medal === m).length
-                  return acc
-                }, {} as Record<Medal, number>)
+               const medalCounts = RESULT_ORDER_ARRAY.reduce((acc, m) => {
+                   acc[m] = portfolio.products.filter(p => p.dimensions[id]?.result === m).length
+                   return acc
+                 }, {} as Record<Result, number>)
                 const totalProducts = portfolio.products.filter(p => p.dimensions[id]).length
                 const metricCount = meta.outputs ? Object.keys(meta.outputs).length : 0
 
@@ -72,10 +74,10 @@ export default function DimensionsOverview() {
                       {totalProducts > 0 ? (
                         <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
                           <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
-                            {MEDAL_ORDER.filter(m => medalCounts[m] > 0).map(m => (
+                            {RESULT_ORDER_ARRAY.filter(m => medalCounts[m] > 0).map(m => (
                               <span key={m} style={{ display: 'inline-flex', alignItems: 'center', gap: '0.3rem' }}>
                                 <MedalBadge medal={m} size="small" />
-                                <span style={{ fontSize: '0.8125rem', color: MEDAL_COLOURS[m], fontWeight: 600 }}>
+                                <span style={{ fontSize: '0.8125rem', color: RESULT_COLOURS[m], fontWeight: 600 }}>
                                   {medalCounts[m]}
                                 </span>
                               </span>

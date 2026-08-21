@@ -5,11 +5,11 @@ import LoadingSpinner from '../components/LoadingSpinner'
 import { usePortfolio } from '../hooks/usePortfolio'
 import {
   buildMetricDistributionRows,
-  MEDAL_ORDER,
+  RESULT_ORDER,
   type MetricDistributionGroup,
   type MetricDistributionRow,
 } from '../lib/groupedPortfolioView'
-import type { Medal, ProductType } from '../types'
+import type { Result, ProductType } from '../types'
 
 function statusCell(status: 'pass' | 'fail' | 'na') {
   if (status === 'pass') return <span style={{ color: '#1d7a1d', fontWeight: 600 }}>✓</span>
@@ -30,13 +30,13 @@ function rowHasFailure(row: MetricDistributionRow) {
 function groupByFilters(
   groups: MetricDistributionGroup[],
   squadFilter: string,
-  medalFilter: 'all' | Medal,
+  medalFilter: 'all' | Result,
   typeFilter: 'all' | ProductType,
   failuresOnly: boolean,
 ) {
   const rowMatches = (row: MetricDistributionRow) => {
     if (squadFilter !== 'all' && row.product.squad !== squadFilter) return false
-    if (medalFilter !== 'all' && row.entry.medal !== medalFilter) return false
+    if (medalFilter !== 'all' && row.entry.result !== medalFilter) return false
     if (typeFilter !== 'all' && row.product.product_type !== typeFilter) return false
     if (failuresOnly && !rowHasFailure(row)) return false
     return true
@@ -58,7 +58,7 @@ export default function MetricDistribution() {
   const { dimensionId, metricKey } = useParams<{ dimensionId: string; metricKey: string }>()
   const { data: portfolio, isLoading, isError, error } = usePortfolio()
   const [squadFilter, setSquadFilter] = useState('all')
-  const [medalFilter, setMedalFilter] = useState<'all' | Medal>('all')
+  const [medalFilter, setMedalFilter] = useState<'all' | Result>('all')
   const [typeFilter, setTypeFilter] = useState<'all' | ProductType>('all')
   const [showFailuresOnly, setShowFailuresOnly] = useState(false)
 
@@ -124,12 +124,14 @@ export default function MetricDistribution() {
               <option value="all">All squads</option>
               {squads.map(squad => <option key={squad} value={squad}>{squad}</option>)}
             </select>
-            <select value={medalFilter} onChange={e => setMedalFilter(e.target.value as 'all' | Medal)} className="p-form__control" style={{ width: 'auto', marginBottom: 0 }}>
-              <option value="all">All medals</option>
+            <select value={medalFilter} onChange={e => setMedalFilter(e.target.value as 'all' | Result)} className="p-form__control" style={{ width: 'auto', marginBottom: 0 }}>
+              <option value="all">All results</option>
               <option value="gold">Gold</option>
               <option value="silver">Silver</option>
               <option value="bronze">Bronze</option>
-              <option value="unrated">Unrated</option>
+              <option value="below_minimum">Below Minimum</option>
+              <option value="insufficient_data">Insufficient Data</option>
+              <option value="not_applicable">N/A</option>
             </select>
             <select value={typeFilter} onChange={e => setTypeFilter(e.target.value as 'all' | ProductType)} className="p-form__control" style={{ width: 'auto', marginBottom: 0 }}>
               <option value="all">All types</option>
@@ -161,7 +163,7 @@ export default function MetricDistribution() {
               </thead>
               <tbody>
                 {filteredGroups
-                  .sort((a, b) => MEDAL_ORDER[b.root.entry.medal] - MEDAL_ORDER[a.root.entry.medal])
+                  .sort((a, b) => RESULT_ORDER[b.root.entry.result] - RESULT_ORDER[a.root.entry.result])
                   .flatMap(group => {
                     const rows = []
                     if (group.rootVisible) {
@@ -171,7 +173,7 @@ export default function MetricDistribution() {
                             <Link to={`/products/${group.root.product.id}`} style={{ fontWeight: 600 }}>{group.root.product.name}</Link>
                           </td>
                           <td style={{ padding: '0.75rem', verticalAlign: 'top' }}>{group.root.product.product_type}</td>
-                          <td style={{ padding: '0.75rem', verticalAlign: 'top' }}><MedalBadge medal={group.root.entry.medal} size="small" /></td>
+                          <td style={{ padding: '0.75rem', verticalAlign: 'top' }}><MedalBadge medal={group.root.entry.result} size="small" /></td>
                           <td style={{ padding: '0.75rem', verticalAlign: 'top' }}>{valueCell(group.root.value)}</td>
                           <td style={{ padding: '0.75rem', verticalAlign: 'top' }}>{statusCell(group.root.bronze)}</td>
                           <td style={{ padding: '0.75rem', verticalAlign: 'top' }}>{statusCell(group.root.silver)}</td>
@@ -188,7 +190,7 @@ export default function MetricDistribution() {
                             </Link>
                           </td>
                           <td style={{ padding: '0.75rem', verticalAlign: 'top' }}>{leaf.product.product_type}</td>
-                          <td style={{ padding: '0.75rem', verticalAlign: 'top' }}><MedalBadge medal={leaf.entry.medal} size="small" /></td>
+                          <td style={{ padding: '0.75rem', verticalAlign: 'top' }}><MedalBadge medal={leaf.entry.result} size="small" /></td>
                           <td style={{ padding: '0.75rem', verticalAlign: 'top' }}>{valueCell(leaf.value)}</td>
                           <td style={{ padding: '0.75rem', verticalAlign: 'top' }}>{statusCell(leaf.bronze)}</td>
                           <td style={{ padding: '0.75rem', verticalAlign: 'top' }}>{statusCell(leaf.silver)}</td>

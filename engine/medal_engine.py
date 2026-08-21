@@ -18,19 +18,8 @@ from engine.models import (
     Medal,
     ProductResult,
     Result,
-    Status,
 )
 from engine.rubric import evaluate_rubric
-
-
-def _dimension_status(medal: Medal, applicability: ApplicabilityOutcome) -> Status:
-    if applicability == ApplicabilityOutcome.NOT_APPLICABLE:
-        return Status.NOT_APPLICABLE
-    if applicability == ApplicabilityOutcome.INSUFFICIENT_DATA:
-        return Status.INSUFFICIENT_DATA
-    if medal == Medal.UNRATED:
-        return Status.BELOW_MINIMUM
-    return Status(medal.value)
 
 
 def _product_result(dimension_results: dict[str, DimensionResult], current_medal: Medal) -> Result:
@@ -88,7 +77,7 @@ def compute_leaf_product(
             medal=dim_medal,
             target=target,
             applicability=applicability,
-            status=_dimension_status(dim_medal, applicability),
+            result=_compute_result(dim_medal, applicability),
             metrics=metrics,
             drift=drift,
             composition=None,
@@ -205,7 +194,7 @@ def compute_product(
         dimension_results[dim_name] = DimensionResult(
             medal=dim_medal,
             target=target_medal,
-            status=_dimension_status(dim_medal, applicability),
+            result=_compute_result(dim_medal, applicability),
             metrics=metrics,
             drift=drift,
             applicability=applicability,

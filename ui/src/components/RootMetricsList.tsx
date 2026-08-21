@@ -104,7 +104,7 @@ export default function RootMetricsList({ composition, thresholds, metaOutputs }
   const [expanded, setExpanded] = React.useState<Record<string, boolean>>({})
 
   const inScope = composition.filter(
-    c => !c.excluded_from_parent_medal && c.applicability === 'scored',
+    c => !c.excluded_from_parent_medal && c.result !== 'insufficient_data' && c.result !== 'not_applicable',
   )
   const metricKeys = metaOutputs ? Object.keys(metaOutputs) : []
 

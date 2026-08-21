@@ -3,10 +3,10 @@ import { useParams, Link } from 'react-router'
 import { usePortfolio } from '../hooks/usePortfolio'
 import MedalBadge from '../components/MedalBadge'
 import LoadingSpinner from '../components/LoadingSpinner'
-import type { DriftInfo, Medal } from '../types'
+import { RESULT_ORDER } from '../lib/groupedPortfolioView'
+import type { DriftInfo } from '../types'
 import { buildDimensionGroupedRows } from '../lib/groupedPortfolioView'
 
-const MEDAL_ORDER: Record<Medal, number> = { gold: 3, silver: 2, bronze: 1, unrated: 0 }
 const TIER_LABELS = ['gold', 'silver', 'bronze'] as const
 
 function parseCriterionMetric(criterion: string): string {
@@ -48,7 +48,7 @@ export default function DimensionDetail() {
 
   const groupedProductScores = buildDimensionGroupedRows(portfolio, id!)
     .sort((a, b) =>
-      MEDAL_ORDER[b.root.entry.medal] - MEDAL_ORDER[a.root.entry.medal]
+      RESULT_ORDER[b.root.entry.result] - RESULT_ORDER[a.root.entry.result]
     )
 
   return (
@@ -214,7 +214,7 @@ export default function DimensionDetail() {
                         </Link>
                       </td>
                       <td style={{ padding: '0.75rem', verticalAlign: 'top' }}>
-                        <MedalBadge medal={group.root.entry.medal} size="small" />
+                        <MedalBadge medal={group.root.entry.result} size="small" />
                       </td>
                       <td style={{ padding: '0.75rem', verticalAlign: 'top' }}>
                         {renderDriftDeadline(group.root.entry.drift)}
@@ -228,7 +228,7 @@ export default function DimensionDetail() {
                           </Link>
                         </td>
                         <td style={{ padding: '0.75rem', verticalAlign: 'top' }}>
-                          <MedalBadge medal={leaf.entry.medal} size="small" />
+                          <MedalBadge medal={leaf.entry.result} size="small" />
                         </td>
                         <td style={{ padding: '0.75rem', verticalAlign: 'top' }}>
                           {leaf.entry.drift ? renderDriftDeadline(leaf.entry.drift) : <span style={{ color: '#999' }}>—</span>}

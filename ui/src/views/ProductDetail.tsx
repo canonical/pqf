@@ -111,12 +111,12 @@ export default function ProductDetail() {
               <span className="u-text--muted" style={{ fontSize: '0.75rem', display: 'block', marginBottom: '0.25rem' }}>
                 {isRoot ? 'CURRENT' : 'MEDAL'}
               </span>
-              <MedalBadge medal={product.current_status as any} />
+              <MedalBadge medal={product.current_result} />
             </div>
             {isRoot && (
               <div>
                 <span className="u-text--muted" style={{ fontSize: '0.75rem', display: 'block', marginBottom: '0.25rem' }}>TARGET</span>
-                <MedalBadge medal={product.target_medal} />
+                <MedalBadge medal={product.target_result} />
               </div>
             )}
             <div>
@@ -210,7 +210,7 @@ export default function ProductDetail() {
                   // Bronze criteria establish the minimum bar (rated vs unrated);
                   // target-tier criteria are overlaid so failing metrics show against the actual target.
                   const bronzeCriteria = dimMeta?.medals?.bronze?.criteria ?? []
-                  const targetCriteria = dimMeta?.medals?.[entry.target as 'bronze' | 'silver' | 'gold']?.criteria ?? []
+                  const targetCriteria = dimMeta?.medals?.[product.target_result as 'bronze' | 'silver' | 'gold']?.criteria ?? []
                   const thresholds = parseCriteria([...bronzeCriteria, ...targetCriteria])
 
                   return (
@@ -219,13 +219,13 @@ export default function ProductDetail() {
                         <Link to={`/dimensions/${dim}`} style={{ fontWeight: 500 }}>{dim.replace(/_/g, ' ')}</Link>
                       </td>
                       <td style={{ padding: '0.75rem', verticalAlign: 'top' }}>
-                        <MedalBadge medal={entry.status as any} size="small" />
+                        <MedalBadge medal={entry.result as any} size="small" />
                       </td>
                       <td style={{ padding: '0.75rem', verticalAlign: 'top' }}>
                         {isRoot && <DriftChip drift={entry.drift} />}
                       </td>
                       <td style={{ padding: '0.75rem', verticalAlign: 'top' }}>
-                        {entry.applicability === 'not_applicable' ? (
+                        {entry.result === 'not_applicable' ? (
                           <span style={{ color: '#999' }}>—</span>
                         ) : isRoot && entry.composition && entry.composition.length > 0 ? (
                           <RootMetricsList
@@ -292,7 +292,7 @@ export default function ProductDetail() {
                         </td>
                         {dependencyDimensions.map(dim => (
                           <td key={dim} style={{ padding: '0.75rem', verticalAlign: 'top' }}>
-                            <MedalBadge medal={leaf.dimensions[dim]?.status as any} size="small" />
+                            <MedalBadge medal={leaf.dimensions[dim]?.result as any} size="small" />
                           </td>
                         ))}
                       </tr>
@@ -347,7 +347,7 @@ export default function ProductDetail() {
                             <React.Fragment key={i}>
                               {i > 0 && <span style={{ color: '#ccc', margin: '0 0.4rem' }}>·</span>}
                               <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem' }}>
-                                {linked?.current_medal && <MedalBadge medal={linked.current_medal} size="small" />}
+                                {linked?.current_result && <MedalBadge medal={linked.current_result} size="small" />}
                                 <Link to={`/products/${linked!.id}`}>{cr.label}</Link>
                               </span>
                             </React.Fragment>

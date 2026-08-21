@@ -3,6 +3,7 @@ import type {
   Medal,
   Portfolio,
   Product,
+  Result,
 } from '../types'
 
 export type MetricTierStatus = 'pass' | 'fail' | 'na'
@@ -189,4 +190,13 @@ export const MEDAL_ORDER: Record<Medal, number> = {
   silver: 2,
   bronze: 1,
   unrated: 0,
+}
+
+export const RESULT_ORDER: Record<Result, number> = {
+  gold: 6,
+  silver: 5,
+  bronze: 4,
+  below_minimum: 3,
+  insufficient_data: 2,
+  not_applicable: 1,
 }
