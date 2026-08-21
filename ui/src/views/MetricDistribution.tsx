@@ -17,8 +17,9 @@ function statusCell(status: 'pass' | 'fail' | 'na') {
   return <span style={{ color: '#888' }}>N/A</span>
 }
 
-function valueCell(value: string | number | boolean | undefined) {
+function valueCell(value: string | number | boolean | null | undefined) {
   if (value === undefined) return '—'
+  if (value === null) return '—'
   if (typeof value === 'boolean') return value ? 'true' : 'false'
   return String(value)
 }

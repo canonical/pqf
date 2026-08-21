@@ -63,6 +63,24 @@ export interface MedalCriteria {
   criteria: string[]
 }
 
+export interface NumericMetricDefinition {
+  name: string
+  type: 'numeric'
+  medals: Partial<Record<Medal, { min: number }>>
+  label?: string
+  description?: string
+}
+
+export interface BooleanMetricDefinition {
+  name: string
+  type: 'boolean'
+  signal_name: string
+  label?: string
+  description?: string
+}
+
+export type MetricDefinition = NumericMetricDefinition | BooleanMetricDefinition
+
 export interface OutputMeta {
   label: string
   description: string

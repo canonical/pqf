@@ -1,5 +1,6 @@
 import type {
   DimensionEntry,
+  MetricDefinition,
   Medal,
   Portfolio,
   Product,
@@ -7,7 +8,7 @@ import type {
 } from '../types'
 
 export type MetricTierStatus = 'pass' | 'fail' | 'na'
-export type MetricValue = string | number | boolean | undefined
+export type MetricValue = string | number | boolean | null | undefined
 
 export interface GroupedRootRow {
   root: Product
@@ -130,6 +131,48 @@ export function evaluateMetricAgainstTier(
     default:
       return 'fail'
   }
+}
+
+function formatGap(gap: number): string {
+  const rounded = Math.round(gap * 10) / 10
+  return Number.isInteger(rounded) ? String(rounded) : rounded.toFixed(1)
+}
+
+export function computeGapToTarget(
+  result: MetricValue,
+  targetMedal: Medal,
+  metric: MetricDefinition,
+): string | null {
+  if (result === null || result === undefined) {
+    if (metric.type === 'boolean') {
+      return `Configure ${metric.signal_name}`
+    }
+    return null
+  }
+
+  if (metric.type === 'boolean') {
+    return result === true ? '✓ Meets' : '✗ Missing'
+  }
+
+  const targetThreshold = metric.medals[targetMedal]?.min
+  if (targetThreshold === undefined) {
+    return null
+  }
+
+  const numericResult = typeof result === 'number' ? result : Number(result)
+  if (Number.isNaN(numericResult)) {
+    return null
+  }
+
+  if (numericResult === targetThreshold) {
+    return 'At target'
+  }
+
+  if (numericResult > targetThreshold) {
+    return 'Exceeds target'
+  }
+
+  return `+${formatGap(targetThreshold - numericResult)}% → ${targetMedal}`
 }
 
 function getCompositionMetricValue(
