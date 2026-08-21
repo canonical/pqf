@@ -5,23 +5,98 @@ import LoadingSpinner from '../components/LoadingSpinner'
 import { usePortfolio } from '../hooks/usePortfolio'
 import {
   buildMetricDistributionRows,
+  computeGapToTarget,
   RESULT_ORDER,
   type MetricDistributionGroup,
   type MetricDistributionRow,
+  type MetricValue,
 } from '../lib/groupedPortfolioView'
-import type { Result, ProductType } from '../types'
+import type { DimensionMeta, Medal, MetricDefinition, ProductType, Result } from '../types'
 
-function statusCell(status: 'pass' | 'fail' | 'na') {
-  if (status === 'pass') return <span style={{ color: '#1d7a1d', fontWeight: 600 }}>✓</span>
-  if (status === 'fail') return <span style={{ color: '#c7162b', fontWeight: 600 }}>✕</span>
-  return <span style={{ color: '#888' }}>N/A</span>
+interface DistributionCounts {
+  gold: number
+  silver: number
+  bronze: number
+  below_minimum: number
+  no_data: number
 }
 
-function valueCell(value: string | number | boolean | null | undefined) {
-  if (value === undefined) return '—'
-  if (value === null) return '—'
+function valueCell(value: MetricValue) {
+  if (value === undefined || value === null) return '—'
   if (typeof value === 'boolean') return value ? 'true' : 'false'
   return String(value)
+}
+
+function computeDistribution(groups: MetricDistributionGroup[]): DistributionCounts {
+  const counts: DistributionCounts = {
+    gold: 0,
+    silver: 0,
+    bronze: 0,
+    below_minimum: 0,
+    no_data: 0,
+  }
+
+  for (const group of groups) {
+    for (const row of [group.root, ...group.leaves]) {
+      if (row.value === undefined || row.value === null) {
+        counts.no_data += 1
+      } else if (row.entry.result === 'gold') {
+        counts.gold += 1
+      } else if (row.entry.result === 'silver') {
+        counts.silver += 1
+      } else if (row.entry.result === 'bronze') {
+        counts.bronze += 1
+      } else {
+        counts.below_minimum += 1
+      }
+    }
+  }
+
+  return counts
+}
+
+function formatCriterion(criterion: string): string {
+  return criterion
+    .replace(/\s*>=\s*/g, ' ≥ ')
+    .replace(/\s*<=\s*/g, ' ≤ ')
+    .replace(/\s*==\s*/g, ' = ')
+    .replace(/\s*>\s*/g, ' > ')
+    .replace(/\s*<\s*/g, ' < ')
+}
+
+function thresholdSummary(criteria: string[]) {
+  return criteria.length > 0 ? criteria.map(formatCriterion).join(' · ') : 'No criteria'
+}
+
+function parseMinThreshold(criteria: string[]) {
+  const criterion = criteria[0]
+  if (!criterion) return undefined
+  const match = criterion.match(/^\w+\s*>=\s*([0-9]+(?:\.[0-9]+)?)$/)
+  return match ? Number(match[1]) : undefined
+}
+
+function buildMetricDefinition(
+  metricKey: string,
+  metricType: string,
+  medals: DimensionMeta['medals'],
+): MetricDefinition {
+  if (metricType === 'boolean') {
+    return { name: metricKey, type: 'boolean', signal_name: metricKey }
+  }
+
+  const bronze = parseMinThreshold(medals.bronze?.criteria ?? [])
+  const silver = parseMinThreshold(medals.silver?.criteria ?? [])
+  const gold = parseMinThreshold(medals.gold?.criteria ?? [])
+
+  return {
+    name: metricKey,
+    type: 'numeric',
+    medals: {
+      ...(bronze !== undefined ? { bronze: { min: bronze } } : {}),
+      ...(silver !== undefined ? { silver: { min: silver } } : {}),
+      ...(gold !== undefined ? { gold: { min: gold } } : {}),
+    },
+  }
 }
 
 function rowHasFailure(row: MetricDistributionRow) {
@@ -53,6 +128,65 @@ function groupByFilters(
       rootVisible: rootMatches || filteredLeaves.length > 0,
     }]
   })
+}
+
+function resultLabel(result: Result) {
+  return <MedalBadge medal={result} size="small" />
+}
+
+function distributionBar({ gold, silver, bronze, below_minimum, no_data }: DistributionCounts) {
+  const total = gold + silver + bronze + below_minimum + no_data
+  if (total === 0) return null
+
+  const segments: Array<{ key: keyof DistributionCounts; color: string; label: string }> = [
+    { key: 'gold', color: '#C7962F', label: 'Gold' },
+    { key: 'silver', color: '#8F8F8F', label: 'Silver' },
+    { key: 'bronze', color: '#9E622A', label: 'Bronze' },
+    { key: 'below_minimum', color: '#C7162B', label: 'Sub-min' },
+    { key: 'no_data', color: '#666', label: 'No data' },
+  ]
+
+  return (
+    <div>
+      <div
+        aria-label="Metric distribution"
+        style={{
+          display: 'flex',
+          overflow: 'hidden',
+          borderRadius: '999px',
+          height: '16px',
+          background: '#eee',
+        }}
+      >
+        {segments.map((segment) => {
+          const count = { gold, silver, bronze, below_minimum, no_data }[segment.key]
+          if (count === 0) return null
+          return (
+            <div
+              key={segment.key}
+              title={`${segment.label}: ${count}`}
+              style={{
+                width: `${(count / total) * 100}%`,
+                backgroundColor: segment.color,
+              }}
+            />
+          )
+        })}
+      </div>
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.75rem', marginTop: '0.75rem' }}>
+        <span><strong>Gold</strong>: {gold}</span>
+        <span><strong>Silver</strong>: {silver}</span>
+        <span><strong>Bronze</strong>: {bronze}</span>
+        <span><strong>Sub-min</strong>: {below_minimum}</span>
+        <span><strong>No data</strong>: {no_data}</span>
+      </div>
+    </div>
+  )
+}
+
+function toGapTarget(target: Result): Medal {
+  if (target === 'gold' || target === 'silver' || target === 'bronze') return target
+  return 'unrated'
 }
 
 export default function MetricDistribution() {
@@ -105,21 +239,88 @@ export default function MetricDistribution() {
     )
   }
 
+  const metricMeta = meta.outputs[metricKey]
+  const metricDefinition = buildMetricDefinition(metricKey, metricMeta.type, meta.medals)
+  const thresholdPills = [
+    ['Bronze', meta.medals.bronze?.criteria ?? []],
+    ['Silver', meta.medals.silver?.criteria ?? []],
+    ['Gold', meta.medals.gold?.criteria ?? []],
+  ] as const
   const flattenedCount = filteredGroups.reduce((count, group) => count + (group.rootVisible ? 1 : 0) + group.leaves.length, 0)
-  const metricLabel = meta.outputs[metricKey].label ?? metricKey
+  const distribution = computeDistribution(filteredGroups)
 
   return (
     <div className="row" style={{ paddingTop: '1.5rem' }}>
       <div className="col-12">
         <p style={{ marginBottom: '1rem' }}><Link to={`/dimensions/${dimensionId}`}>← {meta.label ?? dimensionId}</Link></p>
+
         <div className="p-card u-sv3">
-          <h1 className="p-heading--3" style={{ marginBottom: '0.25rem' }}>Metric distribution</h1>
-          <p className="u-text--muted" style={{ margin: 0 }}>
-            {metricLabel} ({metricKey})
-          </p>
+          <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr) 320px', gap: '1.5rem', alignItems: 'start' }}>
+            <div>
+              <h1 className="p-heading--3" style={{ marginBottom: '0.25rem' }}>Metric distribution</h1>
+              <p className="u-text--muted" style={{ margin: 0 }}>
+                {metricMeta.label} ({metricKey})
+              </p>
+              {metricMeta.description && <p style={{ marginBottom: '0.75rem' }}>{metricMeta.description}</p>}
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
+                {metricMeta.ai_assisted ? (
+                  <span
+                    title="Scored by AI (LLM via OpenRouter)"
+                    style={{
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '0.25rem',
+                      fontSize: '0.75rem',
+                      fontWeight: 600,
+                      color: '#7764d8',
+                      background: '#f0eeff',
+                      border: '1px solid #c5bcf5',
+                      borderRadius: '3px',
+                      padding: '0.15rem 0.4rem',
+                      cursor: 'default',
+                    }}
+                  >
+                    ✦ AI
+                  </span>
+                ) : (
+                  <span style={{ fontSize: '0.75rem', color: '#666' }}>Deterministic</span>
+                )}
+              </div>
+            </div>
+
+            <div>
+              <h2 className="p-heading--4" style={{ marginBottom: '0.75rem' }}>Fleet distribution</h2>
+              {distributionBar(distribution)}
+            </div>
+          </div>
         </div>
 
         <div className="p-card u-sv3">
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.75rem', alignItems: 'center', marginBottom: '1rem' }}>
+            {thresholdPills.map(([label, criteria]) => (
+              <span
+                key={label}
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '0.4rem',
+                  borderRadius: '999px',
+                  border: '1px solid #d9d9d9',
+                  background: '#fafafa',
+                  padding: '0.35rem 0.75rem',
+                  fontSize: '0.875rem',
+                }}
+                title={criteria.join(' · ')}
+              >
+                <strong>{label}</strong>
+                <span>{thresholdSummary(criteria)}</span>
+              </span>
+            ))}
+            <span style={{ marginLeft: 'auto', fontSize: '0.8125rem', color: '#777' }}>
+              {flattenedCount} row{flattenedCount === 1 ? '' : 's'}
+            </span>
+          </div>
+
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.75rem', alignItems: 'center', marginBottom: '1rem' }}>
             <select value={squadFilter} onChange={e => setSquadFilter(e.target.value)} className="p-form__control" style={{ width: 'auto', marginBottom: 0 }}>
               <option value="all">All squads</option>
@@ -144,22 +345,22 @@ export default function MetricDistribution() {
               <input type="checkbox" checked={showFailuresOnly} onChange={e => setShowFailuresOnly(e.target.checked)} />
               Show failures only
             </label>
-            <span style={{ marginLeft: 'auto', fontSize: '0.8125rem', color: '#777' }}>
-              {flattenedCount} row{flattenedCount === 1 ? '' : 's'}
-            </span>
           </div>
 
           <div style={{ overflowX: 'auto' }}>
-            <table style={{ tableLayout: 'fixed', width: '100%', borderCollapse: 'collapse' }}>
+            <table className="p-table" style={{ tableLayout: 'fixed', width: '100%', borderCollapse: 'collapse' }}>
+              <colgroup>
+                <col style={{ width: '40%' }} />
+                <col style={{ width: '18%' }} />
+                <col style={{ width: '18%' }} />
+                <col style={{ width: '24%' }} />
+              </colgroup>
               <thead>
                 <tr style={{ borderBottom: '1px solid #d9d9d9' }}>
-                  <th style={{ padding: '0.5rem 0.75rem', textAlign: 'left', fontSize: '0.75rem', fontWeight: 600, textTransform: 'uppercase', color: '#666' }}>Product</th>
-                  <th style={{ padding: '0.5rem 0.75rem', textAlign: 'left', fontSize: '0.75rem', fontWeight: 600, textTransform: 'uppercase', color: '#666' }}>Type</th>
-                  <th style={{ padding: '0.5rem 0.75rem', textAlign: 'left', fontSize: '0.75rem', fontWeight: 600, textTransform: 'uppercase', color: '#666' }}>Dimension medal</th>
+                  <th style={{ padding: '0.5rem 0.75rem', textAlign: 'left', fontSize: '0.75rem', fontWeight: 600, textTransform: 'uppercase', color: '#666' }}>Product (Target)</th>
                   <th style={{ padding: '0.5rem 0.75rem', textAlign: 'left', fontSize: '0.75rem', fontWeight: 600, textTransform: 'uppercase', color: '#666' }}>Value</th>
-                  <th style={{ padding: '0.5rem 0.75rem', textAlign: 'left', fontSize: '0.75rem', fontWeight: 600, textTransform: 'uppercase', color: '#666' }}>Bronze</th>
-                  <th style={{ padding: '0.5rem 0.75rem', textAlign: 'left', fontSize: '0.75rem', fontWeight: 600, textTransform: 'uppercase', color: '#666' }}>Silver</th>
-                  <th style={{ padding: '0.5rem 0.75rem', textAlign: 'left', fontSize: '0.75rem', fontWeight: 600, textTransform: 'uppercase', color: '#666' }}>Gold</th>
+                  <th style={{ padding: '0.5rem 0.75rem', textAlign: 'left', fontSize: '0.75rem', fontWeight: 600, textTransform: 'uppercase', color: '#666' }}>Result</th>
+                  <th style={{ padding: '0.5rem 0.75rem', textAlign: 'left', fontSize: '0.75rem', fontWeight: 600, textTransform: 'uppercase', color: '#666' }}>Gap to target</th>
                 </tr>
               </thead>
               <tbody>
@@ -171,14 +372,14 @@ export default function MetricDistribution() {
                       rows.push(
                         <tr key={group.root.product.id} style={{ borderBottom: '1px solid #e5e5e5', background: '#fafafa' }}>
                           <td style={{ padding: '0.75rem', verticalAlign: 'top' }}>
-                            <Link to={`/products/${group.root.product.id}`} style={{ fontWeight: 600 }}>{group.root.product.name}</Link>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
+                              <Link to={`/products/${group.root.product.id}`} style={{ fontWeight: 600 }}>{group.root.product.name}</Link>
+                              <MedalBadge medal={group.root.product.target_result} size="small" />
+                            </div>
                           </td>
-                          <td style={{ padding: '0.75rem', verticalAlign: 'top' }}>{group.root.product.product_type}</td>
-                          <td style={{ padding: '0.75rem', verticalAlign: 'top' }}><MedalBadge medal={group.root.entry.result} size="small" /></td>
                           <td style={{ padding: '0.75rem', verticalAlign: 'top' }}>{valueCell(group.root.value)}</td>
-                          <td style={{ padding: '0.75rem', verticalAlign: 'top' }}>{statusCell(group.root.bronze)}</td>
-                          <td style={{ padding: '0.75rem', verticalAlign: 'top' }}>{statusCell(group.root.silver)}</td>
-                          <td style={{ padding: '0.75rem', verticalAlign: 'top' }}>{statusCell(group.root.gold)}</td>
+                          <td style={{ padding: '0.75rem', verticalAlign: 'top' }}>{resultLabel(group.root.entry.result)}</td>
+                          <td style={{ padding: '0.75rem', verticalAlign: 'top' }}>{computeGapToTarget(group.root.value, toGapTarget(group.root.product.target_result), metricDefinition) ?? '—'}</td>
                         </tr>,
                       )
                     }
@@ -186,16 +387,16 @@ export default function MetricDistribution() {
                       rows.push(
                         <tr key={leaf.product.id} style={{ borderBottom: '1px solid #e5e5e5', background: '#fff' }}>
                           <td style={{ padding: '0.75rem', verticalAlign: 'top' }}>
-                            <Link to={`/products/${leaf.product.id}`} style={{ fontWeight: 500 }}>
-                              ↳ {leaf.product.name}
-                            </Link>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
+                              <Link to={`/products/${leaf.product.id}`} style={{ fontWeight: 500 }}>
+                                ↳ {leaf.product.name}
+                              </Link>
+                              <MedalBadge medal={leaf.product.target_result} size="small" />
+                            </div>
                           </td>
-                          <td style={{ padding: '0.75rem', verticalAlign: 'top' }}>{leaf.product.product_type}</td>
-                          <td style={{ padding: '0.75rem', verticalAlign: 'top' }}><MedalBadge medal={leaf.entry.result} size="small" /></td>
                           <td style={{ padding: '0.75rem', verticalAlign: 'top' }}>{valueCell(leaf.value)}</td>
-                          <td style={{ padding: '0.75rem', verticalAlign: 'top' }}>{statusCell(leaf.bronze)}</td>
-                          <td style={{ padding: '0.75rem', verticalAlign: 'top' }}>{statusCell(leaf.silver)}</td>
-                          <td style={{ padding: '0.75rem', verticalAlign: 'top' }}>{statusCell(leaf.gold)}</td>
+                          <td style={{ padding: '0.75rem', verticalAlign: 'top' }}>{resultLabel(leaf.entry.result)}</td>
+                          <td style={{ padding: '0.75rem', verticalAlign: 'top' }}>{computeGapToTarget(leaf.value, toGapTarget(leaf.product.target_result), metricDefinition) ?? '—'}</td>
                         </tr>,
                       )
                     }

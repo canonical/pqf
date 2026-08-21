@@ -66,7 +66,13 @@ const mockPortfolio: Portfolio = {
     test_verification: {
       label: 'Test Verification',
       outputs: {
-        coverage_pct: { label: 'Coverage', description: 'Coverage', type: 'number', range: '0-100' },
+        coverage_pct: {
+          label: 'Coverage',
+          description: 'Coverage',
+          type: 'number',
+          range: '0-100',
+          ai_assisted: true,
+        },
       },
       medals: {
         bronze: { criteria: ['coverage_pct >= 70'] },
@@ -96,11 +102,24 @@ function wrap(path: string) {
 }
 
 describe('MetricDistribution route', () => {
-  it('renders metric distribution with tier pass/fail columns', async () => {
+  it('renders the redesigned metric distribution header and table', async () => {
     wrap('/dimensions/test_verification/metrics/coverage_pct')
     expect(await screen.findByRole('heading', { name: /metric distribution/i })).toBeInTheDocument()
-    expect(screen.getByRole('columnheader', { name: /bronze/i })).toBeInTheDocument()
-    expect(screen.getByRole('columnheader', { name: /silver/i })).toBeInTheDocument()
-    expect(screen.getByRole('columnheader', { name: /gold/i })).toBeInTheDocument()
+    expect(screen.getByText(/Coverage \(coverage_pct\)/i)).toBeInTheDocument()
+    expect(screen.getByText('coverage_pct ≥ 70')).toBeInTheDocument()
+    expect(screen.getByText('coverage_pct ≥ 80')).toBeInTheDocument()
+    expect(screen.getByText('coverage_pct ≥ 90')).toBeInTheDocument()
+    expect(screen.getByRole('columnheader', { name: /product \(target\)/i })).toBeInTheDocument()
+    expect(screen.getByRole('columnheader', { name: /^value$/i })).toBeInTheDocument()
+    expect(screen.getByRole('columnheader', { name: /^result$/i })).toBeInTheDocument()
+    expect(screen.getByRole('columnheader', { name: /gap to target/i })).toBeInTheDocument()
+  })
+
+  it('shows the gap to target and ai-assisted badge for metric rows', async () => {
+    wrap('/dimensions/test_verification/metrics/coverage_pct')
+    const leafLink = await screen.findByRole('link', { name: /discourse k8s/i })
+    expect(leafLink).toBeInTheDocument()
+    expect(screen.getByText('Exceeds target')).toBeInTheDocument()
+    expect(screen.getByText('✦ AI')).toBeInTheDocument()
   })
 })

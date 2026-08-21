@@ -140,6 +140,10 @@ def test_dimensions_config_declares_required_metrics_for_scoring_for_each_dimens
         "avg_pr_review_days",
         "response_coverage_rate",
     ]
+    assert (
+        dimensions["dimensions"]["documentation"]["outputs"]["diataxis_coverage_ai"]["ai_assisted"]
+        is True
+    )
 
 
 def test_required_metrics_for_scoring_are_declared_outputs():
