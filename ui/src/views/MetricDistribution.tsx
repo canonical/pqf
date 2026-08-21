@@ -27,6 +27,15 @@ function valueCell(value: MetricValue) {
   return String(value)
 }
 
+function metricStatus(row: MetricDistributionRow): Result {
+  if (row.value === undefined || row.value === null) return 'insufficient_data'
+  if (row.gold === 'pass') return 'gold'
+  if (row.silver === 'pass') return 'silver'
+  if (row.bronze === 'pass') return 'bronze'
+  if (row.bronze === 'fail' || row.silver === 'fail' || row.gold === 'fail') return 'below_minimum'
+  return 'insufficient_data'
+}
+
 function computeDistribution(groups: MetricDistributionGroup[]): DistributionCounts {
   const counts: DistributionCounts = {
     gold: 0,
@@ -38,7 +47,7 @@ function computeDistribution(groups: MetricDistributionGroup[]): DistributionCou
 
   for (const group of groups) {
     for (const row of [group.root, ...group.leaves]) {
-      const result = row.entry.result
+      const result = metricStatus(row)
       if (result === 'gold') {
         counts.gold += 1
       } else if (result === 'silver') {
@@ -113,7 +122,7 @@ function groupByFilters(
 ) {
   const rowMatches = (row: MetricDistributionRow) => {
     if (squadFilter !== 'all' && row.product.squad !== squadFilter) return false
-    if (medalFilter !== 'all' && row.entry.result !== medalFilter) return false
+    if (medalFilter !== 'all' && metricStatus(row) !== medalFilter) return false
     if (typeFilter !== 'all' && row.product.product_type !== typeFilter) return false
     if (failuresOnly && !rowHasFailure(row)) return false
     return true
@@ -343,8 +352,7 @@ export default function MetricDistribution() {
               <option value="silver">Silver</option>
               <option value="bronze">Bronze</option>
               <option value="below_minimum">Sub-min</option>
-              <option value="insufficient_data">Insuff. data</option>
-              <option value="not_applicable">N/A</option>
+              <option value="insufficient_data">No data</option>
             </select>
             <select value={typeFilter} onChange={e => setTypeFilter(e.target.value as 'all' | ProductType)} className="p-form__control" style={{ width: 'auto', marginBottom: 0 }}>
               <option value="all">All types</option>
@@ -358,6 +366,10 @@ export default function MetricDistribution() {
             </label>
           </div>
 
+          <p style={{ margin: '0 0 1rem', fontSize: '0.8125rem', color: '#666' }}>
+            Metric status is computed from this metric&apos;s value and thresholds; it does not show the overall dimension medal.
+          </p>
+
           <div style={{ overflowX: 'auto' }}>
             <table className="p-table" style={{ tableLayout: 'fixed', width: '100%', borderCollapse: 'collapse' }}>
               <colgroup>
@@ -370,13 +382,13 @@ export default function MetricDistribution() {
                 <tr style={{ background: '#f5f5f5' }}>
                   <th style={TABLE_TH}>Product</th>
                   <th style={TABLE_TH}>Value</th>
-                  <th style={TABLE_TH}>Result</th>
+                  <th style={TABLE_TH}>Metric status</th>
                   <th style={TABLE_TH}>Gap to target</th>
                 </tr>
               </thead>
               <tbody>
                 {filteredGroups
-                  .sort((a, b) => RESULT_ORDER[b.root.entry.result] - RESULT_ORDER[a.root.entry.result])
+                  .sort((a, b) => RESULT_ORDER[metricStatus(b.root)] - RESULT_ORDER[metricStatus(a.root)])
                   .flatMap(group => {
                     const rows = []
                     if (group.rootVisible) {
@@ -394,7 +406,7 @@ export default function MetricDistribution() {
                             </div>
                           </td>
                           <td style={{ padding: '0.65rem 0.75rem', verticalAlign: 'top' }}>{valueCell(group.root.value)}</td>
-                          <td style={{ padding: '0.65rem 0.75rem', verticalAlign: 'top' }}>{resultLabel(group.root.entry.result)}</td>
+                          <td style={{ padding: '0.65rem 0.75rem', verticalAlign: 'top' }}>{resultLabel(metricStatus(group.root))}</td>
                           <td style={{ padding: '0.65rem 0.75rem', verticalAlign: 'top' }}>{computeGapToTarget(group.root.value, toGapTarget(group.root.product.target_result), metricDefinition) ?? '—'}</td>
                         </tr>,
                       )
@@ -438,7 +450,7 @@ export default function MetricDistribution() {
                             </div>
                           </td>
                           <td style={{ padding: '0.65rem 0.75rem', verticalAlign: 'top' }}>{valueCell(leaf.value)}</td>
-                          <td style={{ padding: '0.65rem 0.75rem', verticalAlign: 'top' }}>{resultLabel(leaf.entry.result)}</td>
+                          <td style={{ padding: '0.65rem 0.75rem', verticalAlign: 'top' }}>{resultLabel(metricStatus(leaf))}</td>
                           <td style={{ padding: '0.65rem 0.75rem', verticalAlign: 'top' }}>{computeGapToTarget(leaf.value, toGapTarget(leaf.product.target_result), metricDefinition) ?? '—'}</td>
                         </tr>,
                       )
