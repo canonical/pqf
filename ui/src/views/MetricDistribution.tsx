@@ -129,7 +129,7 @@ export default function MetricDistribution() {
               <option value="gold">Gold</option>
               <option value="silver">Silver</option>
               <option value="bronze">Bronze</option>
-              <option value="below_minimum">Below min</option>
+              <option value="below_minimum">Sub-min</option>
               <option value="insufficient_data">Insuff. data</option>
               <option value="not_applicable">N/A</option>
             </select>

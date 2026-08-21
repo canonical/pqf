@@ -200,7 +200,7 @@ describe('ProductDetail', () => {
 
     const row = screen.getByRole('link', { name: 'documentation' }).closest('tr')
     expect(row).not.toBeNull()
-    expect(row).toHaveTextContent('Below min')
+    expect(row).toHaveTextContent('Sub-min')
   })
 
   it('renders root current medal as below minimum when a scored dimension fails bronze', () => {
@@ -247,7 +247,7 @@ describe('ProductDetail', () => {
 
     const currentBlock = screen.getByText('CURRENT').closest('div')
     expect(currentBlock).not.toBeNull()
-    expect(within(currentBlock as HTMLElement).getByText('Below min')).toBeInTheDocument()
+    expect(within(currentBlock as HTMLElement).getByText('Sub-min')).toBeInTheDocument()
   })
 
   it('N/A dimension evidence column shows dash instead of metric values', () => {
