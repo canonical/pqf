@@ -74,7 +74,7 @@ export interface NumericMetricDefinition {
 export interface BooleanMetricDefinition {
   name: string
   type: 'boolean'
-  signal_name: string
+  signal_name?: string
   label?: string
   description?: string
 }

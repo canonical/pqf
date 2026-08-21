@@ -138,6 +138,12 @@ function formatGap(gap: number): string {
   return Number.isInteger(rounded) ? String(rounded) : rounded.toFixed(1)
 }
 
+const TARGET_EPSILON = 1e-9
+
+function isAtTarget(result: number, target: number): boolean {
+  return Math.abs(result - target) <= TARGET_EPSILON
+}
+
 export function computeGapToTarget(
   result: MetricValue,
   targetMedal: Medal,
@@ -145,7 +151,7 @@ export function computeGapToTarget(
 ): string | null {
   if (result === null || result === undefined) {
     if (metric.type === 'boolean') {
-      return `Configure ${metric.signal_name}`
+      return `Configure ${metric.signal_name ?? metric.name}`
     }
     return null
   }
@@ -164,7 +170,7 @@ export function computeGapToTarget(
     return null
   }
 
-  if (numericResult === targetThreshold) {
+  if (isAtTarget(numericResult, targetThreshold)) {
     return 'At target'
   }
 

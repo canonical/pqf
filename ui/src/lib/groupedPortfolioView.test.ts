@@ -114,6 +114,22 @@ describe('computeGapToTarget', () => {
     expect(computeGapToTarget(80, 'silver', metric)).toBe('At target')
   })
 
+  it('returns "At target" when numeric result is equal within floating point epsilon', () => {
+    const metric = {
+      name: 'coverage_pct',
+      type: 'numeric',
+      medals: {
+        bronze: { min: 70 },
+        silver: { min: 80 },
+        gold: { min: 90 },
+      },
+    } satisfies MetricDefinition
+
+    expect(computeGapToTarget(0.1 + 0.2, 'bronze', { ...metric, medals: { bronze: { min: 0.3 } } })).toBe(
+      'At target',
+    )
+  })
+
   it('returns "+5% → silver" when numeric result is below the target threshold', () => {
     const metric = {
       name: 'coverage_pct',
@@ -170,6 +186,15 @@ describe('computeGapToTarget', () => {
     } satisfies MetricDefinition
 
     expect(computeGapToTarget(null, 'bronze', metric)).toBe('Configure SECURITY.md')
+  })
+
+  it('falls back to the metric name when boolean metric has no signal_name', () => {
+    const metric = {
+      name: 'has_security_md',
+      type: 'boolean',
+    } satisfies MetricDefinition
+
+    expect(computeGapToTarget(undefined, 'bronze', metric)).toBe('Configure has_security_md')
   })
 
   it('returns null when a numeric metric has no target threshold', () => {
