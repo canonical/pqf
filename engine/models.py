@@ -17,6 +17,17 @@ MEDAL_RANK: dict[Medal, int] = {
 }
 
 
+class Result(StrEnum):
+    """Canonical measurement and scoring result."""
+
+    GOLD = "gold"
+    SILVER = "silver"
+    BRONZE = "bronze"
+    BELOW_MINIMUM = "below_minimum"
+    INSUFFICIENT_DATA = "insufficient_data"
+    NOT_APPLICABLE = "not_applicable"
+
+
 class Status(StrEnum):
     GOLD = "gold"
     SILVER = "silver"
@@ -65,7 +76,7 @@ class DimensionResult:
     metrics: dict
     drift: DriftState | None
     applicability: ApplicabilityOutcome = ApplicabilityOutcome.SCORED
-    status: Status = Status.GOLD
+    result: Result = Result.GOLD
     composition: list["LeafDimensionResult"] | None = None
 
 
@@ -76,7 +87,7 @@ class LeafDimensionResult:
     product_id: str
     repo: str
     medal: Medal
-    status: Status
+    result: Result
     applicability: ApplicabilityOutcome
     metrics: dict
     excluded_from_parent_medal: bool = False
@@ -87,5 +98,6 @@ class ProductResult:
     product_id: str
     current_medal: Medal
     target_medal: Medal
-    current_status: Status
+    current_result: Result
+    target_result: Result
     dimensions: dict[str, DimensionResult]
