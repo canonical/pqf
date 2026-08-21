@@ -150,38 +150,30 @@ Same pattern in `compute_leaf_product()` and `compute_root_product()` in medal_e
 
 ### 3. Portfolio Assembly (assemble.py)
 
-When writing `portfolio.json`, include `result` field alongside `medal` (for backwards compatibility during transition):
+Write only `result` field to `portfolio.json` (remove unused internal fields):
 
 ```python
 def _dim_to_dict(dim_result: DimensionResult, ...) -> dict:
     return {
-        # Keep medal/applicability for now (backwards compat)
-        "medal": dim_result.medal.value,
-        "target": dim_result.target.value,
-        "applicability": dim_result.applicability.value,
-        # Add canonical result field
+        # Only expose the canonical result field
         "result": dim_result.result.value,
-        # ... rest of fields ...
+        # ... rest of fields (metrics, drift, etc.) ...
     }
 
 def _result_to_dict(result: ProductResult, ...) -> dict:
     return {
-        # Keep medal for now
-        "current_medal": result.current_medal.value,
-        "target_medal": result.target_medal.value,
-        # Add canonical result fields
+        # Only expose canonical result fields
         "current_result": result.current_result.value,
         "target_result": result.target_result.value,
-        # No applicability in output (internal-only)
         # ... rest of fields ...
     }
 ```
 
-**Backwards compatibility strategy:**
-- Keep `medal`, `applicability` in JSON output during transition (no consumers broken)
-- Add new `result` field
-- UI prefers reading `result` if present, falls back to deriving from `medal+applicability`
-- Plan for future deprecation of old fields once all consumers updated
+**No backwards compatibility needed:**
+- Portfolio.json is auto-generated nightly by GHA
+- Only the UI (which we control) consumes it
+- Clean refactor: remove `medal` and `applicability` from JSON entirely
+- Smaller JSON payload, clearer semantics
 
 ### 4. UI Type Definitions (ui/src/types.ts)
 
@@ -335,7 +327,7 @@ All views (ProductDetail, Overview, ProductsExplorer, tables, etc.) become clean
 - Update dataclasses to include `result` field
 - Add `_compute_result()` helper
 - Update aggregation logic
-- Update portfolio.json to include result fields (keep medal/applicability for now)
+- Update portfolio.json to include **only** result fields (remove medal/applicability)
 - All engine tests pass
 
 ### Phase 2: UI Consumption (this PR)
@@ -345,9 +337,7 @@ All views (ProductDetail, Overview, ProductsExplorer, tables, etc.) become clean
 - Remove conditional logic
 - All UI tests pass
 
-### Phase 3: Deprecation (future)
-- Plan for removing public `medal`, `applicability` fields from portfolio.json after all downstream consumers (dashboards, integrations) updated
-- Could be a separate PR 1-2 sprints later
+**Phase 3 (deprecated):** None — everything is complete after phase 2.
 
 ---
 
@@ -367,7 +357,6 @@ All views (ProductDetail, Overview, ProductsExplorer, tables, etc.) become clean
 
 | Risk | Impact | Mitigation |
 |------|--------|-----------|
-| Downstream consumers break if portfolio.json changes | High | Keep `medal`, `applicability` in JSON during phase 1-2; deprecate later with notice |
 | Test fixtures miss the new `result` field | High | Update all fixtures in one pass; catch with type checking |
 | UI components still reference `medal` or `applicability` | Medium | Search all views for `medal`, `applicability` references; replace with `result` |
 | MedalBadge colors differ from enum mapping | Medium | Hard-code color mapping in component; document in spec |
