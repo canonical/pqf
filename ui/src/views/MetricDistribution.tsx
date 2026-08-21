@@ -38,14 +38,15 @@ function computeDistribution(groups: MetricDistributionGroup[]): DistributionCou
 
   for (const group of groups) {
     for (const row of [group.root, ...group.leaves]) {
-      if (row.value === undefined || row.value === null) {
-        counts.no_data += 1
-      } else if (row.entry.result === 'gold') {
+      const result = row.entry.result
+      if (result === 'gold') {
         counts.gold += 1
-      } else if (row.entry.result === 'silver') {
+      } else if (result === 'silver') {
         counts.silver += 1
-      } else if (row.entry.result === 'bronze') {
+      } else if (result === 'bronze') {
         counts.bronze += 1
+      } else if (result === 'insufficient_data' || result === 'not_applicable') {
+        counts.no_data += 1
       } else {
         counts.below_minimum += 1
       }
