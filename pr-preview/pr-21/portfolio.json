@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-08-21T14:14:26.387261+00:00",
+  "generated_at": "2026-08-21T14:26:16.880687+00:00",
   "products": [
     {
       "id": "12-factor",
@@ -59,7 +59,7 @@
                 "latest_build_passing": false,
                 "integration_test_evidence_present": false,
                 "uses_ops_testing": true,
-                "uses_jubilant": false
+                "uses_jubilant": true
               },
               "excluded_from_parent_medal": false
             },
@@ -72,8 +72,8 @@
                 "stability_pct": null,
                 "latest_build_passing": null,
                 "integration_test_evidence_present": false,
-                "uses_ops_testing": true,
-                "uses_jubilant": false
+                "uses_ops_testing": false,
+                "uses_jubilant": true
               },
               "excluded_from_parent_medal": false
             }
@@ -87,11 +87,11 @@
             {
               "product_id": "rockcraft",
               "repo": "canonical/rockcraft",
-              "result": "bronze",
+              "result": "below_minimum",
               "metrics": {
-                "readme_present": true,
-                "contributing_present": true,
-                "has_security": true,
+                "readme_present": false,
+                "contributing_present": false,
+                "has_security": false,
                 "documentation_workflows_passing": false,
                 "diataxis_coverage_ai": 0,
                 "uses_rtd_hosting": false,
@@ -184,7 +184,7 @@
               "repo": "canonical/rockcraft",
               "result": "bronze",
               "metrics": {
-                "renovate_enabled": false,
+                "renovate_enabled": true,
                 "canonical_repo_automation_registered": false,
                 "branch_protection_required_checks": false,
                 "signed_commits_required": false,
@@ -198,7 +198,7 @@
               "repo": "canonical/charmcraft",
               "result": "bronze",
               "metrics": {
-                "renovate_enabled": false,
+                "renovate_enabled": true,
                 "canonical_repo_automation_registered": false,
                 "branch_protection_required_checks": false,
                 "signed_commits_required": false,
@@ -212,7 +212,7 @@
               "repo": "canonical/paas-charm",
               "result": "bronze",
               "metrics": {
-                "renovate_enabled": false,
+                "renovate_enabled": true,
                 "canonical_repo_automation_registered": false,
                 "branch_protection_required_checks": false,
                 "signed_commits_required": false,
@@ -414,7 +414,7 @@
                 "branch_protection_required_checks": false,
                 "signed_commits_required": false,
                 "sast_workflow_present": false,
-                "cve_tracking_process_present": true
+                "cve_tracking_process_present": false
               },
               "excluded_from_parent_medal": false
             },
@@ -428,7 +428,7 @@
                 "branch_protection_required_checks": false,
                 "signed_commits_required": false,
                 "sast_workflow_present": false,
-                "cve_tracking_process_present": true
+                "cve_tracking_process_present": false
               },
               "excluded_from_parent_medal": false
             }
@@ -503,49 +503,49 @@
       "parent_product_ids": [],
       "dimensions": {
         "test_verification": {
-          "result": "bronze",
+          "result": "insufficient_data",
           "metrics": {},
           "drift": null,
           "composition": [
             {
               "product_id": "bacula-server",
               "repo": "canonical/backup-operators",
-              "result": "bronze",
+              "result": "insufficient_data",
               "metrics": {
                 "coverage_pct": null,
                 "stability_pct": null,
-                "latest_build_passing": false,
-                "integration_test_evidence_present": true,
+                "latest_build_passing": null,
+                "integration_test_evidence_present": false,
                 "uses_ops_testing": true,
-                "uses_jubilant": false
+                "uses_jubilant": true
               },
               "excluded_from_parent_medal": false
             },
             {
               "product_id": "bacula-fd",
               "repo": "canonical/backup-operators",
-              "result": "bronze",
+              "result": "insufficient_data",
               "metrics": {
                 "coverage_pct": null,
                 "stability_pct": null,
-                "latest_build_passing": false,
-                "integration_test_evidence_present": true,
+                "latest_build_passing": null,
+                "integration_test_evidence_present": false,
                 "uses_ops_testing": true,
-                "uses_jubilant": false
+                "uses_jubilant": true
               },
               "excluded_from_parent_medal": false
             },
             {
               "product_id": "backup-integrator",
               "repo": "canonical/backup-operators",
-              "result": "bronze",
+              "result": "insufficient_data",
               "metrics": {
                 "coverage_pct": null,
                 "stability_pct": null,
-                "latest_build_passing": false,
-                "integration_test_evidence_present": true,
+                "latest_build_passing": null,
+                "integration_test_evidence_present": false,
                 "uses_ops_testing": true,
-                "uses_jubilant": false
+                "uses_jubilant": true
               },
               "excluded_from_parent_medal": false
             },
@@ -557,9 +557,9 @@
                 "coverage_pct": null,
                 "stability_pct": null,
                 "latest_build_passing": null,
-                "integration_test_evidence_present": false,
+                "integration_test_evidence_present": true,
                 "uses_ops_testing": true,
-                "uses_jubilant": false
+                "uses_jubilant": true
               },
               "excluded_from_parent_medal": false
             }
@@ -711,7 +711,7 @@
               "repo": "canonical/backup-operators",
               "result": "bronze",
               "metrics": {
-                "renovate_enabled": false,
+                "renovate_enabled": true,
                 "canonical_repo_automation_registered": false,
                 "branch_protection_required_checks": false,
                 "signed_commits_required": false,
@@ -725,7 +725,7 @@
               "repo": "canonical/backup-operators",
               "result": "bronze",
               "metrics": {
-                "renovate_enabled": false,
+                "renovate_enabled": true,
                 "canonical_repo_automation_registered": false,
                 "branch_protection_required_checks": false,
                 "signed_commits_required": false,
@@ -739,7 +739,7 @@
               "repo": "canonical/backup-operators",
               "result": "bronze",
               "metrics": {
-                "renovate_enabled": false,
+                "renovate_enabled": true,
                 "canonical_repo_automation_registered": false,
                 "branch_protection_required_checks": false,
                 "signed_commits_required": false,
@@ -1444,7 +1444,7 @@
                 "stability_pct": null,
                 "latest_build_passing": true,
                 "integration_test_evidence_present": true,
-                "uses_ops_testing": true,
+                "uses_ops_testing": false,
                 "uses_jubilant": false
               },
               "excluded_from_parent_medal": false
@@ -1548,7 +1548,7 @@
                 "branch_protection_required_checks": false,
                 "signed_commits_required": false,
                 "sast_workflow_present": false,
-                "cve_tracking_process_present": true
+                "cve_tracking_process_present": false
               },
               "excluded_from_parent_medal": false
             },
@@ -1638,7 +1638,7 @@
                 "stability_pct": null,
                 "latest_build_passing": false,
                 "integration_test_evidence_present": true,
-                "uses_ops_testing": true,
+                "uses_ops_testing": false,
                 "uses_jubilant": false
               },
               "excluded_from_parent_medal": false
@@ -1935,14 +1935,14 @@
             {
               "product_id": "dns-policy",
               "repo": "canonical/dns-operators",
-              "result": "insufficient_data",
+              "result": "bronze",
               "metrics": {
                 "coverage_pct": null,
                 "stability_pct": null,
-                "latest_build_passing": null,
-                "integration_test_evidence_present": false,
-                "uses_ops_testing": true,
-                "uses_jubilant": false
+                "latest_build_passing": true,
+                "integration_test_evidence_present": true,
+                "uses_ops_testing": false,
+                "uses_jubilant": true
               },
               "excluded_from_parent_medal": false
             },
@@ -1955,8 +1955,8 @@
                 "stability_pct": null,
                 "latest_build_passing": null,
                 "integration_test_evidence_present": false,
-                "uses_ops_testing": true,
-                "uses_jubilant": false
+                "uses_ops_testing": false,
+                "uses_jubilant": true
               },
               "excluded_from_parent_medal": false
             },
@@ -1969,8 +1969,8 @@
                 "stability_pct": null,
                 "latest_build_passing": null,
                 "integration_test_evidence_present": false,
-                "uses_ops_testing": true,
-                "uses_jubilant": false
+                "uses_ops_testing": false,
+                "uses_jubilant": true
               },
               "excluded_from_parent_medal": false
             },
@@ -1983,8 +1983,8 @@
                 "stability_pct": null,
                 "latest_build_passing": null,
                 "integration_test_evidence_present": false,
-                "uses_ops_testing": true,
-                "uses_jubilant": false
+                "uses_ops_testing": false,
+                "uses_jubilant": true
               },
               "excluded_from_parent_medal": false
             },
@@ -1996,23 +1996,23 @@
                 "coverage_pct": null,
                 "stability_pct": null,
                 "latest_build_passing": null,
-                "integration_test_evidence_present": true,
-                "uses_ops_testing": true,
-                "uses_jubilant": false
+                "integration_test_evidence_present": false,
+                "uses_ops_testing": false,
+                "uses_jubilant": true
               },
               "excluded_from_parent_medal": false
             },
             {
               "product_id": "charmed-dns-policy",
               "repo": "canonical/dns-operators",
-              "result": "bronze",
+              "result": "insufficient_data",
               "metrics": {
                 "coverage_pct": null,
                 "stability_pct": null,
-                "latest_build_passing": true,
-                "integration_test_evidence_present": true,
-                "uses_ops_testing": true,
-                "uses_jubilant": false
+                "latest_build_passing": null,
+                "integration_test_evidence_present": false,
+                "uses_ops_testing": false,
+                "uses_jubilant": true
               },
               "excluded_from_parent_medal": false
             }
@@ -2231,7 +2231,7 @@
               "repo": "canonical/dns-operators",
               "result": "bronze",
               "metrics": {
-                "renovate_enabled": false,
+                "renovate_enabled": true,
                 "canonical_repo_automation_registered": false,
                 "branch_protection_required_checks": false,
                 "signed_commits_required": false,
@@ -2245,7 +2245,7 @@
               "repo": "canonical/dns-operators",
               "result": "bronze",
               "metrics": {
-                "renovate_enabled": false,
+                "renovate_enabled": true,
                 "canonical_repo_automation_registered": false,
                 "branch_protection_required_checks": false,
                 "signed_commits_required": false,
@@ -2301,7 +2301,7 @@
               "repo": "canonical/dns-operators",
               "result": "bronze",
               "metrics": {
-                "renovate_enabled": false,
+                "renovate_enabled": true,
                 "canonical_repo_automation_registered": false,
                 "branch_protection_required_checks": false,
                 "signed_commits_required": false,
@@ -2452,35 +2452,35 @@
       "parent_product_ids": [],
       "dimensions": {
         "test_verification": {
-          "result": "bronze",
+          "result": "insufficient_data",
           "metrics": {},
           "drift": null,
           "composition": [
             {
               "product_id": "falco-charm",
               "repo": "canonical/falco-operators",
-              "result": "bronze",
+              "result": "insufficient_data",
               "metrics": {
                 "coverage_pct": null,
                 "stability_pct": null,
-                "latest_build_passing": true,
+                "latest_build_passing": null,
                 "integration_test_evidence_present": false,
                 "uses_ops_testing": true,
-                "uses_jubilant": false
+                "uses_jubilant": true
               },
               "excluded_from_parent_medal": false
             },
             {
               "product_id": "falcosidekick-k8s",
               "repo": "canonical/falco-operators",
-              "result": "bronze",
+              "result": "insufficient_data",
               "metrics": {
                 "coverage_pct": null,
                 "stability_pct": null,
-                "latest_build_passing": true,
+                "latest_build_passing": null,
                 "integration_test_evidence_present": false,
                 "uses_ops_testing": true,
-                "uses_jubilant": false
+                "uses_jubilant": true
               },
               "excluded_from_parent_medal": false
             }
@@ -2496,8 +2496,8 @@
               "repo": "canonical/falco-operators",
               "result": "below_minimum",
               "metrics": {
-                "readme_present": true,
-                "contributing_present": true,
+                "readme_present": false,
+                "contributing_present": false,
                 "has_security": false,
                 "documentation_workflows_passing": false,
                 "diataxis_coverage_ai": 0,
@@ -2564,7 +2564,7 @@
               "repo": "canonical/falco-operators",
               "result": "bronze",
               "metrics": {
-                "renovate_enabled": false,
+                "renovate_enabled": true,
                 "canonical_repo_automation_registered": false,
                 "branch_protection_required_checks": false,
                 "signed_commits_required": false,
@@ -2578,7 +2578,7 @@
               "repo": "canonical/falco-operators",
               "result": "bronze",
               "metrics": {
-                "renovate_enabled": false,
+                "renovate_enabled": true,
                 "canonical_repo_automation_registered": false,
                 "branch_protection_required_checks": false,
                 "signed_commits_required": false,
@@ -2660,7 +2660,7 @@
                 "latest_build_passing": true,
                 "integration_test_evidence_present": true,
                 "uses_ops_testing": true,
-                "uses_jubilant": false
+                "uses_jubilant": true
               },
               "excluded_from_parent_medal": false
             }
@@ -2722,7 +2722,7 @@
                 "branch_protection_required_checks": false,
                 "signed_commits_required": false,
                 "sast_workflow_present": false,
-                "cve_tracking_process_present": false
+                "cve_tracking_process_present": true
               },
               "excluded_from_parent_medal": false
             }
@@ -2797,8 +2797,8 @@
                 "stability_pct": null,
                 "latest_build_passing": true,
                 "integration_test_evidence_present": false,
-                "uses_ops_testing": true,
-                "uses_jubilant": false
+                "uses_ops_testing": false,
+                "uses_jubilant": true
               },
               "excluded_from_parent_medal": false
             },
@@ -2812,7 +2812,7 @@
                 "latest_build_passing": true,
                 "integration_test_evidence_present": true,
                 "uses_ops_testing": true,
-                "uses_jubilant": false
+                "uses_jubilant": true
               },
               "excluded_from_parent_medal": false
             },
@@ -2825,21 +2825,21 @@
                 "stability_pct": null,
                 "latest_build_passing": true,
                 "integration_test_evidence_present": false,
-                "uses_ops_testing": true,
-                "uses_jubilant": false
+                "uses_ops_testing": false,
+                "uses_jubilant": true
               },
               "excluded_from_parent_medal": false
             },
             {
               "product_id": "haproxy-spoe-auth-snap",
               "repo": "canonical/haproxy-operator",
-              "result": "bronze",
+              "result": "insufficient_data",
               "metrics": {
                 "coverage_pct": null,
                 "stability_pct": null,
-                "latest_build_passing": true,
+                "latest_build_passing": null,
                 "integration_test_evidence_present": false,
-                "uses_ops_testing": false,
+                "uses_ops_testing": true,
                 "uses_jubilant": true
               },
               "excluded_from_parent_medal": false
@@ -2978,7 +2978,7 @@
               "repo": "canonical/haproxy-operator",
               "result": "bronze",
               "metrics": {
-                "renovate_enabled": false,
+                "renovate_enabled": true,
                 "canonical_repo_automation_registered": false,
                 "branch_protection_required_checks": false,
                 "signed_commits_required": false,
@@ -2992,7 +2992,7 @@
               "repo": "canonical/ingress-configurator-operator",
               "result": "bronze",
               "metrics": {
-                "renovate_enabled": true,
+                "renovate_enabled": false,
                 "canonical_repo_automation_registered": false,
                 "branch_protection_required_checks": false,
                 "signed_commits_required": false,
@@ -3006,7 +3006,7 @@
               "repo": "canonical/haproxy-operator",
               "result": "bronze",
               "metrics": {
-                "renovate_enabled": true,
+                "renovate_enabled": false,
                 "canonical_repo_automation_registered": false,
                 "branch_protection_required_checks": false,
                 "signed_commits_required": false,
@@ -3025,7 +3025,7 @@
                 "branch_protection_required_checks": false,
                 "signed_commits_required": false,
                 "sast_workflow_present": false,
-                "cve_tracking_process_present": true
+                "cve_tracking_process_present": false
               },
               "excluded_from_parent_medal": false
             }
@@ -3127,7 +3127,7 @@
                 "stability_pct": null,
                 "latest_build_passing": true,
                 "integration_test_evidence_present": true,
-                "uses_ops_testing": true,
+                "uses_ops_testing": false,
                 "uses_jubilant": false
               },
               "excluded_from_parent_medal": false
@@ -3273,12 +3273,12 @@
             {
               "product_id": "http-proxy-policy",
               "repo": "canonical/http-proxy-operators",
-              "result": "insufficient_data",
+              "result": "bronze",
               "metrics": {
                 "coverage_pct": null,
                 "stability_pct": null,
-                "latest_build_passing": null,
-                "integration_test_evidence_present": false,
+                "latest_build_passing": true,
+                "integration_test_evidence_present": true,
                 "uses_ops_testing": true,
                 "uses_jubilant": false
               },
@@ -3287,12 +3287,12 @@
             {
               "product_id": "http-proxy-configurator",
               "repo": "canonical/http-proxy-operators",
-              "result": "insufficient_data",
+              "result": "bronze",
               "metrics": {
                 "coverage_pct": null,
                 "stability_pct": null,
-                "latest_build_passing": null,
-                "integration_test_evidence_present": false,
+                "latest_build_passing": true,
+                "integration_test_evidence_present": true,
                 "uses_ops_testing": true,
                 "uses_jubilant": false
               },
@@ -3301,12 +3301,12 @@
             {
               "product_id": "charmed-http-proxy-policy",
               "repo": "canonical/http-proxy-operators",
-              "result": "insufficient_data",
+              "result": "bronze",
               "metrics": {
                 "coverage_pct": null,
                 "stability_pct": null,
-                "latest_build_passing": null,
-                "integration_test_evidence_present": false,
+                "latest_build_passing": true,
+                "integration_test_evidence_present": true,
                 "uses_ops_testing": true,
                 "uses_jubilant": false
               },
@@ -3324,8 +3324,8 @@
               "repo": "canonical/http-proxy-operators",
               "result": "below_minimum",
               "metrics": {
-                "readme_present": false,
-                "contributing_present": false,
+                "readme_present": true,
+                "contributing_present": true,
                 "has_security": false,
                 "documentation_workflows_passing": false,
                 "diataxis_coverage_ai": 0,
@@ -3446,7 +3446,7 @@
               "repo": "canonical/http-proxy-operators",
               "result": "bronze",
               "metrics": {
-                "renovate_enabled": true,
+                "renovate_enabled": false,
                 "canonical_repo_automation_registered": false,
                 "branch_protection_required_checks": false,
                 "signed_commits_required": false,
@@ -3460,7 +3460,7 @@
               "repo": "canonical/http-proxy-operators",
               "result": "bronze",
               "metrics": {
-                "renovate_enabled": false,
+                "renovate_enabled": true,
                 "canonical_repo_automation_registered": false,
                 "branch_protection_required_checks": false,
                 "signed_commits_required": false,
@@ -3474,7 +3474,7 @@
               "repo": "canonical/http-proxy-operators",
               "result": "bronze",
               "metrics": {
-                "renovate_enabled": true,
+                "renovate_enabled": false,
                 "canonical_repo_automation_registered": false,
                 "branch_protection_required_checks": false,
                 "signed_commits_required": false,
@@ -3488,7 +3488,7 @@
               "repo": "canonical/http-proxy-operators",
               "result": "bronze",
               "metrics": {
-                "renovate_enabled": false,
+                "renovate_enabled": true,
                 "canonical_repo_automation_registered": false,
                 "branch_protection_required_checks": false,
                 "signed_commits_required": false,
@@ -3738,21 +3738,21 @@
       "parent_product_ids": [],
       "dimensions": {
         "test_verification": {
-          "result": "silver",
+          "result": "bronze",
           "metrics": {},
           "drift": null,
           "composition": [
             {
               "product_id": "indico-charm",
               "repo": "canonical/indico-operator",
-              "result": "silver",
+              "result": "bronze",
               "metrics": {
                 "coverage_pct": 94,
                 "stability_pct": 94,
                 "latest_build_passing": false,
-                "integration_test_evidence_present": true,
+                "integration_test_evidence_present": false,
                 "uses_ops_testing": true,
-                "uses_jubilant": false
+                "uses_jubilant": true
               },
               "excluded_from_parent_medal": false
             }
@@ -3768,13 +3768,13 @@
               "repo": "canonical/indico-operator",
               "result": "below_minimum",
               "metrics": {
-                "readme_present": true,
+                "readme_present": false,
                 "contributing_present": false,
-                "has_security": true,
+                "has_security": false,
                 "documentation_workflows_passing": false,
                 "diataxis_coverage_ai": 0,
                 "uses_rtd_hosting": false,
-                "release_notes_process_implemented": true
+                "release_notes_process_implemented": false
               },
               "excluded_from_parent_medal": false
             }
@@ -3899,7 +3899,7 @@
                 "stability_pct": null,
                 "latest_build_passing": false,
                 "integration_test_evidence_present": true,
-                "uses_ops_testing": true,
+                "uses_ops_testing": false,
                 "uses_jubilant": false
               },
               "excluded_from_parent_medal": false
@@ -3943,11 +3943,11 @@
             {
               "product_id": "jenkins-agent-k8s",
               "repo": "canonical/jenkins-agent-k8s-operator",
-              "result": "below_minimum",
+              "result": "bronze",
               "metrics": {
                 "readme_present": true,
                 "contributing_present": true,
-                "has_security": false,
+                "has_security": true,
                 "documentation_workflows_passing": false,
                 "diataxis_coverage_ai": 0,
                 "uses_rtd_hosting": false,
@@ -4039,7 +4039,7 @@
               "repo": "canonical/jenkins-agent-k8s-operator",
               "result": "bronze",
               "metrics": {
-                "renovate_enabled": true,
+                "renovate_enabled": false,
                 "canonical_repo_automation_registered": false,
                 "branch_protection_required_checks": false,
                 "signed_commits_required": false,
@@ -4053,7 +4053,7 @@
               "repo": "canonical/jenkins-agent-operator",
               "result": "bronze",
               "metrics": {
-                "renovate_enabled": true,
+                "renovate_enabled": false,
                 "canonical_repo_automation_registered": false,
                 "branch_protection_required_checks": false,
                 "signed_commits_required": false,
@@ -4178,7 +4178,7 @@
                 "latest_build_passing": false,
                 "integration_test_evidence_present": true,
                 "uses_ops_testing": true,
-                "uses_jubilant": true
+                "uses_jubilant": false
               },
               "excluded_from_parent_medal": false
             },
@@ -4192,7 +4192,7 @@
                 "latest_build_passing": false,
                 "integration_test_evidence_present": true,
                 "uses_ops_testing": true,
-                "uses_jubilant": true
+                "uses_jubilant": false
               },
               "excluded_from_parent_medal": false
             },
@@ -4204,7 +4204,7 @@
                 "coverage_pct": null,
                 "stability_pct": null,
                 "latest_build_passing": false,
-                "integration_test_evidence_present": false,
+                "integration_test_evidence_present": true,
                 "uses_ops_testing": true,
                 "uses_jubilant": false
               },
@@ -4213,12 +4213,12 @@
             {
               "product_id": "opendkim-snap",
               "repo": "canonical/mailserver-operators",
-              "result": "insufficient_data",
+              "result": "bronze",
               "metrics": {
                 "coverage_pct": null,
                 "stability_pct": null,
-                "latest_build_passing": null,
-                "integration_test_evidence_present": false,
+                "latest_build_passing": false,
+                "integration_test_evidence_present": true,
                 "uses_ops_testing": true,
                 "uses_jubilant": false
               },
@@ -4251,8 +4251,8 @@
               "repo": "canonical/mailserver-operators",
               "result": "below_minimum",
               "metrics": {
-                "readme_present": false,
-                "contributing_present": false,
+                "readme_present": true,
+                "contributing_present": true,
                 "has_security": false,
                 "documentation_workflows_passing": false,
                 "diataxis_coverage_ai": 0,
@@ -4266,8 +4266,8 @@
               "repo": "canonical/mailserver-operators",
               "result": "below_minimum",
               "metrics": {
-                "readme_present": false,
-                "contributing_present": false,
+                "readme_present": true,
+                "contributing_present": true,
                 "has_security": false,
                 "documentation_workflows_passing": false,
                 "diataxis_coverage_ai": 0,
@@ -4389,8 +4389,8 @@
                 "canonical_repo_automation_registered": false,
                 "branch_protection_required_checks": false,
                 "signed_commits_required": false,
-                "sast_workflow_present": true,
-                "cve_tracking_process_present": true
+                "sast_workflow_present": false,
+                "cve_tracking_process_present": false
               },
               "excluded_from_parent_medal": false
             },
@@ -4399,11 +4399,11 @@
               "repo": "canonical/mailserver-operators",
               "result": "bronze",
               "metrics": {
-                "renovate_enabled": true,
+                "renovate_enabled": false,
                 "canonical_repo_automation_registered": false,
                 "branch_protection_required_checks": false,
                 "signed_commits_required": false,
-                "sast_workflow_present": true,
+                "sast_workflow_present": false,
                 "cve_tracking_process_present": false
               },
               "excluded_from_parent_medal": false
@@ -4694,7 +4694,7 @@
                 "stability_pct": null,
                 "latest_build_passing": true,
                 "integration_test_evidence_present": true,
-                "uses_ops_testing": false,
+                "uses_ops_testing": true,
                 "uses_jubilant": false
               },
               "excluded_from_parent_medal": false
@@ -4702,14 +4702,14 @@
             {
               "product_id": "maubot",
               "repo": "canonical/maubot-operator",
-              "result": "insufficient_data",
+              "result": "bronze",
               "metrics": {
                 "coverage_pct": null,
                 "stability_pct": null,
-                "latest_build_passing": null,
+                "latest_build_passing": true,
                 "integration_test_evidence_present": false,
-                "uses_ops_testing": false,
-                "uses_jubilant": true
+                "uses_ops_testing": true,
+                "uses_jubilant": false
               },
               "excluded_from_parent_medal": false
             },
@@ -4722,7 +4722,7 @@
                 "stability_pct": null,
                 "latest_build_passing": null,
                 "integration_test_evidence_present": false,
-                "uses_ops_testing": false,
+                "uses_ops_testing": true,
                 "uses_jubilant": false
               },
               "excluded_from_parent_medal": false
@@ -4739,8 +4739,8 @@
               "repo": "canonical/synapse-operator",
               "result": "below_minimum",
               "metrics": {
-                "readme_present": false,
-                "contributing_present": false,
+                "readme_present": true,
+                "contributing_present": true,
                 "has_security": false,
                 "documentation_workflows_passing": false,
                 "diataxis_coverage_ai": 0,
@@ -4754,9 +4754,9 @@
               "repo": "canonical/draupnir-snap",
               "result": "below_minimum",
               "metrics": {
-                "readme_present": false,
+                "readme_present": true,
                 "contributing_present": false,
-                "has_security": false,
+                "has_security": true,
                 "documentation_workflows_passing": false,
                 "diataxis_coverage_ai": 0,
                 "uses_rtd_hosting": false,
@@ -4769,11 +4769,11 @@
               "repo": "canonical/mjolnir-snap",
               "result": "below_minimum",
               "metrics": {
-                "readme_present": false,
+                "readme_present": true,
                 "contributing_present": false,
-                "has_security": false,
+                "has_security": true,
                 "documentation_workflows_passing": false,
-                "diataxis_coverage_ai": 0,
+                "diataxis_coverage_ai": 1,
                 "uses_rtd_hosting": false,
                 "release_notes_process_implemented": false
               },
@@ -4784,9 +4784,9 @@
               "repo": "canonical/mas-cli-snap",
               "result": "below_minimum",
               "metrics": {
-                "readme_present": false,
+                "readme_present": true,
                 "contributing_present": false,
-                "has_security": false,
+                "has_security": true,
                 "documentation_workflows_passing": false,
                 "diataxis_coverage_ai": 0,
                 "uses_rtd_hosting": false,
@@ -4799,9 +4799,9 @@
               "repo": "canonical/matrix-appservice-irc",
               "result": "below_minimum",
               "metrics": {
-                "readme_present": false,
+                "readme_present": true,
                 "contributing_present": false,
-                "has_security": false,
+                "has_security": true,
                 "documentation_workflows_passing": false,
                 "diataxis_coverage_ai": 0,
                 "uses_rtd_hosting": false,
@@ -4814,7 +4814,7 @@
               "repo": "canonical/synapse_stats_exporter",
               "result": "below_minimum",
               "metrics": {
-                "readme_present": false,
+                "readme_present": true,
                 "contributing_present": false,
                 "has_security": false,
                 "documentation_workflows_passing": false,
@@ -5052,7 +5052,7 @@
               "repo": "canonical/matrix-appservice-irc",
               "result": "bronze",
               "metrics": {
-                "renovate_enabled": true,
+                "renovate_enabled": false,
                 "canonical_repo_automation_registered": false,
                 "branch_protection_required_checks": false,
                 "signed_commits_required": false,
@@ -5108,7 +5108,7 @@
               "repo": "canonical/irc-bridge-operator",
               "result": "bronze",
               "metrics": {
-                "renovate_enabled": false,
+                "renovate_enabled": true,
                 "canonical_repo_automation_registered": false,
                 "branch_protection_required_checks": false,
                 "signed_commits_required": false,
@@ -5120,19 +5120,19 @@
           ]
         },
         "support_engagement": {
-          "result": "insufficient_data",
+          "result": "bronze",
           "metrics": {},
           "drift": null,
           "composition": [
             {
               "product_id": "synapse",
               "repo": "canonical/synapse-operator",
-              "result": "insufficient_data",
+              "result": "bronze",
               "metrics": {
-                "avg_triage_days": null,
-                "avg_pr_review_days": null,
-                "response_coverage_rate": null,
-                "ownership_signal": false,
+                "avg_triage_days": 729.2,
+                "avg_pr_review_days": 0.1,
+                "response_coverage_rate": 89.7,
+                "ownership_signal": true,
                 "has_jira_sync": false
               },
               "excluded_from_parent_medal": false
@@ -5145,8 +5145,8 @@
                 "avg_triage_days": null,
                 "avg_pr_review_days": null,
                 "response_coverage_rate": null,
-                "ownership_signal": false,
-                "has_jira_sync": false
+                "ownership_signal": true,
+                "has_jira_sync": true
               },
               "excluded_from_parent_medal": false
             },
@@ -5158,8 +5158,8 @@
                 "avg_triage_days": null,
                 "avg_pr_review_days": null,
                 "response_coverage_rate": null,
-                "ownership_signal": false,
-                "has_jira_sync": false
+                "ownership_signal": true,
+                "has_jira_sync": true
               },
               "excluded_from_parent_medal": false
             },
@@ -5171,8 +5171,8 @@
                 "avg_triage_days": null,
                 "avg_pr_review_days": null,
                 "response_coverage_rate": null,
-                "ownership_signal": false,
-                "has_jira_sync": false
+                "ownership_signal": true,
+                "has_jira_sync": true
               },
               "excluded_from_parent_medal": false
             },
@@ -5184,8 +5184,8 @@
                 "avg_triage_days": null,
                 "avg_pr_review_days": null,
                 "response_coverage_rate": null,
-                "ownership_signal": false,
-                "has_jira_sync": false
+                "ownership_signal": true,
+                "has_jira_sync": true
               },
               "excluded_from_parent_medal": false
             },
@@ -5197,7 +5197,7 @@
                 "avg_triage_days": null,
                 "avg_pr_review_days": null,
                 "response_coverage_rate": null,
-                "ownership_signal": false,
+                "ownership_signal": true,
                 "has_jira_sync": false
               },
               "excluded_from_parent_medal": false
@@ -5218,13 +5218,13 @@
             {
               "product_id": "maubot",
               "repo": "canonical/maubot-operator",
-              "result": "insufficient_data",
+              "result": "bronze",
               "metrics": {
-                "avg_triage_days": null,
-                "avg_pr_review_days": null,
-                "response_coverage_rate": null,
-                "ownership_signal": false,
-                "has_jira_sync": false
+                "avg_triage_days": 355.8,
+                "avg_pr_review_days": 3.6,
+                "response_coverage_rate": 83.3,
+                "ownership_signal": true,
+                "has_jira_sync": true
               },
               "excluded_from_parent_medal": false
             },
@@ -5236,8 +5236,8 @@
                 "avg_triage_days": null,
                 "avg_pr_review_days": null,
                 "response_coverage_rate": null,
-                "ownership_signal": false,
-                "has_jira_sync": false
+                "ownership_signal": true,
+                "has_jira_sync": true
               },
               "excluded_from_parent_medal": false
             }
@@ -5286,7 +5286,7 @@
                 "latest_build_passing": null,
                 "integration_test_evidence_present": true,
                 "uses_ops_testing": true,
-                "uses_jubilant": true
+                "uses_jubilant": false
               },
               "excluded_from_parent_medal": false
             }
@@ -5541,7 +5541,7 @@
                 "latest_build_passing": false,
                 "integration_test_evidence_present": true,
                 "uses_ops_testing": false,
-                "uses_jubilant": true
+                "uses_jubilant": false
               },
               "excluded_from_parent_medal": false
             }
@@ -5734,7 +5734,7 @@
                 "branch_protection_required_checks": false,
                 "signed_commits_required": false,
                 "sast_workflow_present": false,
-                "cve_tracking_process_present": false
+                "cve_tracking_process_present": true
               },
               "excluded_from_parent_medal": false
             }
@@ -5798,7 +5798,7 @@
                 "latest_build_passing": true,
                 "integration_test_evidence_present": true,
                 "uses_ops_testing": true,
-                "uses_jubilant": true
+                "uses_jubilant": false
               },
               "excluded_from_parent_medal": false
             }
@@ -5923,7 +5923,7 @@
                 "stability_pct": null,
                 "latest_build_passing": false,
                 "integration_test_evidence_present": true,
-                "uses_ops_testing": false,
+                "uses_ops_testing": true,
                 "uses_jubilant": false
               },
               "excluded_from_parent_medal": false
@@ -6042,7 +6042,7 @@
             "stability_pct": null,
             "latest_build_passing": true,
             "integration_test_evidence_present": true,
-            "uses_ops_testing": false,
+            "uses_ops_testing": true,
             "uses_jubilant": false
           },
           "drift": null,
@@ -6155,20 +6155,20 @@
       "parent_product_ids": [],
       "dimensions": {
         "test_verification": {
-          "result": "bronze",
+          "result": "insufficient_data",
           "metrics": {},
           "drift": null,
           "composition": [
             {
               "product_id": "github-runner",
               "repo": "canonical/github-runner-operator",
-              "result": "bronze",
+              "result": "insufficient_data",
               "metrics": {
                 "coverage_pct": null,
                 "stability_pct": null,
-                "latest_build_passing": false,
-                "integration_test_evidence_present": true,
-                "uses_ops_testing": true,
+                "latest_build_passing": null,
+                "integration_test_evidence_present": false,
+                "uses_ops_testing": false,
                 "uses_jubilant": true
               },
               "excluded_from_parent_medal": false
@@ -6176,25 +6176,25 @@
             {
               "product_id": "github-runner-image-builder",
               "repo": "canonical/github-runner-image-builder-operator",
-              "result": "bronze",
+              "result": "insufficient_data",
               "metrics": {
                 "coverage_pct": null,
                 "stability_pct": null,
-                "latest_build_passing": false,
-                "integration_test_evidence_present": true,
-                "uses_ops_testing": false,
-                "uses_jubilant": true
+                "latest_build_passing": null,
+                "integration_test_evidence_present": false,
+                "uses_ops_testing": true,
+                "uses_jubilant": false
               },
               "excluded_from_parent_medal": false
             },
             {
               "product_id": "github-runner-webhook-router",
               "repo": "canonical/github-runner-webhook-router",
-              "result": "bronze",
+              "result": "insufficient_data",
               "metrics": {
                 "coverage_pct": null,
                 "stability_pct": null,
-                "latest_build_passing": false,
+                "latest_build_passing": null,
                 "integration_test_evidence_present": false,
                 "uses_ops_testing": true,
                 "uses_jubilant": false
@@ -6210,7 +6210,7 @@
                 "stability_pct": null,
                 "latest_build_passing": null,
                 "integration_test_evidence_present": false,
-                "uses_ops_testing": false,
+                "uses_ops_testing": true,
                 "uses_jubilant": false
               },
               "excluded_from_parent_medal": false
@@ -6239,7 +6239,7 @@
                 "latest_build_passing": null,
                 "integration_test_evidence_present": false,
                 "uses_ops_testing": true,
-                "uses_jubilant": true
+                "uses_jubilant": false
               },
               "excluded_from_parent_medal": false
             },
@@ -6253,7 +6253,7 @@
                 "latest_build_passing": null,
                 "integration_test_evidence_present": false,
                 "uses_ops_testing": true,
-                "uses_jubilant": true
+                "uses_jubilant": false
               },
               "excluded_from_parent_medal": false
             }
@@ -6297,11 +6297,11 @@
             {
               "product_id": "github-runner-webhook-router",
               "repo": "canonical/github-runner-webhook-router",
-              "result": "bronze",
+              "result": "below_minimum",
               "metrics": {
-                "readme_present": true,
-                "contributing_present": true,
-                "has_security": true,
+                "readme_present": false,
+                "contributing_present": false,
+                "has_security": false,
                 "documentation_workflows_passing": false,
                 "diataxis_coverage_ai": 0,
                 "uses_rtd_hosting": false,
@@ -6314,8 +6314,8 @@
               "repo": "canonical/tmate-ssh-server-operator",
               "result": "below_minimum",
               "metrics": {
-                "readme_present": true,
-                "contributing_present": true,
+                "readme_present": false,
+                "contributing_present": false,
                 "has_security": false,
                 "documentation_workflows_passing": false,
                 "diataxis_coverage_ai": 0,
@@ -6472,7 +6472,7 @@
               "repo": "canonical/github-runner-operator",
               "result": "bronze",
               "metrics": {
-                "renovate_enabled": false,
+                "renovate_enabled": true,
                 "canonical_repo_automation_registered": false,
                 "branch_protection_required_checks": false,
                 "signed_commits_required": false,
@@ -6532,7 +6532,7 @@
                 "canonical_repo_automation_registered": false,
                 "branch_protection_required_checks": false,
                 "signed_commits_required": false,
-                "sast_workflow_present": false,
+                "sast_workflow_present": true,
                 "cve_tracking_process_present": false
               },
               "excluded_from_parent_medal": false
@@ -6765,7 +6765,7 @@
                 "branch_protection_required_checks": false,
                 "signed_commits_required": false,
                 "sast_workflow_present": true,
-                "cve_tracking_process_present": false
+                "cve_tracking_process_present": true
               },
               "excluded_from_parent_medal": false
             }
@@ -6835,8 +6835,8 @@
                 "stability_pct": null,
                 "latest_build_passing": true,
                 "integration_test_evidence_present": false,
-                "uses_ops_testing": false,
-                "uses_jubilant": true
+                "uses_ops_testing": true,
+                "uses_jubilant": false
               },
               "excluded_from_parent_medal": false
             }
@@ -6962,7 +6962,7 @@
                 "latest_build_passing": true,
                 "integration_test_evidence_present": true,
                 "uses_ops_testing": true,
-                "uses_jubilant": true
+                "uses_jubilant": false
               },
               "excluded_from_parent_medal": false
             }
@@ -7126,7 +7126,7 @@
                 "coverage_pct": null,
                 "stability_pct": null,
                 "latest_build_passing": false,
-                "integration_test_evidence_present": false,
+                "integration_test_evidence_present": true,
                 "uses_ops_testing": true,
                 "uses_jubilant": false
               },
@@ -7239,7 +7239,7 @@
               "repo": "canonical/wazuh-server-operator",
               "result": "bronze",
               "metrics": {
-                "renovate_enabled": false,
+                "renovate_enabled": true,
                 "canonical_repo_automation_registered": false,
                 "branch_protection_required_checks": false,
                 "signed_commits_required": false,
@@ -7362,7 +7362,7 @@
                 "latest_build_passing": true,
                 "integration_test_evidence_present": true,
                 "uses_ops_testing": true,
-                "uses_jubilant": true
+                "uses_jubilant": false
               },
               "excluded_from_parent_medal": false
             }
@@ -7424,7 +7424,7 @@
                 "branch_protection_required_checks": false,
                 "signed_commits_required": false,
                 "sast_workflow_present": true,
-                "cve_tracking_process_present": true
+                "cve_tracking_process_present": false
               },
               "excluded_from_parent_medal": false
             }
@@ -7562,8 +7562,8 @@
                 "canonical_repo_automation_registered": false,
                 "branch_protection_required_checks": false,
                 "signed_commits_required": false,
-                "sast_workflow_present": false,
-                "cve_tracking_process_present": false
+                "sast_workflow_present": true,
+                "cve_tracking_process_present": true
               },
               "excluded_from_parent_medal": false
             }
@@ -7597,7 +7597,7 @@
       "name": "rockcraft",
       "description": "",
       "lifecycle": "stable",
-      "current_result": "bronze",
+      "current_result": "below_minimum",
       "target_result": "gold",
       "squad": "",
       "is_portfolio_entry": false,
@@ -7626,11 +7626,11 @@
           "composition": null
         },
         "documentation": {
-          "result": "bronze",
+          "result": "below_minimum",
           "metrics": {
-            "readme_present": true,
-            "contributing_present": true,
-            "has_security": true,
+            "readme_present": false,
+            "contributing_present": false,
+            "has_security": false,
             "documentation_workflows_passing": false,
             "diataxis_coverage_ai": 0,
             "uses_rtd_hosting": false,
@@ -7653,7 +7653,7 @@
         "security_ssdlc": {
           "result": "bronze",
           "metrics": {
-            "renovate_enabled": false,
+            "renovate_enabled": true,
             "canonical_repo_automation_registered": false,
             "branch_protection_required_checks": false,
             "signed_commits_required": false,
@@ -7706,7 +7706,7 @@
             "latest_build_passing": false,
             "integration_test_evidence_present": false,
             "uses_ops_testing": true,
-            "uses_jubilant": false
+            "uses_jubilant": true
           },
           "drift": null,
           "composition": null
@@ -7739,7 +7739,7 @@
         "security_ssdlc": {
           "result": "bronze",
           "metrics": {
-            "renovate_enabled": false,
+            "renovate_enabled": true,
             "canonical_repo_automation_registered": false,
             "branch_protection_required_checks": false,
             "signed_commits_required": false,
@@ -7791,8 +7791,8 @@
             "stability_pct": null,
             "latest_build_passing": null,
             "integration_test_evidence_present": false,
-            "uses_ops_testing": true,
-            "uses_jubilant": false
+            "uses_ops_testing": false,
+            "uses_jubilant": true
           },
           "drift": null,
           "composition": null
@@ -7825,7 +7825,7 @@
         "security_ssdlc": {
           "result": "bronze",
           "metrics": {
-            "renovate_enabled": false,
+            "renovate_enabled": true,
             "canonical_repo_automation_registered": false,
             "branch_protection_required_checks": false,
             "signed_commits_required": false,
@@ -7916,7 +7916,7 @@
             "branch_protection_required_checks": false,
             "signed_commits_required": false,
             "sast_workflow_present": false,
-            "cve_tracking_process_present": true
+            "cve_tracking_process_present": false
           },
           "drift": null,
           "composition": null
@@ -8002,7 +8002,7 @@
             "branch_protection_required_checks": false,
             "signed_commits_required": false,
             "sast_workflow_present": false,
-            "cve_tracking_process_present": true
+            "cve_tracking_process_present": false
           },
           "drift": null,
           "composition": null
@@ -8043,14 +8043,14 @@
       ],
       "dimensions": {
         "test_verification": {
-          "result": "bronze",
+          "result": "insufficient_data",
           "metrics": {
             "coverage_pct": null,
             "stability_pct": null,
-            "latest_build_passing": false,
-            "integration_test_evidence_present": true,
+            "latest_build_passing": null,
+            "integration_test_evidence_present": false,
             "uses_ops_testing": true,
-            "uses_jubilant": false
+            "uses_jubilant": true
           },
           "drift": null,
           "composition": null
@@ -8129,14 +8129,14 @@
       ],
       "dimensions": {
         "test_verification": {
-          "result": "bronze",
+          "result": "insufficient_data",
           "metrics": {
             "coverage_pct": null,
             "stability_pct": null,
-            "latest_build_passing": false,
-            "integration_test_evidence_present": true,
+            "latest_build_passing": null,
+            "integration_test_evidence_present": false,
             "uses_ops_testing": true,
-            "uses_jubilant": false
+            "uses_jubilant": true
           },
           "drift": null,
           "composition": null
@@ -8169,7 +8169,7 @@
         "security_ssdlc": {
           "result": "bronze",
           "metrics": {
-            "renovate_enabled": false,
+            "renovate_enabled": true,
             "canonical_repo_automation_registered": false,
             "branch_protection_required_checks": false,
             "signed_commits_required": false,
@@ -8215,14 +8215,14 @@
       ],
       "dimensions": {
         "test_verification": {
-          "result": "bronze",
+          "result": "insufficient_data",
           "metrics": {
             "coverage_pct": null,
             "stability_pct": null,
-            "latest_build_passing": false,
-            "integration_test_evidence_present": true,
+            "latest_build_passing": null,
+            "integration_test_evidence_present": false,
             "uses_ops_testing": true,
-            "uses_jubilant": false
+            "uses_jubilant": true
           },
           "drift": null,
           "composition": null
@@ -8255,7 +8255,7 @@
         "security_ssdlc": {
           "result": "bronze",
           "metrics": {
-            "renovate_enabled": false,
+            "renovate_enabled": true,
             "canonical_repo_automation_registered": false,
             "branch_protection_required_checks": false,
             "signed_commits_required": false,
@@ -8306,9 +8306,9 @@
             "coverage_pct": null,
             "stability_pct": null,
             "latest_build_passing": null,
-            "integration_test_evidence_present": false,
+            "integration_test_evidence_present": true,
             "uses_ops_testing": true,
-            "uses_jubilant": false
+            "uses_jubilant": true
           },
           "drift": null,
           "composition": null
@@ -8341,7 +8341,7 @@
         "security_ssdlc": {
           "result": "bronze",
           "metrics": {
-            "renovate_enabled": false,
+            "renovate_enabled": true,
             "canonical_repo_automation_registered": false,
             "branch_protection_required_checks": false,
             "signed_commits_required": false,
@@ -8909,7 +8909,7 @@
             "stability_pct": null,
             "latest_build_passing": true,
             "integration_test_evidence_present": true,
-            "uses_ops_testing": true,
+            "uses_ops_testing": false,
             "uses_jubilant": false
           },
           "drift": null,
@@ -8948,7 +8948,7 @@
             "branch_protection_required_checks": false,
             "signed_commits_required": false,
             "sast_workflow_present": false,
-            "cve_tracking_process_present": true
+            "cve_tracking_process_present": false
           },
           "drift": null,
           "composition": null
@@ -9081,7 +9081,7 @@
             "stability_pct": null,
             "latest_build_passing": false,
             "integration_test_evidence_present": true,
-            "uses_ops_testing": true,
+            "uses_ops_testing": false,
             "uses_jubilant": false
           },
           "drift": null,
@@ -9287,7 +9287,7 @@
         "security_ssdlc": {
           "result": "bronze",
           "metrics": {
-            "renovate_enabled": false,
+            "renovate_enabled": true,
             "canonical_repo_automation_registered": false,
             "branch_protection_required_checks": false,
             "signed_commits_required": false,
@@ -9333,14 +9333,14 @@
       ],
       "dimensions": {
         "test_verification": {
-          "result": "insufficient_data",
+          "result": "bronze",
           "metrics": {
             "coverage_pct": null,
             "stability_pct": null,
-            "latest_build_passing": null,
-            "integration_test_evidence_present": false,
-            "uses_ops_testing": true,
-            "uses_jubilant": false
+            "latest_build_passing": true,
+            "integration_test_evidence_present": true,
+            "uses_ops_testing": false,
+            "uses_jubilant": true
           },
           "drift": null,
           "composition": null
@@ -9373,7 +9373,7 @@
         "security_ssdlc": {
           "result": "bronze",
           "metrics": {
-            "renovate_enabled": false,
+            "renovate_enabled": true,
             "canonical_repo_automation_registered": false,
             "branch_protection_required_checks": false,
             "signed_commits_required": false,
@@ -9425,8 +9425,8 @@
             "stability_pct": null,
             "latest_build_passing": null,
             "integration_test_evidence_present": false,
-            "uses_ops_testing": true,
-            "uses_jubilant": false
+            "uses_ops_testing": false,
+            "uses_jubilant": true
           },
           "drift": null,
           "composition": null
@@ -9511,8 +9511,8 @@
             "stability_pct": null,
             "latest_build_passing": null,
             "integration_test_evidence_present": false,
-            "uses_ops_testing": true,
-            "uses_jubilant": false
+            "uses_ops_testing": false,
+            "uses_jubilant": true
           },
           "drift": null,
           "composition": null
@@ -9597,8 +9597,8 @@
             "stability_pct": null,
             "latest_build_passing": null,
             "integration_test_evidence_present": false,
-            "uses_ops_testing": true,
-            "uses_jubilant": false
+            "uses_ops_testing": false,
+            "uses_jubilant": true
           },
           "drift": null,
           "composition": null
@@ -9682,9 +9682,9 @@
             "coverage_pct": null,
             "stability_pct": null,
             "latest_build_passing": null,
-            "integration_test_evidence_present": true,
-            "uses_ops_testing": true,
-            "uses_jubilant": false
+            "integration_test_evidence_present": false,
+            "uses_ops_testing": false,
+            "uses_jubilant": true
           },
           "drift": null,
           "composition": null
@@ -9717,7 +9717,7 @@
         "security_ssdlc": {
           "result": "bronze",
           "metrics": {
-            "renovate_enabled": false,
+            "renovate_enabled": true,
             "canonical_repo_automation_registered": false,
             "branch_protection_required_checks": false,
             "signed_commits_required": false,
@@ -9763,14 +9763,14 @@
       ],
       "dimensions": {
         "test_verification": {
-          "result": "bronze",
+          "result": "insufficient_data",
           "metrics": {
             "coverage_pct": null,
             "stability_pct": null,
-            "latest_build_passing": true,
-            "integration_test_evidence_present": true,
-            "uses_ops_testing": true,
-            "uses_jubilant": false
+            "latest_build_passing": null,
+            "integration_test_evidence_present": false,
+            "uses_ops_testing": false,
+            "uses_jubilant": true
           },
           "drift": null,
           "composition": null
@@ -9849,14 +9849,14 @@
       ],
       "dimensions": {
         "test_verification": {
-          "result": "bronze",
+          "result": "insufficient_data",
           "metrics": {
             "coverage_pct": null,
             "stability_pct": null,
-            "latest_build_passing": true,
+            "latest_build_passing": null,
             "integration_test_evidence_present": false,
             "uses_ops_testing": true,
-            "uses_jubilant": false
+            "uses_jubilant": true
           },
           "drift": null,
           "composition": null
@@ -9864,8 +9864,8 @@
         "documentation": {
           "result": "below_minimum",
           "metrics": {
-            "readme_present": true,
-            "contributing_present": true,
+            "readme_present": false,
+            "contributing_present": false,
             "has_security": false,
             "documentation_workflows_passing": false,
             "diataxis_coverage_ai": 0,
@@ -9889,7 +9889,7 @@
         "security_ssdlc": {
           "result": "bronze",
           "metrics": {
-            "renovate_enabled": false,
+            "renovate_enabled": true,
             "canonical_repo_automation_registered": false,
             "branch_protection_required_checks": false,
             "signed_commits_required": false,
@@ -9935,14 +9935,14 @@
       ],
       "dimensions": {
         "test_verification": {
-          "result": "bronze",
+          "result": "insufficient_data",
           "metrics": {
             "coverage_pct": null,
             "stability_pct": null,
-            "latest_build_passing": true,
+            "latest_build_passing": null,
             "integration_test_evidence_present": false,
             "uses_ops_testing": true,
-            "uses_jubilant": false
+            "uses_jubilant": true
           },
           "drift": null,
           "composition": null
@@ -9975,7 +9975,7 @@
         "security_ssdlc": {
           "result": "bronze",
           "metrics": {
-            "renovate_enabled": false,
+            "renovate_enabled": true,
             "canonical_repo_automation_registered": false,
             "branch_protection_required_checks": false,
             "signed_commits_required": false,
@@ -10028,7 +10028,7 @@
             "latest_build_passing": true,
             "integration_test_evidence_present": true,
             "uses_ops_testing": true,
-            "uses_jubilant": false
+            "uses_jubilant": true
           },
           "drift": null,
           "composition": null
@@ -10037,6 +10037,92 @@
           "result": "below_minimum",
           "metrics": {
             "readme_present": true,
+            "contributing_present": false,
+            "has_security": false,
+            "documentation_workflows_passing": false,
+            "diataxis_coverage_ai": 0,
+            "uses_rtd_hosting": false,
+            "release_notes_process_implemented": false
+          },
+          "drift": null,
+          "composition": null
+        },
+        "substrate_compat": {
+          "result": "bronze",
+          "metrics": {
+            "supports_juju_3": false,
+            "supports_juju_4": false,
+            "substrate_test_evidence_present": false,
+            "uses_canonical_k8s": false
+          },
+          "drift": null,
+          "composition": null
+        },
+        "security_ssdlc": {
+          "result": "bronze",
+          "metrics": {
+            "renovate_enabled": true,
+            "canonical_repo_automation_registered": false,
+            "branch_protection_required_checks": false,
+            "signed_commits_required": false,
+            "sast_workflow_present": false,
+            "cve_tracking_process_present": true
+          },
+          "drift": null,
+          "composition": null
+        },
+        "support_engagement": {
+          "result": "insufficient_data",
+          "metrics": {
+            "avg_triage_days": null,
+            "avg_pr_review_days": null,
+            "response_coverage_rate": null,
+            "ownership_signal": false,
+            "has_jira_sync": false
+          },
+          "drift": null,
+          "composition": null
+        }
+      }
+    },
+    {
+      "id": "haproxy-charm",
+      "product_type": "charm",
+      "name": "haproxy-charm",
+      "description": "",
+      "lifecycle": "stable",
+      "current_result": "below_minimum",
+      "target_result": "gold",
+      "squad": "",
+      "is_portfolio_entry": false,
+      "documentation_url": "",
+      "source": {
+        "repo": "canonical/haproxy-operator",
+        "subpath": "haproxy-operator"
+      },
+      "composed_of": null,
+      "context_refs": [],
+      "parent_product_ids": [
+        "haproxy"
+      ],
+      "dimensions": {
+        "test_verification": {
+          "result": "bronze",
+          "metrics": {
+            "coverage_pct": null,
+            "stability_pct": null,
+            "latest_build_passing": true,
+            "integration_test_evidence_present": false,
+            "uses_ops_testing": false,
+            "uses_jubilant": true
+          },
+          "drift": null,
+          "composition": null
+        },
+        "documentation": {
+          "result": "below_minimum",
+          "metrics": {
+            "readme_present": false,
             "contributing_present": false,
             "has_security": false,
             "documentation_workflows_passing": false,
@@ -10086,9 +10172,9 @@
       }
     },
     {
-      "id": "haproxy-charm",
+      "id": "ingress-configurator",
       "product_type": "charm",
-      "name": "haproxy-charm",
+      "name": "ingress-configurator",
       "description": "",
       "lifecycle": "stable",
       "current_result": "below_minimum",
@@ -10097,8 +10183,8 @@
       "is_portfolio_entry": false,
       "documentation_url": "",
       "source": {
-        "repo": "canonical/haproxy-operator",
-        "subpath": "haproxy-operator"
+        "repo": "canonical/ingress-configurator-operator",
+        "subpath": null
       },
       "composed_of": null,
       "context_refs": [],
@@ -10112,9 +10198,9 @@
             "coverage_pct": null,
             "stability_pct": null,
             "latest_build_passing": true,
-            "integration_test_evidence_present": false,
+            "integration_test_evidence_present": true,
             "uses_ops_testing": true,
-            "uses_jubilant": false
+            "uses_jubilant": true
           },
           "drift": null,
           "composition": null
@@ -10172,92 +10258,6 @@
       }
     },
     {
-      "id": "ingress-configurator",
-      "product_type": "charm",
-      "name": "ingress-configurator",
-      "description": "",
-      "lifecycle": "stable",
-      "current_result": "below_minimum",
-      "target_result": "gold",
-      "squad": "",
-      "is_portfolio_entry": false,
-      "documentation_url": "",
-      "source": {
-        "repo": "canonical/ingress-configurator-operator",
-        "subpath": null
-      },
-      "composed_of": null,
-      "context_refs": [],
-      "parent_product_ids": [
-        "haproxy"
-      ],
-      "dimensions": {
-        "test_verification": {
-          "result": "bronze",
-          "metrics": {
-            "coverage_pct": null,
-            "stability_pct": null,
-            "latest_build_passing": true,
-            "integration_test_evidence_present": true,
-            "uses_ops_testing": true,
-            "uses_jubilant": false
-          },
-          "drift": null,
-          "composition": null
-        },
-        "documentation": {
-          "result": "below_minimum",
-          "metrics": {
-            "readme_present": false,
-            "contributing_present": false,
-            "has_security": false,
-            "documentation_workflows_passing": false,
-            "diataxis_coverage_ai": 0,
-            "uses_rtd_hosting": false,
-            "release_notes_process_implemented": false
-          },
-          "drift": null,
-          "composition": null
-        },
-        "substrate_compat": {
-          "result": "bronze",
-          "metrics": {
-            "supports_juju_3": false,
-            "supports_juju_4": false,
-            "substrate_test_evidence_present": false,
-            "uses_canonical_k8s": false
-          },
-          "drift": null,
-          "composition": null
-        },
-        "security_ssdlc": {
-          "result": "bronze",
-          "metrics": {
-            "renovate_enabled": true,
-            "canonical_repo_automation_registered": false,
-            "branch_protection_required_checks": false,
-            "signed_commits_required": false,
-            "sast_workflow_present": false,
-            "cve_tracking_process_present": false
-          },
-          "drift": null,
-          "composition": null
-        },
-        "support_engagement": {
-          "result": "insufficient_data",
-          "metrics": {
-            "avg_triage_days": null,
-            "avg_pr_review_days": null,
-            "response_coverage_rate": null,
-            "ownership_signal": false,
-            "has_jira_sync": false
-          },
-          "drift": null,
-          "composition": null
-        }
-      }
-    },
-    {
       "id": "haproxy-spoe-auth",
       "product_type": "charm",
       "name": "haproxy-spoe-auth",
@@ -10285,8 +10285,8 @@
             "stability_pct": null,
             "latest_build_passing": true,
             "integration_test_evidence_present": false,
-            "uses_ops_testing": true,
-            "uses_jubilant": false
+            "uses_ops_testing": false,
+            "uses_jubilant": true
           },
           "drift": null,
           "composition": null
@@ -10319,7 +10319,7 @@
         "security_ssdlc": {
           "result": "bronze",
           "metrics": {
-            "renovate_enabled": true,
+            "renovate_enabled": false,
             "canonical_repo_automation_registered": false,
             "branch_protection_required_checks": false,
             "signed_commits_required": false,
@@ -10365,13 +10365,13 @@
       ],
       "dimensions": {
         "test_verification": {
-          "result": "bronze",
+          "result": "insufficient_data",
           "metrics": {
             "coverage_pct": null,
             "stability_pct": null,
-            "latest_build_passing": true,
+            "latest_build_passing": null,
             "integration_test_evidence_present": false,
-            "uses_ops_testing": false,
+            "uses_ops_testing": true,
             "uses_jubilant": true
           },
           "drift": null,
@@ -10410,7 +10410,7 @@
             "branch_protection_required_checks": false,
             "signed_commits_required": false,
             "sast_workflow_present": false,
-            "cve_tracking_process_present": true
+            "cve_tracking_process_present": false
           },
           "drift": null,
           "composition": null
@@ -10457,7 +10457,7 @@
             "stability_pct": null,
             "latest_build_passing": true,
             "integration_test_evidence_present": true,
-            "uses_ops_testing": true,
+            "uses_ops_testing": false,
             "uses_jubilant": false
           },
           "drift": null,
@@ -10552,8 +10552,8 @@
         "documentation": {
           "result": "below_minimum",
           "metrics": {
-            "readme_present": false,
-            "contributing_present": false,
+            "readme_present": true,
+            "contributing_present": true,
             "has_security": false,
             "documentation_workflows_passing": false,
             "diataxis_coverage_ai": 0,
@@ -10577,7 +10577,7 @@
         "security_ssdlc": {
           "result": "bronze",
           "metrics": {
-            "renovate_enabled": true,
+            "renovate_enabled": false,
             "canonical_repo_automation_registered": false,
             "branch_protection_required_checks": false,
             "signed_commits_required": false,
@@ -10623,98 +10623,12 @@
       ],
       "dimensions": {
         "test_verification": {
-          "result": "insufficient_data",
+          "result": "bronze",
           "metrics": {
             "coverage_pct": null,
             "stability_pct": null,
-            "latest_build_passing": null,
-            "integration_test_evidence_present": false,
-            "uses_ops_testing": true,
-            "uses_jubilant": false
-          },
-          "drift": null,
-          "composition": null
-        },
-        "documentation": {
-          "result": "below_minimum",
-          "metrics": {
-            "readme_present": false,
-            "contributing_present": false,
-            "has_security": false,
-            "documentation_workflows_passing": false,
-            "diataxis_coverage_ai": 0,
-            "uses_rtd_hosting": false,
-            "release_notes_process_implemented": false
-          },
-          "drift": null,
-          "composition": null
-        },
-        "substrate_compat": {
-          "result": "bronze",
-          "metrics": {
-            "supports_juju_3": false,
-            "supports_juju_4": false,
-            "substrate_test_evidence_present": false,
-            "uses_canonical_k8s": false
-          },
-          "drift": null,
-          "composition": null
-        },
-        "security_ssdlc": {
-          "result": "bronze",
-          "metrics": {
-            "renovate_enabled": false,
-            "canonical_repo_automation_registered": false,
-            "branch_protection_required_checks": false,
-            "signed_commits_required": false,
-            "sast_workflow_present": false,
-            "cve_tracking_process_present": false
-          },
-          "drift": null,
-          "composition": null
-        },
-        "support_engagement": {
-          "result": "insufficient_data",
-          "metrics": {
-            "avg_triage_days": null,
-            "avg_pr_review_days": null,
-            "response_coverage_rate": null,
-            "ownership_signal": false,
-            "has_jira_sync": false
-          },
-          "drift": null,
-          "composition": null
-        }
-      }
-    },
-    {
-      "id": "http-proxy-configurator",
-      "product_type": "charm",
-      "name": "http-proxy-configurator",
-      "description": "",
-      "lifecycle": "stable",
-      "current_result": "below_minimum",
-      "target_result": "silver",
-      "squad": "",
-      "is_portfolio_entry": false,
-      "documentation_url": "",
-      "source": {
-        "repo": "canonical/http-proxy-operators",
-        "subpath": "http-proxy-configurator-operator"
-      },
-      "composed_of": null,
-      "context_refs": [],
-      "parent_product_ids": [
-        "http-proxy"
-      ],
-      "dimensions": {
-        "test_verification": {
-          "result": "insufficient_data",
-          "metrics": {
-            "coverage_pct": null,
-            "stability_pct": null,
-            "latest_build_passing": null,
-            "integration_test_evidence_present": false,
+            "latest_build_passing": true,
+            "integration_test_evidence_present": true,
             "uses_ops_testing": true,
             "uses_jubilant": false
           },
@@ -10774,6 +10688,92 @@
       }
     },
     {
+      "id": "http-proxy-configurator",
+      "product_type": "charm",
+      "name": "http-proxy-configurator",
+      "description": "",
+      "lifecycle": "stable",
+      "current_result": "below_minimum",
+      "target_result": "silver",
+      "squad": "",
+      "is_portfolio_entry": false,
+      "documentation_url": "",
+      "source": {
+        "repo": "canonical/http-proxy-operators",
+        "subpath": "http-proxy-configurator-operator"
+      },
+      "composed_of": null,
+      "context_refs": [],
+      "parent_product_ids": [
+        "http-proxy"
+      ],
+      "dimensions": {
+        "test_verification": {
+          "result": "bronze",
+          "metrics": {
+            "coverage_pct": null,
+            "stability_pct": null,
+            "latest_build_passing": true,
+            "integration_test_evidence_present": true,
+            "uses_ops_testing": true,
+            "uses_jubilant": false
+          },
+          "drift": null,
+          "composition": null
+        },
+        "documentation": {
+          "result": "below_minimum",
+          "metrics": {
+            "readme_present": false,
+            "contributing_present": false,
+            "has_security": false,
+            "documentation_workflows_passing": false,
+            "diataxis_coverage_ai": 0,
+            "uses_rtd_hosting": false,
+            "release_notes_process_implemented": false
+          },
+          "drift": null,
+          "composition": null
+        },
+        "substrate_compat": {
+          "result": "bronze",
+          "metrics": {
+            "supports_juju_3": false,
+            "supports_juju_4": false,
+            "substrate_test_evidence_present": false,
+            "uses_canonical_k8s": false
+          },
+          "drift": null,
+          "composition": null
+        },
+        "security_ssdlc": {
+          "result": "bronze",
+          "metrics": {
+            "renovate_enabled": false,
+            "canonical_repo_automation_registered": false,
+            "branch_protection_required_checks": false,
+            "signed_commits_required": false,
+            "sast_workflow_present": false,
+            "cve_tracking_process_present": false
+          },
+          "drift": null,
+          "composition": null
+        },
+        "support_engagement": {
+          "result": "insufficient_data",
+          "metrics": {
+            "avg_triage_days": null,
+            "avg_pr_review_days": null,
+            "response_coverage_rate": null,
+            "ownership_signal": false,
+            "has_jira_sync": false
+          },
+          "drift": null,
+          "composition": null
+        }
+      }
+    },
+    {
       "id": "charmed-http-proxy-policy",
       "product_type": "snap",
       "name": "charmed-http-proxy-policy",
@@ -10795,12 +10795,12 @@
       ],
       "dimensions": {
         "test_verification": {
-          "result": "insufficient_data",
+          "result": "bronze",
           "metrics": {
             "coverage_pct": null,
             "stability_pct": null,
-            "latest_build_passing": null,
-            "integration_test_evidence_present": false,
+            "latest_build_passing": true,
+            "integration_test_evidence_present": true,
             "uses_ops_testing": true,
             "uses_jubilant": false
           },
@@ -10835,7 +10835,7 @@
         "security_ssdlc": {
           "result": "bronze",
           "metrics": {
-            "renovate_enabled": false,
+            "renovate_enabled": true,
             "canonical_repo_automation_registered": false,
             "branch_protection_required_checks": false,
             "signed_commits_required": false,
@@ -10967,14 +10967,14 @@
       ],
       "dimensions": {
         "test_verification": {
-          "result": "silver",
+          "result": "bronze",
           "metrics": {
             "coverage_pct": 94,
             "stability_pct": 94,
             "latest_build_passing": false,
-            "integration_test_evidence_present": true,
+            "integration_test_evidence_present": false,
             "uses_ops_testing": true,
-            "uses_jubilant": false
+            "uses_jubilant": true
           },
           "drift": null,
           "composition": null
@@ -10982,13 +10982,13 @@
         "documentation": {
           "result": "below_minimum",
           "metrics": {
-            "readme_present": true,
+            "readme_present": false,
             "contributing_present": false,
-            "has_security": true,
+            "has_security": false,
             "documentation_workflows_passing": false,
             "diataxis_coverage_ai": 0,
             "uses_rtd_hosting": false,
-            "release_notes_process_implemented": true
+            "release_notes_process_implemented": false
           },
           "drift": null,
           "composition": null
@@ -11123,7 +11123,7 @@
       "name": "jenkins-agent-k8s",
       "description": "",
       "lifecycle": "stable",
-      "current_result": "below_minimum",
+      "current_result": "bronze",
       "target_result": "bronze",
       "squad": "",
       "is_portfolio_entry": false,
@@ -11145,18 +11145,18 @@
             "stability_pct": null,
             "latest_build_passing": false,
             "integration_test_evidence_present": true,
-            "uses_ops_testing": true,
+            "uses_ops_testing": false,
             "uses_jubilant": false
           },
           "drift": null,
           "composition": null
         },
         "documentation": {
-          "result": "below_minimum",
+          "result": "bronze",
           "metrics": {
             "readme_present": true,
             "contributing_present": true,
-            "has_security": false,
+            "has_security": true,
             "documentation_workflows_passing": false,
             "diataxis_coverage_ai": 0,
             "uses_rtd_hosting": false,
@@ -11179,7 +11179,7 @@
         "security_ssdlc": {
           "result": "bronze",
           "metrics": {
-            "renovate_enabled": true,
+            "renovate_enabled": false,
             "canonical_repo_automation_registered": false,
             "branch_protection_required_checks": false,
             "signed_commits_required": false,
@@ -11265,7 +11265,7 @@
         "security_ssdlc": {
           "result": "bronze",
           "metrics": {
-            "renovate_enabled": true,
+            "renovate_enabled": false,
             "canonical_repo_automation_registered": false,
             "branch_protection_required_checks": false,
             "signed_commits_required": false,
@@ -11355,8 +11355,8 @@
             "canonical_repo_automation_registered": false,
             "branch_protection_required_checks": false,
             "signed_commits_required": false,
-            "sast_workflow_present": true,
-            "cve_tracking_process_present": true
+            "sast_workflow_present": false,
+            "cve_tracking_process_present": false
           },
           "drift": null,
           "composition": null
@@ -11404,7 +11404,7 @@
             "latest_build_passing": false,
             "integration_test_evidence_present": true,
             "uses_ops_testing": true,
-            "uses_jubilant": true
+            "uses_jubilant": false
           },
           "drift": null,
           "composition": null
@@ -11412,8 +11412,8 @@
         "documentation": {
           "result": "below_minimum",
           "metrics": {
-            "readme_present": false,
-            "contributing_present": false,
+            "readme_present": true,
+            "contributing_present": true,
             "has_security": false,
             "documentation_workflows_passing": false,
             "diataxis_coverage_ai": 0,
@@ -11437,11 +11437,11 @@
         "security_ssdlc": {
           "result": "bronze",
           "metrics": {
-            "renovate_enabled": true,
+            "renovate_enabled": false,
             "canonical_repo_automation_registered": false,
             "branch_protection_required_checks": false,
             "signed_commits_required": false,
-            "sast_workflow_present": true,
+            "sast_workflow_present": false,
             "cve_tracking_process_present": false
           },
           "drift": null,
@@ -11490,7 +11490,7 @@
             "latest_build_passing": false,
             "integration_test_evidence_present": true,
             "uses_ops_testing": true,
-            "uses_jubilant": true
+            "uses_jubilant": false
           },
           "drift": null,
           "composition": null
@@ -11498,8 +11498,8 @@
         "documentation": {
           "result": "below_minimum",
           "metrics": {
-            "readme_present": false,
-            "contributing_present": false,
+            "readme_present": true,
+            "contributing_present": true,
             "has_security": false,
             "documentation_workflows_passing": false,
             "diataxis_coverage_ai": 0,
@@ -11574,7 +11574,7 @@
             "coverage_pct": null,
             "stability_pct": null,
             "latest_build_passing": false,
-            "integration_test_evidence_present": false,
+            "integration_test_evidence_present": true,
             "uses_ops_testing": true,
             "uses_jubilant": false
           },
@@ -11655,12 +11655,12 @@
       ],
       "dimensions": {
         "test_verification": {
-          "result": "insufficient_data",
+          "result": "bronze",
           "metrics": {
             "coverage_pct": null,
             "stability_pct": null,
-            "latest_build_passing": null,
-            "integration_test_evidence_present": false,
+            "latest_build_passing": false,
+            "integration_test_evidence_present": true,
             "uses_ops_testing": true,
             "uses_jubilant": false
           },
@@ -11756,8 +11756,8 @@
         "documentation": {
           "result": "below_minimum",
           "metrics": {
-            "readme_present": false,
-            "contributing_present": false,
+            "readme_present": true,
+            "contributing_present": true,
             "has_security": false,
             "documentation_workflows_passing": false,
             "diataxis_coverage_ai": 0,
@@ -11792,12 +11792,12 @@
           "composition": null
         },
         "support_engagement": {
-          "result": "insufficient_data",
+          "result": "bronze",
           "metrics": {
-            "avg_triage_days": null,
-            "avg_pr_review_days": null,
-            "response_coverage_rate": null,
-            "ownership_signal": false,
+            "avg_triage_days": 729.2,
+            "avg_pr_review_days": 0.1,
+            "response_coverage_rate": 89.7,
+            "ownership_signal": true,
             "has_jira_sync": false
           },
           "drift": null,
@@ -11842,9 +11842,9 @@
         "documentation": {
           "result": "below_minimum",
           "metrics": {
-            "readme_present": false,
+            "readme_present": true,
             "contributing_present": false,
-            "has_security": false,
+            "has_security": true,
             "documentation_workflows_passing": false,
             "diataxis_coverage_ai": 0,
             "uses_rtd_hosting": false,
@@ -11883,8 +11883,8 @@
             "avg_triage_days": null,
             "avg_pr_review_days": null,
             "response_coverage_rate": null,
-            "ownership_signal": false,
-            "has_jira_sync": false
+            "ownership_signal": true,
+            "has_jira_sync": true
           },
           "drift": null,
           "composition": null
@@ -11928,11 +11928,11 @@
         "documentation": {
           "result": "below_minimum",
           "metrics": {
-            "readme_present": false,
+            "readme_present": true,
             "contributing_present": false,
-            "has_security": false,
+            "has_security": true,
             "documentation_workflows_passing": false,
-            "diataxis_coverage_ai": 0,
+            "diataxis_coverage_ai": 1,
             "uses_rtd_hosting": false,
             "release_notes_process_implemented": false
           },
@@ -11969,8 +11969,8 @@
             "avg_triage_days": null,
             "avg_pr_review_days": null,
             "response_coverage_rate": null,
-            "ownership_signal": false,
-            "has_jira_sync": false
+            "ownership_signal": true,
+            "has_jira_sync": true
           },
           "drift": null,
           "composition": null
@@ -12014,9 +12014,9 @@
         "documentation": {
           "result": "below_minimum",
           "metrics": {
-            "readme_present": false,
+            "readme_present": true,
             "contributing_present": false,
-            "has_security": false,
+            "has_security": true,
             "documentation_workflows_passing": false,
             "diataxis_coverage_ai": 0,
             "uses_rtd_hosting": false,
@@ -12055,8 +12055,8 @@
             "avg_triage_days": null,
             "avg_pr_review_days": null,
             "response_coverage_rate": null,
-            "ownership_signal": false,
-            "has_jira_sync": false
+            "ownership_signal": true,
+            "has_jira_sync": true
           },
           "drift": null,
           "composition": null
@@ -12100,9 +12100,9 @@
         "documentation": {
           "result": "below_minimum",
           "metrics": {
-            "readme_present": false,
+            "readme_present": true,
             "contributing_present": false,
-            "has_security": false,
+            "has_security": true,
             "documentation_workflows_passing": false,
             "diataxis_coverage_ai": 0,
             "uses_rtd_hosting": false,
@@ -12125,7 +12125,7 @@
         "security_ssdlc": {
           "result": "bronze",
           "metrics": {
-            "renovate_enabled": true,
+            "renovate_enabled": false,
             "canonical_repo_automation_registered": false,
             "branch_protection_required_checks": false,
             "signed_commits_required": false,
@@ -12141,8 +12141,8 @@
             "avg_triage_days": null,
             "avg_pr_review_days": null,
             "response_coverage_rate": null,
-            "ownership_signal": false,
-            "has_jira_sync": false
+            "ownership_signal": true,
+            "has_jira_sync": true
           },
           "drift": null,
           "composition": null
@@ -12186,7 +12186,7 @@
         "documentation": {
           "result": "below_minimum",
           "metrics": {
-            "readme_present": false,
+            "readme_present": true,
             "contributing_present": false,
             "has_security": false,
             "documentation_workflows_passing": false,
@@ -12227,7 +12227,7 @@
             "avg_triage_days": null,
             "avg_pr_review_days": null,
             "response_coverage_rate": null,
-            "ownership_signal": false,
+            "ownership_signal": true,
             "has_jira_sync": false
           },
           "drift": null,
@@ -12257,14 +12257,14 @@
       ],
       "dimensions": {
         "test_verification": {
-          "result": "insufficient_data",
+          "result": "bronze",
           "metrics": {
             "coverage_pct": null,
             "stability_pct": null,
-            "latest_build_passing": null,
+            "latest_build_passing": true,
             "integration_test_evidence_present": false,
-            "uses_ops_testing": false,
-            "uses_jubilant": true
+            "uses_ops_testing": true,
+            "uses_jubilant": false
           },
           "drift": null,
           "composition": null
@@ -12308,13 +12308,13 @@
           "composition": null
         },
         "support_engagement": {
-          "result": "insufficient_data",
+          "result": "bronze",
           "metrics": {
-            "avg_triage_days": null,
-            "avg_pr_review_days": null,
-            "response_coverage_rate": null,
-            "ownership_signal": false,
-            "has_jira_sync": false
+            "avg_triage_days": 355.8,
+            "avg_pr_review_days": 3.6,
+            "response_coverage_rate": 83.3,
+            "ownership_signal": true,
+            "has_jira_sync": true
           },
           "drift": null,
           "composition": null
@@ -12349,7 +12349,7 @@
             "stability_pct": null,
             "latest_build_passing": null,
             "integration_test_evidence_present": false,
-            "uses_ops_testing": false,
+            "uses_ops_testing": true,
             "uses_jubilant": false
           },
           "drift": null,
@@ -12383,7 +12383,7 @@
         "security_ssdlc": {
           "result": "bronze",
           "metrics": {
-            "renovate_enabled": false,
+            "renovate_enabled": true,
             "canonical_repo_automation_registered": false,
             "branch_protection_required_checks": false,
             "signed_commits_required": false,
@@ -12399,8 +12399,8 @@
             "avg_triage_days": null,
             "avg_pr_review_days": null,
             "response_coverage_rate": null,
-            "ownership_signal": false,
-            "has_jira_sync": false
+            "ownership_signal": true,
+            "has_jira_sync": true
           },
           "drift": null,
           "composition": null
@@ -12436,7 +12436,7 @@
             "latest_build_passing": null,
             "integration_test_evidence_present": true,
             "uses_ops_testing": true,
-            "uses_jubilant": true
+            "uses_jubilant": false
           },
           "drift": null,
           "composition": null
@@ -12608,7 +12608,7 @@
             "latest_build_passing": false,
             "integration_test_evidence_present": true,
             "uses_ops_testing": false,
-            "uses_jubilant": true
+            "uses_jubilant": false
           },
           "drift": null,
           "composition": null
@@ -12732,7 +12732,7 @@
             "branch_protection_required_checks": false,
             "signed_commits_required": false,
             "sast_workflow_present": false,
-            "cve_tracking_process_present": false
+            "cve_tracking_process_present": true
           },
           "drift": null,
           "composition": null
@@ -12780,7 +12780,7 @@
             "latest_build_passing": true,
             "integration_test_evidence_present": true,
             "uses_ops_testing": true,
-            "uses_jubilant": true
+            "uses_jubilant": false
           },
           "drift": null,
           "composition": null
@@ -12865,7 +12865,7 @@
             "stability_pct": null,
             "latest_build_passing": false,
             "integration_test_evidence_present": true,
-            "uses_ops_testing": false,
+            "uses_ops_testing": true,
             "uses_jubilant": false
           },
           "drift": null,
@@ -12945,13 +12945,13 @@
       ],
       "dimensions": {
         "test_verification": {
-          "result": "bronze",
+          "result": "insufficient_data",
           "metrics": {
             "coverage_pct": null,
             "stability_pct": null,
-            "latest_build_passing": false,
-            "integration_test_evidence_present": true,
-            "uses_ops_testing": true,
+            "latest_build_passing": null,
+            "integration_test_evidence_present": false,
+            "uses_ops_testing": false,
             "uses_jubilant": true
           },
           "drift": null,
@@ -12985,7 +12985,7 @@
         "security_ssdlc": {
           "result": "bronze",
           "metrics": {
-            "renovate_enabled": false,
+            "renovate_enabled": true,
             "canonical_repo_automation_registered": false,
             "branch_protection_required_checks": false,
             "signed_commits_required": false,
@@ -13031,14 +13031,14 @@
       ],
       "dimensions": {
         "test_verification": {
-          "result": "bronze",
+          "result": "insufficient_data",
           "metrics": {
             "coverage_pct": null,
             "stability_pct": null,
-            "latest_build_passing": false,
-            "integration_test_evidence_present": true,
-            "uses_ops_testing": false,
-            "uses_jubilant": true
+            "latest_build_passing": null,
+            "integration_test_evidence_present": false,
+            "uses_ops_testing": true,
+            "uses_jubilant": false
           },
           "drift": null,
           "composition": null
@@ -13101,7 +13101,7 @@
       "name": "github-runner-webhook-router",
       "description": "",
       "lifecycle": "stable",
-      "current_result": "bronze",
+      "current_result": "below_minimum",
       "target_result": "gold",
       "squad": "",
       "is_portfolio_entry": false,
@@ -13117,11 +13117,11 @@
       ],
       "dimensions": {
         "test_verification": {
-          "result": "bronze",
+          "result": "insufficient_data",
           "metrics": {
             "coverage_pct": null,
             "stability_pct": null,
-            "latest_build_passing": false,
+            "latest_build_passing": null,
             "integration_test_evidence_present": false,
             "uses_ops_testing": true,
             "uses_jubilant": false
@@ -13130,11 +13130,11 @@
           "composition": null
         },
         "documentation": {
-          "result": "bronze",
+          "result": "below_minimum",
           "metrics": {
-            "readme_present": true,
-            "contributing_present": true,
-            "has_security": true,
+            "readme_present": false,
+            "contributing_present": false,
+            "has_security": false,
             "documentation_workflows_passing": false,
             "diataxis_coverage_ai": 0,
             "uses_rtd_hosting": false,
@@ -13209,7 +13209,7 @@
             "stability_pct": null,
             "latest_build_passing": null,
             "integration_test_evidence_present": false,
-            "uses_ops_testing": false,
+            "uses_ops_testing": true,
             "uses_jubilant": false
           },
           "drift": null,
@@ -13218,8 +13218,8 @@
         "documentation": {
           "result": "below_minimum",
           "metrics": {
-            "readme_present": true,
-            "contributing_present": true,
+            "readme_present": false,
+            "contributing_present": false,
             "has_security": false,
             "documentation_workflows_passing": false,
             "diataxis_coverage_ai": 0,
@@ -13333,7 +13333,7 @@
             "canonical_repo_automation_registered": false,
             "branch_protection_required_checks": false,
             "signed_commits_required": false,
-            "sast_workflow_present": false,
+            "sast_workflow_present": true,
             "cve_tracking_process_present": false
           },
           "drift": null,
@@ -13382,7 +13382,7 @@
             "latest_build_passing": null,
             "integration_test_evidence_present": false,
             "uses_ops_testing": true,
-            "uses_jubilant": true
+            "uses_jubilant": false
           },
           "drift": null,
           "composition": null
@@ -13468,7 +13468,7 @@
             "latest_build_passing": null,
             "integration_test_evidence_present": false,
             "uses_ops_testing": true,
-            "uses_jubilant": true
+            "uses_jubilant": false
           },
           "drift": null,
           "composition": null
@@ -13592,7 +13592,7 @@
             "branch_protection_required_checks": false,
             "signed_commits_required": false,
             "sast_workflow_present": true,
-            "cve_tracking_process_present": false
+            "cve_tracking_process_present": true
           },
           "drift": null,
           "composition": null
@@ -13639,8 +13639,8 @@
             "stability_pct": null,
             "latest_build_passing": true,
             "integration_test_evidence_present": false,
-            "uses_ops_testing": false,
-            "uses_jubilant": true
+            "uses_ops_testing": true,
+            "uses_jubilant": false
           },
           "drift": null,
           "composition": null
@@ -13726,7 +13726,7 @@
             "latest_build_passing": true,
             "integration_test_evidence_present": true,
             "uses_ops_testing": true,
-            "uses_jubilant": true
+            "uses_jubilant": false
           },
           "drift": null,
           "composition": null
@@ -13845,7 +13845,7 @@
         "security_ssdlc": {
           "result": "bronze",
           "metrics": {
-            "renovate_enabled": false,
+            "renovate_enabled": true,
             "canonical_repo_automation_registered": false,
             "branch_protection_required_checks": false,
             "signed_commits_required": false,
@@ -13982,7 +13982,7 @@
             "coverage_pct": null,
             "stability_pct": null,
             "latest_build_passing": false,
-            "integration_test_evidence_present": false,
+            "integration_test_evidence_present": true,
             "uses_ops_testing": true,
             "uses_jubilant": false
           },
@@ -14070,7 +14070,7 @@
             "latest_build_passing": true,
             "integration_test_evidence_present": true,
             "uses_ops_testing": true,
-            "uses_jubilant": true
+            "uses_jubilant": false
           },
           "drift": null,
           "composition": null
@@ -14108,7 +14108,7 @@
             "branch_protection_required_checks": false,
             "signed_commits_required": false,
             "sast_workflow_present": true,
-            "cve_tracking_process_present": true
+            "cve_tracking_process_present": false
           },
           "drift": null,
           "composition": null
@@ -14193,8 +14193,8 @@
             "canonical_repo_automation_registered": false,
             "branch_protection_required_checks": false,
             "signed_commits_required": false,
-            "sast_workflow_present": false,
-            "cve_tracking_process_present": false
+            "sast_workflow_present": true,
+            "cve_tracking_process_present": true
           },
           "drift": null,
           "composition": null
