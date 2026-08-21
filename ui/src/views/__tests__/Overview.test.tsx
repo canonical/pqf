@@ -122,7 +122,7 @@ describe('Overview', () => {
     } as ReturnType<typeof usePortfolio>)
 
     wrap(<Overview />)
-    expect(screen.getAllByText('Below minimum').length).toBeGreaterThan(0)
+    expect(screen.getAllByText('Below min').length).toBeGreaterThan(0)
   })
 
   it('filters by search input', async () => {

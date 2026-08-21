@@ -17,8 +17,8 @@ const MEDAL_LABELS: Record<string, string> = {
   bronze: 'Bronze',
   silver: 'Silver',
   gold: 'Gold',
-  below_minimum: 'Below Minimum',
-  insufficient_data: 'Insufficient Data',
+  below_minimum: 'Below min',
+  insufficient_data: 'Insuff. data',
   not_applicable: 'Not Applicable',
 }
 

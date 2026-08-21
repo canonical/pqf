@@ -129,8 +129,8 @@ export default function MetricDistribution() {
               <option value="gold">Gold</option>
               <option value="silver">Silver</option>
               <option value="bronze">Bronze</option>
-              <option value="below_minimum">Below Minimum</option>
-              <option value="insufficient_data">Insufficient Data</option>
+              <option value="below_minimum">Below min</option>
+              <option value="insufficient_data">Insuff. data</option>
               <option value="not_applicable">N/A</option>
             </select>
             <select value={typeFilter} onChange={e => setTypeFilter(e.target.value as 'all' | ProductType)} className="p-form__control" style={{ width: 'auto', marginBottom: 0 }}>

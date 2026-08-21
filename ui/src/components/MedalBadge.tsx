@@ -17,8 +17,8 @@ const MEDAL_LABELS: Record<BadgeValue, string> = {
   silver: 'Silver',
   bronze: 'Bronze',
   unrated: 'Unrated',
-  below_minimum: 'Below minimum',
-  insufficient_data: 'Insufficient data',
+  below_minimum: 'Below min',
+  insufficient_data: 'Insuff. data',
   not_applicable: 'N/A',
 }
 
