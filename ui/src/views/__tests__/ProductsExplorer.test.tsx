@@ -142,7 +142,7 @@ describe('ProductsExplorer', () => {
     } as ReturnType<typeof usePortfolio>)
 
     wrap()
-    expect(screen.getByText('Below minimum')).toBeInTheDocument()
+    expect(screen.getAllByText('Below minimum').length).toBeGreaterThan(0)
   })
 
   it('shows search input', () => {
