@@ -39,7 +39,7 @@ export default function MedalBadge({ medal, size = 'default' }: Props) {
         padding: size === 'small' ? '0.1rem 0.4rem' : '0.2rem 0.6rem',
         fontSize,
         fontWeight: 600,
-        minWidth: 'fit-content',
+        minWidth: size === 'small' ? '7rem' : '8.5rem',
         display: 'inline-flex',
         justifyContent: 'center',
         alignItems: 'center',
