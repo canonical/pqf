@@ -17,10 +17,8 @@ const mockPortfolio: Portfolio = {
       name: 'Matrix (Synapse)',
       product_type: 'root',
       lifecycle: 'stable',
-      target_medal: 'gold',
-      current_medal: 'bronze',
-      current_status: 'bronze',
-      target_status: 'gold',
+      target_result: 'gold',
+      current_result: 'bronze',
       squad: 'americas',
       is_portfolio_entry: true,
       context_refs: [],
@@ -33,10 +31,8 @@ const mockPortfolio: Portfolio = {
       name: 'Synapse Charm',
       product_type: 'charm',
       lifecycle: 'stable',
-      target_medal: 'gold',
-      current_medal: 'unrated',
-      current_status: 'insufficient_data',
-      target_status: 'gold',
+      target_result: 'gold',
+      current_result: 'below_minimum',
       squad: '',
       is_portfolio_entry: false,
       context_refs: [],
@@ -50,10 +46,8 @@ const mockPortfolio: Portfolio = {
       name: 'Wazuh Indexer',
       product_type: 'root',
       lifecycle: 'stable',
-      target_medal: 'silver',
-      current_medal: 'bronze',
-      current_status: 'bronze',
-      target_status: 'silver',
+      target_result: 'silver',
+      current_result: 'bronze',
       squad: 'emea',
       is_portfolio_entry: true,
       context_refs: [],
@@ -125,14 +119,10 @@ describe('ProductsExplorer', () => {
       products: [
         {
           ...mockPortfolio.products[0],
-          current_medal: 'unrated',
-          current_status: 'below_minimum',
+          current_result: 'below_minimum',
           dimensions: {
             documentation: {
-              medal: 'unrated',
-              target: 'gold',
-              status: 'below_minimum',
-              applicability: 'scored',
+              result: 'below_minimum',
               drift: null,
               metrics: {},
               composition: null,
@@ -152,7 +142,7 @@ describe('ProductsExplorer', () => {
     } as ReturnType<typeof usePortfolio>)
 
     wrap()
-    expect(screen.getByText('Below minimum')).toBeInTheDocument()
+    expect(screen.getAllByText('Sub-min').length).toBeGreaterThan(0)
   })
 
   it('shows search input', () => {
@@ -207,7 +197,7 @@ describe('ProductsExplorer', () => {
     wrap()
     const searchInput = screen.getByRole('searchbox', { name: /search products/i })
     fireEvent.change(searchInput, { target: { value: 'wazuh' } })
-    expect(screen.getByText(/result/i)).toBeInTheDocument()
+    expect(screen.getByText(/1\s+result/i)).toBeInTheDocument()
   })
 
   it('uses explicit column sizing to prioritize product and repo columns', () => {

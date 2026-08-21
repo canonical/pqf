@@ -10,8 +10,30 @@ from engine.models import (
     DimensionResult,
     LeafDimensionResult,
     Medal,
+    Result,
     Status,
 )
+
+
+def _compute_result(medal: Medal, applicability: ApplicabilityOutcome) -> Result:
+    """
+    Map (medal, applicability) pair to canonical result.
+
+    Hierarchy:
+    1. If not_applicable → result = not_applicable
+    2. If insufficient_data → result = insufficient_data
+    3. If scored and medal is unrated → result = below_minimum
+    4. Otherwise, result matches medal value (gold/silver/bronze)
+    """
+    match applicability:
+        case ApplicabilityOutcome.NOT_APPLICABLE:
+            return Result.NOT_APPLICABLE
+        case ApplicabilityOutcome.INSUFFICIENT_DATA:
+            return Result.INSUFFICIENT_DATA
+        case ApplicabilityOutcome.SCORED:
+            if medal == Medal.UNRATED:
+                return Result.BELOW_MINIMUM
+            return Result(medal.value)
 
 
 def _dimension_status(medal: Medal, applicability: ApplicabilityOutcome) -> Status:
@@ -76,7 +98,7 @@ def aggregate_root_dimension(
             medal=Medal.UNRATED,
             target=target,
             applicability=applicability,
-            status=_dimension_status(Medal.UNRATED, applicability),
+            result=_compute_result(Medal.UNRATED, applicability),
             metrics={},
             drift=None,
             composition=list(leaf_results),
@@ -88,7 +110,7 @@ def aggregate_root_dimension(
         medal=worst.medal,
         target=target,
         applicability=ApplicabilityOutcome.SCORED,
-        status=_dimension_status(worst.medal, ApplicabilityOutcome.SCORED),
+        result=_compute_result(worst.medal, ApplicabilityOutcome.SCORED),
         metrics={},
         drift=None,  # root drift tracked by assemble.py after full assembly
         composition=list(leaf_results),

@@ -18,22 +18,17 @@ const mockPortfolio: Portfolio = {
       description: 'Chat',
       lifecycle: 'stable',
       product_type: 'root',
-      target_medal: 'gold',
-      current_medal: 'bronze',
-      current_status: 'bronze',
-      target_status: 'gold',
+      target_result: 'gold',
+      current_result: 'bronze',
       squad: 'americas',
       is_portfolio_entry: true,
       composed_of: null,
       context_refs: [],
       parent_product_ids: [],
       dimensions: {
-        test_verification: { medal: 'silver', target: 'gold', status: 'silver', applicability: 'scored', drift: null, metrics: {}, composition: null },
+        test_verification: { result: 'silver', drift: null, metrics: {}, composition: null },
         documentation: {
-          medal: 'bronze',
-          target: 'gold',
-          status: 'bronze',
-          applicability: 'scored',
+          result: 'bronze',
           drift: { status: 'remediating', first_seen_at: '2026-01-01T00:00:00Z', deadline: '2026-07-01T00:00:00Z' },
           metrics: {},
           composition: null,
@@ -49,7 +44,7 @@ const mockPortfolio: Portfolio = {
 
 const rootProduct: Product = {
   id: 'matrix', product_type: 'root', name: 'Matrix', lifecycle: 'stable',
-  target_medal: 'gold', current_medal: 'bronze', current_status: 'bronze', target_status: 'gold', squad: 'americas',
+  target_result: 'gold', current_result: 'bronze', squad: 'americas',
   is_portfolio_entry: true, context_refs: [], parent_product_ids: [],
   composed_of: [{ product_id: 'synapse', excluded_from_parent_medal: false }],
   dimensions: {},
@@ -57,7 +52,7 @@ const rootProduct: Product = {
 
 const inlineLeaf: Product = {
   id: 'synapse', product_type: 'charm', name: 'Synapse', lifecycle: 'stable',
-  target_medal: 'gold', current_medal: 'gold', current_status: 'gold', target_status: 'gold', squad: '',
+  target_result: 'gold', current_result: 'gold', squad: '',
   is_portfolio_entry: false, context_refs: [], parent_product_ids: ['matrix'],
   composed_of: null, source: { repo: 'canonical/synapse-operator', subpath: null },
   dimensions: {},
@@ -106,14 +101,10 @@ describe('Overview', () => {
       products: [
         {
           ...mockPortfolio.products[0],
-          current_medal: 'unrated',
-          current_status: 'below_minimum',
+          current_result: 'below_minimum',
           dimensions: {
             documentation: {
-              medal: 'unrated',
-              target: 'gold',
-              status: 'below_minimum',
-              applicability: 'scored',
+              result: 'below_minimum',
               drift: null,
               metrics: {},
               composition: null,
@@ -131,7 +122,7 @@ describe('Overview', () => {
     } as ReturnType<typeof usePortfolio>)
 
     wrap(<Overview />)
-    expect(screen.getAllByText('Below minimum').length).toBeGreaterThan(0)
+    expect(screen.getAllByText('Sub-min').length).toBeGreaterThan(0)
   })
 
   it('filters by search input', async () => {
@@ -164,13 +155,13 @@ describe('Overview', () => {
             ...mockPortfolio.products[0],
             id: 'alpha',
             name: 'Alpha',
-            target_medal: 'gold',
+            target_result: 'gold',
           },
           {
             ...mockPortfolio.products[0],
             id: 'zeta',
             name: 'Zeta',
-            target_medal: 'bronze',
+            target_result: 'bronze',
           },
         ],
       },

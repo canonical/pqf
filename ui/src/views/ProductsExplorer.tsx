@@ -11,15 +11,15 @@ const SQUAD_LABELS: Record<string, string> = {
   apac: 'APAC',
 }
 
-const MEDAL_OPTIONS = ['all', 'bronze', 'silver', 'gold', 'unrated', 'remediating', 'overdue']
+const MEDAL_OPTIONS = ['all', 'bronze', 'silver', 'gold', 'below_minimum', 'insufficient_data', 'not_applicable']
 const MEDAL_LABELS: Record<string, string> = {
-  all: 'All medals',
+  all: 'All results',
   bronze: 'Bronze',
   silver: 'Silver',
   gold: 'Gold',
-  unrated: 'Unrated',
-  remediating: 'Remediating',
-  overdue: 'Overdue',
+  below_minimum: 'Sub-min',
+  insufficient_data: 'Insuff. data',
+  not_applicable: 'Not Applicable',
 }
 
 export default function ProductsExplorer() {
@@ -48,7 +48,7 @@ export default function ProductsExplorer() {
     const matchesSearch = (p: Product) =>
       !q || p.name.toLowerCase().includes(q) || p.id.toLowerCase().includes(q)
     const matchesMedal = (p: Product) =>
-      medalFilter === 'all' || p.current_medal === medalFilter
+      medalFilter === 'all' || p.current_result === medalFilter
     const matchesType = (p: Product) =>
       typeFilter === 'all' || p.product_type === typeFilter
     const matchesSquad = (p: Product) =>
@@ -253,10 +253,10 @@ export default function ProductsExplorer() {
                           </span>
                         </td>
                         <td style={{ padding: '0.65rem 0.75rem', whiteSpace: 'nowrap' }}>
-                          <MedalBadge medal={root.current_status as any} size="small" />
+                          <MedalBadge medal={root.current_result as any} size="small" />
                         </td>
                         <td style={{ padding: '0.65rem 0.75rem', whiteSpace: 'nowrap' }}>
-                          <MedalBadge medal={root.target_medal} size="small" />
+                          <MedalBadge medal={root.target_result} size="small" />
                         </td>
                         <td style={{ padding: '0.65rem 0.75rem', whiteSpace: 'nowrap', fontSize: '0.875rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.04em', color: '#555' }}>
                           {SQUAD_LABELS[root.squad?.toLowerCase()] ?? root.squad}
@@ -321,7 +321,7 @@ export default function ProductsExplorer() {
                               </span>
                             </td>
                             <td style={{ padding: '0.45rem 0.75rem', whiteSpace: 'nowrap' }}>
-                              <MedalBadge medal={leaf.current_status as any} size="small" />
+                              <MedalBadge medal={leaf.current_result as any} size="small" />
                             </td>
                             <td style={{ padding: '0.45rem 0.75rem', whiteSpace: 'nowrap', color: '#ccc', fontSize: '0.875rem' }}>—</td>
                             <td style={{ padding: '0.45rem 0.75rem', whiteSpace: 'nowrap', color: '#ccc', fontSize: '0.875rem' }}>—</td>
@@ -365,10 +365,10 @@ export default function ProductsExplorer() {
                       </span>
                     </td>
                     <td style={{ padding: '0.6rem 0.75rem', whiteSpace: 'nowrap' }}>
-                      <MedalBadge medal={p.current_status as any} size="small" />
+                      <MedalBadge medal={p.current_result as any} size="small" />
                     </td>
                     <td style={{ padding: '0.6rem 0.75rem', whiteSpace: 'nowrap' }}>
-                      {p.target_medal ? <MedalBadge medal={p.target_medal} size="small" /> : <span style={{ color: '#ccc' }}>—</span>}
+                      {p.target_result ? <MedalBadge medal={p.target_result} size="small" /> : <span style={{ color: '#ccc' }}>—</span>}
                     </td>
                     <td style={{ padding: '0.6rem 0.75rem', whiteSpace: 'nowrap', fontSize: '0.875rem', fontWeight: p.squad ? 600 : 400, textTransform: p.squad ? 'uppercase' : undefined, letterSpacing: p.squad ? '0.04em' : undefined, color: p.squad ? '#555' : '#ccc' }}>
                       {p.squad ? (SQUAD_LABELS[p.squad.toLowerCase()] ?? p.squad) : '—'}

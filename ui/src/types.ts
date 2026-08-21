@@ -1,5 +1,5 @@
 export type Medal = 'gold' | 'silver' | 'bronze' | 'unrated'
-export type Status = 'gold' | 'silver' | 'bronze' | 'below_minimum' | 'insufficient_data' | 'not_applicable'
+export type Result = 'gold' | 'silver' | 'bronze' | 'below_minimum' | 'insufficient_data' | 'not_applicable'
 export type DriftStatus = 'remediating' | 'overdue'
 export type Lifecycle = 'experimental' | 'beta' | 'stable' | 'legacy'
 export type ProductType = 'root' | 'charm' | 'snap'
@@ -14,18 +14,13 @@ export interface DriftInfo {
 export interface LeafDimensionResult {
   product_id: string
   repo: string
-  medal: Medal
-  status: Status
-  applicability: ApplicabilityOutcome
+  result: Result
   metrics: Record<string, string | number | boolean>
   excluded_from_parent_medal: boolean
 }
 
 export interface DimensionEntry {
-  medal: Medal
-  target: Medal
-  status: Status
-  applicability: ApplicabilityOutcome
+  result: Result
   drift: DriftInfo | null
   metrics: Record<string, string | number | boolean>
   composition: LeafDimensionResult[] | null
@@ -52,10 +47,8 @@ export interface Product {
   name: string
   description?: string
   lifecycle: Lifecycle
-  target_medal: Medal
-  current_medal: Medal
-  current_status: Status
-  target_status: Status
+  current_result: Result
+  target_result: Result
   squad: string
   is_portfolio_entry: boolean
   documentation_url?: string

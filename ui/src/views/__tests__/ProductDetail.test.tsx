@@ -17,10 +17,8 @@ const mockPortfolio: Portfolio = {
       name: 'Matrix (Synapse)',
       description: 'Chat platform',
       lifecycle: 'stable',
-      target_medal: 'gold',
-      current_medal: 'bronze',
-      current_status: 'bronze',
-      target_status: 'gold',
+      target_result: 'gold',
+      current_result: 'bronze',
       squad: 'americas',
       is_portfolio_entry: true,
       documentation_url: 'https://charmhub.io/synapse',
@@ -32,10 +30,7 @@ const mockPortfolio: Portfolio = {
       composed_of: [{ product_id: 'synapse', excluded_from_parent_medal: false }],
       dimensions: {
         test_verification: {
-          medal: 'silver',
-          target: 'gold',
-          status: 'silver',
-          applicability: 'scored',
+          result: 'silver',
           drift: null,
           metrics: { coverage_pct: 87, stability_pct: 94, latest_build_passing: true },
           composition: null,
@@ -47,10 +42,8 @@ const mockPortfolio: Portfolio = {
       product_type: 'charm',
       name: 'Synapse Charm',
       lifecycle: 'stable',
-      target_medal: 'gold',
-      current_medal: 'bronze',
-      current_status: 'bronze',
-      target_status: 'gold',
+      target_result: 'gold',
+      current_result: 'bronze',
       squad: '',
       is_portfolio_entry: false,
       context_refs: [],
@@ -59,19 +52,13 @@ const mockPortfolio: Portfolio = {
       source: { repo: 'canonical/synapse-operator', subpath: null },
       dimensions: {
         test_verification: {
-          medal: 'bronze',
-          target: 'gold',
-          status: 'bronze',
-          applicability: 'scored',
+          result: 'bronze',
           drift: null,
           metrics: { coverage_pct: 65, latest_build_passing: true },
           composition: null,
         },
         substrate_compat: {
-          medal: 'unrated',
-          target: 'gold',
-          status: 'not_applicable',
-          applicability: 'not_applicable',
+          result: 'not_applicable',
           drift: null,
           metrics: { supports_juju_3: false, supports_juju_4: false, supports_ck8s: false },
           composition: null,
@@ -111,19 +98,14 @@ function portfolioWithComposition(overrides?: { composition: LeafDimensionResult
         ...mockPortfolio.products[0],
         dimensions: {
           test_verification: {
-            medal: 'silver',
-            target: 'gold',
-            status: 'silver',
-            applicability: 'scored',
+            result: 'silver',
             drift: null,
             metrics: { coverage_pct: 87, stability_pct: 94, latest_build_passing: true },
             composition: overrides?.composition ?? [
               {
                 product_id: 'synapse',
                 repo: 'canonical/synapse-operator',
-                medal: 'bronze',
-                status: 'bronze',
-                applicability: 'scored',
+                result: 'bronze',
                 metrics: { coverage_pct: 65, latest_build_passing: true },
                 excluded_from_parent_medal: false,
               },
@@ -186,10 +168,7 @@ describe('ProductDetail', () => {
           dimensions: {
             ...mockPortfolio.products[0].dimensions,
             documentation: {
-              medal: 'unrated',
-              target: 'silver',
-              status: 'below_minimum',
-              applicability: 'scored',
+              result: 'below_minimum',
               drift: null,
               metrics: {
                 readme_present: true,
@@ -221,7 +200,7 @@ describe('ProductDetail', () => {
 
     const row = screen.getByRole('link', { name: 'documentation' }).closest('tr')
     expect(row).not.toBeNull()
-    expect(row).toHaveTextContent('Below minimum')
+    expect(row).toHaveTextContent('Sub-min')
   })
 
   it('renders root current medal as below minimum when a scored dimension fails bronze', () => {
@@ -232,16 +211,11 @@ describe('ProductDetail', () => {
           ...mockPortfolio.products[0],
           id: 'aproxy',
           name: 'Aproxy',
-          current_medal: 'unrated',
-          current_status: 'below_minimum',
-          target_status: 'gold',
+          current_result: 'below_minimum',
           dimensions: {
             ...mockPortfolio.products[0].dimensions,
             documentation: {
-              medal: 'unrated',
-              target: 'silver',
-              status: 'below_minimum',
-              applicability: 'scored',
+              result: 'below_minimum',
               drift: null,
               metrics: {
                 readme_present: true,
@@ -273,7 +247,7 @@ describe('ProductDetail', () => {
 
     const currentBlock = screen.getByText('CURRENT').closest('div')
     expect(currentBlock).not.toBeNull()
-    expect(within(currentBlock as HTMLElement).getByText('Below minimum')).toBeInTheDocument()
+    expect(within(currentBlock as HTMLElement).getByText('Sub-min')).toBeInTheDocument()
   })
 
   it('N/A dimension evidence column shows dash instead of metric values', () => {
@@ -366,9 +340,7 @@ describe('ProductDetail', () => {
           {
             product_id: 'synapse',
             repo: 'canonical/synapse-operator',
-            medal: 'bronze',
-            status: 'bronze',
-            applicability: 'scored',
+            result: 'bronze',
             metrics: { coverage_pct: 65, latest_build_passing: true },
             excluded_from_parent_medal: false,
           },
@@ -389,18 +361,14 @@ describe('ProductDetail', () => {
           {
             product_id: 'synapse',
             repo: 'canonical/synapse-operator',
-            medal: 'bronze',
-            status: 'bronze',
-            applicability: 'scored',
+            result: 'bronze',
             metrics: { coverage_pct: 65, latest_build_passing: true },
             excluded_from_parent_medal: false,
           },
           {
             product_id: 'saml',
             repo: 'canonical/saml-operator',
-            medal: 'gold',
-            status: 'gold',
-            applicability: 'scored',
+            result: 'gold',
             metrics: { coverage_pct: 90, latest_build_passing: false },
             excluded_from_parent_medal: false,
           },
@@ -418,16 +386,14 @@ describe('ProductDetail', () => {
           {
             product_id: 'synapse',
             repo: 'canonical/synapse-operator',
-            medal: 'bronze',
-            applicability: 'scored',
+            result: 'bronze',
             metrics: { coverage_pct: 65 },
             excluded_from_parent_medal: false,
           },
           {
             product_id: 'saml',
             repo: 'canonical/saml-operator',
-            medal: 'gold',
-            applicability: 'scored',
+            result: 'gold',
             metrics: {},
             excluded_from_parent_medal: true,
           },

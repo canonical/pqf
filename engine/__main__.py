@@ -40,7 +40,7 @@ def _dimension_to_dict(dim: DimensionResult) -> dict:
     return {
         "medal": dim.medal.value,
         "target": dim.target.value,
-        "status": dim.status.value,
+        "result": dim.result.value,
         "metrics": dim.metrics,
         "drift": _drift_to_dict(dim.drift),
     }
@@ -55,7 +55,7 @@ def _result_to_portfolio_entry(result: ProductResult, product: dict) -> dict:
         "lifecycle": product.get("lifecycle", ""),
         "target_medal": result.target_medal.value,
         "current_medal": result.current_medal.value,
-        "current_status": result.current_status.value,
+        "current_result": result.current_result.value,
         "squad": product.get("ownership", {}).get("squad", ""),
         "documentation_url": product.get("documentation_url", ""),
         "components": product.get("components", {}),

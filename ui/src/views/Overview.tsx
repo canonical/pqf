@@ -3,16 +3,16 @@ import { Link } from 'react-router'
 import { usePortfolio } from '../hooks/usePortfolio'
 import MedalBadge from '../components/MedalBadge'
 import LoadingSpinner from '../components/LoadingSpinner'
-import type { DriftInfo, Medal } from '../types'
+import { RESULT_ORDER } from '../lib/groupedPortfolioView'
+import type { DriftInfo } from '../types'
 
-const MEDAL_ORDER: Record<Medal, number> = { gold: 3, silver: 2, bronze: 1, unrated: 0 }
 const SQUAD_LABELS: Record<string, string> = {
   americas: 'AMER',
   emea: 'EMEA',
   apac: 'APAC',
 }
 
-type SortField = 'name' | 'current_medal' | 'target_medal'
+type SortField = 'name' | 'current_result' | 'target_result'
 
 function DriftIndicator({ drift }: { drift: DriftInfo | null }) {
   if (!drift) return null
@@ -55,10 +55,10 @@ export default function Overview() {
     return [...filtered].sort((a, b) => {
       let cmp = 0
       if (sortField === 'name') cmp = a.name.localeCompare(b.name)
-      else if (sortField === 'current_medal')
-        cmp = MEDAL_ORDER[a.current_medal] - MEDAL_ORDER[b.current_medal]
-      else if (sortField === 'target_medal')
-        cmp = MEDAL_ORDER[a.target_medal] - MEDAL_ORDER[b.target_medal]
+      else if (sortField === 'current_result')
+        cmp = RESULT_ORDER[a.current_result] - RESULT_ORDER[b.current_result]
+      else if (sortField === 'target_result')
+        cmp = RESULT_ORDER[a.target_result] - RESULT_ORDER[b.target_result]
       return sortDir === 'asc' ? cmp : -cmp
     })
   }, [portfolio, search, sortField, sortDir])
@@ -68,7 +68,7 @@ export default function Overview() {
     const portfolioProducts = portfolio.products.filter(p => p.is_portfolio_entry)
     const total = portfolioProducts.length
     const atTarget = portfolioProducts.filter(
-      p => MEDAL_ORDER[p.current_medal] >= MEDAL_ORDER[p.target_medal]
+      p => RESULT_ORDER[p.current_result] >= RESULT_ORDER[p.target_result]
     ).length
     const overdue = portfolioProducts.filter(p =>
       Object.values(p.dimensions).some(d => d.drift?.status === 'overdue')
@@ -168,15 +168,15 @@ export default function Overview() {
                 </th>
                 <th style={{ width: '10%' }}>Squad</th>
                 <th
-                  aria-sort={getAriaSort('target_medal')}
-                  onClick={() => toggleSort('target_medal')}
+                  aria-sort={getAriaSort('target_result')}
+                  onClick={() => toggleSort('target_result')}
                   style={{ cursor: 'pointer', width: '15%' }}
                 >
                   Target
                 </th>
                 <th
-                  aria-sort={getAriaSort('current_medal')}
-                  onClick={() => toggleSort('current_medal')}
+                  aria-sort={getAriaSort('current_result')}
+                  onClick={() => toggleSort('current_result')}
                   style={{ cursor: 'pointer', width: '15%' }}
                 >
                   Current
@@ -208,8 +208,8 @@ export default function Overview() {
                         {squadLabel(product.squad)}
                       </span>
                     </td>
-                    <td><MedalBadge medal={product.target_medal} size="small" /></td>
-                    <td><MedalBadge medal={product.current_status as any} size="small" /></td>
+                    <td><MedalBadge medal={product.target_result} size="small" /></td>
+                    <td><MedalBadge medal={product.current_result} size="small" /></td>
                     {hasDriftData && <td><DriftIndicator drift={worstDrift} /></td>}
                   </tr>
                 )
@@ -245,7 +245,7 @@ export default function Overview() {
                       const d = product.dimensions[dim]
                       return (
                         <td key={dim}>
-                          {d ? <MedalBadge medal={d.status as any} size="small" /> : <span>—</span>}
+                          {d ? <MedalBadge medal={d.result as any} size="small" /> : <span>—</span>}
                         </td>
                       )
                     })}
