@@ -151,15 +151,22 @@ jobs:
             --products-dir products/ \
             > /tmp/scorers/${{ matrix.product }}/security_ssdlc.json
 
-      - name: Run support_engagement scorer
+      - name: Prepare support_engagement scorer output
         if: github.event_name != 'pull_request' || steps.needs_rescore.outputs.changed == 'true'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          python scorers/support_engagement/scorer.py \
-            --product-yaml products/${{ matrix.product }}.yaml \
-            --products-dir products/ \
-            > /tmp/scorers/${{ matrix.product }}/support_engagement.json
+          if [ "${{ github.event_name }}" = "pull_request" ] && [ -f "computed/${{ matrix.product }}.json" ]; then
+            # PR previews should stay stable and avoid API-rate-limit drift for support metrics.
+            jq '.leaf_metrics | map_values(.support_engagement // {})' \
+              computed/${{ matrix.product }}.json \
+              > /tmp/scorers/${{ matrix.product }}/support_engagement.json
+          else
+            python scorers/support_engagement/scorer.py \
+              --product-yaml products/${{ matrix.product }}.yaml \
+              --products-dir products/ \
+              > /tmp/scorers/${{ matrix.product }}/support_engagement.json
+          fi
 
       - name: Merge scorer outputs into computed/${{ matrix.product }}.json
         if: github.event_name != 'pull_request' || steps.needs_rescore.outputs.changed == 'true'
