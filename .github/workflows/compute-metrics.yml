@@ -238,6 +238,7 @@ jobs:
     permissions:
       contents: write
       pull-requests: write
+      issues: write
     steps:
       - uses: actions/checkout@v4
         with:
@@ -264,13 +265,21 @@ jobs:
         # Vite copies ../public/ (containing fresh portfolio.json from artifacts) into dist/
 
       - name: Deploy PR preview
-        uses: rossjrw/pr-preview-action@v1.7.3
+        uses: peaceiris/actions-gh-pages@v4
         with:
-          source-dir: ./ui/dist
-          preview-branch: gh-pages
-          umbrella-dir: pr-preview
-          action: deploy
-          pr-number: ${{ github.event.pull_request.number }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ui/dist
+          destination_dir: pr-preview/pr-${{ github.event.pull_request.number }}
+          keep_files: true
+
+      - name: Leave preview comment
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          url="https://canonical.github.io/pqf/pr-preview/pr-${{ github.event.pull_request.number }}/"
+          body="Preview deployed: $url"
+          gh pr comment ${{ github.event.pull_request.number }} --edit-last --create-if-none --body "$body"
 
   # ── 5. Build and deploy production site from fresh engine artifacts ───────────
   deploy-production:
