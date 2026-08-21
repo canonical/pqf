@@ -189,6 +189,16 @@ function toGapTarget(target: Result): Medal {
   return 'unrated'
 }
 
+const TABLE_TH: React.CSSProperties = {
+  padding: '0.5rem 0.75rem',
+  textAlign: 'left',
+  fontSize: '0.75rem',
+  fontWeight: 600,
+  textTransform: 'uppercase',
+  color: '#666',
+  borderBottom: '2px solid #d9d9d9',
+}
+
 export default function MetricDistribution() {
   const { dimensionId, metricKey } = useParams<{ dimensionId: string; metricKey: string }>()
   const { data: portfolio, isLoading, isError, error } = usePortfolio()
@@ -356,11 +366,11 @@ export default function MetricDistribution() {
                 <col style={{ width: '24%' }} />
               </colgroup>
               <thead>
-                <tr style={{ borderBottom: '1px solid #d9d9d9' }}>
-                  <th style={{ padding: '0.5rem 0.75rem', textAlign: 'left', fontSize: '0.75rem', fontWeight: 600, textTransform: 'uppercase', color: '#666' }}>Product (Target)</th>
-                  <th style={{ padding: '0.5rem 0.75rem', textAlign: 'left', fontSize: '0.75rem', fontWeight: 600, textTransform: 'uppercase', color: '#666' }}>Value</th>
-                  <th style={{ padding: '0.5rem 0.75rem', textAlign: 'left', fontSize: '0.75rem', fontWeight: 600, textTransform: 'uppercase', color: '#666' }}>Result</th>
-                  <th style={{ padding: '0.5rem 0.75rem', textAlign: 'left', fontSize: '0.75rem', fontWeight: 600, textTransform: 'uppercase', color: '#666' }}>Gap to target</th>
+                <tr style={{ background: '#f5f5f5' }}>
+                  <th style={TABLE_TH}>Product</th>
+                  <th style={TABLE_TH}>Value</th>
+                  <th style={TABLE_TH}>Result</th>
+                  <th style={TABLE_TH}>Gap to target</th>
                 </tr>
               </thead>
               <tbody>
@@ -371,32 +381,64 @@ export default function MetricDistribution() {
                     if (group.rootVisible) {
                       rows.push(
                         <tr key={group.root.product.id} style={{ borderBottom: '1px solid #e5e5e5', background: '#fafafa' }}>
-                          <td style={{ padding: '0.75rem', verticalAlign: 'top' }}>
+                          <td style={{ padding: '0.65rem 0.75rem', minWidth: 0 }}>
                             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
-                              <Link to={`/products/${group.root.product.id}`} style={{ fontWeight: 600 }}>{group.root.product.name}</Link>
+                              <Link
+                                to={`/products/${group.root.product.id}`}
+                                style={{ display: 'block', fontWeight: 600, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}
+                              >
+                                {group.root.product.name}
+                              </Link>
                               <MedalBadge medal={group.root.product.target_result} size="small" />
                             </div>
                           </td>
-                          <td style={{ padding: '0.75rem', verticalAlign: 'top' }}>{valueCell(group.root.value)}</td>
-                          <td style={{ padding: '0.75rem', verticalAlign: 'top' }}>{resultLabel(group.root.entry.result)}</td>
-                          <td style={{ padding: '0.75rem', verticalAlign: 'top' }}>{computeGapToTarget(group.root.value, toGapTarget(group.root.product.target_result), metricDefinition) ?? '—'}</td>
+                          <td style={{ padding: '0.65rem 0.75rem', verticalAlign: 'top' }}>{valueCell(group.root.value)}</td>
+                          <td style={{ padding: '0.65rem 0.75rem', verticalAlign: 'top' }}>{resultLabel(group.root.entry.result)}</td>
+                          <td style={{ padding: '0.65rem 0.75rem', verticalAlign: 'top' }}>{computeGapToTarget(group.root.value, toGapTarget(group.root.product.target_result), metricDefinition) ?? '—'}</td>
                         </tr>,
                       )
                     }
                     for (const leaf of group.leaves) {
                       rows.push(
                         <tr key={leaf.product.id} style={{ borderBottom: '1px solid #e5e5e5', background: '#fff' }}>
-                          <td style={{ padding: '0.75rem', verticalAlign: 'top' }}>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
-                              <Link to={`/products/${leaf.product.id}`} style={{ fontWeight: 500 }}>
-                                ↳ {leaf.product.name}
+                          <td style={{ padding: '0.65rem 0.75rem', minWidth: 0 }}>
+                            <div style={{ display: 'flex', alignItems: 'center', minWidth: 0 }}>
+                              <div style={{ width: '1.25rem', flexShrink: 0, alignSelf: 'stretch', position: 'relative', marginRight: '0.35rem' }}>
+                                <span
+                                  style={{
+                                    position: 'absolute',
+                                    left: '0.5rem',
+                                    top: 0,
+                                    bottom: 0,
+                                    width: '1px',
+                                    background: '#c8d3e0',
+                                    pointerEvents: 'none',
+                                  }}
+                                />
+                                <span
+                                  style={{
+                                    position: 'absolute',
+                                    left: '0.5rem',
+                                    top: '50%',
+                                    width: '0.6rem',
+                                    height: '1px',
+                                    background: '#c8d3e0',
+                                    pointerEvents: 'none',
+                                  }}
+                                />
+                              </div>
+                              <Link
+                                to={`/products/${leaf.product.id}`}
+                                style={{ display: 'block', minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontSize: '0.875rem' }}
+                              >
+                                {leaf.product.name}
                               </Link>
                               <MedalBadge medal={leaf.product.target_result} size="small" />
                             </div>
                           </td>
-                          <td style={{ padding: '0.75rem', verticalAlign: 'top' }}>{valueCell(leaf.value)}</td>
-                          <td style={{ padding: '0.75rem', verticalAlign: 'top' }}>{resultLabel(leaf.entry.result)}</td>
-                          <td style={{ padding: '0.75rem', verticalAlign: 'top' }}>{computeGapToTarget(leaf.value, toGapTarget(leaf.product.target_result), metricDefinition) ?? '—'}</td>
+                          <td style={{ padding: '0.65rem 0.75rem', verticalAlign: 'top' }}>{valueCell(leaf.value)}</td>
+                          <td style={{ padding: '0.65rem 0.75rem', verticalAlign: 'top' }}>{resultLabel(leaf.entry.result)}</td>
+                          <td style={{ padding: '0.65rem 0.75rem', verticalAlign: 'top' }}>{computeGapToTarget(leaf.value, toGapTarget(leaf.product.target_result), metricDefinition) ?? '—'}</td>
                         </tr>,
                       )
                     }

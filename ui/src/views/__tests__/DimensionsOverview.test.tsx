@@ -19,7 +19,7 @@ const mockPortfolio: Portfolio = {
       current_result: 'bronze',
       squad: 'americas',
       is_portfolio_entry: true,
-      composed_of: [{ product_id: 'discourse-k8s', excluded_from_parent_medal: false }],
+      composed_of: null,
       context_refs: [],
       parent_product_ids: [],
       dimensions: {
@@ -27,15 +27,7 @@ const mockPortfolio: Portfolio = {
           result: 'bronze',
           drift: null,
           metrics: {},
-          composition: [
-            {
-              product_id: 'discourse-k8s',
-              repo: 'canonical/discourse-k8s-operator',
-              result: 'silver',
-              metrics: { coverage_pct: 83 },
-              excluded_from_parent_medal: false,
-            },
-          ],
+          composition: null,
         },
       },
     },
@@ -56,7 +48,7 @@ const mockPortfolio: Portfolio = {
         test_verification: {
           result: 'silver',
           drift: null,
-          metrics: { coverage_pct: 83 },
+          metrics: {},
           composition: null,
         },
       },
@@ -65,13 +57,19 @@ const mockPortfolio: Portfolio = {
   dimensions_meta: {
     test_verification: {
       label: 'Test Verification',
+      description: 'Build and coverage quality signals.',
       outputs: {
         coverage_pct: {
           label: 'Coverage',
           description: 'Coverage',
           type: 'number',
           range: '0-100',
-          ai_assisted: true,
+        },
+        stability_pct: {
+          label: 'Stability',
+          description: 'Stability',
+          type: 'number',
+          range: '0-100',
         },
       },
       medals: {
@@ -101,25 +99,19 @@ function wrap(path: string) {
   )
 }
 
-describe('MetricDistribution route', () => {
-  it('renders the redesigned metric distribution header and table', async () => {
-    wrap('/dimensions/test_verification/metrics/coverage_pct')
-    expect(await screen.findByRole('heading', { name: /metric distribution/i })).toBeInTheDocument()
-    expect(screen.getByText(/Coverage \(coverage_pct\)/i)).toBeInTheDocument()
-    expect(screen.getByText('coverage_pct ≥ 70')).toBeInTheDocument()
-    expect(screen.getByText('coverage_pct ≥ 80')).toBeInTheDocument()
-    expect(screen.getByText('coverage_pct ≥ 90')).toBeInTheDocument()
-    expect(screen.getByRole('columnheader', { name: /^product$/i })).toBeInTheDocument()
-    expect(screen.getByRole('columnheader', { name: /^value$/i })).toBeInTheDocument()
-    expect(screen.getByRole('columnheader', { name: /^result$/i })).toBeInTheDocument()
-    expect(screen.getByRole('columnheader', { name: /gap to target/i })).toBeInTheDocument()
-  })
+describe('DimensionsOverview route', () => {
+  it('renders a Products-style table shell for dimensions', async () => {
+    wrap('/dimensions')
 
-  it('shows the gap to target and ai-assisted badge for metric rows', async () => {
-    wrap('/dimensions/test_verification/metrics/coverage_pct')
-    const leafLink = await screen.findByRole('link', { name: /discourse k8s/i })
-    expect(leafLink).toBeInTheDocument()
-    expect(screen.getByText('Exceeds target')).toBeInTheDocument()
-    expect(screen.getByText('✦ AI')).toBeInTheDocument()
+    expect(await screen.findByRole('heading', { name: /dimensions/i })).toBeInTheDocument()
+    expect(screen.getByRole('columnheader', { name: /dimension/i })).toBeInTheDocument()
+    expect(screen.getByRole('columnheader', { name: /description/i })).toBeInTheDocument()
+    expect(screen.getByRole('columnheader', { name: /products/i })).toBeInTheDocument()
+    expect(screen.getByRole('columnheader', { name: /metrics/i })).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: /test verification/i })).toBeInTheDocument()
+    expect(screen.getByText('2 products')).toBeInTheDocument()
+    expect(screen.getByText('2 metrics')).toBeInTheDocument()
+    expect(screen.getByText('Bronze')).toBeInTheDocument()
+    expect(screen.getByText('Silver')).toBeInTheDocument()
   })
 })
