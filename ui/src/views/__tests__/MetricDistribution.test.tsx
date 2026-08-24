@@ -40,6 +40,57 @@ const mockPortfolio: Portfolio = {
       },
     },
     {
+      id: 'aardvark',
+      product_type: 'root',
+      name: 'Aardvark',
+      lifecycle: 'stable',
+      target_result: 'silver',
+      current_result: 'bronze',
+      squad: 'americas',
+      is_portfolio_entry: true,
+      composed_of: [{ product_id: 'aardvark-agent', excluded_from_parent_medal: false }],
+      context_refs: [],
+      parent_product_ids: [],
+      dimensions: {
+        test_verification: {
+          result: 'bronze',
+          drift: null,
+          metrics: {},
+          composition: [
+            {
+              product_id: 'aardvark-agent',
+              repo: 'canonical/aardvark-agent',
+              result: 'bronze',
+              metrics: { coverage_pct: 75 },
+              excluded_from_parent_medal: false,
+            },
+          ],
+        },
+      },
+    },
+    {
+      id: 'aardvark-agent',
+      product_type: 'charm',
+      name: 'Aardvark Agent',
+      lifecycle: 'stable',
+      target_result: 'silver',
+      current_result: 'bronze',
+      squad: '',
+      is_portfolio_entry: false,
+      composed_of: null,
+      context_refs: [],
+      parent_product_ids: ['aardvark'],
+      source: { repo: 'canonical/aardvark-agent', subpath: null },
+      dimensions: {
+        test_verification: {
+          result: 'bronze',
+          drift: null,
+          metrics: { coverage_pct: 75 },
+          composition: null,
+        },
+      },
+    },
+    {
       id: 'discourse-k8s',
       product_type: 'charm',
       name: 'Discourse K8s',
@@ -164,6 +215,21 @@ describe('MetricDistribution route', () => {
     expect(headers).toEqual(['Product', 'Threshold result', 'Gap to target', 'Value'])
   })
 
+  it('keeps rows alphabetical by product name', async () => {
+    wrap('/dimensions/test_verification/metrics/coverage_pct')
+    await screen.findByRole('heading', { name: /metric distribution/i })
+    const table = screen.getByRole('table')
+    const productLinks = table.querySelectorAll('tbody a')
+    expect(Array.from(productLinks).map((link) => link.textContent?.trim())).toEqual([
+      'Aardvark',
+      'Aardvark Agent',
+      'Discourse',
+      'Discourse K8s',
+      'Landscape',
+      'Landscape Server',
+    ])
+  })
+
   it('shows the gap to target and ai-assisted badge for metric rows', async () => {
     wrap('/dimensions/test_verification/metrics/coverage_pct')
     const leafLink = await screen.findByRole('link', { name: /discourse k8s/i })
@@ -179,7 +245,7 @@ describe('MetricDistribution route', () => {
     const gapClassSelect = screen.getByRole('combobox', { name: /gap class/i })
     fireEvent.change(gapClassSelect, { target: { value: 'below_target' } })
 
-    expect(screen.getAllByRole('cell', { name: 'Below target (+5% to silver)' })).toHaveLength(2)
+    expect(screen.getAllByRole('cell', { name: 'Below target (+5% to silver)' })).toHaveLength(4)
     expect(screen.queryAllByRole('cell', { name: 'Exceeds target' })).toHaveLength(0)
   })
 

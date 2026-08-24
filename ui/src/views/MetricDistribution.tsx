@@ -7,7 +7,6 @@ import {
   buildMetricDistributionRows,
   computeGapClass,
   computeGapToTarget,
-  RESULT_ORDER,
   type GapClass,
   type MetricTierStatus,
   type MetricDistributionGroup,
@@ -428,7 +427,7 @@ export default function MetricDistribution() {
               </thead>
               <tbody>
                 {filteredGroups
-                  .sort((a, b) => RESULT_ORDER[metricStatus(b.root)] - RESULT_ORDER[metricStatus(a.root)])
+                  .sort((a, b) => a.root.product.name.localeCompare(b.root.product.name))
                   .flatMap(group => {
                     const rows = []
                     if (group.rootVisible) {
@@ -457,7 +456,7 @@ export default function MetricDistribution() {
                         </tr>,
                       )
                     }
-                    for (const leaf of group.leaves) {
+                    for (const leaf of [...group.leaves].sort((a, b) => a.product.name.localeCompare(b.product.name))) {
                       rows.push(
                         <tr key={leaf.product.id} style={{ borderBottom: '1px solid #e5e5e5', background: '#fff' }}>
                           <td style={{ padding: '0.65rem 0.75rem', minWidth: 0 }}>
