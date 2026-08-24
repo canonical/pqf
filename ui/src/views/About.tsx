@@ -39,8 +39,12 @@ export default function About() {
               <td>Baseline quality. Meeting minimum-tier criteria.</td>
             </tr>
             <tr>
-              <td><MedalBadge medal="unrated" /></td>
-              <td>Not yet scored, or insufficient data.</td>
+              <td><MedalBadge medal="below_minimum" /></td>
+              <td>Below minimum. Dimension was measured but failed to meet minimum criteria.</td>
+            </tr>
+            <tr>
+              <td><MedalBadge medal="insufficient_data" /></td>
+              <td>Insufficient data. Dimension could not be measured.</td>
             </tr>
           </tbody>
         </table>
