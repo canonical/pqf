@@ -215,7 +215,7 @@ export default function ProductsExplorer() {
                 <tr style={{ background: '#f5f5f5' }}>
                   <th style={TH}>Product</th>
                   <th style={TH}>Type</th>
-                  <th style={TH}>Medal</th>
+                  <th style={TH}>Current</th>
                   <th style={TH}>Target</th>
                   <th style={TH}>Squad</th>
                   <th style={TH}>Repo</th>
