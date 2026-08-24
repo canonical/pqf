@@ -80,6 +80,10 @@ function thresholdSummary(criteria: string[]) {
   return criteria.length > 0 ? criteria.map(formatCriterion).join(' · ') : 'No criteria'
 }
 
+function criteriaForMetric(criteria: string[], metricKey: string) {
+  return criteria.filter((criterion) => criterion.trim().startsWith(`${metricKey} `))
+}
+
 function parseMinThreshold(criteria: string[]) {
   const criterion = criteria[0]
   if (!criterion) return undefined
@@ -293,6 +297,11 @@ export default function MetricDistribution() {
     ['Silver', meta.medals.silver?.criteria ?? []],
     ['Gold', meta.medals.gold?.criteria ?? []],
   ] as const
+  const scopedThresholdPills = thresholdPills
+    .map(([label, criteria]) => [label, criteriaForMetric(criteria, metricKey)] as const)
+    .filter(([, criteria]) => criteria.length > 0)
+  const isInformational = metricMeta.informational === true
+  const showsThresholdPills = !isInformational && scopedThresholdPills.length > 0
   const flattenedCount = filteredGroups.reduce((count, group) => count + (group.rootVisible ? 1 : 0) + group.leaves.length, 0)
   const distribution = computeDistribution(filteredGroups)
 
@@ -344,25 +353,33 @@ export default function MetricDistribution() {
 
         <div className="p-card u-sv3">
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.75rem', alignItems: 'center', marginBottom: '1rem' }}>
-            {thresholdPills.map(([label, criteria]) => (
-              <span
-                key={label}
-                style={{
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: '0.4rem',
-                  borderRadius: '999px',
-                  border: '1px solid #d9d9d9',
-                  background: '#fafafa',
-                  padding: '0.35rem 0.75rem',
-                  fontSize: '0.875rem',
-                }}
-                title={criteria.join(' · ')}
-              >
-                <strong>{label}</strong>
-                <span>{thresholdSummary(criteria)}</span>
+            {showsThresholdPills ? (
+              scopedThresholdPills.map(([label, criteria]) => (
+                <span
+                  key={label}
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '0.4rem',
+                    borderRadius: '999px',
+                    border: '1px solid #d9d9d9',
+                    background: '#fafafa',
+                    padding: '0.35rem 0.75rem',
+                    fontSize: '0.875rem',
+                  }}
+                  title={criteria.join(' · ')}
+                >
+                  <strong>{label}</strong>
+                  <span>{thresholdSummary(criteria)}</span>
+                </span>
+              ))
+            ) : (
+              <span style={{ fontSize: '0.875rem', color: '#666' }}>
+                {isInformational
+                  ? 'Informational metric (not used for medal scoring).'
+                  : 'Not part of medal scoring criteria.'}
               </span>
-            ))}
+            )}
             <span style={{ marginLeft: 'auto', fontSize: '0.8125rem', color: '#777' }}>
               {flattenedCount} row{flattenedCount === 1 ? '' : 's'}
             </span>

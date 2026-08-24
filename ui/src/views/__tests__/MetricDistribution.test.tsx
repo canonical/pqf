@@ -32,7 +32,7 @@ const mockPortfolio: Portfolio = {
               product_id: 'discourse-k8s',
               repo: 'canonical/discourse-k8s-operator',
               result: 'silver',
-              metrics: { coverage_pct: 83 },
+              metrics: { coverage_pct: 83, latest_build_passing: true },
               excluded_from_parent_medal: false,
             },
           ],
@@ -61,7 +61,7 @@ const mockPortfolio: Portfolio = {
               product_id: 'aardvark-agent',
               repo: 'canonical/aardvark-agent',
               result: 'bronze',
-              metrics: { coverage_pct: 75 },
+              metrics: { coverage_pct: 75, latest_build_passing: false },
               excluded_from_parent_medal: false,
             },
           ],
@@ -85,7 +85,7 @@ const mockPortfolio: Portfolio = {
         test_verification: {
           result: 'bronze',
           drift: null,
-          metrics: { coverage_pct: 75 },
+          metrics: { coverage_pct: 75, latest_build_passing: false },
           composition: null,
         },
       },
@@ -107,7 +107,7 @@ const mockPortfolio: Portfolio = {
         test_verification: {
           result: 'silver',
           drift: null,
-          metrics: { coverage_pct: 83 },
+          metrics: { coverage_pct: 83, latest_build_passing: true },
           composition: null,
         },
       },
@@ -134,7 +134,7 @@ const mockPortfolio: Portfolio = {
               product_id: 'landscape-server',
               repo: 'canonical/landscape-server',
               result: 'bronze',
-              metrics: { coverage_pct: 75 },
+              metrics: { coverage_pct: 75, latest_build_passing: false },
               excluded_from_parent_medal: false,
             },
           ],
@@ -158,7 +158,7 @@ const mockPortfolio: Portfolio = {
         test_verification: {
           result: 'bronze',
           drift: null,
-          metrics: { coverage_pct: 75 },
+          metrics: { coverage_pct: 75, latest_build_passing: false },
           composition: null,
         },
       },
@@ -175,9 +175,16 @@ const mockPortfolio: Portfolio = {
           range: '0-100',
           ai_assisted: true,
         },
+        latest_build_passing: {
+          label: 'Latest build passing',
+          description: 'Latest build result',
+          type: 'boolean',
+          range: 'true/false',
+          informational: true,
+        },
       },
       medals: {
-        bronze: { criteria: ['coverage_pct >= 70'] },
+        bronze: { criteria: ['coverage_pct >= 70', 'latest_build_passing == true'] },
         silver: { criteria: ['coverage_pct >= 80'] },
         gold: { criteria: ['coverage_pct >= 90'] },
       },
@@ -211,8 +218,18 @@ describe('MetricDistribution route', () => {
     expect(screen.getByText('coverage_pct ≥ 70')).toBeInTheDocument()
     expect(screen.getByText('coverage_pct ≥ 80')).toBeInTheDocument()
     expect(screen.getByText('coverage_pct ≥ 90')).toBeInTheDocument()
+    expect(screen.queryByText('latest_build_passing = true')).not.toBeInTheDocument()
     const headers = screen.getAllByRole('columnheader').map((header) => header.textContent?.trim())
     expect(headers).toEqual(['Product', 'Threshold result', 'Gap to target', 'Value'])
+  })
+
+  it('hides medal criteria wall for informational metrics', async () => {
+    wrap('/dimensions/test_verification/metrics/latest_build_passing')
+    await screen.findByRole('heading', { name: /metric distribution/i })
+    expect(screen.queryByText('coverage_pct ≥ 70')).not.toBeInTheDocument()
+    expect(screen.queryByText('coverage_pct ≥ 80')).not.toBeInTheDocument()
+    expect(screen.queryByText('coverage_pct ≥ 90')).not.toBeInTheDocument()
+    expect(screen.getByText(/informational metric/i)).toBeInTheDocument()
   })
 
   it('keeps rows alphabetical by product name', async () => {
