@@ -163,6 +163,28 @@ const mockPortfolio: Portfolio = {
         },
       },
     },
+    {
+      id: 'zulu-test',
+      product_type: 'charm',
+      name: 'Zulu Test',
+      lifecycle: 'stable',
+      target_result: 'bronze',
+      current_result: 'bronze',
+      squad: '',
+      is_portfolio_entry: false,
+      composed_of: null,
+      context_refs: [],
+      parent_product_ids: [],
+      source: { repo: 'canonical/zulu-test', subpath: null },
+      dimensions: {
+        test_verification: {
+          result: 'silver',
+          drift: null,
+          metrics: { coverage_pct: 85, latest_build_passing: true, has_release_notes: true },
+          composition: null,
+        },
+      },
+    },
   ],
   dimensions_meta: {
     test_verification: {
@@ -182,11 +204,17 @@ const mockPortfolio: Portfolio = {
           range: 'true/false',
           informational: true,
         },
+        has_release_notes: {
+          label: 'Release notes process',
+          description: 'Release notes implemented',
+          type: 'boolean',
+          range: 'true/false',
+        },
       },
       medals: {
         bronze: { criteria: ['coverage_pct >= 70', 'latest_build_passing == true'] },
-        silver: { criteria: ['coverage_pct >= 80'] },
-        gold: { criteria: ['coverage_pct >= 90'] },
+        silver: { criteria: ['coverage_pct >= 80', 'has_release_notes == true'] },
+        gold: { criteria: ['coverage_pct >= 90', 'has_release_notes == true'] },
       },
     },
   },
@@ -244,6 +272,7 @@ describe('MetricDistribution route', () => {
       'Discourse K8s',
       'Landscape',
       'Landscape Server',
+      'Zulu Test',
     ])
   })
 
@@ -251,7 +280,7 @@ describe('MetricDistribution route', () => {
     wrap('/dimensions/test_verification/metrics/coverage_pct')
     const leafLink = await screen.findByRole('link', { name: /discourse k8s/i })
     expect(leafLink).toBeInTheDocument()
-    expect(screen.getAllByRole('cell', { name: 'Exceeds target' })).toHaveLength(2)
+    expect(screen.getAllByRole('cell', { name: 'Exceeds target' })).toHaveLength(3)
     expect(screen.getByText('✦ AI')).toBeInTheDocument()
   })
 
@@ -304,5 +333,45 @@ describe('MetricDistribution route', () => {
     )
 
     expect(await screen.findByRole('heading', { name: /metric distribution/i })).toBeInTheDocument()
+  })
+
+  it('shows N/A for threshold result when metric not in product target tier', async () => {
+    wrap('/dimensions/test_verification/metrics/has_release_notes')
+    await screen.findByRole('heading', { name: /metric distribution/i })
+    
+    // Zulu Test has bronze target, but has_release_notes is only in silver/gold criteria
+    // So it should show N/A in the threshold result column
+    const zululink = screen.getByRole('link', { name: /Zulu Test/i })
+    expect(zululink).toBeInTheDocument()
+    
+    // Find the row for Zulu Test
+    const zuluRow = zululink.closest('tr')
+    const cells = zuluRow?.querySelectorAll('td')
+    
+    // Second cell (index 1) is the "Threshold result" column
+    // It should contain 'N/A' instead of a medal badge
+    const thresholdCell = cells?.[1]
+    expect(thresholdCell?.textContent).toContain('N/A')
+  })
+
+  it('shows actual threshold result when metric is in product target tier', async () => {
+    wrap('/dimensions/test_verification/metrics/coverage_pct')
+    await screen.findByRole('heading', { name: /metric distribution/i })
+    
+    // Zulu Test has bronze target and coverage_pct is in bronze criteria
+    // So it should show actual result (silver), not N/A
+    const zululink = screen.getByRole('link', { name: /Zulu Test/i })
+    expect(zululink).toBeInTheDocument()
+    
+    // Verify that Zulu Test's row doesn't show N/A in the threshold column
+    // (when metric is applicable to target tier)
+    const zuluRow = zululink.closest('tr')
+    const cells = zuluRow?.querySelectorAll('td')
+    const thresholdCell = cells?.[1]
+    
+    // The cell should NOT contain 'N/A' (it should contain a medal badge or result)
+    // and should NOT be empty
+    expect(thresholdCell?.textContent).not.toContain('N/A')
+    expect(thresholdCell?.textContent?.trim().length).toBeGreaterThan(0)
   })
 })
