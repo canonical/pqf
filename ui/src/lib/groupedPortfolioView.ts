@@ -207,6 +207,47 @@ function buildMetricRow(
   }
 }
 
+function metricResultFromValue(
+  criteria: { bronze: string[]; silver: string[]; gold: string[] },
+  metricKey: string,
+  value: MetricValue,
+): Result {
+  if (value === undefined || value === null) return 'insufficient_data'
+  const gold = evaluateMetricAgainstTier(criteria.gold, metricKey, value)
+  const silver = evaluateMetricAgainstTier(criteria.silver, metricKey, value)
+  const bronze = evaluateMetricAgainstTier(criteria.bronze, metricKey, value)
+  if (gold === 'pass') return 'gold'
+  if (silver === 'pass') return 'silver'
+  if (bronze === 'pass') return 'bronze'
+  if (gold === 'fail' || silver === 'fail' || bronze === 'fail') return 'below_minimum'
+  return 'insufficient_data'
+}
+
+const METRIC_RESULT_WORST_TO_BEST: Record<Result, number> = {
+  insufficient_data: 0,
+  below_minimum: 1,
+  bronze: 2,
+  silver: 3,
+  gold: 4,
+  not_applicable: 5,
+}
+
+function deriveRootMetricValue(
+  criteria: { bronze: string[]; silver: string[]; gold: string[] },
+  metricKey: string,
+  leafValues: MetricValue[],
+): MetricValue {
+  const candidates = leafValues.filter((value): value is Exclude<MetricValue, null | undefined> => value !== null && value !== undefined)
+  if (candidates.length === 0) return undefined
+
+  return candidates.reduce((worst, candidate) => (
+    METRIC_RESULT_WORST_TO_BEST[metricResultFromValue(criteria, metricKey, candidate)]
+      < METRIC_RESULT_WORST_TO_BEST[metricResultFromValue(criteria, metricKey, worst)]
+      ? candidate
+      : worst
+  ))
+}
+
 export function buildMetricDistributionRows(
   portfolio: Portfolio,
   dimensionId: string,
@@ -219,17 +260,15 @@ export function buildMetricDistributionRows(
     silver: meta?.medals?.silver?.criteria ?? [],
     gold: meta?.medals?.gold?.criteria ?? [],
   }
-
   return groupedRows.map((group) => {
-    const rootValue = group.root.entry.metrics[metricKey]
+    const leafValues = group.leaves.map((leaf) => (
+      getCompositionMetricValue(group.root.entry, leaf.product.id, metricKey)
+      ?? leaf.entry.metrics[metricKey]
+    ))
+    const rootValue = group.root.entry.metrics[metricKey] ?? deriveRootMetricValue(criteria, metricKey, leafValues)
     return {
       root: buildMetricRow(group.root.product, group.root.entry, criteria, metricKey, rootValue),
-      leaves: group.leaves.map((leaf) => {
-        const value =
-          getCompositionMetricValue(group.root.entry, leaf.product.id, metricKey)
-          ?? leaf.entry.metrics[metricKey]
-        return buildMetricRow(leaf.product, leaf.entry, criteria, metricKey, value)
-      }),
+      leaves: group.leaves.map((leaf, index) => buildMetricRow(leaf.product, leaf.entry, criteria, metricKey, leafValues[index])),
     }
   })
 }

@@ -119,7 +119,14 @@ describe('MetricDistribution route', () => {
     wrap('/dimensions/test_verification/metrics/coverage_pct')
     const leafLink = await screen.findByRole('link', { name: /discourse k8s/i })
     expect(leafLink).toBeInTheDocument()
-    expect(screen.getByText('Exceeds target')).toBeInTheDocument()
+    expect(screen.getAllByText('Exceeds target')).toHaveLength(2)
     expect(screen.getByText('✦ AI')).toBeInTheDocument()
+  })
+
+  it('falls back to composition metrics for root rows when root metric is missing', async () => {
+    wrap('/dimensions/test_verification/metrics/coverage_pct')
+    await screen.findByRole('heading', { name: /metric distribution/i })
+    const valueCells = screen.getAllByRole('cell', { name: '83' })
+    expect(valueCells).toHaveLength(2)
   })
 })

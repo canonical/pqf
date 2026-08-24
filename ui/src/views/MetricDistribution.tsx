@@ -368,6 +368,8 @@ export default function MetricDistribution() {
 
           <p style={{ margin: '0 0 1rem', fontSize: '0.8125rem', color: '#666' }}>
             Metric status is computed from this metric&apos;s value and thresholds; it does not show the overall dimension medal.
+            {' '}
+            Gap to target compares the metric value to the threshold for this product&apos;s target medal.
           </p>
 
           <div style={{ overflowX: 'auto' }}>
@@ -402,7 +404,6 @@ export default function MetricDistribution() {
                               >
                                 {group.root.product.name}
                               </Link>
-                              <MedalBadge medal={group.root.product.target_result} size="small" />
                             </div>
                           </td>
                           <td style={{ padding: '0.65rem 0.75rem', verticalAlign: 'top' }}>{valueCell(group.root.value)}</td>
@@ -446,7 +447,6 @@ export default function MetricDistribution() {
                               >
                                 {leaf.product.name}
                               </Link>
-                              <MedalBadge medal={leaf.product.target_result} size="small" />
                             </div>
                           </td>
                           <td style={{ padding: '0.65rem 0.75rem', verticalAlign: 'top' }}>{valueCell(leaf.value)}</td>
