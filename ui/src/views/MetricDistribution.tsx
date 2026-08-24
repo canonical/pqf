@@ -121,7 +121,7 @@ function groupByFilters(
   squadFilter: string,
   medalFilter: 'all' | Result,
   typeFilter: 'all' | ProductType,
-  metricDefinition: MetricDefinition,
+  metricDefinition: MetricDefinition | null,
   gapFilter: 'all' | GapClass,
   failuresOnly: boolean,
 ) {
@@ -129,10 +129,13 @@ function groupByFilters(
     if (squadFilter !== 'all' && row.product.squad !== squadFilter) return false
     if (medalFilter !== 'all' && metricStatus(row) !== medalFilter) return false
     if (typeFilter !== 'all' && row.product.product_type !== typeFilter) return false
-    const target = toGapTarget(row.product.target_result)
-    const targetStatus = targetTierStatus(row, target)
-    if (gapFilter !== 'all' && computeGapClass(row.value, target, metricDefinition, targetStatus) !== gapFilter) {
-      return false
+    if (gapFilter !== 'all') {
+      if (!metricDefinition) return false
+      const target = toGapTarget(row.product.target_result)
+      const targetStatus = targetTierStatus(row, target)
+      if (computeGapClass(row.value, target, metricDefinition, targetStatus) !== gapFilter) {
+        return false
+      }
     }
     if (failuresOnly && !rowHasFailure(row)) return false
     return true
@@ -253,6 +256,19 @@ export default function MetricDistribution() {
     return Array.from(items).sort()
   }, [groups])
 
+  const metricDefinition = useMemo(() => {
+    if (!portfolio || !dimensionId || !metricKey) return null
+    const meta = portfolio.dimensions_meta[dimensionId]
+    const metricMeta = meta?.outputs?.[metricKey]
+    if (!meta || !metricMeta) return null
+    return buildMetricDefinition(metricKey, metricMeta.type, meta.medals)
+  }, [portfolio, dimensionId, metricKey])
+
+  const filteredGroups = useMemo(
+    () => groupByFilters(groups, squadFilter, medalFilter, typeFilter, metricDefinition, gapFilter, showFailuresOnly),
+    [groups, squadFilter, medalFilter, typeFilter, metricDefinition, gapFilter, showFailuresOnly],
+  )
+
   if (isLoading) return <LoadingSpinner />
   if (isError) return <div className="p-notification--negative"><p>{error?.message}</p></div>
   if (!portfolio || !dimensionId || !metricKey) return null
@@ -271,13 +287,8 @@ export default function MetricDistribution() {
       </div>
     )
   }
-
   const metricMeta = meta.outputs[metricKey]
-  const metricDefinition = buildMetricDefinition(metricKey, metricMeta.type, meta.medals)
-  const filteredGroups = useMemo(
-    () => groupByFilters(groups, squadFilter, medalFilter, typeFilter, metricDefinition, gapFilter, showFailuresOnly),
-    [groups, squadFilter, medalFilter, typeFilter, metricDefinition, gapFilter, showFailuresOnly],
-  )
+  if (!metricDefinition) return null
   const thresholdPills = [
     ['Bronze', meta.medals.bronze?.criteria ?? []],
     ['Silver', meta.medals.silver?.criteria ?? []],

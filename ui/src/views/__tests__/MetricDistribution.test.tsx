@@ -189,4 +189,37 @@ describe('MetricDistribution route', () => {
     const valueCells = screen.getAllByRole('cell', { name: '83' })
     expect(valueCells).toHaveLength(2)
   })
+
+  it('does not crash when route transitions from loading to loaded state', async () => {
+    const queryClient = new QueryClient()
+    window.location.hash = '#/dimensions/test_verification/metrics/coverage_pct'
+
+    vi.mocked(usePortfolio)
+      .mockReturnValueOnce({
+        data: undefined,
+        isLoading: true,
+        isError: false,
+        error: null,
+      } as ReturnType<typeof usePortfolio>)
+      .mockReturnValue({
+        data: mockPortfolio,
+        isLoading: false,
+        isError: false,
+        error: null,
+      } as ReturnType<typeof usePortfolio>)
+
+    const { rerender } = render(
+      <QueryClientProvider client={queryClient}>
+        <App />
+      </QueryClientProvider>,
+    )
+
+    rerender(
+      <QueryClientProvider client={queryClient}>
+        <App />
+      </QueryClientProvider>,
+    )
+
+    expect(await screen.findByRole('heading', { name: /metric distribution/i })).toBeInTheDocument()
+  })
 })
