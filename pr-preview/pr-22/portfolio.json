@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-08-24T17:27:54.348865+00:00",
+  "generated_at": "2026-08-24T17:55:33.087705+00:00",
   "products": [
     {
       "id": "12-factor",
@@ -52,11 +52,11 @@
             {
               "product_id": "charmcraft",
               "repo": "canonical/charmcraft",
-              "result": "insufficient_data",
+              "result": "bronze",
               "metrics": {
                 "coverage_pct": null,
                 "stability_pct": null,
-                "latest_build_passing": null,
+                "latest_build_passing": true,
                 "integration_test_evidence_present": false,
                 "uses_ops_testing": false,
                 "uses_jubilant": true
@@ -1778,7 +1778,7 @@
                 "latest_build_passing": false,
                 "integration_test_evidence_present": false,
                 "uses_ops_testing": false,
-                "uses_jubilant": false
+                "uses_jubilant": true
               },
               "excluded_from_parent_medal": false
             }
@@ -1857,8 +1857,8 @@
               "result": "bronze",
               "metrics": {
                 "avg_triage_days": 292.8,
-                "avg_pr_review_days": 0.9,
-                "response_coverage_rate": 91.5,
+                "avg_pr_review_days": 0.8,
+                "response_coverage_rate": 91.7,
                 "ownership_signal": true,
                 "has_jira_sync": true
               },
@@ -2327,7 +2327,7 @@
           ]
         },
         "support_engagement": {
-          "result": "bronze",
+          "result": "below_minimum",
           "metrics": {},
           "drift": null,
           "composition": [
@@ -2347,78 +2347,78 @@
             {
               "product_id": "dns-policy",
               "repo": "canonical/dns-operators",
-              "result": "bronze",
+              "result": "below_minimum",
               "metrics": {
                 "avg_triage_days": 517.8,
-                "avg_pr_review_days": 10.9,
-                "response_coverage_rate": 53.6,
-                "ownership_signal": true,
-                "has_jira_sync": true
+                "avg_pr_review_days": 0.0,
+                "response_coverage_rate": 3.6,
+                "ownership_signal": false,
+                "has_jira_sync": false
               },
               "excluded_from_parent_medal": false
             },
             {
               "product_id": "dns-integrator",
               "repo": "canonical/dns-operators",
-              "result": "bronze",
+              "result": "insufficient_data",
               "metrics": {
-                "avg_triage_days": 517.8,
-                "avg_pr_review_days": 10.9,
-                "response_coverage_rate": 53.6,
-                "ownership_signal": true,
-                "has_jira_sync": true
+                "avg_triage_days": null,
+                "avg_pr_review_days": null,
+                "response_coverage_rate": null,
+                "ownership_signal": false,
+                "has_jira_sync": false
               },
               "excluded_from_parent_medal": false
             },
             {
               "product_id": "dns-resolver",
               "repo": "canonical/dns-operators",
-              "result": "bronze",
+              "result": "insufficient_data",
               "metrics": {
-                "avg_triage_days": 517.8,
-                "avg_pr_review_days": 10.9,
-                "response_coverage_rate": 53.6,
-                "ownership_signal": true,
-                "has_jira_sync": true
+                "avg_triage_days": null,
+                "avg_pr_review_days": null,
+                "response_coverage_rate": null,
+                "ownership_signal": false,
+                "has_jira_sync": false
               },
               "excluded_from_parent_medal": false
             },
             {
               "product_id": "dns-secondary",
               "repo": "canonical/dns-operators",
-              "result": "bronze",
+              "result": "insufficient_data",
               "metrics": {
-                "avg_triage_days": 517.8,
-                "avg_pr_review_days": 10.9,
-                "response_coverage_rate": 53.6,
-                "ownership_signal": true,
-                "has_jira_sync": true
+                "avg_triage_days": null,
+                "avg_pr_review_days": null,
+                "response_coverage_rate": null,
+                "ownership_signal": false,
+                "has_jira_sync": false
               },
               "excluded_from_parent_medal": false
             },
             {
               "product_id": "charmed-bind",
               "repo": "canonical/dns-operators",
-              "result": "bronze",
+              "result": "insufficient_data",
               "metrics": {
-                "avg_triage_days": 517.8,
-                "avg_pr_review_days": 10.9,
-                "response_coverage_rate": 53.6,
-                "ownership_signal": true,
-                "has_jira_sync": true
+                "avg_triage_days": null,
+                "avg_pr_review_days": null,
+                "response_coverage_rate": null,
+                "ownership_signal": false,
+                "has_jira_sync": false
               },
               "excluded_from_parent_medal": false
             },
             {
               "product_id": "charmed-dns-policy",
               "repo": "canonical/dns-operators",
-              "result": "bronze",
+              "result": "insufficient_data",
               "metrics": {
-                "avg_triage_days": 517.8,
-                "avg_pr_review_days": 10.9,
-                "response_coverage_rate": 53.6,
-                "ownership_signal": true,
-                "has_jira_sync": true
+                "avg_triage_days": null,
+                "avg_pr_review_days": null,
+                "response_coverage_rate": null,
+                "ownership_signal": false,
+                "has_jira_sync": false
               },
               "excluded_from_parent_medal": false
             }
@@ -5120,7 +5120,7 @@
           ]
         },
         "support_engagement": {
-          "result": "bronze",
+          "result": "below_minimum",
           "metrics": {},
           "drift": null,
           "composition": [
@@ -5218,13 +5218,13 @@
             {
               "product_id": "maubot",
               "repo": "canonical/maubot-operator",
-              "result": "bronze",
+              "result": "below_minimum",
               "metrics": {
                 "avg_triage_days": 355.8,
-                "avg_pr_review_days": 3.6,
-                "response_coverage_rate": 83.3,
-                "ownership_signal": true,
-                "has_jira_sync": true
+                "avg_pr_review_days": 0.0,
+                "response_coverage_rate": 58.3,
+                "ownership_signal": false,
+                "has_jira_sync": false
               },
               "excluded_from_parent_medal": false
             },
@@ -5236,8 +5236,8 @@
                 "avg_triage_days": null,
                 "avg_pr_review_days": null,
                 "response_coverage_rate": null,
-                "ownership_signal": true,
-                "has_jira_sync": true
+                "ownership_signal": false,
+                "has_jira_sync": false
               },
               "excluded_from_parent_medal": false
             }
@@ -6168,7 +6168,7 @@
                 "stability_pct": null,
                 "latest_build_passing": false,
                 "integration_test_evidence_present": true,
-                "uses_ops_testing": false,
+                "uses_ops_testing": true,
                 "uses_jubilant": true
               },
               "excluded_from_parent_medal": false
@@ -6391,11 +6391,11 @@
             {
               "product_id": "github-runner-image-builder",
               "repo": "canonical/github-runner-image-builder-operator",
-              "result": "gold",
+              "result": "bronze",
               "metrics": {
                 "supports_juju_3": false,
-                "supports_juju_4": true,
-                "substrate_test_evidence_present": true,
+                "supports_juju_4": false,
+                "substrate_test_evidence_present": false,
                 "uses_canonical_k8s": false
               },
               "excluded_from_parent_medal": false
@@ -6476,8 +6476,8 @@
                 "canonical_repo_automation_registered": false,
                 "branch_protection_required_checks": false,
                 "signed_commits_required": false,
-                "sast_workflow_present": true,
-                "cve_tracking_process_present": true
+                "sast_workflow_present": false,
+                "cve_tracking_process_present": false
               },
               "excluded_from_parent_medal": false
             },
@@ -6491,7 +6491,7 @@
                 "branch_protection_required_checks": false,
                 "signed_commits_required": false,
                 "sast_workflow_present": false,
-                "cve_tracking_process_present": true
+                "cve_tracking_process_present": false
               },
               "excluded_from_parent_medal": false
             },
@@ -6500,12 +6500,12 @@
               "repo": "canonical/github-runner-webhook-router",
               "result": "bronze",
               "metrics": {
-                "renovate_enabled": true,
+                "renovate_enabled": false,
                 "canonical_repo_automation_registered": false,
                 "branch_protection_required_checks": false,
                 "signed_commits_required": false,
-                "sast_workflow_present": true,
-                "cve_tracking_process_present": true
+                "sast_workflow_present": false,
+                "cve_tracking_process_present": false
               },
               "excluded_from_parent_medal": false
             },
@@ -6528,12 +6528,12 @@
               "repo": "canonical/repo-policy-compliance",
               "result": "bronze",
               "metrics": {
-                "renovate_enabled": true,
+                "renovate_enabled": false,
                 "canonical_repo_automation_registered": false,
                 "branch_protection_required_checks": false,
                 "signed_commits_required": false,
-                "sast_workflow_present": true,
-                "cve_tracking_process_present": true
+                "sast_workflow_present": false,
+                "cve_tracking_process_present": false
               },
               "excluded_from_parent_medal": false
             },
@@ -6547,7 +6547,7 @@
                 "branch_protection_required_checks": false,
                 "signed_commits_required": false,
                 "sast_workflow_present": false,
-                "cve_tracking_process_present": true
+                "cve_tracking_process_present": false
               },
               "excluded_from_parent_medal": false
             },
@@ -6561,40 +6561,40 @@
                 "branch_protection_required_checks": false,
                 "signed_commits_required": false,
                 "sast_workflow_present": false,
-                "cve_tracking_process_present": true
+                "cve_tracking_process_present": false
               },
               "excluded_from_parent_medal": false
             }
           ]
         },
         "support_engagement": {
-          "result": "bronze",
+          "result": "insufficient_data",
           "metrics": {},
           "drift": null,
           "composition": [
             {
               "product_id": "github-runner",
               "repo": "canonical/github-runner-operator",
-              "result": "bronze",
+              "result": "insufficient_data",
               "metrics": {
-                "avg_triage_days": 732.2,
-                "avg_pr_review_days": 0.5,
-                "response_coverage_rate": 84.2,
-                "ownership_signal": true,
-                "has_jira_sync": true
+                "avg_triage_days": null,
+                "avg_pr_review_days": null,
+                "response_coverage_rate": null,
+                "ownership_signal": false,
+                "has_jira_sync": false
               },
               "excluded_from_parent_medal": false
             },
             {
               "product_id": "github-runner-image-builder",
               "repo": "canonical/github-runner-image-builder-operator",
-              "result": "bronze",
+              "result": "insufficient_data",
               "metrics": {
-                "avg_triage_days": 159.7,
-                "avg_pr_review_days": 0.7,
-                "response_coverage_rate": 76.5,
-                "ownership_signal": true,
-                "has_jira_sync": true
+                "avg_triage_days": null,
+                "avg_pr_review_days": null,
+                "response_coverage_rate": null,
+                "ownership_signal": false,
+                "has_jira_sync": false
               },
               "excluded_from_parent_medal": false
             },
@@ -6606,21 +6606,21 @@
                 "avg_triage_days": null,
                 "avg_pr_review_days": null,
                 "response_coverage_rate": null,
-                "ownership_signal": true,
-                "has_jira_sync": true
+                "ownership_signal": false,
+                "has_jira_sync": false
               },
               "excluded_from_parent_medal": false
             },
             {
               "product_id": "tmate-ssh-server",
               "repo": "canonical/tmate-ssh-server-operator",
-              "result": "bronze",
+              "result": "insufficient_data",
               "metrics": {
-                "avg_triage_days": 613.0,
-                "avg_pr_review_days": 19.9,
-                "response_coverage_rate": 100.0,
-                "ownership_signal": true,
-                "has_jira_sync": true
+                "avg_triage_days": null,
+                "avg_pr_review_days": null,
+                "response_coverage_rate": null,
+                "ownership_signal": false,
+                "has_jira_sync": false
               },
               "excluded_from_parent_medal": false
             },
@@ -6632,34 +6632,34 @@
                 "avg_triage_days": null,
                 "avg_pr_review_days": null,
                 "response_coverage_rate": null,
-                "ownership_signal": true,
-                "has_jira_sync": true
+                "ownership_signal": false,
+                "has_jira_sync": false
               },
               "excluded_from_parent_medal": false
             },
             {
               "product_id": "github-runner-planner",
               "repo": "canonical/github-runner-operators",
-              "result": "gold",
+              "result": "insufficient_data",
               "metrics": {
-                "avg_triage_days": 0.0,
-                "avg_pr_review_days": 0.2,
-                "response_coverage_rate": 93.0,
-                "ownership_signal": true,
-                "has_jira_sync": true
+                "avg_triage_days": null,
+                "avg_pr_review_days": null,
+                "response_coverage_rate": null,
+                "ownership_signal": false,
+                "has_jira_sync": false
               },
               "excluded_from_parent_medal": false
             },
             {
               "product_id": "github-runner-webhook-gateway",
               "repo": "canonical/github-runner-operators",
-              "result": "gold",
+              "result": "insufficient_data",
               "metrics": {
-                "avg_triage_days": 0.0,
-                "avg_pr_review_days": 0.2,
-                "response_coverage_rate": 93.0,
-                "ownership_signal": true,
-                "has_jira_sync": true
+                "avg_triage_days": null,
+                "avg_pr_review_days": null,
+                "response_coverage_rate": null,
+                "ownership_signal": false,
+                "has_jira_sync": false
               },
               "excluded_from_parent_medal": false
             }
@@ -6702,7 +6702,7 @@
                 "stability_pct": null,
                 "latest_build_passing": true,
                 "integration_test_evidence_present": true,
-                "uses_ops_testing": false,
+                "uses_ops_testing": true,
                 "uses_jubilant": false
               },
               "excluded_from_parent_medal": false
@@ -6799,7 +6799,7 @@
       "name": "Traefik",
       "description": "Traefik is your all-in-one, self-hosted, cloud-native, GitOps-driven application proxy, API gateway, and API management platform.",
       "lifecycle": "stable",
-      "current_result": "bronze",
+      "current_result": "below_minimum",
       "target_result": "gold",
       "squad": "emea",
       "is_portfolio_entry": true,
@@ -6905,20 +6905,20 @@
           ]
         },
         "support_engagement": {
-          "result": "bronze",
+          "result": "below_minimum",
           "metrics": {},
           "drift": null,
           "composition": [
             {
               "product_id": "traefik-k8s-charm",
               "repo": "canonical/traefik-k8s-operator",
-              "result": "bronze",
+              "result": "below_minimum",
               "metrics": {
                 "avg_triage_days": 114.4,
-                "avg_pr_review_days": 3.3,
-                "response_coverage_rate": 86.1,
-                "ownership_signal": true,
-                "has_jira_sync": true
+                "avg_pr_review_days": 1.5,
+                "response_coverage_rate": 45.5,
+                "ownership_signal": false,
+                "has_jira_sync": false
               },
               "excluded_from_parent_medal": false
             }
@@ -7031,20 +7031,20 @@
           ]
         },
         "support_engagement": {
-          "result": "silver",
+          "result": "insufficient_data",
           "metrics": {},
           "drift": null,
           "composition": [
             {
               "product_id": "ubuntu-motd-server",
               "repo": "canonical/ubuntu-motd-server-operator",
-              "result": "silver",
+              "result": "insufficient_data",
               "metrics": {
-                "avg_triage_days": 0.0,
-                "avg_pr_review_days": 0.6,
-                "response_coverage_rate": 83.3,
-                "ownership_signal": true,
-                "has_jira_sync": true
+                "avg_triage_days": null,
+                "avg_pr_review_days": null,
+                "response_coverage_rate": null,
+                "ownership_signal": false,
+                "has_jira_sync": false
               },
               "excluded_from_parent_medal": false
             }
@@ -7279,33 +7279,33 @@
           ]
         },
         "support_engagement": {
-          "result": "bronze",
+          "result": "insufficient_data",
           "metrics": {},
           "drift": null,
           "composition": [
             {
               "product_id": "wazuh-server",
               "repo": "canonical/wazuh-server-operator",
-              "result": "bronze",
+              "result": "insufficient_data",
               "metrics": {
-                "avg_triage_days": 392.8,
-                "avg_pr_review_days": 3.1,
-                "response_coverage_rate": 84.4,
-                "ownership_signal": true,
-                "has_jira_sync": true
+                "avg_triage_days": null,
+                "avg_pr_review_days": null,
+                "response_coverage_rate": null,
+                "ownership_signal": false,
+                "has_jira_sync": false
               },
               "excluded_from_parent_medal": false
             },
             {
               "product_id": "wazuh-indexer",
               "repo": "canonical/wazuh-indexer-operator",
-              "result": "bronze",
+              "result": "insufficient_data",
               "metrics": {
-                "avg_triage_days": 0.0,
-                "avg_pr_review_days": 1.3,
-                "response_coverage_rate": 66.7,
-                "ownership_signal": true,
-                "has_jira_sync": true
+                "avg_triage_days": null,
+                "avg_pr_review_days": null,
+                "response_coverage_rate": null,
+                "ownership_signal": false,
+                "has_jira_sync": false
               },
               "excluded_from_parent_medal": false
             },
@@ -7317,8 +7317,8 @@
                 "avg_triage_days": null,
                 "avg_pr_review_days": null,
                 "response_coverage_rate": null,
-                "ownership_signal": true,
-                "has_jira_sync": true
+                "ownership_signal": false,
+                "has_jira_sync": false
               },
               "excluded_from_parent_medal": false
             }
@@ -7441,10 +7441,10 @@
               "result": "below_minimum",
               "metrics": {
                 "avg_triage_days": 0.0,
-                "avg_pr_review_days": 0.9,
-                "response_coverage_rate": 88.9,
+                "avg_pr_review_days": 1.0,
+                "response_coverage_rate": 77.8,
                 "ownership_signal": false,
-                "has_jira_sync": true
+                "has_jira_sync": false
               },
               "excluded_from_parent_medal": false
             }
@@ -7530,18 +7530,18 @@
           ]
         },
         "substrate_compat": {
-          "result": "silver",
+          "result": "bronze",
           "metrics": {},
           "drift": null,
           "composition": [
             {
               "product_id": "wordpress-k8s-charm",
               "repo": "canonical/wordpress-k8s-operator",
-              "result": "silver",
+              "result": "bronze",
               "metrics": {
-                "supports_juju_3": true,
+                "supports_juju_3": false,
                 "supports_juju_4": false,
-                "substrate_test_evidence_present": true,
+                "substrate_test_evidence_present": false,
                 "uses_canonical_k8s": false
               },
               "excluded_from_parent_medal": false
@@ -7570,20 +7570,20 @@
           ]
         },
         "support_engagement": {
-          "result": "bronze",
+          "result": "insufficient_data",
           "metrics": {},
           "drift": null,
           "composition": [
             {
               "product_id": "wordpress-k8s-charm",
               "repo": "canonical/wordpress-k8s-operator",
-              "result": "bronze",
+              "result": "insufficient_data",
               "metrics": {
-                "avg_triage_days": 367.6,
-                "avg_pr_review_days": 4.9,
-                "response_coverage_rate": 55.6,
-                "ownership_signal": true,
-                "has_jira_sync": true
+                "avg_triage_days": null,
+                "avg_pr_review_days": null,
+                "response_coverage_rate": null,
+                "ownership_signal": false,
+                "has_jira_sync": false
               },
               "excluded_from_parent_medal": false
             }
@@ -7699,11 +7699,11 @@
       ],
       "dimensions": {
         "test_verification": {
-          "result": "insufficient_data",
+          "result": "bronze",
           "metrics": {
             "coverage_pct": null,
             "stability_pct": null,
-            "latest_build_passing": null,
+            "latest_build_passing": true,
             "integration_test_evidence_present": false,
             "uses_ops_testing": false,
             "uses_jubilant": true
@@ -9168,7 +9168,7 @@
             "latest_build_passing": false,
             "integration_test_evidence_present": false,
             "uses_ops_testing": false,
-            "uses_jubilant": false
+            "uses_jubilant": true
           },
           "drift": null,
           "composition": null
@@ -9215,8 +9215,8 @@
           "result": "bronze",
           "metrics": {
             "avg_triage_days": 292.8,
-            "avg_pr_review_days": 0.9,
-            "response_coverage_rate": 91.5,
+            "avg_pr_review_days": 0.8,
+            "response_coverage_rate": 91.7,
             "ownership_signal": true,
             "has_jira_sync": true
           },
@@ -9384,13 +9384,13 @@
           "composition": null
         },
         "support_engagement": {
-          "result": "bronze",
+          "result": "below_minimum",
           "metrics": {
             "avg_triage_days": 517.8,
-            "avg_pr_review_days": 10.9,
-            "response_coverage_rate": 53.6,
-            "ownership_signal": true,
-            "has_jira_sync": true
+            "avg_pr_review_days": 0.0,
+            "response_coverage_rate": 3.6,
+            "ownership_signal": false,
+            "has_jira_sync": false
           },
           "drift": null,
           "composition": null
@@ -9470,13 +9470,13 @@
           "composition": null
         },
         "support_engagement": {
-          "result": "bronze",
+          "result": "insufficient_data",
           "metrics": {
-            "avg_triage_days": 517.8,
-            "avg_pr_review_days": 10.9,
-            "response_coverage_rate": 53.6,
-            "ownership_signal": true,
-            "has_jira_sync": true
+            "avg_triage_days": null,
+            "avg_pr_review_days": null,
+            "response_coverage_rate": null,
+            "ownership_signal": false,
+            "has_jira_sync": false
           },
           "drift": null,
           "composition": null
@@ -9556,13 +9556,13 @@
           "composition": null
         },
         "support_engagement": {
-          "result": "bronze",
+          "result": "insufficient_data",
           "metrics": {
-            "avg_triage_days": 517.8,
-            "avg_pr_review_days": 10.9,
-            "response_coverage_rate": 53.6,
-            "ownership_signal": true,
-            "has_jira_sync": true
+            "avg_triage_days": null,
+            "avg_pr_review_days": null,
+            "response_coverage_rate": null,
+            "ownership_signal": false,
+            "has_jira_sync": false
           },
           "drift": null,
           "composition": null
@@ -9642,13 +9642,13 @@
           "composition": null
         },
         "support_engagement": {
-          "result": "bronze",
+          "result": "insufficient_data",
           "metrics": {
-            "avg_triage_days": 517.8,
-            "avg_pr_review_days": 10.9,
-            "response_coverage_rate": 53.6,
-            "ownership_signal": true,
-            "has_jira_sync": true
+            "avg_triage_days": null,
+            "avg_pr_review_days": null,
+            "response_coverage_rate": null,
+            "ownership_signal": false,
+            "has_jira_sync": false
           },
           "drift": null,
           "composition": null
@@ -9728,13 +9728,13 @@
           "composition": null
         },
         "support_engagement": {
-          "result": "bronze",
+          "result": "insufficient_data",
           "metrics": {
-            "avg_triage_days": 517.8,
-            "avg_pr_review_days": 10.9,
-            "response_coverage_rate": 53.6,
-            "ownership_signal": true,
-            "has_jira_sync": true
+            "avg_triage_days": null,
+            "avg_pr_review_days": null,
+            "response_coverage_rate": null,
+            "ownership_signal": false,
+            "has_jira_sync": false
           },
           "drift": null,
           "composition": null
@@ -9814,13 +9814,13 @@
           "composition": null
         },
         "support_engagement": {
-          "result": "bronze",
+          "result": "insufficient_data",
           "metrics": {
-            "avg_triage_days": 517.8,
-            "avg_pr_review_days": 10.9,
-            "response_coverage_rate": 53.6,
-            "ownership_signal": true,
-            "has_jira_sync": true
+            "avg_triage_days": null,
+            "avg_pr_review_days": null,
+            "response_coverage_rate": null,
+            "ownership_signal": false,
+            "has_jira_sync": false
           },
           "drift": null,
           "composition": null
@@ -12241,7 +12241,7 @@
       "name": "maubot",
       "description": "",
       "lifecycle": "stable",
-      "current_result": "bronze",
+      "current_result": "below_minimum",
       "target_result": "gold",
       "squad": "",
       "is_portfolio_entry": false,
@@ -12308,13 +12308,13 @@
           "composition": null
         },
         "support_engagement": {
-          "result": "bronze",
+          "result": "below_minimum",
           "metrics": {
             "avg_triage_days": 355.8,
-            "avg_pr_review_days": 3.6,
-            "response_coverage_rate": 83.3,
-            "ownership_signal": true,
-            "has_jira_sync": true
+            "avg_pr_review_days": 0.0,
+            "response_coverage_rate": 58.3,
+            "ownership_signal": false,
+            "has_jira_sync": false
           },
           "drift": null,
           "composition": null
@@ -12399,8 +12399,8 @@
             "avg_triage_days": null,
             "avg_pr_review_days": null,
             "response_coverage_rate": null,
-            "ownership_signal": true,
-            "has_jira_sync": true
+            "ownership_signal": false,
+            "has_jira_sync": false
           },
           "drift": null,
           "composition": null
@@ -12951,7 +12951,7 @@
             "stability_pct": null,
             "latest_build_passing": false,
             "integration_test_evidence_present": true,
-            "uses_ops_testing": false,
+            "uses_ops_testing": true,
             "uses_jubilant": true
           },
           "drift": null,
@@ -12989,20 +12989,20 @@
             "canonical_repo_automation_registered": false,
             "branch_protection_required_checks": false,
             "signed_commits_required": false,
-            "sast_workflow_present": true,
-            "cve_tracking_process_present": true
+            "sast_workflow_present": false,
+            "cve_tracking_process_present": false
           },
           "drift": null,
           "composition": null
         },
         "support_engagement": {
-          "result": "bronze",
+          "result": "insufficient_data",
           "metrics": {
-            "avg_triage_days": 732.2,
-            "avg_pr_review_days": 0.5,
-            "response_coverage_rate": 84.2,
-            "ownership_signal": true,
-            "has_jira_sync": true
+            "avg_triage_days": null,
+            "avg_pr_review_days": null,
+            "response_coverage_rate": null,
+            "ownership_signal": false,
+            "has_jira_sync": false
           },
           "drift": null,
           "composition": null
@@ -13058,11 +13058,11 @@
           "composition": null
         },
         "substrate_compat": {
-          "result": "gold",
+          "result": "bronze",
           "metrics": {
             "supports_juju_3": false,
-            "supports_juju_4": true,
-            "substrate_test_evidence_present": true,
+            "supports_juju_4": false,
+            "substrate_test_evidence_present": false,
             "uses_canonical_k8s": false
           },
           "drift": null,
@@ -13076,19 +13076,19 @@
             "branch_protection_required_checks": false,
             "signed_commits_required": false,
             "sast_workflow_present": false,
-            "cve_tracking_process_present": true
+            "cve_tracking_process_present": false
           },
           "drift": null,
           "composition": null
         },
         "support_engagement": {
-          "result": "bronze",
+          "result": "insufficient_data",
           "metrics": {
-            "avg_triage_days": 159.7,
-            "avg_pr_review_days": 0.7,
-            "response_coverage_rate": 76.5,
-            "ownership_signal": true,
-            "has_jira_sync": true
+            "avg_triage_days": null,
+            "avg_pr_review_days": null,
+            "response_coverage_rate": null,
+            "ownership_signal": false,
+            "has_jira_sync": false
           },
           "drift": null,
           "composition": null
@@ -13157,12 +13157,12 @@
         "security_ssdlc": {
           "result": "bronze",
           "metrics": {
-            "renovate_enabled": true,
+            "renovate_enabled": false,
             "canonical_repo_automation_registered": false,
             "branch_protection_required_checks": false,
             "signed_commits_required": false,
-            "sast_workflow_present": true,
-            "cve_tracking_process_present": true
+            "sast_workflow_present": false,
+            "cve_tracking_process_present": false
           },
           "drift": null,
           "composition": null
@@ -13173,8 +13173,8 @@
             "avg_triage_days": null,
             "avg_pr_review_days": null,
             "response_coverage_rate": null,
-            "ownership_signal": true,
-            "has_jira_sync": true
+            "ownership_signal": false,
+            "has_jira_sync": false
           },
           "drift": null,
           "composition": null
@@ -13254,13 +13254,13 @@
           "composition": null
         },
         "support_engagement": {
-          "result": "bronze",
+          "result": "insufficient_data",
           "metrics": {
-            "avg_triage_days": 613.0,
-            "avg_pr_review_days": 19.9,
-            "response_coverage_rate": 100.0,
-            "ownership_signal": true,
-            "has_jira_sync": true
+            "avg_triage_days": null,
+            "avg_pr_review_days": null,
+            "response_coverage_rate": null,
+            "ownership_signal": false,
+            "has_jira_sync": false
           },
           "drift": null,
           "composition": null
@@ -13329,12 +13329,12 @@
         "security_ssdlc": {
           "result": "bronze",
           "metrics": {
-            "renovate_enabled": true,
+            "renovate_enabled": false,
             "canonical_repo_automation_registered": false,
             "branch_protection_required_checks": false,
             "signed_commits_required": false,
-            "sast_workflow_present": true,
-            "cve_tracking_process_present": true
+            "sast_workflow_present": false,
+            "cve_tracking_process_present": false
           },
           "drift": null,
           "composition": null
@@ -13345,8 +13345,8 @@
             "avg_triage_days": null,
             "avg_pr_review_days": null,
             "response_coverage_rate": null,
-            "ownership_signal": true,
-            "has_jira_sync": true
+            "ownership_signal": false,
+            "has_jira_sync": false
           },
           "drift": null,
           "composition": null
@@ -13420,19 +13420,19 @@
             "branch_protection_required_checks": false,
             "signed_commits_required": false,
             "sast_workflow_present": false,
-            "cve_tracking_process_present": true
+            "cve_tracking_process_present": false
           },
           "drift": null,
           "composition": null
         },
         "support_engagement": {
-          "result": "gold",
+          "result": "insufficient_data",
           "metrics": {
-            "avg_triage_days": 0.0,
-            "avg_pr_review_days": 0.2,
-            "response_coverage_rate": 93.0,
-            "ownership_signal": true,
-            "has_jira_sync": true
+            "avg_triage_days": null,
+            "avg_pr_review_days": null,
+            "response_coverage_rate": null,
+            "ownership_signal": false,
+            "has_jira_sync": false
           },
           "drift": null,
           "composition": null
@@ -13506,19 +13506,19 @@
             "branch_protection_required_checks": false,
             "signed_commits_required": false,
             "sast_workflow_present": false,
-            "cve_tracking_process_present": true
+            "cve_tracking_process_present": false
           },
           "drift": null,
           "composition": null
         },
         "support_engagement": {
-          "result": "gold",
+          "result": "insufficient_data",
           "metrics": {
-            "avg_triage_days": 0.0,
-            "avg_pr_review_days": 0.2,
-            "response_coverage_rate": 93.0,
-            "ownership_signal": true,
-            "has_jira_sync": true
+            "avg_triage_days": null,
+            "avg_pr_review_days": null,
+            "response_coverage_rate": null,
+            "ownership_signal": false,
+            "has_jira_sync": false
           },
           "drift": null,
           "composition": null
@@ -13553,7 +13553,7 @@
             "stability_pct": null,
             "latest_build_passing": true,
             "integration_test_evidence_present": true,
-            "uses_ops_testing": false,
+            "uses_ops_testing": true,
             "uses_jubilant": false
           },
           "drift": null,
@@ -13617,7 +13617,7 @@
       "name": "traefik-k8s-charm",
       "description": "",
       "lifecycle": "stable",
-      "current_result": "bronze",
+      "current_result": "below_minimum",
       "target_result": "gold",
       "squad": "",
       "is_portfolio_entry": false,
@@ -13684,13 +13684,13 @@
           "composition": null
         },
         "support_engagement": {
-          "result": "bronze",
+          "result": "below_minimum",
           "metrics": {
             "avg_triage_days": 114.4,
-            "avg_pr_review_days": 3.3,
-            "response_coverage_rate": 86.1,
-            "ownership_signal": true,
-            "has_jira_sync": true
+            "avg_pr_review_days": 1.5,
+            "response_coverage_rate": 45.5,
+            "ownership_signal": false,
+            "has_jira_sync": false
           },
           "drift": null,
           "composition": null
@@ -13770,13 +13770,13 @@
           "composition": null
         },
         "support_engagement": {
-          "result": "silver",
+          "result": "insufficient_data",
           "metrics": {
-            "avg_triage_days": 0.0,
-            "avg_pr_review_days": 0.6,
-            "response_coverage_rate": 83.3,
-            "ownership_signal": true,
-            "has_jira_sync": true
+            "avg_triage_days": null,
+            "avg_pr_review_days": null,
+            "response_coverage_rate": null,
+            "ownership_signal": false,
+            "has_jira_sync": false
           },
           "drift": null,
           "composition": null
@@ -13856,13 +13856,13 @@
           "composition": null
         },
         "support_engagement": {
-          "result": "bronze",
+          "result": "insufficient_data",
           "metrics": {
-            "avg_triage_days": 392.8,
-            "avg_pr_review_days": 3.1,
-            "response_coverage_rate": 84.4,
-            "ownership_signal": true,
-            "has_jira_sync": true
+            "avg_triage_days": null,
+            "avg_pr_review_days": null,
+            "response_coverage_rate": null,
+            "ownership_signal": false,
+            "has_jira_sync": false
           },
           "drift": null,
           "composition": null
@@ -13942,13 +13942,13 @@
           "composition": null
         },
         "support_engagement": {
-          "result": "bronze",
+          "result": "insufficient_data",
           "metrics": {
-            "avg_triage_days": 0.0,
-            "avg_pr_review_days": 1.3,
-            "response_coverage_rate": 66.7,
-            "ownership_signal": true,
-            "has_jira_sync": true
+            "avg_triage_days": null,
+            "avg_pr_review_days": null,
+            "response_coverage_rate": null,
+            "ownership_signal": false,
+            "has_jira_sync": false
           },
           "drift": null,
           "composition": null
@@ -14033,8 +14033,8 @@
             "avg_triage_days": null,
             "avg_pr_review_days": null,
             "response_coverage_rate": null,
-            "ownership_signal": true,
-            "has_jira_sync": true
+            "ownership_signal": false,
+            "has_jira_sync": false
           },
           "drift": null,
           "composition": null
@@ -14117,10 +14117,10 @@
           "result": "below_minimum",
           "metrics": {
             "avg_triage_days": 0.0,
-            "avg_pr_review_days": 0.9,
-            "response_coverage_rate": 88.9,
+            "avg_pr_review_days": 1.0,
+            "response_coverage_rate": 77.8,
             "ownership_signal": false,
-            "has_jira_sync": true
+            "has_jira_sync": false
           },
           "drift": null,
           "composition": null
@@ -14176,11 +14176,11 @@
           "composition": null
         },
         "substrate_compat": {
-          "result": "silver",
+          "result": "bronze",
           "metrics": {
-            "supports_juju_3": true,
+            "supports_juju_3": false,
             "supports_juju_4": false,
-            "substrate_test_evidence_present": true,
+            "substrate_test_evidence_present": false,
             "uses_canonical_k8s": false
           },
           "drift": null,
@@ -14200,13 +14200,13 @@
           "composition": null
         },
         "support_engagement": {
-          "result": "bronze",
+          "result": "insufficient_data",
           "metrics": {
-            "avg_triage_days": 367.6,
-            "avg_pr_review_days": 4.9,
-            "response_coverage_rate": 55.6,
-            "ownership_signal": true,
-            "has_jira_sync": true
+            "avg_triage_days": null,
+            "avg_pr_review_days": null,
+            "response_coverage_rate": null,
+            "ownership_signal": false,
+            "has_jira_sync": false
           },
           "drift": null,
           "composition": null
