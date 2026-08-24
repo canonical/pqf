@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-08-24T15:10:50.247417+00:00",
+  "generated_at": "2026-08-24T17:27:54.348865+00:00",
   "products": [
     {
       "id": "12-factor",
@@ -52,11 +52,11 @@
             {
               "product_id": "charmcraft",
               "repo": "canonical/charmcraft",
-              "result": "bronze",
+              "result": "insufficient_data",
               "metrics": {
                 "coverage_pct": null,
                 "stability_pct": null,
-                "latest_build_passing": false,
+                "latest_build_passing": null,
                 "integration_test_evidence_present": false,
                 "uses_ops_testing": false,
                 "uses_jubilant": true
@@ -246,9 +246,9 @@
               "repo": "canonical/charmcraft",
               "result": "below_minimum",
               "metrics": {
-                "avg_triage_days": 197.2,
+                "avg_triage_days": 191.0,
                 "avg_pr_review_days": 1.7,
-                "response_coverage_rate": 81.3,
+                "response_coverage_rate": 81.9,
                 "ownership_signal": false,
                 "has_jira_sync": true
               },
@@ -1778,7 +1778,7 @@
                 "latest_build_passing": false,
                 "integration_test_evidence_present": false,
                 "uses_ops_testing": false,
-                "uses_jubilant": true
+                "uses_jubilant": false
               },
               "excluded_from_parent_medal": false
             }
@@ -2011,7 +2011,7 @@
                 "stability_pct": null,
                 "latest_build_passing": true,
                 "integration_test_evidence_present": true,
-                "uses_ops_testing": true,
+                "uses_ops_testing": false,
                 "uses_jubilant": true
               },
               "excluded_from_parent_medal": false
@@ -2466,7 +2466,7 @@
                 "latest_build_passing": true,
                 "integration_test_evidence_present": false,
                 "uses_ops_testing": true,
-                "uses_jubilant": false
+                "uses_jubilant": true
               },
               "excluded_from_parent_medal": false
             },
@@ -2739,8 +2739,8 @@
               "result": "bronze",
               "metrics": {
                 "avg_triage_days": 75.2,
-                "avg_pr_review_days": 3.6,
-                "response_coverage_rate": 65.5,
+                "avg_pr_review_days": 3.4,
+                "response_coverage_rate": 67.1,
                 "ownership_signal": true,
                 "has_jira_sync": true
               },
@@ -2825,8 +2825,8 @@
                 "stability_pct": null,
                 "latest_build_passing": true,
                 "integration_test_evidence_present": false,
-                "uses_ops_testing": true,
-                "uses_jubilant": false
+                "uses_ops_testing": false,
+                "uses_jubilant": true
               },
               "excluded_from_parent_medal": false
             },
@@ -4076,7 +4076,7 @@
               "metrics": {
                 "avg_triage_days": 105.6,
                 "avg_pr_review_days": 1.2,
-                "response_coverage_rate": 72.1,
+                "response_coverage_rate": 71.0,
                 "ownership_signal": true,
                 "has_jira_sync": true
               },
@@ -4178,7 +4178,7 @@
                 "latest_build_passing": false,
                 "integration_test_evidence_present": true,
                 "uses_ops_testing": true,
-                "uses_jubilant": false
+                "uses_jubilant": true
               },
               "excluded_from_parent_medal": false
             },
@@ -4773,7 +4773,7 @@
                 "contributing_present": false,
                 "has_security": true,
                 "documentation_workflows_passing": false,
-                "diataxis_coverage_ai": 1,
+                "diataxis_coverage_ai": 0,
                 "uses_rtd_hosting": false,
                 "release_notes_process_implemented": false
               },
@@ -4818,7 +4818,7 @@
                 "contributing_present": false,
                 "has_security": false,
                 "documentation_workflows_passing": false,
-                "diataxis_coverage_ai": 1,
+                "diataxis_coverage_ai": 0,
                 "uses_rtd_hosting": false,
                 "release_notes_process_implemented": false
               },
@@ -7699,11 +7699,11 @@
       ],
       "dimensions": {
         "test_verification": {
-          "result": "bronze",
+          "result": "insufficient_data",
           "metrics": {
             "coverage_pct": null,
             "stability_pct": null,
-            "latest_build_passing": false,
+            "latest_build_passing": null,
             "integration_test_evidence_present": false,
             "uses_ops_testing": false,
             "uses_jubilant": true
@@ -7752,9 +7752,9 @@
         "support_engagement": {
           "result": "below_minimum",
           "metrics": {
-            "avg_triage_days": 197.2,
+            "avg_triage_days": 191.0,
             "avg_pr_review_days": 1.7,
-            "response_coverage_rate": 81.3,
+            "response_coverage_rate": 81.9,
             "ownership_signal": false,
             "has_jira_sync": true
           },
@@ -9168,7 +9168,7 @@
             "latest_build_passing": false,
             "integration_test_evidence_present": false,
             "uses_ops_testing": false,
-            "uses_jubilant": true
+            "uses_jubilant": false
           },
           "drift": null,
           "composition": null
@@ -9769,7 +9769,7 @@
             "stability_pct": null,
             "latest_build_passing": true,
             "integration_test_evidence_present": true,
-            "uses_ops_testing": true,
+            "uses_ops_testing": false,
             "uses_jubilant": true
           },
           "drift": null,
@@ -9856,7 +9856,7 @@
             "latest_build_passing": true,
             "integration_test_evidence_present": false,
             "uses_ops_testing": true,
-            "uses_jubilant": false
+            "uses_jubilant": true
           },
           "drift": null,
           "composition": null
@@ -10075,8 +10075,8 @@
           "result": "bronze",
           "metrics": {
             "avg_triage_days": 75.2,
-            "avg_pr_review_days": 3.6,
-            "response_coverage_rate": 65.5,
+            "avg_pr_review_days": 3.4,
+            "response_coverage_rate": 67.1,
             "ownership_signal": true,
             "has_jira_sync": true
           },
@@ -10285,8 +10285,8 @@
             "stability_pct": null,
             "latest_build_passing": true,
             "integration_test_evidence_present": false,
-            "uses_ops_testing": true,
-            "uses_jubilant": false
+            "uses_ops_testing": false,
+            "uses_jubilant": true
           },
           "drift": null,
           "composition": null
@@ -11108,7 +11108,7 @@
           "metrics": {
             "avg_triage_days": 105.6,
             "avg_pr_review_days": 1.2,
-            "response_coverage_rate": 72.1,
+            "response_coverage_rate": 71.0,
             "ownership_signal": true,
             "has_jira_sync": true
           },
@@ -11404,7 +11404,7 @@
             "latest_build_passing": false,
             "integration_test_evidence_present": true,
             "uses_ops_testing": true,
-            "uses_jubilant": false
+            "uses_jubilant": true
           },
           "drift": null,
           "composition": null
@@ -11932,7 +11932,7 @@
             "contributing_present": false,
             "has_security": true,
             "documentation_workflows_passing": false,
-            "diataxis_coverage_ai": 1,
+            "diataxis_coverage_ai": 0,
             "uses_rtd_hosting": false,
             "release_notes_process_implemented": false
           },
@@ -12190,7 +12190,7 @@
             "contributing_present": false,
             "has_security": false,
             "documentation_workflows_passing": false,
-            "diataxis_coverage_ai": 1,
+            "diataxis_coverage_ai": 0,
             "uses_rtd_hosting": false,
             "release_notes_process_implemented": false
           },
