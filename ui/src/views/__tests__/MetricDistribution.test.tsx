@@ -241,8 +241,7 @@ function wrap(path: string) {
 describe('MetricDistribution route', () => {
   it('renders the redesigned metric distribution header and table', async () => {
     wrap('/dimensions/test_verification/metrics/coverage_pct')
-    expect(await screen.findByRole('heading', { name: /metric distribution/i })).toBeInTheDocument()
-    expect(screen.getByText(/Coverage \(coverage_pct\)/i)).toBeInTheDocument()
+    expect(await screen.findByRole('heading', { name: /Coverage \(coverage_pct\)/i })).toBeInTheDocument()
     expect(screen.getByText('coverage_pct ≥ 70')).toBeInTheDocument()
     expect(screen.getByText('coverage_pct ≥ 80')).toBeInTheDocument()
     expect(screen.getByText('coverage_pct ≥ 90')).toBeInTheDocument()
@@ -253,7 +252,7 @@ describe('MetricDistribution route', () => {
 
   it('hides medal criteria wall for informational metrics', async () => {
     wrap('/dimensions/test_verification/metrics/latest_build_passing')
-    await screen.findByRole('heading', { name: /metric distribution/i })
+    await screen.findByRole('heading', { name: /Latest build passing/i })
     expect(screen.queryByText('coverage_pct ≥ 70')).not.toBeInTheDocument()
     expect(screen.queryByText('coverage_pct ≥ 80')).not.toBeInTheDocument()
     expect(screen.queryByText('coverage_pct ≥ 90')).not.toBeInTheDocument()
@@ -262,7 +261,7 @@ describe('MetricDistribution route', () => {
 
   it('keeps rows alphabetical by product name', async () => {
     wrap('/dimensions/test_verification/metrics/coverage_pct')
-    await screen.findByRole('heading', { name: /metric distribution/i })
+    await screen.findByRole('heading', { name: /Coverage/i })
     const table = screen.getByRole('table')
     const productLinks = table.querySelectorAll('tbody a')
     expect(Array.from(productLinks).map((link) => link.textContent?.trim())).toEqual([
@@ -286,7 +285,7 @@ describe('MetricDistribution route', () => {
 
   it('filters rows by gap class without depending on the displayed text', async () => {
     wrap('/dimensions/test_verification/metrics/coverage_pct')
-    await screen.findByRole('heading', { name: /metric distribution/i })
+    await screen.findByRole('heading', { name: /Coverage/i })
 
     const gapClassSelect = screen.getByRole('combobox', { name: /gap class/i })
     fireEvent.change(gapClassSelect, { target: { value: 'below_target' } })
@@ -297,7 +296,7 @@ describe('MetricDistribution route', () => {
 
   it('falls back to composition metrics for root rows when root metric is missing', async () => {
     wrap('/dimensions/test_verification/metrics/coverage_pct')
-    await screen.findByRole('heading', { name: /metric distribution/i })
+    await screen.findByRole('heading', { name: /Coverage/i })
     const valueCells = screen.getAllByRole('cell', { name: '83' })
     expect(valueCells).toHaveLength(2)
   })
@@ -332,12 +331,12 @@ describe('MetricDistribution route', () => {
       </QueryClientProvider>,
     )
 
-    expect(await screen.findByRole('heading', { name: /metric distribution/i })).toBeInTheDocument()
+    expect(await screen.findByRole('heading', { name: /Coverage/i })).toBeInTheDocument()
   })
 
   it('shows N/A for threshold result when metric not in product target tier', async () => {
     wrap('/dimensions/test_verification/metrics/has_release_notes')
-    await screen.findByRole('heading', { name: /metric distribution/i })
+    await screen.findByRole('heading', { name: /Release notes/i })
     
     // Zulu Test has bronze target, but has_release_notes is only in silver/gold criteria
     // So it should show N/A in the threshold result column
@@ -356,7 +355,7 @@ describe('MetricDistribution route', () => {
 
   it('shows actual threshold result when metric is in product target tier', async () => {
     wrap('/dimensions/test_verification/metrics/coverage_pct')
-    await screen.findByRole('heading', { name: /metric distribution/i })
+    await screen.findByRole('heading', { name: /Coverage/i })
     
     // Zulu Test has bronze target and coverage_pct is in bronze criteria
     // So it should show actual result (silver), not N/A
