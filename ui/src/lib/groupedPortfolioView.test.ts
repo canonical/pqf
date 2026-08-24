@@ -130,7 +130,7 @@ describe('computeGapToTarget', () => {
     )
   })
 
-  it('returns "+5% → silver" when numeric result is below the target threshold', () => {
+  it('returns "Below target (+5% to silver)" when numeric result is below the target threshold', () => {
     const metric = {
       name: 'coverage_pct',
       type: 'numeric',
@@ -141,7 +141,7 @@ describe('computeGapToTarget', () => {
       },
     } satisfies MetricDefinition
 
-    expect(computeGapToTarget(75, 'silver', metric)).toBe('+5% → silver')
+    expect(computeGapToTarget(75, 'silver', metric)).toBe('Below target (+5% to silver)')
   })
 
   it('returns "Exceeds target" when numeric result exceeds the target threshold', () => {
@@ -158,43 +158,43 @@ describe('computeGapToTarget', () => {
     expect(computeGapToTarget(95, 'gold', metric)).toBe('Exceeds target')
   })
 
-  it('returns "✓ Meets" for a boolean metric with value true', () => {
+  it('returns "At target" for a boolean metric with value true', () => {
     const metric = {
       name: 'has_security_md',
       type: 'boolean',
       signal_name: 'SECURITY.md',
     } satisfies MetricDefinition
 
-    expect(computeGapToTarget(true, 'bronze', metric)).toBe('✓ Meets')
+    expect(computeGapToTarget(true, 'bronze', metric)).toBe('At target')
   })
 
-  it('returns "✗ Missing" for a boolean metric with value false', () => {
+  it('returns "Below target (requires true)" for a boolean metric with value false', () => {
     const metric = {
       name: 'has_security_md',
       type: 'boolean',
       signal_name: 'SECURITY.md',
     } satisfies MetricDefinition
 
-    expect(computeGapToTarget(false, 'bronze', metric)).toBe('✗ Missing')
+    expect(computeGapToTarget(false, 'bronze', metric)).toBe('Below target (requires true)')
   })
 
-  it('returns "Configure SECURITY.md" when boolean metric has no data', () => {
+  it('returns "Below target (requires true)" when boolean metric has no data', () => {
     const metric = {
       name: 'has_security_md',
       type: 'boolean',
       signal_name: 'SECURITY.md',
     } satisfies MetricDefinition
 
-    expect(computeGapToTarget(null, 'bronze', metric)).toBe('Configure SECURITY.md')
+    expect(computeGapToTarget(null, 'bronze', metric)).toBe('Below target (requires true)')
   })
 
-  it('falls back to the metric name when boolean metric has no signal_name', () => {
+  it('returns null when target medal does not include this boolean metric', () => {
     const metric = {
       name: 'has_security_md',
       type: 'boolean',
     } satisfies MetricDefinition
 
-    expect(computeGapToTarget(undefined, 'bronze', metric)).toBe('Configure has_security_md')
+    expect(computeGapToTarget(true, 'bronze', metric, 'na')).toBeNull()
   })
 
   it('returns null when a numeric metric has no target threshold', () => {
@@ -207,7 +207,7 @@ describe('computeGapToTarget', () => {
     expect(computeGapToTarget(50, 'silver', metric)).toBeNull()
   })
 
-  it('rounds numeric gaps to one decimal place', () => {
+  it('rounds numeric gaps to one decimal place for below-target messages', () => {
     const metric = {
       name: 'coverage_pct',
       type: 'numeric',
@@ -218,6 +218,6 @@ describe('computeGapToTarget', () => {
       },
     } satisfies MetricDefinition
 
-    expect(computeGapToTarget(76.3, 'silver', metric)).toBe('+3.7% → silver')
+    expect(computeGapToTarget(76.3, 'silver', metric)).toBe('Below target (+3.7% to silver)')
   })
 })

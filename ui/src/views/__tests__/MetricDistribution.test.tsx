@@ -109,10 +109,8 @@ describe('MetricDistribution route', () => {
     expect(screen.getByText('coverage_pct ≥ 70')).toBeInTheDocument()
     expect(screen.getByText('coverage_pct ≥ 80')).toBeInTheDocument()
     expect(screen.getByText('coverage_pct ≥ 90')).toBeInTheDocument()
-    expect(screen.getByRole('columnheader', { name: /^product$/i })).toBeInTheDocument()
-    expect(screen.getByRole('columnheader', { name: /^value$/i })).toBeInTheDocument()
-    expect(screen.getByRole('columnheader', { name: /threshold result/i })).toBeInTheDocument()
-    expect(screen.getByRole('columnheader', { name: /gap to target/i })).toBeInTheDocument()
+    const headers = screen.getAllByRole('columnheader').map((header) => header.textContent?.trim())
+    expect(headers).toEqual(['Product', 'Threshold result', 'Gap to target', 'Value'])
   })
 
   it('shows the gap to target and ai-assisted badge for metric rows', async () => {

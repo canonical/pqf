@@ -148,16 +148,21 @@ export function computeGapToTarget(
   result: MetricValue,
   targetMedal: Medal,
   metric: MetricDefinition,
+  targetTierStatus?: MetricTierStatus,
 ): string | null {
+  if (targetTierStatus === 'na') {
+    return null
+  }
+
   if (result === null || result === undefined) {
     if (metric.type === 'boolean') {
-      return `Configure ${metric.signal_name ?? metric.name}`
+      return 'Below target (requires true)'
     }
     return null
   }
 
   if (metric.type === 'boolean') {
-    return result === true ? '✓ Meets' : '✗ Missing'
+    return result === true ? 'At target' : 'Below target (requires true)'
   }
 
   const targetThreshold = metric.medals[targetMedal]?.min
@@ -178,7 +183,7 @@ export function computeGapToTarget(
     return 'Exceeds target'
   }
 
-  return `+${formatGap(targetThreshold - numericResult)}% → ${targetMedal}`
+  return `Below target (+${formatGap(targetThreshold - numericResult)}% to ${targetMedal})`
 }
 
 function getCompositionMetricValue(
