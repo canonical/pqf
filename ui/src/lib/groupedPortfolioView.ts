@@ -200,6 +200,17 @@ export function computeGapToTarget(
   return `Below target (+${formatGap(targetThreshold - numericResult)}% to ${targetMedal})`
 }
 
+export function isMetricApplicableToTier(
+  metricKey: string,
+  criteria: Record<string, boolean>,
+): boolean {
+  /**
+   * Check if a metric is introduced (has criteria) in a specific tier.
+   * A metric is applicable if at least one criterion key starts with "{metricKey} ".
+   */
+  return Object.keys(criteria).some((criterion) => criterion.startsWith(`${metricKey} `))
+}
+
 function getCompositionMetricValue(
   rootEntry: DimensionEntry,
   leafProductId: string,
