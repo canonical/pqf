@@ -9,8 +9,18 @@
 | Page | Description |
 |------|-------------|
 | [Portfolio Overview](views/overview.md) | The main view — heatmap and products table |
-| [Product Detail](views/product-detail.md) | Per-product dimension scores and evidence |
-| [Dimension Detail](views/dimension-detail.md) | Metrics, rubric, and all-product scores for one dimension |
+| [Product Detail](views/product-detail.md) | Per-product dimension results and evidence |
+| [Dimension Detail](views/dimension-detail.md) | Metrics, rubric, and all-product results for one dimension |
+
+## Vocabulary
+
+| Term | Meaning |
+|------|---------|
+| **Current** | The product's present result in a table or dimension card |
+| **Target** | The result a team is aiming for |
+| **Result** | Any scored outcome shown in the UI, including gold / silver / bronze / below minimum / no data / not applicable |
+| **Medal** | The scored tiers when a result is awarded or compared to a target |
+| **Evidence** | Raw metric values used to explain a result |
 
 ## Contributing
 

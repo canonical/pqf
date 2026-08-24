@@ -6,9 +6,9 @@ This guide explains how to create a new quality dimension with a scorer in PQF.
 
 ## Overview
 
-A quality dimension is one axis of the medal rubric (e.g., Test Verification, Documentation, Security). Adding a dimension requires:
+A quality dimension is one axis of the result rubric (e.g., Test Verification, Documentation, Security). Adding a dimension requires:
 
-1. An entry in `config/dimensions.yaml` — declares the dimension's outputs and medal criteria
+1. An entry in `config/dimensions.yaml` — declares the dimension's outputs and result criteria
 2. A new `scorers/<name>/` directory with `logic.py`, `scorer.py`, and tests
 
 ---
@@ -45,9 +45,9 @@ Add a new top-level entry under `dimensions:`:
         - some_number >= 90
 ```
 
-If your dimension only applies to charms, set `applies_to.product_types: [charm]`. Root products automatically return `not_applicable` for this dimension and are not penalized in their medal calculation.
+If your dimension only applies to charms, set `applies_to.product_types: [charm]`. Root products automatically return `not_applicable` for this dimension and are not penalized in their result calculation.
 
-### Medal criteria syntax
+### Result criteria syntax
 
 Each criterion is a string evaluated against the product's computed metrics:
 
@@ -58,7 +58,7 @@ Each criterion is a string evaluated against the product's computed metrics:
 | `metric == true` | `has_readme == true` |
 | `metric == false` | `has_violations == false` |
 
-Medal tiers are **cumulative** — a product earning silver must also satisfy all bronze criteria.
+Result tiers are **cumulative** — a product earning silver must also satisfy all bronze criteria.
 
 ### `ai_assisted` flag
 

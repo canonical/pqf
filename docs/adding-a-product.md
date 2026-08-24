@@ -9,7 +9,7 @@ This guide explains how to onboard a new product into PQF.
 Add a product when a Canonical Platform Engineering team wants to start tracking quality compliance for a product that:
 - Has at least one charm or snap repository on GitHub under the `canonical/` organisation
 - Has an owning squad (AMER, EMEA, or APAC)
-- Has a target medal grade the team is committing to
+- Has a target result grade the team is committing to
 
 ---
 
@@ -80,9 +80,9 @@ context_refs:
 >
 > **Use `context_refs` when:**
 > - It is owned by another squad
-> - You only want it visible for context, not affecting your medal
+> - You only want it visible for context, not affecting your result
 
-`context_refs` entries are shown in the UI but are **never** included in medal computation.
+`context_refs` entries are shown in the UI but are **never** included in result computation.
 
 ### Optional root-level fields
 
@@ -118,7 +118,7 @@ If the charm doesn't publish Allure reports yet, omit the field or set it to `""
 Commit your new `products/<id>.yaml` and open a PR. CI will lint the YAML and run the test suite. A reviewer will check that:
 - The `source.repo` slugs are correct
 - The `squad` matches the team's actual ownership
-- The `target_medal` is realistic
+- The `target_medal` is realistic (it defines the target result in the product YAML)
 
 ---
 

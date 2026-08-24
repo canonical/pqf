@@ -70,4 +70,12 @@ describe('About', () => {
       'https://github.com/canonical/pqf/blob/main/docs/superpowers/specs/2026-06-29-pqf-tool-design.md',
     )
   })
+
+  it('includes sub-minimum in medal levels table', () => {
+    wrap()
+    // The medal levels table should include a row for "sub-minimum" or similar terminology
+    // showing when a dimension was measured but failed to meet minimum criteria
+    const medalTable = screen.getByRole('heading', { name: /medal levels/i }).closest('div')
+    expect(medalTable?.textContent).toMatch(/sub.?min|below.?minimum/i)
+  })
 })

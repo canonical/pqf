@@ -1,6 +1,6 @@
 # Dimension Detail
 
-The Dimension Detail page explains everything about one quality dimension — what metrics are measured, how medals are awarded, and where every product currently stands.
+The Dimension Detail page explains everything about one quality dimension — what metrics are measured, how results are assigned, and where every product currently stands.
 
 ![Dimension Detail](../screenshots/dimension-detail.png)
 
@@ -25,16 +25,16 @@ Fully deterministic metrics (GitHub API checks, file existence, etc.) show **Det
 
 ---
 
-## Medal Rubric
+## Result Rubric
 
-The **Medal Rubric** shows exactly what a product needs to achieve each medal tier.
+The **Result Rubric** shows exactly what a product needs to achieve each result tier.
 
 Each row is one criterion in the format `**Metric label** expression` (e.g., `**Coverage** >= 80`). Hover over any criterion to see the full metric description as a tooltip.
 
-Medal tiers are cumulative — to earn gold, a product must also meet all bronze and silver criteria.
+Result tiers are cumulative — to earn gold, a product must also meet all bronze and silver criteria.
 
 ---
 
 ## Product Scores
 
-The bottom table shows every tracked product's current medal for this dimension, sorted by medal (best first). Click any product name to jump to its [Product Detail](product-detail.md) page.
+The bottom table shows every tracked product's current result for this dimension, sorted by result (best first). Click any product name to jump to its [Product Detail](product-detail.md) page.

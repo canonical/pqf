@@ -444,4 +444,13 @@ describe('ProductDetail', () => {
     expect(screen.queryByRole('button', { name: /component in scope/i })).not.toBeInTheDocument()
     expect(screen.getByText('Coverage')).toBeInTheDocument()
   })
+
+  it('uses canonical terminology: Current instead of Medal in dimensions table', () => {
+    wrap('matrix')
+    const dimensionsCard = screen.getByRole('heading', { name: 'Dimensions' }).closest('.p-card') as HTMLElement
+    const table = dimensionsCard.querySelector('table') as HTMLTableElement
+    // Should have "Current" header, not "Medal"
+    expect(within(table).getByRole('columnheader', { name: 'Current' })).toBeInTheDocument()
+    expect(within(table).queryByRole('columnheader', { name: 'Medal' })).not.toBeInTheDocument()
+  })
 })

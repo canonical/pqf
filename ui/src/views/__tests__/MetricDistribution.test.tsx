@@ -373,4 +373,18 @@ describe('MetricDistribution route', () => {
     expect(thresholdCell?.textContent).not.toContain('N/A')
     expect(thresholdCell?.textContent?.trim().length).toBeGreaterThan(0)
   })
+
+  it('uses canonical terminology in explanatory text about target-contextual metrics', async () => {
+    wrap('/dimensions/test_verification/metrics/coverage_pct')
+    await screen.findByRole('heading', { name: /Coverage/i })
+
+    // Check that the explanatory text uses target-contextual language
+    // It should explain that threshold result is against the dimension rubric for this product's target
+    const explanatoryText = screen.getByText(/Threshold result shows how this metric value rates/, { exact: false })
+    expect(explanatoryText).toBeInTheDocument()
+    
+    // The text should mention "dimension's rubric" or similar language to clarify it's rubric-based
+    // It should also mention "product's target medal" to show context
+    expect(explanatoryText.textContent).toMatch(/target.*medal/i)
+  })
 })

@@ -235,4 +235,11 @@ describe('ProductsExplorer', () => {
       whiteSpace: 'nowrap',
     })
   })
+
+  it('uses canonical terminology: Current column header instead of Medal', () => {
+    wrap()
+    // The table should have "Current" column header, not "Medal"
+    expect(screen.getByRole('columnheader', { name: 'Current' })).toBeInTheDocument()
+    expect(screen.queryByRole('columnheader', { name: 'Medal' })).not.toBeInTheDocument()
+  })
 })
