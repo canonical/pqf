@@ -367,7 +367,7 @@ export default function MetricDistribution() {
           </div>
 
           <p style={{ margin: '0 0 1rem', fontSize: '0.8125rem', color: '#666' }}>
-            Metric status is computed from this metric&apos;s value and thresholds; it does not show the overall dimension medal.
+            Threshold result shows how this metric value rates against the dimension&apos;s rubric (gold/silver/bronze/sub-min/no data).
             {' '}
             Gap to target compares the metric value to the threshold for this product&apos;s target medal.
           </p>
@@ -384,7 +384,7 @@ export default function MetricDistribution() {
                 <tr style={{ background: '#f5f5f5' }}>
                   <th style={TABLE_TH}>Product</th>
                   <th style={TABLE_TH}>Value</th>
-                  <th style={TABLE_TH}>Metric status</th>
+                  <th style={TABLE_TH}>Threshold result</th>
                   <th style={TABLE_TH}>Gap to target</th>
                 </tr>
               </thead>

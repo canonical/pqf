@@ -111,7 +111,7 @@ describe('MetricDistribution route', () => {
     expect(screen.getByText('coverage_pct ≥ 90')).toBeInTheDocument()
     expect(screen.getByRole('columnheader', { name: /^product$/i })).toBeInTheDocument()
     expect(screen.getByRole('columnheader', { name: /^value$/i })).toBeInTheDocument()
-    expect(screen.getByRole('columnheader', { name: /metric status/i })).toBeInTheDocument()
+    expect(screen.getByRole('columnheader', { name: /threshold result/i })).toBeInTheDocument()
     expect(screen.getByRole('columnheader', { name: /gap to target/i })).toBeInTheDocument()
   })
 
