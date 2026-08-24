@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react'
+import { fireEvent, render, screen } from '@testing-library/react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { describe, expect, it, vi } from 'vitest'
 import App from '../../App'
@@ -61,6 +61,57 @@ const mockPortfolio: Portfolio = {
         },
       },
     },
+    {
+      id: 'landscape',
+      product_type: 'root',
+      name: 'Landscape',
+      lifecycle: 'stable',
+      target_result: 'silver',
+      current_result: 'bronze',
+      squad: 'emea',
+      is_portfolio_entry: true,
+      composed_of: [{ product_id: 'landscape-server', excluded_from_parent_medal: false }],
+      context_refs: [],
+      parent_product_ids: [],
+      dimensions: {
+        test_verification: {
+          result: 'bronze',
+          drift: null,
+          metrics: {},
+          composition: [
+            {
+              product_id: 'landscape-server',
+              repo: 'canonical/landscape-server',
+              result: 'bronze',
+              metrics: { coverage_pct: 75 },
+              excluded_from_parent_medal: false,
+            },
+          ],
+        },
+      },
+    },
+    {
+      id: 'landscape-server',
+      product_type: 'charm',
+      name: 'Landscape Server',
+      lifecycle: 'stable',
+      target_result: 'silver',
+      current_result: 'bronze',
+      squad: '',
+      is_portfolio_entry: false,
+      composed_of: null,
+      context_refs: [],
+      parent_product_ids: ['landscape'],
+      source: { repo: 'canonical/landscape-server', subpath: null },
+      dimensions: {
+        test_verification: {
+          result: 'bronze',
+          drift: null,
+          metrics: { coverage_pct: 75 },
+          composition: null,
+        },
+      },
+    },
   ],
   dimensions_meta: {
     test_verification: {
@@ -117,8 +168,19 @@ describe('MetricDistribution route', () => {
     wrap('/dimensions/test_verification/metrics/coverage_pct')
     const leafLink = await screen.findByRole('link', { name: /discourse k8s/i })
     expect(leafLink).toBeInTheDocument()
-    expect(screen.getAllByText('Exceeds target')).toHaveLength(2)
+    expect(screen.getAllByRole('cell', { name: 'Exceeds target' })).toHaveLength(2)
     expect(screen.getByText('✦ AI')).toBeInTheDocument()
+  })
+
+  it('filters rows by gap class without depending on the displayed text', async () => {
+    wrap('/dimensions/test_verification/metrics/coverage_pct')
+    await screen.findByRole('heading', { name: /metric distribution/i })
+
+    const gapClassSelect = screen.getByRole('combobox', { name: /gap class/i })
+    fireEvent.change(gapClassSelect, { target: { value: 'below_target' } })
+
+    expect(screen.getAllByRole('cell', { name: 'Below target (+5% to silver)' })).toHaveLength(2)
+    expect(screen.queryAllByRole('cell', { name: 'Exceeds target' })).toHaveLength(0)
   })
 
   it('falls back to composition metrics for root rows when root metric is missing', async () => {

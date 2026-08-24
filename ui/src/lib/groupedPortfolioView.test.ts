@@ -3,6 +3,7 @@ import type { MetricDefinition, Portfolio } from '../types'
 import {
   buildGroupedProducts,
   buildMetricDistributionRows,
+  computeGapClass,
   computeGapToTarget,
   evaluateMetricAgainstTier,
 } from './groupedPortfolioView'
@@ -219,5 +220,25 @@ describe('computeGapToTarget', () => {
     } satisfies MetricDefinition
 
     expect(computeGapToTarget(76.3, 'silver', metric)).toBe('Below target (+3.7% to silver)')
+  })
+})
+
+describe('computeGapClass', () => {
+  const metric = {
+    name: 'coverage_pct',
+    type: 'numeric',
+    medals: {
+      bronze: { min: 70 },
+      silver: { min: 80 },
+      gold: { min: 90 },
+    },
+  } satisfies MetricDefinition
+
+  it('returns below_target when a numeric result is below the target threshold', () => {
+    expect(computeGapClass(75, 'silver', metric)).toBe('below_target')
+  })
+
+  it('returns not_applicable when the metric is not part of the target criteria', () => {
+    expect(computeGapClass(75, 'silver', metric, 'na')).toBe('not_applicable')
   })
 })

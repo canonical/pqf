@@ -5,8 +5,10 @@ import LoadingSpinner from '../components/LoadingSpinner'
 import { usePortfolio } from '../hooks/usePortfolio'
 import {
   buildMetricDistributionRows,
+  computeGapClass,
   computeGapToTarget,
   RESULT_ORDER,
+  type GapClass,
   type MetricTierStatus,
   type MetricDistributionGroup,
   type MetricDistributionRow,
@@ -119,12 +121,19 @@ function groupByFilters(
   squadFilter: string,
   medalFilter: 'all' | Result,
   typeFilter: 'all' | ProductType,
+  metricDefinition: MetricDefinition,
+  gapFilter: 'all' | GapClass,
   failuresOnly: boolean,
 ) {
   const rowMatches = (row: MetricDistributionRow) => {
     if (squadFilter !== 'all' && row.product.squad !== squadFilter) return false
     if (medalFilter !== 'all' && metricStatus(row) !== medalFilter) return false
     if (typeFilter !== 'all' && row.product.product_type !== typeFilter) return false
+    const target = toGapTarget(row.product.target_result)
+    const targetStatus = targetTierStatus(row, target)
+    if (gapFilter !== 'all' && computeGapClass(row.value, target, metricDefinition, targetStatus) !== gapFilter) {
+      return false
+    }
     if (failuresOnly && !rowHasFailure(row)) return false
     return true
   }
@@ -223,6 +232,7 @@ export default function MetricDistribution() {
   const [squadFilter, setSquadFilter] = useState('all')
   const [medalFilter, setMedalFilter] = useState<'all' | Result>('all')
   const [typeFilter, setTypeFilter] = useState<'all' | ProductType>('all')
+  const [gapFilter, setGapFilter] = useState<'all' | GapClass>('all')
   const [showFailuresOnly, setShowFailuresOnly] = useState(false)
 
   const groups = useMemo(
@@ -242,11 +252,6 @@ export default function MetricDistribution() {
     }
     return Array.from(items).sort()
   }, [groups])
-
-  const filteredGroups = useMemo(
-    () => groupByFilters(groups, squadFilter, medalFilter, typeFilter, showFailuresOnly),
-    [groups, squadFilter, medalFilter, typeFilter, showFailuresOnly],
-  )
 
   if (isLoading) return <LoadingSpinner />
   if (isError) return <div className="p-notification--negative"><p>{error?.message}</p></div>
@@ -269,6 +274,10 @@ export default function MetricDistribution() {
 
   const metricMeta = meta.outputs[metricKey]
   const metricDefinition = buildMetricDefinition(metricKey, metricMeta.type, meta.medals)
+  const filteredGroups = useMemo(
+    () => groupByFilters(groups, squadFilter, medalFilter, typeFilter, metricDefinition, gapFilter, showFailuresOnly),
+    [groups, squadFilter, medalFilter, typeFilter, metricDefinition, gapFilter, showFailuresOnly],
+  )
   const thresholdPills = [
     ['Bronze', meta.medals.bronze?.criteria ?? []],
     ['Silver', meta.medals.silver?.criteria ?? []],
@@ -368,6 +377,16 @@ export default function MetricDistribution() {
               <option value="charm">Charm</option>
               <option value="snap">Snap</option>
             </select>
+            <label style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem', fontSize: '0.875rem', color: '#555' }}>
+              Gap class
+              <select value={gapFilter} onChange={e => setGapFilter(e.target.value as 'all' | GapClass)} className="p-form__control" style={{ width: 'auto', marginBottom: 0 }}>
+                <option value="all">All gaps</option>
+                <option value="at_target">At target</option>
+                <option value="exceeds_target">Exceeds target</option>
+                <option value="below_target">Below target</option>
+                <option value="not_applicable">Not applicable</option>
+              </select>
+            </label>
             <label style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem', fontSize: '0.875rem', color: '#555' }}>
               <input type="checkbox" checked={showFailuresOnly} onChange={e => setShowFailuresOnly(e.target.checked)} />
               Show failures only

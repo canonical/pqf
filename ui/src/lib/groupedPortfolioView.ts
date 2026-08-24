@@ -9,6 +9,7 @@ import type {
 
 export type MetricTierStatus = 'pass' | 'fail' | 'na'
 export type MetricValue = string | number | boolean | null | undefined
+export type GapClass = 'at_target' | 'exceeds_target' | 'below_target' | 'not_applicable'
 
 export interface GroupedRootRow {
   root: Product
@@ -144,45 +145,58 @@ function isAtTarget(result: number, target: number): boolean {
   return Math.abs(result - target) <= TARGET_EPSILON
 }
 
+export function computeGapClass(
+  result: MetricValue,
+  targetMedal: Medal,
+  metric: MetricDefinition,
+  targetTierStatus?: MetricTierStatus,
+): GapClass {
+  if (targetTierStatus === 'na') return 'not_applicable'
+
+  if (result === null || result === undefined) {
+    return metric.type === 'boolean' ? 'below_target' : 'not_applicable'
+  }
+
+  if (metric.type === 'boolean') {
+    return result === true ? 'at_target' : 'below_target'
+  }
+
+  const targetThreshold = metric.medals[targetMedal]?.min
+  if (targetThreshold === undefined) return 'not_applicable'
+
+  const numericResult = typeof result === 'number' ? result : Number(result)
+  if (Number.isNaN(numericResult)) return 'not_applicable'
+
+  if (isAtTarget(numericResult, targetThreshold)) return 'at_target'
+  if (numericResult > targetThreshold) return 'exceeds_target'
+  return 'below_target'
+}
+
 export function computeGapToTarget(
   result: MetricValue,
   targetMedal: Medal,
   metric: MetricDefinition,
   targetTierStatus?: MetricTierStatus,
 ): string | null {
-  if (targetTierStatus === 'na') {
-    return null
-  }
+  const gapClass = computeGapClass(result, targetMedal, metric, targetTierStatus)
+
+  if (gapClass === 'not_applicable') return null
+  if (gapClass === 'at_target') return 'At target'
+  if (gapClass === 'exceeds_target') return 'Exceeds target'
 
   if (result === null || result === undefined) {
-    if (metric.type === 'boolean') {
-      return 'Below target (requires true)'
-    }
-    return null
+    return 'Below target (requires true)'
   }
 
   if (metric.type === 'boolean') {
-    return result === true ? 'At target' : 'Below target (requires true)'
+    return 'Below target (requires true)'
   }
 
   const targetThreshold = metric.medals[targetMedal]?.min
-  if (targetThreshold === undefined) {
-    return null
-  }
+  if (targetThreshold === undefined) return null
 
   const numericResult = typeof result === 'number' ? result : Number(result)
-  if (Number.isNaN(numericResult)) {
-    return null
-  }
-
-  if (isAtTarget(numericResult, targetThreshold)) {
-    return 'At target'
-  }
-
-  if (numericResult > targetThreshold) {
-    return 'Exceeds target'
-  }
-
+  if (Number.isNaN(numericResult)) return null
   return `Below target (+${formatGap(targetThreshold - numericResult)}% to ${targetMedal})`
 }
 
