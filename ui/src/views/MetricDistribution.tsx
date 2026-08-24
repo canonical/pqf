@@ -7,6 +7,7 @@ import {
   buildMetricDistributionRows,
   computeGapClass,
   computeGapToTarget,
+  isMetricApplicableToTier,
   type GapClass,
   type MetricTierStatus,
   type MetricDistributionGroup,
@@ -220,6 +221,19 @@ function targetTierStatus(row: MetricDistributionRow, target: Medal): MetricTier
   if (target === 'silver') return row.silver
   if (target === 'bronze') return row.bronze
   return 'na'
+}
+
+function isMetricApplicableToTargetTier(
+  metricKey: string,
+  portfolio: any,
+  dimensionId: string | undefined,
+  targetMedal: Medal,
+): boolean {
+  if (!portfolio || !dimensionId) return true
+  const meta = portfolio.dimensions_meta[dimensionId]
+  const medalCriteria = meta?.medals?.[targetMedal]
+  if (!medalCriteria || !medalCriteria.criteria) return true
+  return isMetricApplicableToTier(metricKey, medalCriteria.criteria)
 }
 
 const TABLE_TH: React.CSSProperties = {
@@ -460,14 +474,20 @@ export default function MetricDistribution() {
                               </Link>
                             </div>
                           </td>
-                          <td style={{ padding: '0.65rem 0.75rem', verticalAlign: 'top' }}>{resultLabel(metricStatus(group.root))}</td>
                           <td style={{ padding: '0.65rem 0.75rem', verticalAlign: 'top' }}>
-                            {computeGapToTarget(
-                              group.root.value,
-                              toGapTarget(group.root.product.target_result),
-                              metricDefinition,
-                              targetTierStatus(group.root, toGapTarget(group.root.product.target_result)),
-                            ) ?? '—'}
+                            {isMetricApplicableToTargetTier(metricKey!, portfolio, dimensionId, toGapTarget(group.root.product.target_result))
+                              ? resultLabel(metricStatus(group.root))
+                              : 'N/A'}
+                          </td>
+                          <td style={{ padding: '0.65rem 0.75rem', verticalAlign: 'top' }}>
+                            {isMetricApplicableToTargetTier(metricKey!, portfolio, dimensionId, toGapTarget(group.root.product.target_result))
+                              ? (computeGapToTarget(
+                                  group.root.value,
+                                  toGapTarget(group.root.product.target_result),
+                                  metricDefinition,
+                                  targetTierStatus(group.root, toGapTarget(group.root.product.target_result)),
+                                ) ?? '—')
+                              : '—'}
                           </td>
                           <td style={{ padding: '0.65rem 0.75rem', verticalAlign: 'top' }}>{valueCell(group.root.value)}</td>
                         </tr>,
@@ -510,14 +530,20 @@ export default function MetricDistribution() {
                               </Link>
                             </div>
                           </td>
-                          <td style={{ padding: '0.65rem 0.75rem', verticalAlign: 'top' }}>{resultLabel(metricStatus(leaf))}</td>
                           <td style={{ padding: '0.65rem 0.75rem', verticalAlign: 'top' }}>
-                            {computeGapToTarget(
-                              leaf.value,
-                              toGapTarget(leaf.product.target_result),
-                              metricDefinition,
-                              targetTierStatus(leaf, toGapTarget(leaf.product.target_result)),
-                            ) ?? '—'}
+                            {isMetricApplicableToTargetTier(metricKey!, portfolio, dimensionId, toGapTarget(leaf.product.target_result))
+                              ? resultLabel(metricStatus(leaf))
+                              : 'N/A'}
+                          </td>
+                          <td style={{ padding: '0.65rem 0.75rem', verticalAlign: 'top' }}>
+                            {isMetricApplicableToTargetTier(metricKey!, portfolio, dimensionId, toGapTarget(leaf.product.target_result))
+                              ? (computeGapToTarget(
+                                  leaf.value,
+                                  toGapTarget(leaf.product.target_result),
+                                  metricDefinition,
+                                  targetTierStatus(leaf, toGapTarget(leaf.product.target_result)),
+                                ) ?? '—')
+                              : '—'}
                           </td>
                           <td style={{ padding: '0.65rem 0.75rem', verticalAlign: 'top' }}>{valueCell(leaf.value)}</td>
                         </tr>,

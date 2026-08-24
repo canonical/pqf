@@ -202,12 +202,18 @@ export function computeGapToTarget(
 
 export function isMetricApplicableToTier(
   metricKey: string,
-  criteria: Record<string, boolean>,
+  criteria: (string[] | Record<string, boolean> | undefined),
 ): boolean {
   /**
    * Check if a metric is introduced (has criteria) in a specific tier.
-   * A metric is applicable if at least one criterion key starts with "{metricKey} ".
+   * A metric is applicable if at least one criterion key/string starts with "{metricKey} ".
    */
+  if (!criteria) return false
+  
+  if (Array.isArray(criteria)) {
+    return criteria.some((criterion) => criterion.startsWith(`${metricKey} `))
+  }
+  
   return Object.keys(criteria).some((criterion) => criterion.startsWith(`${metricKey} `))
 }
 
