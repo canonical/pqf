@@ -21,7 +21,7 @@ products/*.yaml          config/dimensions.yaml
   computed/{product}.json      (leaf_metrics envelope; GHA-written, never hand-edited)
       │
       ▼
-  engine/assemble.py           (worst-in-scope aggregation → medals; portfolio assembly)
+  engine/assemble.py           (worst-in-scope aggregation → results; portfolio assembly)
       │
       ├─► public/portfolio.json    (single data source for UI)
       └─► public/badges/
@@ -40,10 +40,10 @@ products/*.yaml          config/dimensions.yaml
 | Directory | Owner | Responsibility |
 |-----------|-------|---------------|
 | `products/` | PE team (PR-reviewed) | One YAML per product — manually maintained source of truth |
-| `config/dimensions.yaml` | Contributors | Medal rubrics, scorer contracts, output metadata |
+| `config/dimensions.yaml` | Contributors | Result rubrics, scorer contracts, output metadata |
 | `scorers/{dim}/` | Contributors | `logic.py` (pure, testable) + `scorer.py` (IO wrapper) |
 | `computed/` | GHA only | `leaf_metrics` envelope keyed by leaf product ID — **never hand-edited** |
-| `engine/` | Contributors | Medal computation, drift tracking, portfolio assembly |
+| `engine/` | Contributors | Result computation, drift tracking, portfolio assembly |
 | `public/` | GHA only | `portfolio.json` + badge SVGs — **never hand-edited** |
 | `ui/` | Contributors | React SPA reading `portfolio.json` |
 | `.github/workflows/` | Contributors | Two GHA workflows (see below) |
@@ -58,7 +58,7 @@ Every node in the product graph has a `product_type`:
 
 | Value | Meaning |
 |-------|---------|
-| `root` | Top-level portfolio entry. Has no source repo of its own. Composed of one or more leaf products. Its medal is the worst across all scored leaves. |
+| `root` | Top-level portfolio entry. Has no source repo of its own. Composed of one or more leaf products. Its result is the worst across all scored leaves. |
 | `charm` | A Juju charm — the primary unit of quality scoring. Has a `source.repo` (and optionally `source.subpath` for mono-repos). |
 | `snap` | A snap package. Same scoring contract as `charm`. |
 
@@ -78,7 +78,7 @@ Inline leaves are the common case. Use standalone leaves only when the same char
 `context_refs` lists repos that provide context (e.g., a shared database charm owned by another squad) without being scored as part of this product:
 
 - They appear in the UI for context
-- They are **never** included in medal computation
+- They are **never** included in result computation
 - They do not require a `products/` YAML file
 
 ### Scoring deduplication by `(repo, subpath)`
@@ -128,9 +128,9 @@ This split means the core scoring logic can be tested exhaustively without netwo
 
 ### AI-assisted scoring
 
-Today, production medal-gating metrics are deterministic. We still keep an OpenRouter
+Today, production result-gating metrics are deterministic. We still keep an OpenRouter
 integration path available for future informational checks, but current contracts do not
-require LLM responses to compute medals.
+require LLM responses to compute results.
 
 **How it works:**
 
@@ -161,7 +161,7 @@ dimension detail Metrics table so users know the value is LLM-derived.
 ### `dimensions.yaml` as the single config knob
 
 Adding a new quality dimension requires exactly two changes:
-1. A new entry in `config/dimensions.yaml` — declares label, description, outputs (with metadata), and medal criteria.
+1. A new entry in `config/dimensions.yaml` — declares label, description, outputs (with metadata), and result criteria.
 2. A new `scorers/<name>/scorer.py` that produces exactly the outputs declared.
 
 No scorer hard-codes thresholds. Thresholds live only in `dimensions.yaml`. This means adjusting what "silver" means for a given metric is a one-line YAML change with no Python changes.
@@ -179,10 +179,10 @@ Allure reports are published to `https://canonical.github.io/{repo}/_latest/` vi
 
 ---
 
-## Medal Computation
+## Result Computation
 
-The `engine/` package computes medals in three steps:
+The `engine/` package computes results in three steps:
 
 1. **Rubric evaluation** (`engine/rubric.py`): Parses criterion strings like `"coverage_pct >= 80"` and evaluates them against the product's computed metrics.
-2. **Medal assignment** (`engine/medal_engine.py`): Finds the highest tier where all criteria pass.
-3. **Drift tracking** (`engine/drift_tracker.py`): Compares current medal to previous run; starts/ends remediation windows.
+2. **Result assignment** (`engine/medal_engine.py`): Finds the highest tier where all criteria pass.
+3. **Drift tracking** (`engine/drift_tracker.py`): Compares current result to previous run; starts/ends remediation windows.
