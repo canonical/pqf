@@ -327,10 +327,7 @@ export default function MetricDistribution() {
         <div className="p-card u-sv3">
           <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr) 320px', gap: '1.5rem', alignItems: 'start' }}>
             <div>
-              <h1 className="p-heading--3" style={{ marginBottom: '0.25rem' }}>Metric distribution</h1>
-              <p className="u-text--muted" style={{ margin: 0 }}>
-                {metricMeta.label} ({metricKey})
-              </p>
+              <h1 className="p-heading--3" style={{ marginBottom: '0.25rem' }}>{metricMeta.label} ({metricKey})</h1>
               {metricMeta.description && <p style={{ marginBottom: '0.75rem' }}>{metricMeta.description}</p>}
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
                 {metricMeta.ai_assisted ? (
@@ -359,7 +356,7 @@ export default function MetricDistribution() {
             </div>
 
             <div>
-              <h2 className="p-heading--4" style={{ marginBottom: '0.75rem' }}>Fleet distribution</h2>
+              <h2 className="p-heading--4" style={{ marginBottom: '0.75rem' }}>Portfolio distribution</h2>
               {distributionBar(distribution)}
             </div>
           </div>
@@ -435,7 +432,7 @@ export default function MetricDistribution() {
           </div>
 
           <p style={{ margin: '0 0 1rem', fontSize: '0.8125rem', color: '#666' }}>
-            Threshold result shows how this metric value rates against the dimension&apos;s rubric (gold/silver/bronze/sub-min/no data).
+            Threshold result shows how this metric value rates against this product&apos;s target medal tier (or N/A if the metric is not part of the target tier).
             {' '}
             Gap to target uses consistent labels (At target, Exceeds target, Below target, or —) against this product&apos;s target medal.
           </p>
