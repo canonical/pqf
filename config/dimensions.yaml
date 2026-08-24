@@ -41,7 +41,7 @@ dimensions:
       has_security: {type: boolean, label: "SECURITY present", description: "SECURITY.md exists in the primary repository."}
       documentation_workflows_passing: {type: boolean, label: "Documentation workflows passing", description: "Documentation-specific CI workflows (lint, link-check, build) are present and passing on default branch."}
       release_notes_process_implemented: {type: boolean, label: "Release notes process implemented", description: "Repository has canonical release-notes workflow + structure evidence (common.yaml, releases/, template/, and canonical release-notes automation)."}
-      diataxis_coverage_ai: {type: number, range: "0–4", label: "Diátaxis coverage (AI)", description: "AI-assisted Diátaxis assessment (informational).", informational: true}
+      diataxis_coverage_ai: {type: number, range: "0–4", label: "Diátaxis coverage (AI)", description: "AI-assisted Diátaxis assessment (informational).", informational: true, ai_assisted: true}
       uses_rtd_hosting: {type: boolean, label: "Uses RTD hosting", description: "Documentation points at a Read the Docs host.", informational: true}
     medals:
       bronze: ["readme_present == true", "contributing_present == true", "has_security == true"]

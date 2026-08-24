@@ -1,5 +1,6 @@
 import type {
   DimensionEntry,
+  MetricDefinition,
   Medal,
   Portfolio,
   Product,
@@ -7,7 +8,8 @@ import type {
 } from '../types'
 
 export type MetricTierStatus = 'pass' | 'fail' | 'na'
-export type MetricValue = string | number | boolean | undefined
+export type MetricValue = string | number | boolean | null | undefined
+export type GapClass = 'at_target' | 'exceeds_target' | 'below_target' | 'not_applicable'
 
 export interface GroupedRootRow {
   root: Product
@@ -132,6 +134,89 @@ export function evaluateMetricAgainstTier(
   }
 }
 
+function formatGap(gap: number): string {
+  const rounded = Math.round(gap * 10) / 10
+  return Number.isInteger(rounded) ? String(rounded) : rounded.toFixed(1)
+}
+
+const TARGET_EPSILON = 1e-9
+
+function isAtTarget(result: number, target: number): boolean {
+  return Math.abs(result - target) <= TARGET_EPSILON
+}
+
+export function computeGapClass(
+  result: MetricValue,
+  targetMedal: Medal,
+  metric: MetricDefinition,
+  targetTierStatus?: MetricTierStatus,
+): GapClass {
+  if (targetTierStatus === 'na') return 'not_applicable'
+
+  if (result === null || result === undefined) {
+    return metric.type === 'boolean' ? 'below_target' : 'not_applicable'
+  }
+
+  if (metric.type === 'boolean') {
+    return result === true ? 'at_target' : 'below_target'
+  }
+
+  const targetThreshold = metric.medals[targetMedal]?.min
+  if (targetThreshold === undefined) return 'not_applicable'
+
+  const numericResult = typeof result === 'number' ? result : Number(result)
+  if (Number.isNaN(numericResult)) return 'not_applicable'
+
+  if (isAtTarget(numericResult, targetThreshold)) return 'at_target'
+  if (numericResult > targetThreshold) return 'exceeds_target'
+  return 'below_target'
+}
+
+export function computeGapToTarget(
+  result: MetricValue,
+  targetMedal: Medal,
+  metric: MetricDefinition,
+  targetTierStatus?: MetricTierStatus,
+): string | null {
+  const gapClass = computeGapClass(result, targetMedal, metric, targetTierStatus)
+
+  if (gapClass === 'not_applicable') return null
+  if (gapClass === 'at_target') return 'At target'
+  if (gapClass === 'exceeds_target') return 'Exceeds target'
+
+  if (result === null || result === undefined) {
+    return 'Below target (requires true)'
+  }
+
+  if (metric.type === 'boolean') {
+    return 'Below target (requires true)'
+  }
+
+  const targetThreshold = metric.medals[targetMedal]?.min
+  if (targetThreshold === undefined) return null
+
+  const numericResult = typeof result === 'number' ? result : Number(result)
+  if (Number.isNaN(numericResult)) return null
+  return `Below target (+${formatGap(targetThreshold - numericResult)}% to ${targetMedal})`
+}
+
+export function isMetricApplicableToTier(
+  metricKey: string,
+  criteria: (string[] | Record<string, boolean> | undefined),
+): boolean {
+  /**
+   * Check if a metric is introduced (has criteria) in a specific tier.
+   * A metric is applicable if at least one criterion key/string starts with "{metricKey} ".
+   */
+  if (!criteria) return false
+  
+  if (Array.isArray(criteria)) {
+    return criteria.some((criterion) => criterion.startsWith(`${metricKey} `))
+  }
+  
+  return Object.keys(criteria).some((criterion) => criterion.startsWith(`${metricKey} `))
+}
+
 function getCompositionMetricValue(
   rootEntry: DimensionEntry,
   leafProductId: string,
@@ -158,6 +243,47 @@ function buildMetricRow(
   }
 }
 
+function metricResultFromValue(
+  criteria: { bronze: string[]; silver: string[]; gold: string[] },
+  metricKey: string,
+  value: MetricValue,
+): Result {
+  if (value === undefined || value === null) return 'insufficient_data'
+  const gold = evaluateMetricAgainstTier(criteria.gold, metricKey, value)
+  const silver = evaluateMetricAgainstTier(criteria.silver, metricKey, value)
+  const bronze = evaluateMetricAgainstTier(criteria.bronze, metricKey, value)
+  if (gold === 'pass') return 'gold'
+  if (silver === 'pass') return 'silver'
+  if (bronze === 'pass') return 'bronze'
+  if (gold === 'fail' || silver === 'fail' || bronze === 'fail') return 'below_minimum'
+  return 'insufficient_data'
+}
+
+const METRIC_RESULT_WORST_TO_BEST: Record<Result, number> = {
+  insufficient_data: 0,
+  below_minimum: 1,
+  bronze: 2,
+  silver: 3,
+  gold: 4,
+  not_applicable: 5,
+}
+
+function deriveRootMetricValue(
+  criteria: { bronze: string[]; silver: string[]; gold: string[] },
+  metricKey: string,
+  leafValues: MetricValue[],
+): MetricValue {
+  const candidates = leafValues.filter((value): value is Exclude<MetricValue, null | undefined> => value !== null && value !== undefined)
+  if (candidates.length === 0) return undefined
+
+  return candidates.reduce((worst, candidate) => (
+    METRIC_RESULT_WORST_TO_BEST[metricResultFromValue(criteria, metricKey, candidate)]
+      < METRIC_RESULT_WORST_TO_BEST[metricResultFromValue(criteria, metricKey, worst)]
+      ? candidate
+      : worst
+  ))
+}
+
 export function buildMetricDistributionRows(
   portfolio: Portfolio,
   dimensionId: string,
@@ -170,17 +296,15 @@ export function buildMetricDistributionRows(
     silver: meta?.medals?.silver?.criteria ?? [],
     gold: meta?.medals?.gold?.criteria ?? [],
   }
-
   return groupedRows.map((group) => {
-    const rootValue = group.root.entry.metrics[metricKey]
+    const leafValues = group.leaves.map((leaf) => (
+      getCompositionMetricValue(group.root.entry, leaf.product.id, metricKey)
+      ?? leaf.entry.metrics[metricKey]
+    ))
+    const rootValue = group.root.entry.metrics[metricKey] ?? deriveRootMetricValue(criteria, metricKey, leafValues)
     return {
       root: buildMetricRow(group.root.product, group.root.entry, criteria, metricKey, rootValue),
-      leaves: group.leaves.map((leaf) => {
-        const value =
-          getCompositionMetricValue(group.root.entry, leaf.product.id, metricKey)
-          ?? leaf.entry.metrics[metricKey]
-        return buildMetricRow(leaf.product, leaf.entry, criteria, metricKey, value)
-      }),
+      leaves: group.leaves.map((leaf, index) => buildMetricRow(leaf.product, leaf.entry, criteria, metricKey, leafValues[index])),
     }
   })
 }

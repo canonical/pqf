@@ -14,6 +14,16 @@ const RESULT_COLOURS: Record<Result, string> = {
   not_applicable: '#cccccc',
 }
 
+const TABLE_TH: React.CSSProperties = {
+  padding: '0.5rem 0.75rem',
+  textAlign: 'left',
+  fontSize: '0.75rem',
+  fontWeight: 600,
+  textTransform: 'uppercase',
+  color: '#666',
+  borderBottom: '2px solid #d9d9d9',
+}
+
 export default function DimensionsOverview() {
   const { data: portfolio, isLoading, isError, error } = usePortfolio()
 
@@ -34,75 +44,80 @@ export default function DimensionsOverview() {
           </p>
         </div>
 
-        <div className="p-card u-sv3">
-          <table style={{ tableLayout: 'fixed', width: '100%', borderCollapse: 'collapse' }}>
-            <colgroup>
-              <col style={{ width: '22%' }} />
-              <col style={{ width: '38%' }} />
-              <col style={{ width: '28%' }} />
-              <col style={{ width: '12%' }} />
-            </colgroup>
-            <thead>
-              <tr style={{ borderBottom: '1px solid #d9d9d9' }}>
-                <th style={{ padding: '0.5rem 0.75rem', textAlign: 'left', fontSize: '0.75rem', fontWeight: 600, textTransform: 'uppercase', color: '#666' }}>Dimension</th>
-                <th style={{ padding: '0.5rem 0.75rem', textAlign: 'left', fontSize: '0.75rem', fontWeight: 600, textTransform: 'uppercase', color: '#666' }}>Description</th>
-                <th style={{ padding: '0.5rem 0.75rem', textAlign: 'left', fontSize: '0.75rem', fontWeight: 600, textTransform: 'uppercase', color: '#666' }}>Products</th>
-                <th style={{ padding: '0.5rem 0.75rem', textAlign: 'left', fontSize: '0.75rem', fontWeight: 600, textTransform: 'uppercase', color: '#666' }}>Metrics</th>
-              </tr>
-            </thead>
-            <tbody>
-              {dimensions.map(([id, meta], idx) => {
-               const medalCounts = RESULT_ORDER_ARRAY.reduce((acc, m) => {
+        <div className="p-card u-sv3" style={{ padding: 0, overflow: 'hidden' }}>
+          <div style={{ overflowX: 'auto' }}>
+            <table className="p-table" style={{ tableLayout: 'fixed', width: '100%', borderCollapse: 'collapse' }}>
+              <colgroup>
+               <col style={{ width: '22%' }} />
+               <col style={{ width: '38%' }} />
+               <col style={{ width: '28%' }} />
+               <col style={{ width: '12%' }} />
+              </colgroup>
+              <thead>
+               <tr style={{ background: '#f5f5f5' }}>
+                 <th style={TABLE_TH}>Dimension</th>
+                 <th style={TABLE_TH}>Description</th>
+                 <th style={TABLE_TH}>Products</th>
+                 <th style={TABLE_TH}>Metrics</th>
+               </tr>
+              </thead>
+              <tbody>
+               {dimensions.map(([id, meta], idx) => {
+                 const medalCounts = RESULT_ORDER_ARRAY.reduce((acc, m) => {
                    acc[m] = portfolio.products.filter(p => p.dimensions[id]?.result === m).length
                    return acc
                  }, {} as Record<Result, number>)
-                const totalProducts = portfolio.products.filter(p => p.dimensions[id]).length
-                const metricCount = meta.outputs ? Object.keys(meta.outputs).length : 0
+                 const totalProducts = portfolio.products.filter(p => p.dimensions[id]).length
+                 const metricCount = meta.outputs ? Object.keys(meta.outputs).length : 0
 
-                return (
-                  <tr key={id} style={{ borderBottom: '1px solid #e5e5e5', background: idx % 2 === 0 ? '#fafafa' : '#fff' }}>
-                    <td style={{ padding: '0.75rem', verticalAlign: 'top' }}>
-                      <Link to={`/dimensions/${id}`} style={{ fontWeight: 600, display: 'block' }}>
-                        {meta.label ?? id.replace(/_/g, ' ')}
-                      </Link>
-                      <code style={{ fontSize: '0.75rem', color: '#888' }}>{id}</code>
-                    </td>
-                    <td style={{ padding: '0.75rem', verticalAlign: 'top', fontSize: '0.875rem', color: '#333' }}>
-                      {meta.description ?? '—'}
-                    </td>
-                    <td style={{ padding: '0.75rem', verticalAlign: 'top' }}>
-                      {totalProducts > 0 ? (
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
-                          <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
-                            {RESULT_ORDER_ARRAY.filter(m => medalCounts[m] > 0).map(m => (
-                              <span key={m} style={{ display: 'inline-flex', alignItems: 'center', gap: '0.3rem' }}>
-                                <MedalBadge medal={m} size="small" />
-                                <span style={{ fontSize: '0.8125rem', color: RESULT_COLOURS[m], fontWeight: 600 }}>
-                                  {medalCounts[m]}
-                                </span>
-                              </span>
-                            ))}
-                          </div>
-                          <span style={{ fontSize: '0.75rem', color: '#888' }}>{totalProducts} product{totalProducts !== 1 ? 's' : ''}</span>
-                        </div>
-                      ) : (
-                        <span style={{ fontSize: '0.875rem', color: '#aaa' }}>—</span>
-                      )}
-                    </td>
-                    <td style={{ padding: '0.75rem', verticalAlign: 'top' }}>
-                      {metricCount > 0 ? (
-                        <span style={{ fontSize: '0.875rem', color: '#333' }}>
-                          {metricCount} metric{metricCount !== 1 ? 's' : ''}
-                        </span>
-                      ) : (
-                        <span style={{ fontSize: '0.875rem', color: '#aaa' }}>—</span>
-                      )}
-                    </td>
-                  </tr>
-                )
-              })}
-            </tbody>
-          </table>
+                 return (
+                   <tr key={id} style={{ borderBottom: '1px solid #e5e5e5', background: idx % 2 === 0 ? '#fafafa' : '#fff' }}>
+                     <td style={{ padding: '0.65rem 0.75rem', verticalAlign: 'top', minWidth: 0 }}>
+                       <Link
+                         to={`/dimensions/${id}`}
+                         style={{ display: 'block', fontWeight: 600, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}
+                       >
+                         {meta.label ?? id.replace(/_/g, ' ')}
+                       </Link>
+                       <code style={{ fontSize: '0.75rem', color: '#888' }}>{id}</code>
+                     </td>
+                     <td style={{ padding: '0.65rem 0.75rem', verticalAlign: 'top', fontSize: '0.875rem', color: '#333' }}>
+                       {meta.description ?? '—'}
+                     </td>
+                     <td style={{ padding: '0.65rem 0.75rem', verticalAlign: 'top' }}>
+                       {totalProducts > 0 ? (
+                         <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
+                           <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+                             {RESULT_ORDER_ARRAY.filter(m => medalCounts[m] > 0).map(m => (
+                               <span key={m} style={{ display: 'inline-flex', alignItems: 'center', gap: '0.3rem' }}>
+                                 <MedalBadge medal={m} size="small" />
+                                 <span style={{ fontSize: '0.8125rem', color: RESULT_COLOURS[m], fontWeight: 600 }}>
+                                   {medalCounts[m]}
+                                 </span>
+                               </span>
+                             ))}
+                           </div>
+                           <span style={{ fontSize: '0.75rem', color: '#888' }}>{totalProducts} product{totalProducts !== 1 ? 's' : ''}</span>
+                         </div>
+                       ) : (
+                         <span style={{ fontSize: '0.875rem', color: '#aaa' }}>—</span>
+                       )}
+                     </td>
+                     <td style={{ padding: '0.65rem 0.75rem', verticalAlign: 'top' }}>
+                       {metricCount > 0 ? (
+                         <span style={{ fontSize: '0.875rem', color: '#333' }}>
+                           {metricCount} metric{metricCount !== 1 ? 's' : ''}
+                         </span>
+                       ) : (
+                         <span style={{ fontSize: '0.875rem', color: '#aaa' }}>—</span>
+                       )}
+                     </td>
+                   </tr>
+                 )
+               })}
+              </tbody>
+            </table>
+          </div>
         </div>
 
         <p className="u-sv2">

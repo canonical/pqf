@@ -1,8 +1,10 @@
 import { describe, expect, it } from 'vitest'
-import type { Portfolio } from '../types'
+import type { MetricDefinition, Portfolio } from '../types'
 import {
   buildGroupedProducts,
   buildMetricDistributionRows,
+  computeGapClass,
+  computeGapToTarget,
   evaluateMetricAgainstTier,
 } from './groupedPortfolioView'
 
@@ -95,5 +97,148 @@ describe('groupedPortfolioView', () => {
     expect(groups).toHaveLength(1)
     expect(groups[0].root.product.id).toBe('discourse')
     expect(groups[0].leaves[0].value).toBe(83)
+  })
+})
+
+describe('computeGapToTarget', () => {
+  it('returns "At target" when numeric result equals the target threshold', () => {
+    const metric = {
+      name: 'coverage_pct',
+      type: 'numeric',
+      medals: {
+        bronze: { min: 70 },
+        silver: { min: 80 },
+        gold: { min: 90 },
+      },
+    } satisfies MetricDefinition
+
+    expect(computeGapToTarget(80, 'silver', metric)).toBe('At target')
+  })
+
+  it('returns "At target" when numeric result is equal within floating point epsilon', () => {
+    const metric = {
+      name: 'coverage_pct',
+      type: 'numeric',
+      medals: {
+        bronze: { min: 70 },
+        silver: { min: 80 },
+        gold: { min: 90 },
+      },
+    } satisfies MetricDefinition
+
+    expect(computeGapToTarget(0.1 + 0.2, 'bronze', { ...metric, medals: { bronze: { min: 0.3 } } })).toBe(
+      'At target',
+    )
+  })
+
+  it('returns "Below target (+5% to silver)" when numeric result is below the target threshold', () => {
+    const metric = {
+      name: 'coverage_pct',
+      type: 'numeric',
+      medals: {
+        bronze: { min: 70 },
+        silver: { min: 80 },
+        gold: { min: 90 },
+      },
+    } satisfies MetricDefinition
+
+    expect(computeGapToTarget(75, 'silver', metric)).toBe('Below target (+5% to silver)')
+  })
+
+  it('returns "Exceeds target" when numeric result exceeds the target threshold', () => {
+    const metric = {
+      name: 'coverage_pct',
+      type: 'numeric',
+      medals: {
+        bronze: { min: 70 },
+        silver: { min: 80 },
+        gold: { min: 90 },
+      },
+    } satisfies MetricDefinition
+
+    expect(computeGapToTarget(95, 'gold', metric)).toBe('Exceeds target')
+  })
+
+  it('returns "At target" for a boolean metric with value true', () => {
+    const metric = {
+      name: 'has_security_md',
+      type: 'boolean',
+      signal_name: 'SECURITY.md',
+    } satisfies MetricDefinition
+
+    expect(computeGapToTarget(true, 'bronze', metric)).toBe('At target')
+  })
+
+  it('returns "Below target (requires true)" for a boolean metric with value false', () => {
+    const metric = {
+      name: 'has_security_md',
+      type: 'boolean',
+      signal_name: 'SECURITY.md',
+    } satisfies MetricDefinition
+
+    expect(computeGapToTarget(false, 'bronze', metric)).toBe('Below target (requires true)')
+  })
+
+  it('returns "Below target (requires true)" when boolean metric has no data', () => {
+    const metric = {
+      name: 'has_security_md',
+      type: 'boolean',
+      signal_name: 'SECURITY.md',
+    } satisfies MetricDefinition
+
+    expect(computeGapToTarget(null, 'bronze', metric)).toBe('Below target (requires true)')
+  })
+
+  it('returns null when target medal does not include this boolean metric', () => {
+    const metric = {
+      name: 'has_security_md',
+      type: 'boolean',
+    } satisfies MetricDefinition
+
+    expect(computeGapToTarget(true, 'bronze', metric, 'na')).toBeNull()
+  })
+
+  it('returns null when a numeric metric has no target threshold', () => {
+    const metric = {
+      name: 'coverage_pct',
+      type: 'numeric',
+      medals: {},
+    } satisfies MetricDefinition
+
+    expect(computeGapToTarget(50, 'silver', metric)).toBeNull()
+  })
+
+  it('rounds numeric gaps to one decimal place for below-target messages', () => {
+    const metric = {
+      name: 'coverage_pct',
+      type: 'numeric',
+      medals: {
+        bronze: { min: 70 },
+        silver: { min: 80 },
+        gold: { min: 90 },
+      },
+    } satisfies MetricDefinition
+
+    expect(computeGapToTarget(76.3, 'silver', metric)).toBe('Below target (+3.7% to silver)')
+  })
+})
+
+describe('computeGapClass', () => {
+  const metric = {
+    name: 'coverage_pct',
+    type: 'numeric',
+    medals: {
+      bronze: { min: 70 },
+      silver: { min: 80 },
+      gold: { min: 90 },
+    },
+  } satisfies MetricDefinition
+
+  it('returns below_target when a numeric result is below the target threshold', () => {
+    expect(computeGapClass(75, 'silver', metric)).toBe('below_target')
+  })
+
+  it('returns not_applicable when the metric is not part of the target criteria', () => {
+    expect(computeGapClass(75, 'silver', metric, 'na')).toBe('not_applicable')
   })
 })
