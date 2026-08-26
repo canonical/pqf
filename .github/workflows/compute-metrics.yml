@@ -151,15 +151,15 @@ jobs:
             --products-dir products/ \
             > /tmp/scorers/${{ matrix.product }}/security_ssdlc.json
 
-      - name: Run support_engagement scorer
+      - name: Run engagement scorer
         if: github.event_name != 'pull_request' || steps.needs_rescore.outputs.changed == 'true'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          python scorers/support_engagement/scorer.py \
+          python scorers/engagement/scorer.py \
             --product-yaml products/${{ matrix.product }}.yaml \
             --products-dir products/ \
-            > /tmp/scorers/${{ matrix.product }}/support_engagement.json
+            > /tmp/scorers/${{ matrix.product }}/engagement.json
 
       - name: Merge scorer outputs into computed/${{ matrix.product }}.json
         if: github.event_name != 'pull_request' || steps.needs_rescore.outputs.changed == 'true'

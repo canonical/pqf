@@ -88,10 +88,10 @@ dimensions:
       silver: ["branch_protection_required_checks == true", "renovate_enabled == true", "signed_commits_required == true"]
       gold: ["branch_protection_required_checks == true", "renovate_enabled == true", "signed_commits_required == true", "sast_workflow_present == true", "cve_tracking_process_present == true"]
 
-  support_engagement:
-    label: "Support engagement"
-    description: "Community and support responsiveness metrics (triage, PR review, and ownership signals)."
-    scorer: "scorers/support_engagement/scorer.py"
+  engagement:
+    label: "Engagement"
+    description: "Community and user engagement metrics: maintainer responsiveness (triage, PR review, ownership signals) and repository traffic."
+    scorer: "scorers/engagement/scorer.py"
     applies_to:
       product_types: ["root", "charm", "snap"]
     aggregation: "worst_in_scope"
@@ -105,6 +105,7 @@ dimensions:
       response_coverage_rate: {type: number, range: "0–100", label: "Response coverage", description: "Percentage of recent issues and PRs that received a first response within the measurement window."}
       ownership_signal: {type: boolean, label: "Ownership signal", description: "Repository exposes clear ownership through a squad topic."}
       has_jira_sync: {type: boolean, label: "Jira sync configured", description: "Repository has GitHub-to-Jira sync configuration."}
+      repo_views_14d: {type: number, range: "≥ 0", label: "Repository views (14d)", description: "Total page views of the GitHub repository in the last 14 days (informational).", informational: true}
     medals:
       bronze: ["ownership_signal == true"]
       silver: ["avg_triage_days <= 3", "avg_pr_review_days <= 5", "response_coverage_rate >= 80", "ownership_signal == true"]
