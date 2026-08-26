@@ -138,8 +138,8 @@ score: _require-github-token _require-openrouter-key
 		> $(SCORE_DIR)/$(PRODUCT)/substrate_compat.json
 	$(PYTHON) scorers/security_ssdlc/scorer.py --product-yaml products/$(PRODUCT).yaml --products-dir products/ \
 		> $(SCORE_DIR)/$(PRODUCT)/security_ssdlc.json
-	$(PYTHON) scorers/support_engagement/scorer.py --product-yaml products/$(PRODUCT).yaml --products-dir products/ \
-		> $(SCORE_DIR)/$(PRODUCT)/support_engagement.json
+	$(PYTHON) scorers/engagement/scorer.py --product-yaml products/$(PRODUCT).yaml --products-dir products/ \
+		> $(SCORE_DIR)/$(PRODUCT)/engagement.json
 	@echo ""
 	@echo "Results in $(SCORE_DIR)/$(PRODUCT)/"
 	@for f in $(SCORE_DIR)/$(PRODUCT)/*.json; do echo "  $$f:"; cat $$f | $(PYTHON) -m json.tool --indent 2; echo ""; done
@@ -155,8 +155,8 @@ score-no-llm: _require-github-token
 		> $(SCORE_DIR)/$(PRODUCT)/substrate_compat.json
 	$(PYTHON) scorers/security_ssdlc/scorer.py --product-yaml products/$(PRODUCT).yaml --products-dir products/ \
 		> $(SCORE_DIR)/$(PRODUCT)/security_ssdlc.json
-	$(PYTHON) scorers/support_engagement/scorer.py --product-yaml products/$(PRODUCT).yaml --products-dir products/ \
-		> $(SCORE_DIR)/$(PRODUCT)/support_engagement.json
+	$(PYTHON) scorers/engagement/scorer.py --product-yaml products/$(PRODUCT).yaml --products-dir products/ \
+		> $(SCORE_DIR)/$(PRODUCT)/engagement.json
 	@echo ""
 	@echo "Results in $(SCORE_DIR)/$(PRODUCT)/"
 	@for f in $(SCORE_DIR)/$(PRODUCT)/*.json; do echo "  $$f:"; cat $$f | $(PYTHON) -m json.tool --indent 2; echo ""; done

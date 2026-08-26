@@ -121,7 +121,7 @@ Current examples:
 - `documentation` requires README/CONTRIBUTING/SECURITY presence (informational metrics like diataxis_coverage_ai and uses_rtd_hosting stay informational)
 - `substrate_compat` requires a declared Juju support signal plus substrate CI evidence
 - `security_ssdlc` requires branch protection and renovate (dependency update measurability)
-- `support_engagement` requires the sampled response metrics that can otherwise be `null`
+- `engagement` requires the sampled response metrics that can otherwise be `null` (informational metrics like repo_views_14d stay informational)
 
 This means a rubric-only change still needs a full recompute when scorer outputs or nullability
 semantics change, because regenerated `computed/*.json` data may now shift products from
