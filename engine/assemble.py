@@ -13,6 +13,24 @@ from engine.medal_engine import compute_leaf_product, compute_root_product
 from engine.models import ProductType
 
 
+def _migrate_legacy_dimension_keys(drift_history: dict) -> None:
+    """
+    Migrate legacy dimension keys in drift history to new names.
+    Mutates drift_history in place.
+
+    Current migrations:
+    - support_engagement → engagement
+    """
+    legacy_key_mapping = {
+        "support_engagement": "engagement",
+    }
+
+    for product_id, product_history in drift_history.items():
+        for old_key, new_key in legacy_key_mapping.items():
+            if old_key in product_history:
+                product_history[new_key] = product_history.pop(old_key)
+
+
 def _build_dimensions_meta(dimensions_config: dict) -> dict:
     meta = {}
     for dim_name, dim_config in dimensions_config.get("dimensions", {}).items():
@@ -198,6 +216,9 @@ def main() -> int:
     dimensions_config = yaml.safe_load(Path(args.dimensions).read_text())
     drift_history_path = Path(args.drift_history)
     drift_history = json.loads(drift_history_path.read_text())
+
+    # Migrate legacy dimension keys in drift history
+    _migrate_legacy_dimension_keys(drift_history)
 
     portfolio = assemble_portfolio(
         products_dir=Path(args.products_dir),
