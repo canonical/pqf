@@ -203,4 +203,5 @@ Makefile            # Single source of truth for all dev commands
 
 - [docs/architecture.md](docs/architecture.md) — full data flow and design decisions
 - [docs/adding-a-product.md](docs/adding-a-product.md) — product onboarding
-- [docs/adding-a-dimension.md](docs/adding-a-dimension.md) — scorer development guide
+- [docs/adding-a-metric.md](docs/adding-a-metric.md) — adding a metric to an existing dimension (worked example)
+- [docs/adding-a-dimension.md](docs/adding-a-dimension.md) — creating a brand-new quality dimension

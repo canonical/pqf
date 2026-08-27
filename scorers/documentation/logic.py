@@ -92,6 +92,11 @@ def _contributing_present(unit: EvaluationUnit, github_token: str | None) -> boo
     return bool(_file_text(unit, "CONTRIBUTING.md", github_token).strip())
 
 
+def _has_changelog(unit: EvaluationUnit, github_token: str | None) -> bool:
+    """Return True if CHANGELOG.md exists and is non-empty in the repository root."""
+    return _file_exists(unit, "CHANGELOG.md", github_token)
+
+
 def _documentation_workflows_passing(check_runs: list[dict[str, Any]]) -> bool:
     # Require core documentation checks (lint, links, build) to be present
     # and passing. Use explicit needles to avoid accidental matches with unrelated jobs.
@@ -284,4 +289,5 @@ def compute_metrics(
         ),
         "uses_rtd_hosting": _uses_rtd_hosting(unit, github_token),
         "release_notes_process_implemented": _release_notes_process_implemented(unit, github_token),
+        "has_changelog": _has_changelog(unit, github_token),
     }

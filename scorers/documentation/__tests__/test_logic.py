@@ -91,6 +91,7 @@ def test_compute_metrics_defaults_signals_when_repo_signals_missing(mocker):
         "diataxis_coverage_ai": 0,
         "uses_rtd_hosting": False,
         "release_notes_process_implemented": False,
+        "has_changelog": False,
     }
     # Ensure removed keys are not in result
     assert "tutorial_tested" not in result
@@ -391,3 +392,28 @@ def test_diataxis_ai_metric_clamps_to_0_4_range(mocker):
 
     result = compute_metrics(UNIT, "gh-token", "or-key", model="openrouter/test-model")
     assert result["diataxis_coverage_ai"] == 4
+
+
+def test_has_changelog_true_when_file_exists(mocker):
+    mocker.patch(
+        "scorers.documentation.logic.repo_file_exists",
+        side_effect=lambda repo, path, token: path == "CHANGELOG.md",
+    )
+    mocker.patch("scorers.documentation.logic.repo_releases", return_value=[])
+    mocker.patch("scorers.documentation.logic.repo_file_text", return_value="")
+    mocker.patch("scorers.documentation.logic.default_branch_check_runs", return_value=[])
+    mocker.patch("scorers.documentation.logic.workflow_files", return_value=[])
+
+    result = compute_metrics(UNIT, "gh-token", "")
+    assert result["has_changelog"] is True
+
+
+def test_has_changelog_false_when_file_missing(mocker):
+    mocker.patch("scorers.documentation.logic.repo_file_exists", return_value=False)
+    mocker.patch("scorers.documentation.logic.repo_releases", return_value=[])
+    mocker.patch("scorers.documentation.logic.repo_file_text", return_value="")
+    mocker.patch("scorers.documentation.logic.default_branch_check_runs", return_value=[])
+    mocker.patch("scorers.documentation.logic.workflow_files", return_value=[])
+
+    result = compute_metrics(UNIT, "gh-token", "")
+    assert result["has_changelog"] is False
