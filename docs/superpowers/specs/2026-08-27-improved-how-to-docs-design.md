@@ -13,7 +13,7 @@ The existing `docs/adding-a-dimension.md` guide was incomplete as a practical tu
 - Showed the wrong `scorer.py` pattern (`resolve_leaf_units` instead of `resolve_leaf_units_for`, missing `--products-dir` arg)
 - Used `@responses.activate` mocking pattern instead of the `pytest-mock` pattern actually used in the project
 - Did not explain *why* the pure/IO split exists or why helpers like `_file_exists` are used instead of `repo_file_exists` directly
-- Had no worked example — someone could read the guide and still not know how to add a metric in practice
+- Had no concrete example — someone could read the guide and still not know how to add a metric in practice
 - No visual feedback showing what the result looks like in the dashboard
 
 Additionally, the guide conflated two distinct tasks: adding a metric to an existing dimension (common) vs. creating a whole new dimension (rare).
@@ -22,7 +22,7 @@ Additionally, the guide conflated two distinct tasks: adding a metric to an exis
 
 ## Approach chosen: Split into two guides
 
-- **`docs/adding-a-metric.md`** — Primary tutorial with a full worked example (`has_changelog` metric added to the `documentation` dimension), real code patterns, annotated diffs, and a dashboard screenshot
+- **`docs/adding-a-metric.md`** — Primary tutorial with a full example (`has_changelog` metric added to the `documentation` dimension), real code patterns, annotated diffs, and a dashboard screenshot
 - **`docs/adding-a-dimension.md`** — Rewritten secondary guide for the rarer case of creating a brand-new dimension; cross-references the metric guide for scorer implementation patterns
 
 This split matches how contributors actually work: adding a metric is far more common than spinning up a new dimension.
@@ -35,7 +35,7 @@ This split matches how contributors actually work: adding a metric is far more c
 
 - Concept map showing how a metric flows from `logic.py` → `dimensions.yaml` → `portfolio.json` → dashboard
 - Prerequisites section
-- 8-step worked example adding `has_changelog` to the `documentation` dimension
+- 8-step example adding `has_changelog` to the `documentation` dimension
   - Steps use real code patterns from `scorers/documentation/logic.py`
   - Each step explains the *why* behind design decisions
   - Step 5 shows the correct `pytest-mock` test pattern including why to patch at the import site
@@ -54,7 +54,7 @@ This split matches how contributors actually work: adding a metric is far more c
 
 ### Supporting changes
 
-- `scorers/documentation/logic.py` — Added `_has_changelog` helper and returned `has_changelog` from `compute_metrics` (worked example implementation)
+- `scorers/documentation/logic.py` — Added `_has_changelog` helper and returned `has_changelog` from `compute_metrics` (example implementation)
 - `scorers/documentation/__tests__/test_logic.py` — Updated default-false test; added `test_has_changelog_true_when_file_exists` and `test_has_changelog_false_when_file_missing`
 - `config/dimensions.yaml` — Added `has_changelog` to documentation dimension outputs (informational)
 - `docs/screenshots/dimension-detail-documentation-after.png` — Playwright screenshot showing the new metric in the dashboard

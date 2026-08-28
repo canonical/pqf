@@ -4,7 +4,7 @@ This guide walks you through adding a new metric to an existing PQF quality dime
 common contributor task. By the end you will have a working metric that fetches real data from
 the GitHub API, gets tested, appears in the dashboard, and can optionally gate medal awards.
 
-We use a concrete worked example throughout: adding a **`has_changelog`** metric to the
+We use a concrete example throughout: adding a **`has_changelog`** metric to the
 `documentation` dimension that checks whether a repository has a `CHANGELOG.md` file.
 
 ---

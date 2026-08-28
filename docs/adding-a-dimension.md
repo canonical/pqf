@@ -5,7 +5,7 @@ example, adding an entirely new axis like "Observability" or "Accessibility" to 
 
 > **Adding a metric to an existing dimension?** That is a more common and simpler task. See
 > [adding-a-metric.md](adding-a-metric.md) instead — it covers the common case with a full
-> worked example.
+> example.
 
 ---
 
