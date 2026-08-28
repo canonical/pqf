@@ -216,8 +216,9 @@ def test_llm_scorer(mocker):
 ## Step 5: Write `scorer.py` (IO wrapper)
 
 `scorer.py` is thin: it reads env vars, resolves leaf units, calls `compute_metrics`, and prints
-JSON. Copy the pattern used by existing scorers exactly — the argument signature and
-`resolve_leaf_units_for` call are load-bearing:
+JSON. Copy the pattern used by existing scorers exactly. In particular, keep the CLI arguments
+and the `resolve_leaf_units_for(...)` call unchanged unless you have a specific reason to alter
+them: PQF relies on that shape to resolve `ref:` entries and the correct set of leaf products.
 
 ```python
 #!/usr/bin/env python3
