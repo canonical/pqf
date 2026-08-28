@@ -2,8 +2,8 @@
 
 ## What this repo is
 
-PQF (Product Quality Framework) tracks quality compliance of Canonical Platform Engineering's
-product portfolio via medal grades (bronze / silver / gold). It has two main parts:
+PQF (Product Quality Framework) tracks quality compliance across Canonical Platform Engineering's
+tracked products via medal grades (bronze / silver / gold). It has two main parts:
 
 1. **Python engine + scorers** (`engine/`, `scorers/`) — pure-Python medal computation pipeline
 2. **React dashboard** (`ui/`) — Canonical-branded SPA that reads `public/portfolio.json`
@@ -66,7 +66,7 @@ When changing scorers, rubrics, or scoring semantics, preserve these rules:
 - **Keep gating metrics high-confidence.** Only use `required_metrics_for_scoring` and medal gates for signals we can measure reliably across the fleet.
 - **Prefer tightening standards over broadening heuristics.** If a detector keeps needing special cases, treat that as a design smell and revisit the standard before expanding the logic.
 
-This rule set exists to keep PQF useful for portfolio reasoning: as simple as possible, as high-confidence as possible, and aligned with the standards we want teams to follow.
+This rule set exists to keep PQF useful for cross-product reasoning: as simple as possible, as high-confidence as possible, and aligned with the standards we want teams to follow.
 
 See also [docs/local-scoring.md](docs/local-scoring.md) for local scoring semantics and [docs/metric-calibration-roadmap.md](docs/metric-calibration-roadmap.md) for the next calibration phases.
 
@@ -108,7 +108,7 @@ Always use `make` targets. CI uses the same targets.
 | `documentation` | `has_readme`, `has_contributing`, `has_security`, `diataxis_coverage` (AI), `style_linter_passing` (AI), `links_passing` | Bronze: readme+contributing+security+links. Silver: diataxis ≥ 4. Gold: style linter + diataxis == 4. |
 | `substrate_compat` | `supports_juju_3`, `supports_juju_4`, `supports_ck8s` | Silver: juju3. Gold: juju4 + ck8s. |
 | `security_ssdlc` | `dependabot_enabled`, `codeql_enabled`, `branch_protection_required_checks` | Silver: dependabot. Gold: dependabot + codeql. |
-| `support_engagement` | `avg_triage_days`, `avg_pr_review_days`, `has_squad_topic`, `has_jira_sync` | Silver: triage ≤ 5d, PR ≤ 7d. Gold: triage ≤ 2d, PR ≤ 3d. |
+| `engagement` | `avg_triage_days`, `avg_pr_review_days`, `response_coverage_rate`, `ownership_signal`, `has_jira_sync`, `repo_views_14d` (informational) | Silver: triage ≤ 3d, PR ≤ 5d, coverage ≥ 80%, ownership. Gold: triage ≤ 2d, PR ≤ 3d, coverage ≥ 90%, ownership. |
 
 ---
 
@@ -203,4 +203,5 @@ Makefile            # Single source of truth for all dev commands
 
 - [docs/architecture.md](docs/architecture.md) — full data flow and design decisions
 - [docs/adding-a-product.md](docs/adding-a-product.md) — product onboarding
-- [docs/adding-a-dimension.md](docs/adding-a-dimension.md) — scorer development guide
+- [docs/adding-a-metric.md](docs/adding-a-metric.md) — adding a metric to an existing dimension (worked example)
+- [docs/adding-a-dimension.md](docs/adding-a-dimension.md) — creating a brand-new quality dimension

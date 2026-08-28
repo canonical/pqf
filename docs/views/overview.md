@@ -1,8 +1,8 @@
-# Portfolio Overview
+# Products Overview
 
-The Portfolio Overview is the main landing page of PQF. It shows the quality state of the entire Canonical Platform Engineering product portfolio at a glance.
+The Products Overview is the main landing page of PQF. It shows the quality state of Canonical Platform Engineering's tracked products at a glance.
 
-![Portfolio Overview](../screenshots/overview.png)
+![Products Overview](../screenshots/overview.png)
 
 ---
 
@@ -42,8 +42,8 @@ Drift tracks whether a product is moving toward or away from its target result o
 
 ---
 
-## Portfolio Heatmap
+## Product Heatmap
 
-The **Heatmap** shows each product's result across every quality dimension, making it easy to spot which dimensions need the most attention across the portfolio.
+The **Heatmap** shows each product's result across every quality dimension, making it easy to spot which dimensions need the most attention across tracked products.
 
 Rows are products; columns are quality dimensions. Each cell shows the result for that product × dimension combination using the same colour coding as the Products table.

@@ -121,7 +121,7 @@ Current examples:
 - `documentation` requires README/CONTRIBUTING/SECURITY presence (informational metrics like diataxis_coverage_ai and uses_rtd_hosting stay informational)
 - `substrate_compat` requires a declared Juju support signal plus substrate CI evidence
 - `security_ssdlc` requires branch protection and renovate (dependency update measurability)
-- `support_engagement` requires the sampled response metrics that can otherwise be `null`
+- `engagement` requires the sampled response metrics that can otherwise be `null` (informational metrics like repo_views_14d stay informational)
 
 This means a rubric-only change still needs a full recompute when scorer outputs or nullability
 semantics change, because regenerated `computed/*.json` data may now shift products from
@@ -135,7 +135,7 @@ When you change a scorer or rubric, keep these interpretation rules intact:
   - Example: `latest_build_passing = false` is a real low signal and should score low.
   - Example: `latest_build_passing = null` because no trustworthy source exists should force `unrated`, not bronze.
 - **Support only sanctioned structural variants.** Expand detector logic for a real allowed variant (for example matrix vs non-matrix workflow encoding), not for every team-specific layout or naming habit in the fleet.
-- **Keep gates conservative.** If a metric is not yet measurable with high confidence across the portfolio, keep it informational instead of letting it gate results.
+- **Keep gates conservative.** If a metric is not yet measurable with high confidence across tracked products, keep it informational instead of letting it gate results.
 - **Use PQF to drive alignment.** If a repository departs from the intended standard without an accepted reason, prefer leaving the detector prescriptive and treating the repo as needing alignment work.
 
 A good rule of thumb: if explaining a metric now takes a paragraph of exceptions, the logic has probably become too complex and should be simplified before it grows further.

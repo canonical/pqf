@@ -8,7 +8,7 @@
 
 | Page | Description |
 |------|-------------|
-| [Portfolio Overview](views/overview.md) | The main view — heatmap and products table |
+| [Products Overview](views/overview.md) | The main view — heatmap and products table |
 | [Product Detail](views/product-detail.md) | Per-product dimension results and evidence |
 | [Dimension Detail](views/dimension-detail.md) | Metrics, rubric, and all-product results for one dimension |
 

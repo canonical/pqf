@@ -15,7 +15,7 @@ export default function About() {
         <h1 className="p-heading--2">About PQF</h1>
         <p>
           The Product Quality Framework (PQF) gives Platform Engineering a data-driven,
-          auditable view of quality and compliance across the product portfolio. Each product is
+          auditable view of quality and compliance across tracked products. Each product is
           scored across five dimensions and awarded a medal — Bronze, Silver, or Gold — based on
           objective, automatically-computed criteria.
         </p>
@@ -82,7 +82,7 @@ export default function About() {
             </a>
           </li>
           <li className="p-list__item">
-            <Link to="/">Portfolio overview</Link>
+            <Link to="/">Overview</Link>
           </li>
         </ul>
       </div>

@@ -28,9 +28,9 @@ Anything outside those classes should be treated cautiously. In most cases it is
 
 ## Remaining phases
 
-## Phase 2 — Portfolio-wide metric audit
+## Phase 2 — Cross-product metric audit
 
-Objective: review every existing metric across the portfolio and classify each result as:
+Objective: review every existing metric across tracked products and classify each result as:
 - detector is correct,
 - detector is wrong,
 - rubric is too strict or too loose,
@@ -71,7 +71,7 @@ Why this phase exists:
 
 ## Phase 6 — Alignment follow-up
 
-Objective: turn calibration findings into concrete follow-up work across the portfolio.
+Objective: turn calibration findings into concrete follow-up work across tracked products.
 
 Outputs may include:
 - scorer fixes,
@@ -84,10 +84,10 @@ Why this phase exists:
 
 ## Phase 7 — Operationalization
 
-Objective: use calibrated PQF results in regular portfolio workflows.
+Objective: use calibrated PQF results in regular product-review workflows.
 
 Examples:
-- recurring portfolio reviews,
+- recurring product reviews,
 - roadmap planning,
 - trend tracking,
 - and UI/reporting improvements that help teams understand why they were scored the way they were.

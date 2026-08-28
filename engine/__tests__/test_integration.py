@@ -11,7 +11,7 @@ Fixture metric values and expected medals:
       supports_juju_3=true and substrate test evidence present; juju_4 false
   )
   security_ssdlc:    silver  (automation + protection + renovate + sast true; cve tracking false)
-  support_engagement: silver (triage 3 <= 3; pr_review 4 <= 5; coverage >= 80; ownership true)
+  engagement:        silver (triage 3 <= 3; pr_review 4 <= 5; coverage >= 80; ownership true)
 
 Overall current_medal: bronze (documentation pulls it down)
 Target: gold (restored from the existing PQF product definition)
@@ -62,7 +62,7 @@ _FIXTURE_COMPUTED = {
             "sast_workflow_present": True,
             "cve_tracking_process_present": False,
         },
-        "support_engagement": {
+        "engagement": {
             "avg_triage_days": 3.0,
             "avg_pr_review_days": 4.0,
             "response_coverage_rate": 85,
@@ -109,7 +109,7 @@ def test_cli_computes_expected_medals_for_matrix():
     assert output["target_medal"] == "gold"
 
     dims = output["dimensions"]
-    assert dims["support_engagement"]["medal"] == "silver"
+    assert dims["engagement"]["medal"] == "silver"
 
     # No drift history entries yet → drift is null for all
     for dim in dims.values():
@@ -135,7 +135,7 @@ def test_dimensions_config_declares_required_metrics_for_scoring_for_each_dimens
         "branch_protection_required_checks",
         "renovate_enabled",
     ]
-    assert dimensions["dimensions"]["support_engagement"]["required_metrics_for_scoring"] == [
+    assert dimensions["dimensions"]["engagement"]["required_metrics_for_scoring"] == [
         "avg_triage_days",
         "avg_pr_review_days",
         "response_coverage_rate",

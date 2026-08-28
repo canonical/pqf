@@ -58,9 +58,9 @@ describe('About', () => {
     expect(screen.getByText('Documentation')).toBeInTheDocument()
   })
 
-  it('links to portfolio overview', () => {
+  it('links to overview', () => {
     wrap()
-    expect(screen.getByRole('link', { name: /portfolio overview/i })).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: /overview/i })).toBeInTheDocument()
   })
 
   it('links framework specification to the canonical repo', () => {

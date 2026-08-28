@@ -112,3 +112,65 @@ def test_dimensions_meta_has_applies_to(portfolio):
     meta = portfolio["dimensions_meta"]["test_verification"]
     assert "charm" in meta["applies_to"]
     assert meta["aggregation"] == "worst_in_scope"
+
+
+def test_migrate_legacy_dimension_keys_support_engagement_to_engagement():
+    """Drift history with support_engagement key is migrated to engagement."""
+    from engine.assemble import _migrate_legacy_dimension_keys
+
+    drift_history = {
+        "product1": {
+            "support_engagement": {
+                "status": "remediating",
+                "first_seen_at": "2026-06-01T00:00:00+00:00",
+                "deadline": "2026-06-15T00:00:00+00:00",
+            },
+            "test_verification": {"status": "resolved"},
+        },
+        "product2": {
+            "support_engagement": {"status": "resolved"},
+        },
+    }
+
+    _migrate_legacy_dimension_keys(drift_history)
+
+    # Old keys should be gone
+    assert "support_engagement" not in drift_history["product1"]
+    assert "support_engagement" not in drift_history["product2"]
+
+    # New keys should exist with same data
+    assert drift_history["product1"]["engagement"]["status"] == "remediating"
+    assert drift_history["product1"]["engagement"]["first_seen_at"] == "2026-06-01T00:00:00+00:00"
+    assert drift_history["product1"]["engagement"]["deadline"] == "2026-06-15T00:00:00+00:00"
+    assert drift_history["product2"]["engagement"]["status"] == "resolved"
+
+    # Other dimensions should be untouched
+    assert drift_history["product1"]["test_verification"]["status"] == "resolved"
+
+
+def test_migrate_legacy_dimension_keys_no_op_if_no_legacy_keys():
+    """Migration is a no-op if no legacy keys are present."""
+    from engine.assemble import _migrate_legacy_dimension_keys
+
+    drift_history = {
+        "product1": {
+            "engagement": {"status": "resolved"},
+            "test_verification": {"status": "resolved"},
+        }
+    }
+    original = json.loads(json.dumps(drift_history))  # deep copy
+
+    _migrate_legacy_dimension_keys(drift_history)
+
+    assert drift_history == original
+
+
+def test_migrate_legacy_dimension_keys_handles_empty_drift_history():
+    """Migration handles empty drift history gracefully."""
+    from engine.assemble import _migrate_legacy_dimension_keys
+
+    drift_history = {}
+
+    _migrate_legacy_dimension_keys(drift_history)
+
+    assert drift_history == {}

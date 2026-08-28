@@ -13,13 +13,13 @@ describe('GlobalNav', () => {
     expect(screen.getByText('PQF')).toBeInTheDocument()
   })
 
-  it('renders Portfolio, Products, and About nav links', () => {
+  it('renders Overview, Products, and About nav links', () => {
     render(
       <HashRouter>
         <GlobalNav />
       </HashRouter>
     )
-    expect(screen.getByRole('link', { name: 'Portfolio' })).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: 'Overview' })).toBeInTheDocument()
     expect(screen.getByRole('link', { name: 'Products' })).toBeInTheDocument()
     expect(screen.getByRole('link', { name: 'About' })).toBeInTheDocument()
   })

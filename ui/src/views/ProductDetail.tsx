@@ -42,7 +42,7 @@ export default function ProductDetail() {
     return (
       <div className="row" style={{ paddingTop: '1.5rem' }}>
         <div className="col-12">
-          <p>Product <strong>{id}</strong> not found. <Link to="/">Back to portfolio</Link></p>
+          <p>Product <strong>{id}</strong> not found. <Link to="/">Back to overview</Link></p>
         </div>
       </div>
     )
@@ -74,7 +74,7 @@ export default function ProductDetail() {
             })}
           </p>
         ) : (
-          <p style={{ marginBottom: '1rem' }}><Link to="/">← Portfolio</Link></p>
+          <p style={{ marginBottom: '1rem' }}><Link to="/">← Overview</Link></p>
         )}
 
         {/* Header card */}

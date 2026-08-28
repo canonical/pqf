@@ -34,7 +34,7 @@ export default function GlobalNav() {
                 className={`p-navigation__link ${isActive('/') ? 'is-selected' : ''}`}
                 to="/"
               >
-                Portfolio
+                Overview
               </Link>
             </li>
             <li className="p-navigation__item">
