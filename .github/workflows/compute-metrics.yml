@@ -34,6 +34,8 @@ concurrency:
 
 permissions:
   contents: write            # needed for the commit-artifacts job
+  issues: read               # needed for engagement scorer (reads issues across org repos)
+  pull-requests: read        # needed for engagement scorer (reads PRs across org repos)
 
 jobs:
 
