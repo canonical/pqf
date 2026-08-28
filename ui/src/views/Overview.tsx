@@ -108,7 +108,7 @@ export default function Overview() {
   return (
     <div className="row" style={{ paddingTop: '1.5rem' }}>
       <div className="col-12">
-        <h1 className="p-heading--2">Portfolio overview</h1>
+        <h1 className="p-heading--2">Products overview</h1>
 
         {/* Summary stats */}
         <div className="row u-sv3">

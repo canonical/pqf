@@ -356,7 +356,7 @@ export default function MetricDistribution() {
             </div>
 
             <div>
-              <h2 className="p-heading--4" style={{ marginBottom: '0.75rem' }}>Portfolio distribution</h2>
+              <h2 className="p-heading--4" style={{ marginBottom: '0.75rem' }}>Product distribution</h2>
               {distributionBar(distribution)}
             </div>
           </div>

@@ -18,7 +18,7 @@ Add a **new dimension** when:
 - The quality axis is conceptually distinct from all existing dimensions (Test Verification,
   Documentation, Security, Substrate Compatibility, Engagement)
 - It requires its own scorer binary with different API calls or external integrations
-- The team has agreed to track this axis across the portfolio
+- The team has agreed to track this axis across PQF-tracked products
 
 ---
 

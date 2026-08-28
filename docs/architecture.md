@@ -21,7 +21,7 @@ products/*.yaml          config/dimensions.yaml
   computed/{product}.json      (leaf_metrics envelope; GHA-written, never hand-edited)
       │
       ▼
-  engine/assemble.py           (worst-in-scope aggregation → results; portfolio assembly)
+  engine/assemble.py           (worst-in-scope aggregation → results; product-set assembly)
       │
       ├─► public/portfolio.json    (single data source for UI)
       └─► public/badges/
@@ -43,7 +43,7 @@ products/*.yaml          config/dimensions.yaml
 | `config/dimensions.yaml` | Contributors | Result rubrics, scorer contracts, output metadata |
 | `scorers/{dim}/` | Contributors | `logic.py` (pure, testable) + `scorer.py` (IO wrapper) |
 | `computed/` | GHA only | `leaf_metrics` envelope keyed by leaf product ID — **never hand-edited** |
-| `engine/` | Contributors | Result computation, drift tracking, portfolio assembly |
+| `engine/` | Contributors | Result computation, drift tracking, product-set assembly |
 | `public/` | GHA only | `portfolio.json` + badge SVGs — **never hand-edited** |
 | `ui/` | Contributors | React SPA reading `portfolio.json` |
 | `.github/workflows/` | Contributors | Two GHA workflows (see below) |
@@ -58,7 +58,7 @@ Every node in the product graph has a `product_type`:
 
 | Value | Meaning |
 |-------|---------|
-| `root` | Top-level portfolio entry. Has no source repo of its own. Composed of one or more leaf products. Its result is the worst across all scored leaves. |
+| `root` | Top-level tracked product entry. Has no source repo of its own. Composed of one or more leaf products. Its result is the worst across all scored leaves. |
 | `charm` | A Juju charm — the primary unit of quality scoring. Has a `source.repo` (and optionally `source.subpath` for mono-repos). |
 | `snap` | A snap package. Same scoring contract as `charm`. |
 
@@ -69,7 +69,7 @@ A leaf product (charm or snap) that appears inside a root's `composed_of` list c
 | Kind | When to use | How declared |
 |------|-------------|--------------|
 | **Inline** | Your squad owns it; it belongs to exactly one root product | Embed the full leaf definition in `composed_of` |
-| **Standalone** | Shared across multiple roots *or* independently tracked in the portfolio | Own `products/<id>.yaml` file + a `ref: <id>` entry in `composed_of` |
+| **Standalone** | Shared across multiple roots *or* independently tracked in PQF | Own `products/<id>.yaml` file + a `ref: <id>` entry in `composed_of` |
 
 Inline leaves are the common case. Use standalone leaves only when the same charm needs to appear under multiple root products or when the team wants to track it independently on the dashboard.
 

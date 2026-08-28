@@ -40,7 +40,7 @@ export default function DimensionDetail() {
     return (
       <div className="row" style={{ paddingTop: '1.5rem' }}>
         <div className="col-12">
-          <p>Dimension <strong>{id}</strong> not found. <Link to="/">Back to portfolio</Link></p>
+          <p>Dimension <strong>{id}</strong> not found. <Link to="/">Back to overview</Link></p>
         </div>
       </div>
     )
@@ -56,7 +56,7 @@ export default function DimensionDetail() {
       <div className="col-12">
 
         {/* Back nav */}
-        <p style={{ marginBottom: '1rem' }}><Link to="/">← Portfolio</Link></p>
+        <p style={{ marginBottom: '1rem' }}><Link to="/">← Overview</Link></p>
 
         {/* Header card */}
         <div className="p-card u-sv3">

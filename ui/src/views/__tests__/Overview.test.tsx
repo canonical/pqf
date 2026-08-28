@@ -79,7 +79,7 @@ describe('Overview', () => {
 
   it('shows page heading', () => {
     wrap(<Overview />)
-    expect(screen.getByRole('heading', { name: /portfolio/i })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: /products overview/i })).toBeInTheDocument()
   })
 
   it('renders product name as link', () => {

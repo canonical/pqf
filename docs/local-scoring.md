@@ -135,7 +135,7 @@ When you change a scorer or rubric, keep these interpretation rules intact:
   - Example: `latest_build_passing = false` is a real low signal and should score low.
   - Example: `latest_build_passing = null` because no trustworthy source exists should force `unrated`, not bronze.
 - **Support only sanctioned structural variants.** Expand detector logic for a real allowed variant (for example matrix vs non-matrix workflow encoding), not for every team-specific layout or naming habit in the fleet.
-- **Keep gates conservative.** If a metric is not yet measurable with high confidence across the portfolio, keep it informational instead of letting it gate results.
+- **Keep gates conservative.** If a metric is not yet measurable with high confidence across tracked products, keep it informational instead of letting it gate results.
 - **Use PQF to drive alignment.** If a repository departs from the intended standard without an accepted reason, prefer leaving the detector prescriptive and treating the repo as needing alignment work.
 
 A good rule of thumb: if explaining a metric now takes a paragraph of exceptions, the logic has probably become too complex and should be simplified before it grows further.

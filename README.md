@@ -3,11 +3,11 @@
 [![CI](https://github.com/canonical/pqf/actions/workflows/ci.yml/badge.svg)](https://github.com/canonical/pqf/actions/workflows/ci.yml)
 [![Deploy](https://github.com/canonical/pqf/actions/workflows/deploy-pages.yml/badge.svg)](https://github.com/canonical/pqf/actions/workflows/deploy-pages.yml)
 
-PQF tracks the quality and compliance state of Canonical Platform Engineering's product portfolio. Products are scored automatically across five quality dimensions (test coverage, documentation, security, substrate compatibility, support engagement) and awarded a **bronze / silver / gold** medal based on configurable criteria.
+PQF tracks the quality and compliance state of Canonical Platform Engineering's tracked products. Products are scored automatically across five quality dimensions (test coverage, documentation, security, substrate compatibility, support engagement) and awarded a **bronze / silver / gold** medal based on configurable criteria.
 
 **[Live dashboard →](https://canonical.github.io/pqf/)**
 
-![Portfolio Overview](docs/screenshots/overview.png)
+![Products Overview](docs/screenshots/overview.png)
 
 ---
 

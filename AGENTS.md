@@ -2,8 +2,8 @@
 
 ## What this repo is
 
-PQF (Product Quality Framework) tracks quality compliance of Canonical Platform Engineering's
-product portfolio via medal grades (bronze / silver / gold). It has two main parts:
+PQF (Product Quality Framework) tracks quality compliance across Canonical Platform Engineering's
+tracked products via medal grades (bronze / silver / gold). It has two main parts:
 
 1. **Python engine + scorers** (`engine/`, `scorers/`) — pure-Python medal computation pipeline
 2. **React dashboard** (`ui/`) — Canonical-branded SPA that reads `public/portfolio.json`
@@ -66,7 +66,7 @@ When changing scorers, rubrics, or scoring semantics, preserve these rules:
 - **Keep gating metrics high-confidence.** Only use `required_metrics_for_scoring` and medal gates for signals we can measure reliably across the fleet.
 - **Prefer tightening standards over broadening heuristics.** If a detector keeps needing special cases, treat that as a design smell and revisit the standard before expanding the logic.
 
-This rule set exists to keep PQF useful for portfolio reasoning: as simple as possible, as high-confidence as possible, and aligned with the standards we want teams to follow.
+This rule set exists to keep PQF useful for cross-product reasoning: as simple as possible, as high-confidence as possible, and aligned with the standards we want teams to follow.
 
 See also [docs/local-scoring.md](docs/local-scoring.md) for local scoring semantics and [docs/metric-calibration-roadmap.md](docs/metric-calibration-roadmap.md) for the next calibration phases.
 
