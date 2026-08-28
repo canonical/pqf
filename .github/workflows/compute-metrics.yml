@@ -79,6 +79,7 @@ jobs:
           changed_paths=$(
             git diff --name-only origin/${{ github.base_ref }}...HEAD -- \
               products/${{ matrix.product }}.yaml config/ scorers/ engine/ \
+              .github/workflows/compute-metrics.yml \
               | grep -Ev '^(engine/__tests__/|scorers/.*/__tests__/)' || true
           )
 
