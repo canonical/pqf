@@ -1,180 +1,96 @@
-# Running Scorers Locally
+# Run PQF locally
 
-This guide explains how to run the full scoring pipeline on your machine so you
-can see the impact of changes to scorers, medal criteria, or product YAML files
-in the local dashboard — without waiting for a nightly CI run.
+Use this workflow to preview changes to metric logic, medal criteria, or product definitions
+without waiting for the nightly GitHub Actions run.
 
----
-
-## Prerequisites
-
-- `make install` and `make install-ui` done
-- `gh` CLI installed and authenticated (`gh auth login`)
-- `OPENROUTER_API_KEY` — optional; currently unused by local scoring contracts.
-
-`GITHUB_TOKEN` is auto-populated from `gh auth token` — you don't need to export it manually.
-
----
-
-## The pipeline
-
-```
-products/*.yaml          ← source of truth (product definitions)
-       │
-       ▼
-scorers/*/scorer.py      ← fetch live data from GitHub API (+ optionally LLM)
-       │  outputs per-leaf metrics per dimension
-       ▼
-.pqf-score/<id>/         ← raw scorer output (one JSON file per dimension)
-       │
-       ▼
-engine/merge_computed.py ← assembles dimension files into computed/<id>.json
-       │
-       ▼
-computed/<id>.json       ← structured leaf_metrics envelope
-       │
-       ▼
-engine/assemble.py       ← computes medals + builds portfolio JSON
-       │
-       ▼
-public/portfolio.json    ← the single data source for the UI
-       │
-       ▼
-make dev                 ← Vite dev server reads public/portfolio.json
-```
-
----
-
-## Score all products and refresh the UI
+## Set up once
 
 ```bash
-# Without LLM (recommended for local dev — fast, no API key needed):
-make score-all-no-llm
-
-# With LLM key exported (same deterministic outputs today):
-make score-all
+python3 -m venv venv
+source venv/bin/activate
+make install-all
+gh auth login
 ```
 
-Both targets:
-1. Run all 5 scorers for every product in `products/`
-2. Merge raw outputs into `computed/<id>.json` for each product
-3. Regenerate `public/portfolio.json`
+`make install-all` runs two existing setup targets:
 
-Then start the dashboard:
+- `make install` installs PQF in editable mode plus its Python test, lint, and validation
+  dependencies into the active Python environment. The virtual environment above keeps them out
+  of your system Python.
+- `make install-ui` runs `npm install` in `ui/`, placing the dashboard dependencies in
+  `ui/node_modules/`. It does not install global npm packages.
+
+The Makefile reads `GITHUB_TOKEN` from `gh auth token`, so you do not need to export it.
+
+## Run the local loop
+
+Pick a representative product ID from `products/`, then run:
 
 ```bash
-make dev   # → http://localhost:5173
+make score-no-llm PRODUCT=matrix
+make _merge PRODUCT=matrix
+make _assemble
 ```
 
----
-
-## Score a single product
-
-Useful when iterating on one scorer or product YAML:
+In a second terminal, start the dashboard:
 
 ```bash
-# Score + merge + assemble in three steps:
-make score-no-llm PRODUCT=matrix   # runs all scorers, saves to .pqf-score/matrix/
-make _merge PRODUCT=matrix         # → computed/matrix.json
-make _assemble                     # → public/portfolio.json
+make dev
+```
 
-# Or with key exported:
+Open <http://localhost:5173>. Keep the dev server running while you repeat the scoring commands;
+it reloads the rebuilt `public/portfolio.json` automatically.
+
+## What to rerun after a change
+
+| Change | Rerun |
+|--------|-------|
+| `scorers/<dimension>/logic.py` | Targeted scorer tests, then the local loop above |
+| `products/<id>.yaml` | The local loop above for that product |
+| Medal criteria in `config/dimensions.yaml` | `make validate && make _assemble` |
+| Output keys or `required_metrics_for_scoring` | The local loop above because computed data must be regenerated |
+| AI metric or prompt | Use the AI variation below |
+
+`make _assemble` can reuse existing `computed/*.json` only when scorer output keys and nullability
+are unchanged.
+
+> **Keep measured-low separate from unmeasurable.** `false`, `0`, or a low percentage is a real
+> result and should be scored. Use `null` only when the signal could not be measured; a required
+> metric with a `null` value makes the dimension `insufficient_data` and `unrated`.
+
+## Include AI-assisted metrics
+
+The default loop skips the AI-assisted documentation check. To exercise that metric, export an
+OpenRouter key and replace the first command with `make score`:
+
+```bash
+export OPENROUTER_API_KEY=<your-key>
 make score PRODUCT=matrix
 make _merge PRODUCT=matrix
 make _assemble
 ```
 
-The dev server hot-reloads `public/portfolio.json` — no restart needed after `_assemble`.
+Set `OPENROUTER_MODEL` only when you need to test a model other than the repository default:
 
----
+```bash
+export OPENROUTER_MODEL=<openrouter-model-id>
+```
 
-## Iterating on a scorer or medal criteria
+Current medal gates are deterministic, so most scorer, rubric, and product changes should use
+the default no-AI loop.
 
-1. Edit `scorers/<dim>/logic.py` or `config/dimensions.yaml`
-2. Run `make score-no-llm PRODUCT=<any-product>`
-3. Run `make _merge PRODUCT=<any-product> && make _assemble`
-4. Refresh the dashboard
+## Inspect the result
 
-For medal criteria changes (`config/dimensions.yaml`), step 2 is optional — the criteria
-are evaluated by `assemble.py`, so `make _assemble` alone picks them up from the existing
-`computed/` files.
+- `.pqf-score/<id>/*.json`: raw output from each scorer
+- `computed/<id>.json`: merged metrics for the product and its leaf components
+- `public/portfolio.json`: assembled results and medal assignments consumed by the UI
 
----
+Use `make score-all-no-llm` only when you need to compare the whole portfolio. Use
+`make score-all` for the same comparison with AI-assisted metrics enabled.
 
-## Measurability gates (`required_metrics_for_scoring`)
+## Keep generated previews out of commits
 
-Each dimension may declare `required_metrics_for_scoring` in `config/dimensions.yaml`.
-This is a list of metric keys that must be present and non-null before PQF will score that
-dimension.
-
-- If every required metric is present, the normal medal rubric runs.
-- If any required metric is missing or `null`, the dimension becomes
-  `insufficient_data` and its medal is forced to `unrated`.
-- Use this for **measurability** checks only — for example, a missing latest test result or
-  a support sample that was too small to calculate averages.
-- Do **not** use it for normal failing values. A measured `false`, `0`, or low percentage
-  should still be scored by the rubric.
-
-Current examples:
-
-- `test_verification` requires `latest_build_passing`
-- `documentation` requires README/CONTRIBUTING/SECURITY presence (informational metrics like diataxis_coverage_ai and uses_rtd_hosting stay informational)
-- `substrate_compat` requires a declared Juju support signal plus substrate CI evidence
-- `security_ssdlc` requires branch protection and renovate (dependency update measurability)
-- `engagement` requires the sampled response metrics that can otherwise be `null` (informational metrics like repo_views_14d stay informational)
-
-This means a rubric-only change still needs a full recompute when scorer outputs or nullability
-semantics change, because regenerated `computed/*.json` data may now shift products from
-`scored` to `insufficient_data`.
-
-## Calibration guidance for contributors
-
-When you change a scorer or rubric, keep these interpretation rules intact:
-
-- **Measured-low is not the same as unmeasured.**
-  - Example: `latest_build_passing = false` is a real low signal and should score low.
-  - Example: `latest_build_passing = null` because no trustworthy source exists should force `unrated`, not bronze.
-- **Support only sanctioned structural variants.** Expand detector logic for a real allowed variant (for example matrix vs non-matrix workflow encoding), not for every team-specific layout or naming habit in the fleet.
-- **Keep gates conservative.** If a metric is not yet measurable with high confidence across tracked products, keep it informational instead of letting it gate results.
-- **Use PQF to drive alignment.** If a repository departs from the intended standard without an accepted reason, prefer leaving the detector prescriptive and treating the repo as needing alignment work.
-
-A good rule of thumb: if explaining a metric now takes a paragraph of exceptions, the logic has probably become too complex and should be simplified before it grows further.
-
----
-
-## Documentation scoring without LLM
-
-`score-no-llm` and `score` currently produce different documentation outputs depending on LLM availability. The
-documentation scorer emits:
-
-- `readme_present` — Deterministic
-- `contributing_present` — Deterministic
-- `has_security` — Deterministic
-- `documentation_workflows_passing` — Deterministic
-- `diataxis_coverage_ai` — AI-assisted via OpenRouter (informational; requires `OPENROUTER_API_KEY`)
-- `uses_rtd_hosting` — Deterministic (informational)
-- `release_notes_process_implemented` — Deterministic
-
----
-
-## SSDLC scoring
-
-The security_ssdlc scorer is fully deterministic and emits:
-
-- `renovate_enabled` — Detects Renovate configuration files
-- `branch_protection_required_checks` — Requires status checks in default branch protection
-- `signed_commits_required` — Requires GPG/SSH signatures in default branch protection
-- `canonical_repo_automation_registered` — Checks `canonical/canonical-repo-automation` registration
-- `sast_workflow_present` — Detects CodeQL or equivalent SAST workflows
-- `cve_tracking_process_present` — Detects CVE tracking documentation or process markers
-
----
-
-## Environment variable reference
-
-| Variable | Required | Source | Notes |
-|----------|----------|--------|-------|
-| `GITHUB_TOKEN` | Yes | Auto: `gh auth token` | All scorers use this for GitHub API calls |
-| `OPENROUTER_API_KEY` | Conditional | Manual export | Required for `documentation` scorer's AI-assisted diataxis_coverage_ai metric; deterministic scoring works without it |
-| `OPENROUTER_MODEL` | No | Optional | Override the OpenRouter model (default: `anthropic/claude-sonnet-4.5`) |
-| `LLM_MODEL` | No | Optional | Override model for either backend |
+Local scoring rewrites `computed/<id>.json` and `public/portfolio.json` so the dashboard can show
+your changes. These files are maintained by GitHub Actions: inspect them locally, but do not
+hand-edit or commit them. Commit the source change in `scorers/`, `config/`, or `products/`
+instead.

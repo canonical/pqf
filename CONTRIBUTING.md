@@ -7,8 +7,6 @@
 - Python 3.12+
 - Node.js 22+
 - `gh` CLI (authenticated: `gh auth login`)
-- `GITHUB_TOKEN` env var (for scoring locally)
-- `OPENROUTER_API_KEY` env var (for documentation scorer)
 
 ---
 
@@ -43,6 +41,9 @@ make dev           # Starts Vite dev server at http://localhost:5173
 ```
 
 The UI reads `public/portfolio.json` at startup. To see real data, the file is already present in the repo (regenerated nightly by GHA). You don't need to run the scorers to develop the UI.
+
+To change metric logic, medal criteria, or product definitions and preview the result, follow
+[Run PQF locally](docs/local-scoring.md). The default workflow does not require an AI API key.
 
 ---
 

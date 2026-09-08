@@ -66,7 +66,10 @@ make dev          # → http://localhost:5173
 | `make dev` | Start Vite dev server |
 | `make e2e` | Run Playwright E2E tests |
 | `make audit` | Run pip-audit + npm audit |
-| `make score PRODUCT=<id>` | Score a product locally (needs `GITHUB_TOKEN` + `OPENROUTER_API_KEY`) |
+| `make score-no-llm PRODUCT=<id>` | Score one product locally without AI |
+| `make score PRODUCT=<id>` | Score one product locally with AI-assisted metrics |
+
+See [Run PQF locally](docs/local-scoring.md) for the complete preview loop.
 
 ## Pre-commit hooks
 

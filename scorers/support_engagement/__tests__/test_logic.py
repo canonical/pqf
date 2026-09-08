@@ -1,3 +1,5 @@
+from datetime import UTC, datetime
+
 import requests
 import responses
 
@@ -86,7 +88,9 @@ def _mock_repo_metadata(
 
 
 @responses.activate
-def test_avg_triage_days_computed_correctly():
+def test_avg_triage_days_computed_correctly(mocker):
+    mock_datetime = mocker.patch("scorers.support_engagement.logic.datetime", wraps=datetime)
+    mock_datetime.now.return_value = datetime(2026, 6, 30, tzinfo=UTC)
     responses.add(
         responses.GET,
         f"{_GITHUB_API}/repos/canonical/synapse-operator/issues",
