@@ -112,6 +112,19 @@ describe('ProductsExplorer', () => {
     expect(screen.getAllByText('Bronze').length).toBeGreaterThan(0)
   })
 
+  it('shows target filter dropdown', () => {
+    wrap()
+    expect(screen.getByRole('combobox', { name: /filter by target/i })).toBeInTheDocument()
+  })
+
+  it('filters root products by target medal', () => {
+    wrap()
+    const select = screen.getByRole('combobox', { name: /filter by target/i })
+    fireEvent.change(select, { target: { value: 'silver' } })
+    expect(screen.queryByRole('link', { name: 'Matrix (Synapse)' })).not.toBeInTheDocument()
+    expect(screen.getByRole('link', { name: 'Wazuh Indexer' })).toBeInTheDocument()
+  })
+
 
   it('shows below minimum for unrated products with scored failed dimensions', () => {
     const belowMinimumPortfolio: Portfolio = {
