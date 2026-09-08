@@ -22,12 +22,21 @@ const MEDAL_LABELS: Record<string, string> = {
   not_applicable: 'Not Applicable',
 }
 
+const TARGET_OPTIONS = ['all', 'bronze', 'silver', 'gold']
+const TARGET_LABELS: Record<string, string> = {
+  all: 'All targets',
+  bronze: 'Target: Bronze',
+  silver: 'Target: Silver',
+  gold: 'Target: Gold',
+}
+
 export default function ProductsExplorer() {
   const { data: portfolio, isLoading, isError, error } = usePortfolio()
 
   const [search, setSearch] = useState('')
   const [squadFilter, setSquadFilter] = useState('all')
   const [medalFilter, setMedalFilter] = useState('all')
+  const [targetFilter, setTargetFilter] = useState('all')
   const [typeFilter, setTypeFilter] = useState('all')
   const [groupByParent, setGroupByParent] = useState(true)
 
@@ -49,6 +58,8 @@ export default function ProductsExplorer() {
       !q || p.name.toLowerCase().includes(q) || p.id.toLowerCase().includes(q)
     const matchesMedal = (p: Product) =>
       medalFilter === 'all' || p.current_result === medalFilter
+    const matchesTarget = (p: Product) =>
+      targetFilter === 'all' || p.target_result === targetFilter
     const matchesType = (p: Product) =>
       typeFilter === 'all' || p.product_type === typeFilter
     const matchesSquad = (p: Product) =>
@@ -56,7 +67,7 @@ export default function ProductsExplorer() {
 
     if (!groupByParent) {
       const flat = allProducts
-        .filter(p => matchesSearch(p) && matchesMedal(p) && matchesType(p))
+        .filter(p => matchesSearch(p) && matchesMedal(p) && matchesTarget(p) && matchesType(p))
         .sort((a, b) => a.name.localeCompare(b.name))
       return { type: 'flat' as const, products: flat }
     }
@@ -68,9 +79,9 @@ export default function ProductsExplorer() {
           .map(c => portfolio.products.find(p => p.id === c.product_id))
           .filter((p): p is Product => p !== undefined)
 
-        const rootMatches = matchesSearch(root) && matchesMedal(root) && matchesType(root)
+        const rootMatches = matchesSearch(root) && matchesMedal(root) && matchesTarget(root) && matchesType(root)
         const matchingLeaves = leafProducts.filter(
-          l => matchesSearch(l) && matchesMedal(l) && matchesType(l),
+          l => matchesSearch(l) && matchesMedal(l) && matchesTarget(l) && matchesType(l),
         )
 
         if (rootMatches) return [{ root, leaves: leafProducts }]
@@ -79,7 +90,7 @@ export default function ProductsExplorer() {
       })
 
     return { type: 'grouped' as const, groups }
-  }, [search, squadFilter, medalFilter, typeFilter, groupByParent, rootProducts, allProducts, portfolio])
+  }, [search, squadFilter, medalFilter, targetFilter, typeFilter, groupByParent, rootProducts, allProducts, portfolio])
 
   if (isLoading) return <LoadingSpinner />
   if (isError) return <div className="p-notification--negative"><p>{error?.message}</p></div>
@@ -95,7 +106,7 @@ export default function ProductsExplorer() {
     borderBottom: '2px solid #d9d9d9',
   }
 
-  const hasActiveFilter = search || squadFilter !== 'all' || medalFilter !== 'all' || typeFilter !== 'all'
+  const hasActiveFilter = search || squadFilter !== 'all' || medalFilter !== 'all' || targetFilter !== 'all' || typeFilter !== 'all'
   const resultCount = filteredData.type === 'flat'
     ? filteredData.products.length
     : filteredData.groups.reduce((n, g) => n + 1 + g.leaves.length, 0)
@@ -145,6 +156,19 @@ export default function ProductsExplorer() {
           >
             {MEDAL_OPTIONS.map(m => (
               <option key={m} value={m}>{MEDAL_LABELS[m]}</option>
+            ))}
+          </select>
+
+          {/* Target filter */}
+          <select
+            value={targetFilter}
+            onChange={e => setTargetFilter(e.target.value)}
+            className="p-form__control"
+            style={{ width: 'auto', marginBottom: 0 }}
+            aria-label="Filter by target"
+          >
+            {TARGET_OPTIONS.map(t => (
+              <option key={t} value={t}>{TARGET_LABELS[t]}</option>
             ))}
           </select>
 
