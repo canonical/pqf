@@ -6,9 +6,19 @@ without waiting for the nightly GitHub Actions run.
 ## Set up once
 
 ```bash
+python3 -m venv venv
+source venv/bin/activate
 make install-all
 gh auth login
 ```
+
+`make install-all` runs two existing setup targets:
+
+- `make install` installs PQF in editable mode plus its Python test, lint, and validation
+  dependencies into the active Python environment. The virtual environment above keeps them out
+  of your system Python.
+- `make install-ui` runs `npm install` in `ui/`, placing the dashboard dependencies in
+  `ui/node_modules/`. It does not install global npm packages.
 
 The Makefile reads `GITHUB_TOKEN` from `gh auth token`, so you do not need to export it.
 
