@@ -136,12 +136,5 @@ The product will appear on the dashboard within 24 hours of merge (or immediatel
 
 ## Local scoring (optional)
 
-To score the product locally before opening a PR:
-
-```bash
-export GITHUB_TOKEN=<your-pat>
-export OPENROUTER_API_KEY=<your-key>
-make score PRODUCT=<id>
-```
-
-Results are written to `.pqf-score/<id>/` (gitignored).
+Follow [Run PQF locally](local-scoring.md) with the new product ID. The default workflow uses
+GitHub authentication from `gh` and does not require an AI API key.

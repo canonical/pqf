@@ -264,7 +264,8 @@ will appear in the metric list for every scored product:
 
 ![Documentation dimension detail showing the has_changelog metric](screenshots/dimension-detail-documentation-after.png)
 
-The Vite dev server hot-reloads `public/portfolio.json` — no restart needed after `make _assemble`.
+See [Run PQF locally](local-scoring.md) for AI-assisted scoring, medal-only changes,
+full-portfolio runs, and generated-artifact guidance.
 
 ---
 
@@ -296,6 +297,7 @@ After a medal-criteria change you can regenerate medals from existing scorer out
 re-running the scorer:
 
 ```bash
+make validate
 make _assemble   # re-evaluates medals from current computed/ files
 make dev
 ```

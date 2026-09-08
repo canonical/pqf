@@ -304,7 +304,8 @@ make _assemble
 make dev   # → http://localhost:5173
 ```
 
-See [Running scorers locally](local-scoring.md) for the full workflow.
+See [Run PQF locally](local-scoring.md) for AI-assisted scoring, full-portfolio runs, and
+generated-artifact guidance.
 
 ---
 
