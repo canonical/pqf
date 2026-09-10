@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-10T02:36:07.230267+00:00",
+  "generated_at": "2026-09-10T15:28:03.998622+00:00",
   "products": [
     {
       "id": "12-factor",
@@ -236,9 +236,9 @@
               "repo": "canonical/rockcraft",
               "result": "below_minimum",
               "metrics": {
-                "avg_triage_days": 86.1,
+                "avg_triage_days": 81.8,
                 "avg_pr_review_days": 1.1,
-                "response_coverage_rate": 83.2,
+                "response_coverage_rate": 84.9,
                 "ownership_signal": false,
                 "has_jira_sync": true,
                 "repo_views_14d": null
@@ -252,7 +252,7 @@
               "metrics": {
                 "avg_triage_days": 203.6,
                 "avg_pr_review_days": 1.3,
-                "response_coverage_rate": 81.3,
+                "response_coverage_rate": 81.1,
                 "ownership_signal": false,
                 "has_jira_sync": true,
                 "repo_views_14d": null
@@ -266,7 +266,7 @@
               "metrics": {
                 "avg_triage_days": 78.0,
                 "avg_pr_review_days": 2.2,
-                "response_coverage_rate": 89.1,
+                "response_coverage_rate": 88.9,
                 "ownership_signal": true,
                 "has_jira_sync": true,
                 "repo_views_14d": null
@@ -1488,7 +1488,7 @@
                 "stability_pct": null,
                 "latest_build_passing": true,
                 "integration_test_evidence_present": true,
-                "uses_ops_testing": true,
+                "uses_ops_testing": false,
                 "uses_jubilant": false
               },
               "excluded_from_parent_medal": false
@@ -1629,6 +1629,504 @@
                 "response_coverage_rate": 76.0,
                 "ownership_signal": true,
                 "has_jira_sync": true,
+                "repo_views_14d": null
+              },
+              "excluded_from_parent_medal": false
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "data-mesh",
+      "product_type": "root",
+      "name": "Data Mesh",
+      "description": "Charmed data platform components for ingestion, cataloguing, query and access control.",
+      "lifecycle": "stable",
+      "current_result": "below_minimum",
+      "target_result": "gold",
+      "squad": "business-data",
+      "is_portfolio_entry": true,
+      "documentation_url": "https://canonical-data-mesh-documentation.readthedocs-hosted.com",
+      "source": null,
+      "composed_of": [
+        {
+          "product_id": "airbyte-k8s",
+          "excluded_from_parent_medal": false
+        },
+        {
+          "product_id": "trino-k8s",
+          "excluded_from_parent_medal": false
+        },
+        {
+          "product_id": "superset-k8s",
+          "excluded_from_parent_medal": false
+        },
+        {
+          "product_id": "ranger-k8s",
+          "excluded_from_parent_medal": false
+        },
+        {
+          "product_id": "datahub-k8s",
+          "excluded_from_parent_medal": false
+        },
+        {
+          "product_id": "hive-metastore-k8s",
+          "excluded_from_parent_medal": false
+        }
+      ],
+      "context_refs": [],
+      "parent_product_ids": [],
+      "dimensions": {
+        "test_verification": {
+          "result": "bronze",
+          "metrics": {},
+          "drift": null,
+          "composition": [
+            {
+              "product_id": "airbyte-k8s",
+              "repo": "canonical/airbyte-k8s-operator",
+              "result": "bronze",
+              "metrics": {
+                "coverage_pct": null,
+                "stability_pct": null,
+                "latest_build_passing": true,
+                "integration_test_evidence_present": true,
+                "uses_ops_testing": true,
+                "uses_jubilant": false
+              },
+              "excluded_from_parent_medal": false
+            },
+            {
+              "product_id": "trino-k8s",
+              "repo": "canonical/trino-k8s-operator",
+              "result": "bronze",
+              "metrics": {
+                "coverage_pct": null,
+                "stability_pct": null,
+                "latest_build_passing": true,
+                "integration_test_evidence_present": true,
+                "uses_ops_testing": false,
+                "uses_jubilant": true
+              },
+              "excluded_from_parent_medal": false
+            },
+            {
+              "product_id": "superset-k8s",
+              "repo": "canonical/superset-k8s-operator",
+              "result": "bronze",
+              "metrics": {
+                "coverage_pct": null,
+                "stability_pct": null,
+                "latest_build_passing": true,
+                "integration_test_evidence_present": true,
+                "uses_ops_testing": true,
+                "uses_jubilant": false
+              },
+              "excluded_from_parent_medal": false
+            },
+            {
+              "product_id": "ranger-k8s",
+              "repo": "canonical/ranger-k8s-operator",
+              "result": "bronze",
+              "metrics": {
+                "coverage_pct": null,
+                "stability_pct": null,
+                "latest_build_passing": false,
+                "integration_test_evidence_present": true,
+                "uses_ops_testing": true,
+                "uses_jubilant": true
+              },
+              "excluded_from_parent_medal": false
+            },
+            {
+              "product_id": "datahub-k8s",
+              "repo": "canonical/datahub-k8s-operator",
+              "result": "bronze",
+              "metrics": {
+                "coverage_pct": null,
+                "stability_pct": null,
+                "latest_build_passing": false,
+                "integration_test_evidence_present": true,
+                "uses_ops_testing": true,
+                "uses_jubilant": true
+              },
+              "excluded_from_parent_medal": false
+            },
+            {
+              "product_id": "hive-metastore-k8s",
+              "repo": "canonical/hive-metastore-k8s-operator",
+              "result": "bronze",
+              "metrics": {
+                "coverage_pct": null,
+                "stability_pct": null,
+                "latest_build_passing": true,
+                "integration_test_evidence_present": true,
+                "uses_ops_testing": true,
+                "uses_jubilant": false
+              },
+              "excluded_from_parent_medal": false
+            }
+          ]
+        },
+        "documentation": {
+          "result": "below_minimum",
+          "metrics": {},
+          "drift": null,
+          "composition": [
+            {
+              "product_id": "airbyte-k8s",
+              "repo": "canonical/airbyte-k8s-operator",
+              "result": "bronze",
+              "metrics": {
+                "readme_present": true,
+                "contributing_present": true,
+                "has_security": true,
+                "documentation_workflows_passing": false,
+                "diataxis_coverage_ai": 0,
+                "uses_rtd_hosting": false,
+                "release_notes_process_implemented": false,
+                "has_changelog": false
+              },
+              "excluded_from_parent_medal": false
+            },
+            {
+              "product_id": "trino-k8s",
+              "repo": "canonical/trino-k8s-operator",
+              "result": "bronze",
+              "metrics": {
+                "readme_present": true,
+                "contributing_present": true,
+                "has_security": true,
+                "documentation_workflows_passing": false,
+                "diataxis_coverage_ai": 0,
+                "uses_rtd_hosting": false,
+                "release_notes_process_implemented": false,
+                "has_changelog": false
+              },
+              "excluded_from_parent_medal": false
+            },
+            {
+              "product_id": "superset-k8s",
+              "repo": "canonical/superset-k8s-operator",
+              "result": "bronze",
+              "metrics": {
+                "readme_present": true,
+                "contributing_present": true,
+                "has_security": true,
+                "documentation_workflows_passing": false,
+                "diataxis_coverage_ai": 0,
+                "uses_rtd_hosting": true,
+                "release_notes_process_implemented": false,
+                "has_changelog": false
+              },
+              "excluded_from_parent_medal": false
+            },
+            {
+              "product_id": "ranger-k8s",
+              "repo": "canonical/ranger-k8s-operator",
+              "result": "bronze",
+              "metrics": {
+                "readme_present": true,
+                "contributing_present": true,
+                "has_security": true,
+                "documentation_workflows_passing": false,
+                "diataxis_coverage_ai": 0,
+                "uses_rtd_hosting": false,
+                "release_notes_process_implemented": false,
+                "has_changelog": false
+              },
+              "excluded_from_parent_medal": false
+            },
+            {
+              "product_id": "datahub-k8s",
+              "repo": "canonical/datahub-k8s-operator",
+              "result": "bronze",
+              "metrics": {
+                "readme_present": true,
+                "contributing_present": true,
+                "has_security": true,
+                "documentation_workflows_passing": false,
+                "diataxis_coverage_ai": 0,
+                "uses_rtd_hosting": true,
+                "release_notes_process_implemented": false,
+                "has_changelog": false
+              },
+              "excluded_from_parent_medal": false
+            },
+            {
+              "product_id": "hive-metastore-k8s",
+              "repo": "canonical/hive-metastore-k8s-operator",
+              "result": "below_minimum",
+              "metrics": {
+                "readme_present": true,
+                "contributing_present": true,
+                "has_security": false,
+                "documentation_workflows_passing": false,
+                "diataxis_coverage_ai": 0,
+                "uses_rtd_hosting": false,
+                "release_notes_process_implemented": false,
+                "has_changelog": false
+              },
+              "excluded_from_parent_medal": false
+            }
+          ]
+        },
+        "substrate_compat": {
+          "result": "silver",
+          "metrics": {},
+          "drift": null,
+          "composition": [
+            {
+              "product_id": "airbyte-k8s",
+              "repo": "canonical/airbyte-k8s-operator",
+              "result": "silver",
+              "metrics": {
+                "supports_juju_3": true,
+                "supports_juju_4": false,
+                "substrate_test_evidence_present": true,
+                "uses_canonical_k8s": true
+              },
+              "excluded_from_parent_medal": false
+            },
+            {
+              "product_id": "trino-k8s",
+              "repo": "canonical/trino-k8s-operator",
+              "result": "silver",
+              "metrics": {
+                "supports_juju_3": true,
+                "supports_juju_4": false,
+                "substrate_test_evidence_present": true,
+                "uses_canonical_k8s": true
+              },
+              "excluded_from_parent_medal": false
+            },
+            {
+              "product_id": "superset-k8s",
+              "repo": "canonical/superset-k8s-operator",
+              "result": "silver",
+              "metrics": {
+                "supports_juju_3": true,
+                "supports_juju_4": false,
+                "substrate_test_evidence_present": true,
+                "uses_canonical_k8s": false
+              },
+              "excluded_from_parent_medal": false
+            },
+            {
+              "product_id": "ranger-k8s",
+              "repo": "canonical/ranger-k8s-operator",
+              "result": "silver",
+              "metrics": {
+                "supports_juju_3": true,
+                "supports_juju_4": false,
+                "substrate_test_evidence_present": true,
+                "uses_canonical_k8s": true
+              },
+              "excluded_from_parent_medal": false
+            },
+            {
+              "product_id": "datahub-k8s",
+              "repo": "canonical/datahub-k8s-operator",
+              "result": "gold",
+              "metrics": {
+                "supports_juju_3": true,
+                "supports_juju_4": true,
+                "substrate_test_evidence_present": true,
+                "uses_canonical_k8s": true
+              },
+              "excluded_from_parent_medal": false
+            },
+            {
+              "product_id": "hive-metastore-k8s",
+              "repo": "canonical/hive-metastore-k8s-operator",
+              "result": "silver",
+              "metrics": {
+                "supports_juju_3": true,
+                "supports_juju_4": false,
+                "substrate_test_evidence_present": true,
+                "uses_canonical_k8s": false
+              },
+              "excluded_from_parent_medal": false
+            }
+          ]
+        },
+        "security_ssdlc": {
+          "result": "bronze",
+          "metrics": {},
+          "drift": null,
+          "composition": [
+            {
+              "product_id": "airbyte-k8s",
+              "repo": "canonical/airbyte-k8s-operator",
+              "result": "bronze",
+              "metrics": {
+                "renovate_enabled": false,
+                "canonical_repo_automation_registered": false,
+                "branch_protection_required_checks": false,
+                "signed_commits_required": false,
+                "sast_workflow_present": true,
+                "cve_tracking_process_present": true
+              },
+              "excluded_from_parent_medal": false
+            },
+            {
+              "product_id": "trino-k8s",
+              "repo": "canonical/trino-k8s-operator",
+              "result": "bronze",
+              "metrics": {
+                "renovate_enabled": false,
+                "canonical_repo_automation_registered": false,
+                "branch_protection_required_checks": false,
+                "signed_commits_required": false,
+                "sast_workflow_present": true,
+                "cve_tracking_process_present": true
+              },
+              "excluded_from_parent_medal": false
+            },
+            {
+              "product_id": "superset-k8s",
+              "repo": "canonical/superset-k8s-operator",
+              "result": "bronze",
+              "metrics": {
+                "renovate_enabled": false,
+                "canonical_repo_automation_registered": false,
+                "branch_protection_required_checks": false,
+                "signed_commits_required": false,
+                "sast_workflow_present": true,
+                "cve_tracking_process_present": true
+              },
+              "excluded_from_parent_medal": false
+            },
+            {
+              "product_id": "ranger-k8s",
+              "repo": "canonical/ranger-k8s-operator",
+              "result": "bronze",
+              "metrics": {
+                "renovate_enabled": false,
+                "canonical_repo_automation_registered": false,
+                "branch_protection_required_checks": false,
+                "signed_commits_required": false,
+                "sast_workflow_present": true,
+                "cve_tracking_process_present": true
+              },
+              "excluded_from_parent_medal": false
+            },
+            {
+              "product_id": "datahub-k8s",
+              "repo": "canonical/datahub-k8s-operator",
+              "result": "bronze",
+              "metrics": {
+                "renovate_enabled": false,
+                "canonical_repo_automation_registered": false,
+                "branch_protection_required_checks": false,
+                "signed_commits_required": false,
+                "sast_workflow_present": true,
+                "cve_tracking_process_present": true
+              },
+              "excluded_from_parent_medal": false
+            },
+            {
+              "product_id": "hive-metastore-k8s",
+              "repo": "canonical/hive-metastore-k8s-operator",
+              "result": "bronze",
+              "metrics": {
+                "renovate_enabled": false,
+                "canonical_repo_automation_registered": false,
+                "branch_protection_required_checks": false,
+                "signed_commits_required": false,
+                "sast_workflow_present": true,
+                "cve_tracking_process_present": false
+              },
+              "excluded_from_parent_medal": false
+            }
+          ]
+        },
+        "engagement": {
+          "result": "below_minimum",
+          "metrics": {},
+          "drift": null,
+          "composition": [
+            {
+              "product_id": "airbyte-k8s",
+              "repo": "canonical/airbyte-k8s-operator",
+              "result": "below_minimum",
+              "metrics": {
+                "avg_triage_days": 14.7,
+                "avg_pr_review_days": 2.4,
+                "response_coverage_rate": 57.7,
+                "ownership_signal": false,
+                "has_jira_sync": false,
+                "repo_views_14d": null
+              },
+              "excluded_from_parent_medal": false
+            },
+            {
+              "product_id": "trino-k8s",
+              "repo": "canonical/trino-k8s-operator",
+              "result": "below_minimum",
+              "metrics": {
+                "avg_triage_days": 127.0,
+                "avg_pr_review_days": 2.2,
+                "response_coverage_rate": 92.3,
+                "ownership_signal": false,
+                "has_jira_sync": false,
+                "repo_views_14d": null
+              },
+              "excluded_from_parent_medal": false
+            },
+            {
+              "product_id": "superset-k8s",
+              "repo": "canonical/superset-k8s-operator",
+              "result": "below_minimum",
+              "metrics": {
+                "avg_triage_days": 0.0,
+                "avg_pr_review_days": 4.2,
+                "response_coverage_rate": 57.1,
+                "ownership_signal": false,
+                "has_jira_sync": false,
+                "repo_views_14d": null
+              },
+              "excluded_from_parent_medal": false
+            },
+            {
+              "product_id": "ranger-k8s",
+              "repo": "canonical/ranger-k8s-operator",
+              "result": "below_minimum",
+              "metrics": {
+                "avg_triage_days": 0.0,
+                "avg_pr_review_days": 0.4,
+                "response_coverage_rate": 100.0,
+                "ownership_signal": false,
+                "has_jira_sync": false,
+                "repo_views_14d": null
+              },
+              "excluded_from_parent_medal": false
+            },
+            {
+              "product_id": "datahub-k8s",
+              "repo": "canonical/datahub-k8s-operator",
+              "result": "below_minimum",
+              "metrics": {
+                "avg_triage_days": 0.0,
+                "avg_pr_review_days": 0.5,
+                "response_coverage_rate": 100.0,
+                "ownership_signal": false,
+                "has_jira_sync": false,
+                "repo_views_14d": null
+              },
+              "excluded_from_parent_medal": false
+            },
+            {
+              "product_id": "hive-metastore-k8s",
+              "repo": "canonical/hive-metastore-k8s-operator",
+              "result": "insufficient_data",
+              "metrics": {
+                "avg_triage_days": null,
+                "avg_pr_review_days": null,
+                "response_coverage_rate": null,
+                "ownership_signal": false,
+                "has_jira_sync": false,
                 "repo_views_14d": null
               },
               "excluded_from_parent_medal": false
@@ -1813,8 +2311,8 @@
                 "stability_pct": 92,
                 "latest_build_passing": false,
                 "integration_test_evidence_present": false,
-                "uses_ops_testing": false,
-                "uses_jubilant": true
+                "uses_ops_testing": true,
+                "uses_jubilant": false
               },
               "excluded_from_parent_medal": false
             }
@@ -1895,7 +2393,7 @@
               "metrics": {
                 "avg_triage_days": 292.8,
                 "avg_pr_review_days": 0.2,
-                "response_coverage_rate": 87.3,
+                "response_coverage_rate": 87.1,
                 "ownership_signal": true,
                 "has_jira_sync": true,
                 "repo_views_14d": null
@@ -1963,7 +2461,7 @@
               "metrics": {
                 "coverage_pct": null,
                 "stability_pct": null,
-                "latest_build_passing": true,
+                "latest_build_passing": false,
                 "integration_test_evidence_present": true,
                 "uses_ops_testing": false,
                 "uses_jubilant": true
@@ -1977,9 +2475,9 @@
               "metrics": {
                 "coverage_pct": null,
                 "stability_pct": null,
-                "latest_build_passing": true,
+                "latest_build_passing": false,
                 "integration_test_evidence_present": true,
-                "uses_ops_testing": false,
+                "uses_ops_testing": true,
                 "uses_jubilant": true
               },
               "excluded_from_parent_medal": false
@@ -1991,7 +2489,7 @@
               "metrics": {
                 "coverage_pct": null,
                 "stability_pct": null,
-                "latest_build_passing": true,
+                "latest_build_passing": false,
                 "integration_test_evidence_present": true,
                 "uses_ops_testing": false,
                 "uses_jubilant": true
@@ -2005,10 +2503,10 @@
               "metrics": {
                 "coverage_pct": null,
                 "stability_pct": null,
-                "latest_build_passing": true,
+                "latest_build_passing": false,
                 "integration_test_evidence_present": true,
                 "uses_ops_testing": true,
-                "uses_jubilant": false
+                "uses_jubilant": true
               },
               "excluded_from_parent_medal": false
             },
@@ -2019,10 +2517,10 @@
               "metrics": {
                 "coverage_pct": null,
                 "stability_pct": null,
-                "latest_build_passing": true,
+                "latest_build_passing": false,
                 "integration_test_evidence_present": true,
-                "uses_ops_testing": false,
-                "uses_jubilant": true
+                "uses_ops_testing": true,
+                "uses_jubilant": false
               },
               "excluded_from_parent_medal": false
             },
@@ -2033,10 +2531,10 @@
               "metrics": {
                 "coverage_pct": null,
                 "stability_pct": null,
-                "latest_build_passing": true,
+                "latest_build_passing": false,
                 "integration_test_evidence_present": true,
-                "uses_ops_testing": false,
-                "uses_jubilant": true
+                "uses_ops_testing": true,
+                "uses_jubilant": false
               },
               "excluded_from_parent_medal": false
             },
@@ -2047,10 +2545,10 @@
               "metrics": {
                 "coverage_pct": null,
                 "stability_pct": null,
-                "latest_build_passing": true,
+                "latest_build_passing": false,
                 "integration_test_evidence_present": true,
-                "uses_ops_testing": false,
-                "uses_jubilant": true
+                "uses_ops_testing": true,
+                "uses_jubilant": false
               },
               "excluded_from_parent_medal": false
             }
@@ -2654,7 +3152,7 @@
               "result": "bronze",
               "metrics": {
                 "avg_triage_days": 0.0,
-                "avg_pr_review_days": 5.9,
+                "avg_pr_review_days": 5.7,
                 "response_coverage_rate": 96.8,
                 "ownership_signal": true,
                 "has_jira_sync": true,
@@ -2668,7 +3166,7 @@
               "result": "bronze",
               "metrics": {
                 "avg_triage_days": 0.0,
-                "avg_pr_review_days": 5.9,
+                "avg_pr_review_days": 5.7,
                 "response_coverage_rate": 96.8,
                 "ownership_signal": true,
                 "has_jira_sync": true,
@@ -2855,7 +3353,7 @@
                 "stability_pct": null,
                 "latest_build_passing": false,
                 "integration_test_evidence_present": false,
-                "uses_ops_testing": false,
+                "uses_ops_testing": true,
                 "uses_jubilant": true
               },
               "excluded_from_parent_medal": false
@@ -2867,7 +3365,7 @@
               "metrics": {
                 "coverage_pct": null,
                 "stability_pct": null,
-                "latest_build_passing": false,
+                "latest_build_passing": true,
                 "integration_test_evidence_present": true,
                 "uses_ops_testing": true,
                 "uses_jubilant": true
@@ -2897,8 +3395,8 @@
                 "stability_pct": null,
                 "latest_build_passing": false,
                 "integration_test_evidence_present": false,
-                "uses_ops_testing": false,
-                "uses_jubilant": true
+                "uses_ops_testing": true,
+                "uses_jubilant": false
               },
               "excluded_from_parent_medal": false
             }
@@ -3105,7 +3603,7 @@
               "metrics": {
                 "avg_triage_days": 26.1,
                 "avg_pr_review_days": 1.9,
-                "response_coverage_rate": 91.8,
+                "response_coverage_rate": 91.7,
                 "ownership_signal": true,
                 "has_jira_sync": true,
                 "repo_views_14d": null
@@ -3119,7 +3617,7 @@
               "metrics": {
                 "avg_triage_days": 11.9,
                 "avg_pr_review_days": 1.6,
-                "response_coverage_rate": 89.7,
+                "response_coverage_rate": 89.9,
                 "ownership_signal": true,
                 "has_jira_sync": true,
                 "repo_views_14d": null
@@ -3133,7 +3631,7 @@
               "metrics": {
                 "avg_triage_days": 26.1,
                 "avg_pr_review_days": 1.9,
-                "response_coverage_rate": 91.8,
+                "response_coverage_rate": 91.7,
                 "ownership_signal": true,
                 "has_jira_sync": true,
                 "repo_views_14d": null
@@ -3147,7 +3645,7 @@
               "metrics": {
                 "avg_triage_days": 26.1,
                 "avg_pr_review_days": 1.9,
-                "response_coverage_rate": 91.8,
+                "response_coverage_rate": 91.7,
                 "ownership_signal": true,
                 "has_jira_sync": true,
                 "repo_views_14d": null
@@ -3273,7 +3771,7 @@
               "repo": "canonical/hockeypuck-k8s-operator",
               "result": "bronze",
               "metrics": {
-                "avg_triage_days": 117.1,
+                "avg_triage_days": 78.1,
                 "avg_pr_review_days": 9.2,
                 "response_coverage_rate": 100.0,
                 "ownership_signal": true,
@@ -3348,7 +3846,7 @@
                 "latest_build_passing": true,
                 "integration_test_evidence_present": true,
                 "uses_ops_testing": true,
-                "uses_jubilant": true
+                "uses_jubilant": false
               },
               "excluded_from_parent_medal": false
             },
@@ -3362,7 +3860,7 @@
                 "latest_build_passing": true,
                 "integration_test_evidence_present": true,
                 "uses_ops_testing": true,
-                "uses_jubilant": true
+                "uses_jubilant": false
               },
               "excluded_from_parent_medal": false
             },
@@ -3376,7 +3874,7 @@
                 "latest_build_passing": true,
                 "integration_test_evidence_present": true,
                 "uses_ops_testing": true,
-                "uses_jubilant": true
+                "uses_jubilant": false
               },
               "excluded_from_parent_medal": false
             }
@@ -3830,7 +4328,7 @@
                 "latest_build_passing": false,
                 "integration_test_evidence_present": true,
                 "uses_ops_testing": true,
-                "uses_jubilant": true
+                "uses_jubilant": false
               },
               "excluded_from_parent_medal": false
             }
@@ -3910,8 +4408,8 @@
               "result": "bronze",
               "metrics": {
                 "avg_triage_days": 366.5,
-                "avg_pr_review_days": 9.3,
-                "response_coverage_rate": 70.0,
+                "avg_pr_review_days": 10.5,
+                "response_coverage_rate": 75.0,
                 "ownership_signal": true,
                 "has_jira_sync": true,
                 "repo_views_14d": null
@@ -3965,8 +4463,8 @@
                 "stability_pct": 100,
                 "latest_build_passing": true,
                 "integration_test_evidence_present": true,
-                "uses_ops_testing": false,
-                "uses_jubilant": true
+                "uses_ops_testing": true,
+                "uses_jubilant": false
               },
               "excluded_from_parent_medal": false
             },
@@ -3979,7 +4477,7 @@
                 "stability_pct": null,
                 "latest_build_passing": false,
                 "integration_test_evidence_present": true,
-                "uses_ops_testing": false,
+                "uses_ops_testing": true,
                 "uses_jubilant": false
               },
               "excluded_from_parent_medal": false
@@ -3993,8 +4491,8 @@
                 "stability_pct": null,
                 "latest_build_passing": false,
                 "integration_test_evidence_present": true,
-                "uses_ops_testing": false,
-                "uses_jubilant": true
+                "uses_ops_testing": true,
+                "uses_jubilant": false
               },
               "excluded_from_parent_medal": false
             }
@@ -4250,7 +4748,7 @@
                 "latest_build_passing": false,
                 "integration_test_evidence_present": false,
                 "uses_ops_testing": true,
-                "uses_jubilant": true
+                "uses_jubilant": false
               },
               "excluded_from_parent_medal": false
             },
@@ -4264,7 +4762,7 @@
                 "latest_build_passing": false,
                 "integration_test_evidence_present": false,
                 "uses_ops_testing": true,
-                "uses_jubilant": true
+                "uses_jubilant": false
               },
               "excluded_from_parent_medal": false
             },
@@ -4278,7 +4776,7 @@
                 "latest_build_passing": false,
                 "integration_test_evidence_present": false,
                 "uses_ops_testing": true,
-                "uses_jubilant": true
+                "uses_jubilant": false
               },
               "excluded_from_parent_medal": false
             },
@@ -4292,7 +4790,7 @@
                 "latest_build_passing": false,
                 "integration_test_evidence_present": false,
                 "uses_ops_testing": true,
-                "uses_jubilant": true
+                "uses_jubilant": false
               },
               "excluded_from_parent_medal": false
             },
@@ -5236,7 +5734,7 @@
               "metrics": {
                 "avg_triage_days": 729.2,
                 "avg_pr_review_days": 0.2,
-                "response_coverage_rate": 93.9,
+                "response_coverage_rate": 94.1,
                 "ownership_signal": true,
                 "has_jira_sync": false,
                 "repo_views_14d": null
@@ -5400,7 +5898,7 @@
                 "latest_build_passing": null,
                 "integration_test_evidence_present": true,
                 "uses_ops_testing": true,
-                "uses_jubilant": true
+                "uses_jubilant": false
               },
               "excluded_from_parent_medal": false
             }
@@ -5608,8 +6106,8 @@
               "result": "gold",
               "metrics": {
                 "avg_triage_days": 0.6,
-                "avg_pr_review_days": 1.8,
-                "response_coverage_rate": 94.4,
+                "avg_pr_review_days": 1.3,
+                "response_coverage_rate": 94.1,
                 "ownership_signal": true,
                 "has_jira_sync": true,
                 "repo_views_14d": null
@@ -5872,8 +6370,8 @@
               "result": "bronze",
               "metrics": {
                 "avg_triage_days": 266.1,
-                "avg_pr_review_days": 2.1,
-                "response_coverage_rate": 83.3,
+                "avg_pr_review_days": 0.5,
+                "response_coverage_rate": 81.8,
                 "ownership_signal": true,
                 "has_jira_sync": true,
                 "repo_views_14d": null
@@ -6310,7 +6808,7 @@
                 "stability_pct": null,
                 "latest_build_passing": true,
                 "integration_test_evidence_present": true,
-                "uses_ops_testing": true,
+                "uses_ops_testing": false,
                 "uses_jubilant": true
               },
               "excluded_from_parent_medal": false
@@ -6338,7 +6836,7 @@
                 "stability_pct": null,
                 "latest_build_passing": true,
                 "integration_test_evidence_present": true,
-                "uses_ops_testing": true,
+                "uses_ops_testing": false,
                 "uses_jubilant": false
               },
               "excluded_from_parent_medal": false
@@ -6364,7 +6862,7 @@
               "metrics": {
                 "coverage_pct": null,
                 "stability_pct": null,
-                "latest_build_passing": false,
+                "latest_build_passing": true,
                 "integration_test_evidence_present": false,
                 "uses_ops_testing": true,
                 "uses_jubilant": true
@@ -6378,7 +6876,7 @@
               "metrics": {
                 "coverage_pct": null,
                 "stability_pct": null,
-                "latest_build_passing": false,
+                "latest_build_passing": true,
                 "integration_test_evidence_present": false,
                 "uses_ops_testing": true,
                 "uses_jubilant": true
@@ -6727,8 +7225,8 @@
               "result": "bronze",
               "metrics": {
                 "avg_triage_days": 120.9,
-                "avg_pr_review_days": 0.6,
-                "response_coverage_rate": 84.2,
+                "avg_pr_review_days": 0.7,
+                "response_coverage_rate": 83.3,
                 "ownership_signal": true,
                 "has_jira_sync": true,
                 "repo_views_14d": null
@@ -6784,7 +7282,7 @@
               "metrics": {
                 "avg_triage_days": 1.4,
                 "avg_pr_review_days": 0.4,
-                "response_coverage_rate": 96.0,
+                "response_coverage_rate": 96.1,
                 "ownership_signal": true,
                 "has_jira_sync": true,
                 "repo_views_14d": null
@@ -6798,7 +7296,7 @@
               "metrics": {
                 "avg_triage_days": 1.4,
                 "avg_pr_review_days": 0.4,
-                "response_coverage_rate": 96.0,
+                "response_coverage_rate": 96.1,
                 "ownership_signal": true,
                 "has_jira_sync": true,
                 "repo_views_14d": null
@@ -7060,8 +7558,8 @@
               "result": "bronze",
               "metrics": {
                 "avg_triage_days": 184.6,
-                "avg_pr_review_days": 3.4,
-                "response_coverage_rate": 88.3,
+                "avg_pr_review_days": 3.3,
+                "response_coverage_rate": 89.1,
                 "ownership_signal": true,
                 "has_jira_sync": true,
                 "repo_views_14d": null
@@ -7273,7 +7771,7 @@
               "metrics": {
                 "coverage_pct": null,
                 "stability_pct": null,
-                "latest_build_passing": true,
+                "latest_build_passing": false,
                 "integration_test_evidence_present": true,
                 "uses_ops_testing": true,
                 "uses_jubilant": false
@@ -7825,9 +8323,9 @@
         "engagement": {
           "result": "below_minimum",
           "metrics": {
-            "avg_triage_days": 86.1,
+            "avg_triage_days": 81.8,
             "avg_pr_review_days": 1.1,
-            "response_coverage_rate": 83.2,
+            "response_coverage_rate": 84.9,
             "ownership_signal": false,
             "has_jira_sync": true,
             "repo_views_14d": null
@@ -7915,7 +8413,7 @@
           "metrics": {
             "avg_triage_days": 203.6,
             "avg_pr_review_days": 1.3,
-            "response_coverage_rate": 81.3,
+            "response_coverage_rate": 81.1,
             "ownership_signal": false,
             "has_jira_sync": true,
             "repo_views_14d": null
@@ -8003,7 +8501,7 @@
           "metrics": {
             "avg_triage_days": 78.0,
             "avg_pr_review_days": 2.2,
-            "response_coverage_rate": 89.1,
+            "response_coverage_rate": 88.9,
             "ownership_signal": true,
             "has_jira_sync": true,
             "repo_views_14d": null
@@ -9185,7 +9683,7 @@
             "stability_pct": null,
             "latest_build_passing": true,
             "integration_test_evidence_present": true,
-            "uses_ops_testing": true,
+            "uses_ops_testing": false,
             "uses_jubilant": false
           },
           "drift": null,
@@ -9238,6 +9736,534 @@
             "response_coverage_rate": 76.0,
             "ownership_signal": true,
             "has_jira_sync": true,
+            "repo_views_14d": null
+          },
+          "drift": null,
+          "composition": null
+        }
+      }
+    },
+    {
+      "id": "airbyte-k8s",
+      "product_type": "charm",
+      "name": "airbyte-k8s",
+      "description": "",
+      "lifecycle": "stable",
+      "current_result": "below_minimum",
+      "target_result": "gold",
+      "squad": "",
+      "is_portfolio_entry": false,
+      "documentation_url": "",
+      "source": {
+        "repo": "canonical/airbyte-k8s-operator",
+        "subpath": null
+      },
+      "composed_of": null,
+      "context_refs": [],
+      "parent_product_ids": [
+        "data-mesh"
+      ],
+      "dimensions": {
+        "test_verification": {
+          "result": "bronze",
+          "metrics": {
+            "coverage_pct": null,
+            "stability_pct": null,
+            "latest_build_passing": true,
+            "integration_test_evidence_present": true,
+            "uses_ops_testing": true,
+            "uses_jubilant": false
+          },
+          "drift": null,
+          "composition": null
+        },
+        "documentation": {
+          "result": "bronze",
+          "metrics": {
+            "readme_present": true,
+            "contributing_present": true,
+            "has_security": true,
+            "documentation_workflows_passing": false,
+            "diataxis_coverage_ai": 0,
+            "uses_rtd_hosting": false,
+            "release_notes_process_implemented": false,
+            "has_changelog": false
+          },
+          "drift": null,
+          "composition": null
+        },
+        "substrate_compat": {
+          "result": "silver",
+          "metrics": {
+            "supports_juju_3": true,
+            "supports_juju_4": false,
+            "substrate_test_evidence_present": true,
+            "uses_canonical_k8s": true
+          },
+          "drift": null,
+          "composition": null
+        },
+        "security_ssdlc": {
+          "result": "bronze",
+          "metrics": {
+            "renovate_enabled": false,
+            "canonical_repo_automation_registered": false,
+            "branch_protection_required_checks": false,
+            "signed_commits_required": false,
+            "sast_workflow_present": true,
+            "cve_tracking_process_present": true
+          },
+          "drift": null,
+          "composition": null
+        },
+        "engagement": {
+          "result": "below_minimum",
+          "metrics": {
+            "avg_triage_days": 14.7,
+            "avg_pr_review_days": 2.4,
+            "response_coverage_rate": 57.7,
+            "ownership_signal": false,
+            "has_jira_sync": false,
+            "repo_views_14d": null
+          },
+          "drift": null,
+          "composition": null
+        }
+      }
+    },
+    {
+      "id": "trino-k8s",
+      "product_type": "charm",
+      "name": "trino-k8s",
+      "description": "",
+      "lifecycle": "stable",
+      "current_result": "below_minimum",
+      "target_result": "gold",
+      "squad": "",
+      "is_portfolio_entry": false,
+      "documentation_url": "",
+      "source": {
+        "repo": "canonical/trino-k8s-operator",
+        "subpath": null
+      },
+      "composed_of": null,
+      "context_refs": [],
+      "parent_product_ids": [
+        "data-mesh"
+      ],
+      "dimensions": {
+        "test_verification": {
+          "result": "bronze",
+          "metrics": {
+            "coverage_pct": null,
+            "stability_pct": null,
+            "latest_build_passing": true,
+            "integration_test_evidence_present": true,
+            "uses_ops_testing": false,
+            "uses_jubilant": true
+          },
+          "drift": null,
+          "composition": null
+        },
+        "documentation": {
+          "result": "bronze",
+          "metrics": {
+            "readme_present": true,
+            "contributing_present": true,
+            "has_security": true,
+            "documentation_workflows_passing": false,
+            "diataxis_coverage_ai": 0,
+            "uses_rtd_hosting": false,
+            "release_notes_process_implemented": false,
+            "has_changelog": false
+          },
+          "drift": null,
+          "composition": null
+        },
+        "substrate_compat": {
+          "result": "silver",
+          "metrics": {
+            "supports_juju_3": true,
+            "supports_juju_4": false,
+            "substrate_test_evidence_present": true,
+            "uses_canonical_k8s": true
+          },
+          "drift": null,
+          "composition": null
+        },
+        "security_ssdlc": {
+          "result": "bronze",
+          "metrics": {
+            "renovate_enabled": false,
+            "canonical_repo_automation_registered": false,
+            "branch_protection_required_checks": false,
+            "signed_commits_required": false,
+            "sast_workflow_present": true,
+            "cve_tracking_process_present": true
+          },
+          "drift": null,
+          "composition": null
+        },
+        "engagement": {
+          "result": "below_minimum",
+          "metrics": {
+            "avg_triage_days": 127.0,
+            "avg_pr_review_days": 2.2,
+            "response_coverage_rate": 92.3,
+            "ownership_signal": false,
+            "has_jira_sync": false,
+            "repo_views_14d": null
+          },
+          "drift": null,
+          "composition": null
+        }
+      }
+    },
+    {
+      "id": "superset-k8s",
+      "product_type": "charm",
+      "name": "superset-k8s",
+      "description": "",
+      "lifecycle": "stable",
+      "current_result": "below_minimum",
+      "target_result": "gold",
+      "squad": "",
+      "is_portfolio_entry": false,
+      "documentation_url": "",
+      "source": {
+        "repo": "canonical/superset-k8s-operator",
+        "subpath": null
+      },
+      "composed_of": null,
+      "context_refs": [],
+      "parent_product_ids": [
+        "data-mesh"
+      ],
+      "dimensions": {
+        "test_verification": {
+          "result": "bronze",
+          "metrics": {
+            "coverage_pct": null,
+            "stability_pct": null,
+            "latest_build_passing": true,
+            "integration_test_evidence_present": true,
+            "uses_ops_testing": true,
+            "uses_jubilant": false
+          },
+          "drift": null,
+          "composition": null
+        },
+        "documentation": {
+          "result": "bronze",
+          "metrics": {
+            "readme_present": true,
+            "contributing_present": true,
+            "has_security": true,
+            "documentation_workflows_passing": false,
+            "diataxis_coverage_ai": 0,
+            "uses_rtd_hosting": true,
+            "release_notes_process_implemented": false,
+            "has_changelog": false
+          },
+          "drift": null,
+          "composition": null
+        },
+        "substrate_compat": {
+          "result": "silver",
+          "metrics": {
+            "supports_juju_3": true,
+            "supports_juju_4": false,
+            "substrate_test_evidence_present": true,
+            "uses_canonical_k8s": false
+          },
+          "drift": null,
+          "composition": null
+        },
+        "security_ssdlc": {
+          "result": "bronze",
+          "metrics": {
+            "renovate_enabled": false,
+            "canonical_repo_automation_registered": false,
+            "branch_protection_required_checks": false,
+            "signed_commits_required": false,
+            "sast_workflow_present": true,
+            "cve_tracking_process_present": true
+          },
+          "drift": null,
+          "composition": null
+        },
+        "engagement": {
+          "result": "below_minimum",
+          "metrics": {
+            "avg_triage_days": 0.0,
+            "avg_pr_review_days": 4.2,
+            "response_coverage_rate": 57.1,
+            "ownership_signal": false,
+            "has_jira_sync": false,
+            "repo_views_14d": null
+          },
+          "drift": null,
+          "composition": null
+        }
+      }
+    },
+    {
+      "id": "ranger-k8s",
+      "product_type": "charm",
+      "name": "ranger-k8s",
+      "description": "",
+      "lifecycle": "stable",
+      "current_result": "below_minimum",
+      "target_result": "gold",
+      "squad": "",
+      "is_portfolio_entry": false,
+      "documentation_url": "",
+      "source": {
+        "repo": "canonical/ranger-k8s-operator",
+        "subpath": null
+      },
+      "composed_of": null,
+      "context_refs": [],
+      "parent_product_ids": [
+        "data-mesh"
+      ],
+      "dimensions": {
+        "test_verification": {
+          "result": "bronze",
+          "metrics": {
+            "coverage_pct": null,
+            "stability_pct": null,
+            "latest_build_passing": false,
+            "integration_test_evidence_present": true,
+            "uses_ops_testing": true,
+            "uses_jubilant": true
+          },
+          "drift": null,
+          "composition": null
+        },
+        "documentation": {
+          "result": "bronze",
+          "metrics": {
+            "readme_present": true,
+            "contributing_present": true,
+            "has_security": true,
+            "documentation_workflows_passing": false,
+            "diataxis_coverage_ai": 0,
+            "uses_rtd_hosting": false,
+            "release_notes_process_implemented": false,
+            "has_changelog": false
+          },
+          "drift": null,
+          "composition": null
+        },
+        "substrate_compat": {
+          "result": "silver",
+          "metrics": {
+            "supports_juju_3": true,
+            "supports_juju_4": false,
+            "substrate_test_evidence_present": true,
+            "uses_canonical_k8s": true
+          },
+          "drift": null,
+          "composition": null
+        },
+        "security_ssdlc": {
+          "result": "bronze",
+          "metrics": {
+            "renovate_enabled": false,
+            "canonical_repo_automation_registered": false,
+            "branch_protection_required_checks": false,
+            "signed_commits_required": false,
+            "sast_workflow_present": true,
+            "cve_tracking_process_present": true
+          },
+          "drift": null,
+          "composition": null
+        },
+        "engagement": {
+          "result": "below_minimum",
+          "metrics": {
+            "avg_triage_days": 0.0,
+            "avg_pr_review_days": 0.4,
+            "response_coverage_rate": 100.0,
+            "ownership_signal": false,
+            "has_jira_sync": false,
+            "repo_views_14d": null
+          },
+          "drift": null,
+          "composition": null
+        }
+      }
+    },
+    {
+      "id": "datahub-k8s",
+      "product_type": "charm",
+      "name": "datahub-k8s",
+      "description": "",
+      "lifecycle": "stable",
+      "current_result": "below_minimum",
+      "target_result": "gold",
+      "squad": "",
+      "is_portfolio_entry": false,
+      "documentation_url": "",
+      "source": {
+        "repo": "canonical/datahub-k8s-operator",
+        "subpath": null
+      },
+      "composed_of": null,
+      "context_refs": [],
+      "parent_product_ids": [
+        "data-mesh"
+      ],
+      "dimensions": {
+        "test_verification": {
+          "result": "bronze",
+          "metrics": {
+            "coverage_pct": null,
+            "stability_pct": null,
+            "latest_build_passing": false,
+            "integration_test_evidence_present": true,
+            "uses_ops_testing": true,
+            "uses_jubilant": true
+          },
+          "drift": null,
+          "composition": null
+        },
+        "documentation": {
+          "result": "bronze",
+          "metrics": {
+            "readme_present": true,
+            "contributing_present": true,
+            "has_security": true,
+            "documentation_workflows_passing": false,
+            "diataxis_coverage_ai": 0,
+            "uses_rtd_hosting": true,
+            "release_notes_process_implemented": false,
+            "has_changelog": false
+          },
+          "drift": null,
+          "composition": null
+        },
+        "substrate_compat": {
+          "result": "gold",
+          "metrics": {
+            "supports_juju_3": true,
+            "supports_juju_4": true,
+            "substrate_test_evidence_present": true,
+            "uses_canonical_k8s": true
+          },
+          "drift": null,
+          "composition": null
+        },
+        "security_ssdlc": {
+          "result": "bronze",
+          "metrics": {
+            "renovate_enabled": false,
+            "canonical_repo_automation_registered": false,
+            "branch_protection_required_checks": false,
+            "signed_commits_required": false,
+            "sast_workflow_present": true,
+            "cve_tracking_process_present": true
+          },
+          "drift": null,
+          "composition": null
+        },
+        "engagement": {
+          "result": "below_minimum",
+          "metrics": {
+            "avg_triage_days": 0.0,
+            "avg_pr_review_days": 0.5,
+            "response_coverage_rate": 100.0,
+            "ownership_signal": false,
+            "has_jira_sync": false,
+            "repo_views_14d": null
+          },
+          "drift": null,
+          "composition": null
+        }
+      }
+    },
+    {
+      "id": "hive-metastore-k8s",
+      "product_type": "charm",
+      "name": "hive-metastore-k8s",
+      "description": "",
+      "lifecycle": "stable",
+      "current_result": "below_minimum",
+      "target_result": "gold",
+      "squad": "",
+      "is_portfolio_entry": false,
+      "documentation_url": "",
+      "source": {
+        "repo": "canonical/hive-metastore-k8s-operator",
+        "subpath": null
+      },
+      "composed_of": null,
+      "context_refs": [],
+      "parent_product_ids": [
+        "data-mesh"
+      ],
+      "dimensions": {
+        "test_verification": {
+          "result": "bronze",
+          "metrics": {
+            "coverage_pct": null,
+            "stability_pct": null,
+            "latest_build_passing": true,
+            "integration_test_evidence_present": true,
+            "uses_ops_testing": true,
+            "uses_jubilant": false
+          },
+          "drift": null,
+          "composition": null
+        },
+        "documentation": {
+          "result": "below_minimum",
+          "metrics": {
+            "readme_present": true,
+            "contributing_present": true,
+            "has_security": false,
+            "documentation_workflows_passing": false,
+            "diataxis_coverage_ai": 0,
+            "uses_rtd_hosting": false,
+            "release_notes_process_implemented": false,
+            "has_changelog": false
+          },
+          "drift": null,
+          "composition": null
+        },
+        "substrate_compat": {
+          "result": "silver",
+          "metrics": {
+            "supports_juju_3": true,
+            "supports_juju_4": false,
+            "substrate_test_evidence_present": true,
+            "uses_canonical_k8s": false
+          },
+          "drift": null,
+          "composition": null
+        },
+        "security_ssdlc": {
+          "result": "bronze",
+          "metrics": {
+            "renovate_enabled": false,
+            "canonical_repo_automation_registered": false,
+            "branch_protection_required_checks": false,
+            "signed_commits_required": false,
+            "sast_workflow_present": true,
+            "cve_tracking_process_present": false
+          },
+          "drift": null,
+          "composition": null
+        },
+        "engagement": {
+          "result": "insufficient_data",
+          "metrics": {
+            "avg_triage_days": null,
+            "avg_pr_review_days": null,
+            "response_coverage_rate": null,
+            "ownership_signal": false,
+            "has_jira_sync": false,
             "repo_views_14d": null
           },
           "drift": null,
@@ -9361,8 +10387,8 @@
             "stability_pct": 92,
             "latest_build_passing": false,
             "integration_test_evidence_present": false,
-            "uses_ops_testing": false,
-            "uses_jubilant": true
+            "uses_ops_testing": true,
+            "uses_jubilant": false
           },
           "drift": null,
           "composition": null
@@ -9411,7 +10437,7 @@
           "metrics": {
             "avg_triage_days": 292.8,
             "avg_pr_review_days": 0.2,
-            "response_coverage_rate": 87.3,
+            "response_coverage_rate": 87.1,
             "ownership_signal": true,
             "has_jira_sync": true,
             "repo_views_14d": null
@@ -9447,7 +10473,7 @@
           "metrics": {
             "coverage_pct": null,
             "stability_pct": null,
-            "latest_build_passing": true,
+            "latest_build_passing": false,
             "integration_test_evidence_present": true,
             "uses_ops_testing": false,
             "uses_jubilant": true
@@ -9535,9 +10561,9 @@
           "metrics": {
             "coverage_pct": null,
             "stability_pct": null,
-            "latest_build_passing": true,
+            "latest_build_passing": false,
             "integration_test_evidence_present": true,
-            "uses_ops_testing": false,
+            "uses_ops_testing": true,
             "uses_jubilant": true
           },
           "drift": null,
@@ -9623,7 +10649,7 @@
           "metrics": {
             "coverage_pct": null,
             "stability_pct": null,
-            "latest_build_passing": true,
+            "latest_build_passing": false,
             "integration_test_evidence_present": true,
             "uses_ops_testing": false,
             "uses_jubilant": true
@@ -9711,10 +10737,10 @@
           "metrics": {
             "coverage_pct": null,
             "stability_pct": null,
-            "latest_build_passing": true,
+            "latest_build_passing": false,
             "integration_test_evidence_present": true,
             "uses_ops_testing": true,
-            "uses_jubilant": false
+            "uses_jubilant": true
           },
           "drift": null,
           "composition": null
@@ -9799,10 +10825,10 @@
           "metrics": {
             "coverage_pct": null,
             "stability_pct": null,
-            "latest_build_passing": true,
+            "latest_build_passing": false,
             "integration_test_evidence_present": true,
-            "uses_ops_testing": false,
-            "uses_jubilant": true
+            "uses_ops_testing": true,
+            "uses_jubilant": false
           },
           "drift": null,
           "composition": null
@@ -9887,10 +10913,10 @@
           "metrics": {
             "coverage_pct": null,
             "stability_pct": null,
-            "latest_build_passing": true,
+            "latest_build_passing": false,
             "integration_test_evidence_present": true,
-            "uses_ops_testing": false,
-            "uses_jubilant": true
+            "uses_ops_testing": true,
+            "uses_jubilant": false
           },
           "drift": null,
           "composition": null
@@ -9975,10 +11001,10 @@
           "metrics": {
             "coverage_pct": null,
             "stability_pct": null,
-            "latest_build_passing": true,
+            "latest_build_passing": false,
             "integration_test_evidence_present": true,
-            "uses_ops_testing": false,
-            "uses_jubilant": true
+            "uses_ops_testing": true,
+            "uses_jubilant": false
           },
           "drift": null,
           "composition": null
@@ -10114,7 +11140,7 @@
           "result": "bronze",
           "metrics": {
             "avg_triage_days": 0.0,
-            "avg_pr_review_days": 5.9,
+            "avg_pr_review_days": 5.7,
             "response_coverage_rate": 96.8,
             "ownership_signal": true,
             "has_jira_sync": true,
@@ -10202,7 +11228,7 @@
           "result": "bronze",
           "metrics": {
             "avg_triage_days": 0.0,
-            "avg_pr_review_days": 5.9,
+            "avg_pr_review_days": 5.7,
             "response_coverage_rate": 96.8,
             "ownership_signal": true,
             "has_jira_sync": true,
@@ -10329,7 +11355,7 @@
             "stability_pct": null,
             "latest_build_passing": false,
             "integration_test_evidence_present": false,
-            "uses_ops_testing": false,
+            "uses_ops_testing": true,
             "uses_jubilant": true
           },
           "drift": null,
@@ -10379,7 +11405,7 @@
           "metrics": {
             "avg_triage_days": 26.1,
             "avg_pr_review_days": 1.9,
-            "response_coverage_rate": 91.8,
+            "response_coverage_rate": 91.7,
             "ownership_signal": true,
             "has_jira_sync": true,
             "repo_views_14d": null
@@ -10415,7 +11441,7 @@
           "metrics": {
             "coverage_pct": null,
             "stability_pct": null,
-            "latest_build_passing": false,
+            "latest_build_passing": true,
             "integration_test_evidence_present": true,
             "uses_ops_testing": true,
             "uses_jubilant": true
@@ -10467,7 +11493,7 @@
           "metrics": {
             "avg_triage_days": 11.9,
             "avg_pr_review_days": 1.6,
-            "response_coverage_rate": 89.7,
+            "response_coverage_rate": 89.9,
             "ownership_signal": true,
             "has_jira_sync": true,
             "repo_views_14d": null
@@ -10555,7 +11581,7 @@
           "metrics": {
             "avg_triage_days": 26.1,
             "avg_pr_review_days": 1.9,
-            "response_coverage_rate": 91.8,
+            "response_coverage_rate": 91.7,
             "ownership_signal": true,
             "has_jira_sync": true,
             "repo_views_14d": null
@@ -10593,8 +11619,8 @@
             "stability_pct": null,
             "latest_build_passing": false,
             "integration_test_evidence_present": false,
-            "uses_ops_testing": false,
-            "uses_jubilant": true
+            "uses_ops_testing": true,
+            "uses_jubilant": false
           },
           "drift": null,
           "composition": null
@@ -10643,7 +11669,7 @@
           "metrics": {
             "avg_triage_days": 26.1,
             "avg_pr_review_days": 1.9,
-            "response_coverage_rate": 91.8,
+            "response_coverage_rate": 91.7,
             "ownership_signal": true,
             "has_jira_sync": true,
             "repo_views_14d": null
@@ -10729,7 +11755,7 @@
         "engagement": {
           "result": "bronze",
           "metrics": {
-            "avg_triage_days": 117.1,
+            "avg_triage_days": 78.1,
             "avg_pr_review_days": 9.2,
             "response_coverage_rate": 100.0,
             "ownership_signal": true,
@@ -10858,7 +11884,7 @@
             "latest_build_passing": true,
             "integration_test_evidence_present": true,
             "uses_ops_testing": true,
-            "uses_jubilant": true
+            "uses_jubilant": false
           },
           "drift": null,
           "composition": null
@@ -10946,7 +11972,7 @@
             "latest_build_passing": true,
             "integration_test_evidence_present": true,
             "uses_ops_testing": true,
-            "uses_jubilant": true
+            "uses_jubilant": false
           },
           "drift": null,
           "composition": null
@@ -11034,7 +12060,7 @@
             "latest_build_passing": true,
             "integration_test_evidence_present": true,
             "uses_ops_testing": true,
-            "uses_jubilant": true
+            "uses_jubilant": false
           },
           "drift": null,
           "composition": null
@@ -11210,7 +12236,7 @@
             "latest_build_passing": false,
             "integration_test_evidence_present": true,
             "uses_ops_testing": true,
-            "uses_jubilant": true
+            "uses_jubilant": false
           },
           "drift": null,
           "composition": null
@@ -11258,8 +12284,8 @@
           "result": "bronze",
           "metrics": {
             "avg_triage_days": 366.5,
-            "avg_pr_review_days": 9.3,
-            "response_coverage_rate": 70.0,
+            "avg_pr_review_days": 10.5,
+            "response_coverage_rate": 75.0,
             "ownership_signal": true,
             "has_jira_sync": true,
             "repo_views_14d": null
@@ -11297,8 +12323,8 @@
             "stability_pct": 100,
             "latest_build_passing": true,
             "integration_test_evidence_present": true,
-            "uses_ops_testing": false,
-            "uses_jubilant": true
+            "uses_ops_testing": true,
+            "uses_jubilant": false
           },
           "drift": null,
           "composition": null
@@ -11385,7 +12411,7 @@
             "stability_pct": null,
             "latest_build_passing": false,
             "integration_test_evidence_present": true,
-            "uses_ops_testing": false,
+            "uses_ops_testing": true,
             "uses_jubilant": false
           },
           "drift": null,
@@ -11473,8 +12499,8 @@
             "stability_pct": null,
             "latest_build_passing": false,
             "integration_test_evidence_present": true,
-            "uses_ops_testing": false,
-            "uses_jubilant": true
+            "uses_ops_testing": true,
+            "uses_jubilant": false
           },
           "drift": null,
           "composition": null
@@ -11562,7 +12588,7 @@
             "latest_build_passing": false,
             "integration_test_evidence_present": false,
             "uses_ops_testing": true,
-            "uses_jubilant": true
+            "uses_jubilant": false
           },
           "drift": null,
           "composition": null
@@ -11650,7 +12676,7 @@
             "latest_build_passing": false,
             "integration_test_evidence_present": false,
             "uses_ops_testing": true,
-            "uses_jubilant": true
+            "uses_jubilant": false
           },
           "drift": null,
           "composition": null
@@ -11738,7 +12764,7 @@
             "latest_build_passing": false,
             "integration_test_evidence_present": false,
             "uses_ops_testing": true,
-            "uses_jubilant": true
+            "uses_jubilant": false
           },
           "drift": null,
           "composition": null
@@ -11826,7 +12852,7 @@
             "latest_build_passing": false,
             "integration_test_evidence_present": false,
             "uses_ops_testing": true,
-            "uses_jubilant": true
+            "uses_jubilant": false
           },
           "drift": null,
           "composition": null
@@ -12051,7 +13077,7 @@
           "metrics": {
             "avg_triage_days": 729.2,
             "avg_pr_review_days": 0.2,
-            "response_coverage_rate": 93.9,
+            "response_coverage_rate": 94.1,
             "ownership_signal": true,
             "has_jira_sync": false,
             "repo_views_14d": null
@@ -12706,7 +13732,7 @@
             "latest_build_passing": null,
             "integration_test_evidence_present": true,
             "uses_ops_testing": true,
-            "uses_jubilant": true
+            "uses_jubilant": false
           },
           "drift": null,
           "composition": null
@@ -12842,8 +13868,8 @@
           "result": "gold",
           "metrics": {
             "avg_triage_days": 0.6,
-            "avg_pr_review_days": 1.8,
-            "response_coverage_rate": 94.4,
+            "avg_pr_review_days": 1.3,
+            "response_coverage_rate": 94.1,
             "ownership_signal": true,
             "has_jira_sync": true,
             "repo_views_14d": null
@@ -13018,8 +14044,8 @@
           "result": "bronze",
           "metrics": {
             "avg_triage_days": 266.1,
-            "avg_pr_review_days": 2.1,
-            "response_coverage_rate": 83.3,
+            "avg_pr_review_days": 0.5,
+            "response_coverage_rate": 81.8,
             "ownership_signal": true,
             "has_jira_sync": true,
             "repo_views_14d": null
@@ -13321,7 +14347,7 @@
             "stability_pct": null,
             "latest_build_passing": true,
             "integration_test_evidence_present": true,
-            "uses_ops_testing": true,
+            "uses_ops_testing": false,
             "uses_jubilant": true
           },
           "drift": null,
@@ -13370,8 +14396,8 @@
           "result": "bronze",
           "metrics": {
             "avg_triage_days": 120.9,
-            "avg_pr_review_days": 0.6,
-            "response_coverage_rate": 84.2,
+            "avg_pr_review_days": 0.7,
+            "response_coverage_rate": 83.3,
             "ownership_signal": true,
             "has_jira_sync": true,
             "repo_views_14d": null
@@ -13497,7 +14523,7 @@
             "stability_pct": null,
             "latest_build_passing": true,
             "integration_test_evidence_present": true,
-            "uses_ops_testing": true,
+            "uses_ops_testing": false,
             "uses_jubilant": false
           },
           "drift": null,
@@ -13671,7 +14697,7 @@
           "metrics": {
             "coverage_pct": null,
             "stability_pct": null,
-            "latest_build_passing": false,
+            "latest_build_passing": true,
             "integration_test_evidence_present": false,
             "uses_ops_testing": true,
             "uses_jubilant": true
@@ -13723,7 +14749,7 @@
           "metrics": {
             "avg_triage_days": 1.4,
             "avg_pr_review_days": 0.4,
-            "response_coverage_rate": 96.0,
+            "response_coverage_rate": 96.1,
             "ownership_signal": true,
             "has_jira_sync": true,
             "repo_views_14d": null
@@ -13759,7 +14785,7 @@
           "metrics": {
             "coverage_pct": null,
             "stability_pct": null,
-            "latest_build_passing": false,
+            "latest_build_passing": true,
             "integration_test_evidence_present": false,
             "uses_ops_testing": true,
             "uses_jubilant": true
@@ -13811,7 +14837,7 @@
           "metrics": {
             "avg_triage_days": 1.4,
             "avg_pr_review_days": 0.4,
-            "response_coverage_rate": 96.0,
+            "response_coverage_rate": 96.1,
             "ownership_signal": true,
             "has_jira_sync": true,
             "repo_views_14d": null
@@ -13986,8 +15012,8 @@
           "result": "bronze",
           "metrics": {
             "avg_triage_days": 184.6,
-            "avg_pr_review_days": 3.4,
-            "response_coverage_rate": 88.3,
+            "avg_pr_review_days": 3.3,
+            "response_coverage_rate": 89.1,
             "ownership_signal": true,
             "has_jira_sync": true,
             "repo_views_14d": null
@@ -14287,7 +15313,7 @@
           "metrics": {
             "coverage_pct": null,
             "stability_pct": null,
-            "latest_build_passing": true,
+            "latest_build_passing": false,
             "integration_test_evidence_present": true,
             "uses_ops_testing": true,
             "uses_jubilant": false
