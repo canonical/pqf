@@ -1,4 +1,4 @@
-from engine.models import MEDAL_RANK, DimensionResult, DriftState, Medal, ProductResult, Result
+from engine.models import MEDAL_RANK, DimensionResult, Medal, ProductResult, Result
 
 
 def test_medal_values_are_lowercase_strings():
@@ -19,27 +19,16 @@ def test_medal_comparable_via_rank():
     assert min(medals, key=lambda m: MEDAL_RANK[m]) == Medal.UNRATED
 
 
-def test_drift_state_instantiation():
-    drift = DriftState(
-        status="remediating",
-        first_seen_at="2026-06-01T00:00:00+00:00",
-        deadline="2026-12-01T00:00:00+00:00",
-    )
-    assert drift.status == "remediating"
-    assert drift.first_seen_at == "2026-06-01T00:00:00+00:00"
-    assert drift.deadline == "2026-12-01T00:00:00+00:00"
-
-
 def test_dimension_result_instantiation():
     dim = DimensionResult(
         medal=Medal.SILVER,
         target=Medal.GOLD,
+        meets_target=False,
         result=Result.SILVER,
         metrics={"coverage_pct": 85},
-        drift=None,
     )
     assert dim.medal == Medal.SILVER
-    assert dim.drift is None
+    assert dim.meets_target is False
 
 
 def test_product_result_instantiation():
@@ -47,9 +36,11 @@ def test_product_result_instantiation():
         product_id="matrix",
         current_medal=Medal.BRONZE,
         target_medal=Medal.GOLD,
+        meets_target=False,
         current_result=Result.BRONZE,
         target_result=Result.GOLD,
         dimensions={},
     )
     assert result.product_id == "matrix"
     assert result.current_medal == Medal.BRONZE
+    assert result.meets_target is False

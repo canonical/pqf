@@ -3,22 +3,33 @@ name: Compute Metrics
 
 on:
   schedule:
-    - cron: '0 2 * * *'    # nightly at 02:00 UTC
+    # Cron literals are mapped to a cadence by engine/workflow_matrix.py
+    # (SCHEDULE_CADENCES). test_workflows.py asserts the two match exactly.
+    - cron: '0 2 * * *'    # nightly at 02:00 UTC — active framework version(s)
+    - cron: '0 3 * * 1'    # weekly, Monday at 03:00 UTC — upcoming framework version(s)
   workflow_dispatch:         # manual trigger
+    inputs:
+      framework_version:
+        description: 'Framework version to score (must be active or upcoming)'
+        required: true
+        type: string
   push:
     branches: [main]
     paths:
       - 'products/**'        # re-run when a product YAML changes
+      - 'framework/**'       # re-run when a framework version contract changes
       - 'config/**'          # re-run when dimension config changes
       - 'scorers/**'         # re-run when scorer logic changes
       - '!scorers/**/__tests__/**'
       - 'engine/**'          # re-run when assembly logic changes
       - '!engine/__tests__/**'
+      - 'ui/**'              # rebuild UI while carrying forward current metric artifacts
       - '.github/workflows/compute-metrics.yml'  # re-run when workflow behavior changes
   pull_request:
     types: [opened, reopened, synchronize]
     paths:
       - 'products/**'
+      - 'framework/**'
       - 'config/**'
       - 'scorers/**'
       - '!scorers/**/__tests__/**'
@@ -27,166 +38,226 @@ on:
       - 'ui/**'
       - '.github/workflows/compute-metrics.yml'
 
-# Cancel any in-progress run on the same branch when a new push arrives.
-# This prevents N sequential LLM runs when multiple commits land quickly.
-# The nightly schedule run is never cancelled (unique group per run_id).
+# Main pushes are serialized so a later UI-only commit cannot cancel unpublished
+# scorer/catalog changes from an earlier commit. Other branch runs are superseded
+# normally; schedules have a unique group per run.
 concurrency:
   group: compute-metrics-${{ github.ref }}-${{ github.event_name == 'schedule' && github.run_id || 'push' }}
-  cancel-in-progress: ${{ github.event_name != 'schedule' }}
+  cancel-in-progress: ${{ github.event_name != 'schedule' && github.ref != 'refs/heads/main' }}
 
 permissions:
-  contents: write            # needed for the commit-artifacts job
+  contents: write            # needed for the deploy jobs
   issues: read               # needed for engagement scorer (reads issues across org repos)
   pull-requests: read        # needed for engagement scorer (reads PRs across org repos)
 
 jobs:
 
-  # ── 1. Discover products ────────────────────────────────────────────────────
-  discover-products:
-    if: github.event_name != 'pull_request' || github.event.action != 'closed'
+  # ── 0. Semantic change report (PRs only) ───────────────────────────────────
+  # Summarizes framework/catalog changes by category (metadata-only, additive
+  # informational, scoring-semantic, catalog membership/target) so reviewers
+  # can see the blast radius before the compute jobs finish.
+  change-report:
+    if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
-    outputs:
-      matrix: ${{ steps.scan.outputs.matrix }}
-    steps:
-      - uses: actions/checkout@v4
-      - id: scan
-        name: Scan products/*.yaml
-        run: |
-          products=$(ls products/*.yaml 2>/dev/null \
-            | xargs -I{} basename {} .yaml \
-            | jq -R -s -c 'split("\n") | map(select(length > 0))')
-          echo "matrix={\"product\": $products}" >> "$GITHUB_OUTPUT"
-
-  # ── 2. Compute metrics per product ─────────────────────────────────────────
-  compute-metrics:
-    if: github.event_name != 'pull_request' || github.event.action != 'closed'
-    needs: discover-products
-    runs-on: ubuntu-latest
-    strategy:
-      matrix: ${{ fromJson(needs.discover-products.outputs.matrix) }}
-      fail-fast: false
-      max-parallel: 10   # Limit concurrent jobs to avoid GitHub API rate limits (1000 req/hr)
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0   # Needed to compare against base branch
 
-      # For pull_request: skip rescoring unchanged products, reuse committed computed file
-      - name: Check if product needs rescoring
-        id: needs_rescore
-        if: github.event_name == 'pull_request'
-        run: |
-          changed_paths=$(
-            git diff --name-only origin/${{ github.base_ref }}...HEAD -- \
-              products/${{ matrix.product }}.yaml config/ scorers/ engine/ \
-              .github/workflows/compute-metrics.yml \
-              | grep -Ev '^(engine/__tests__/|scorers/.*/__tests__/)' || true
-          )
-
-          if [ -n "$changed_paths" ]; then
-            echo "changed=true" >> $GITHUB_OUTPUT
-          elif [ -f "computed/${{ matrix.product }}.json" ]; then
-            echo "changed=false" >> $GITHUB_OUTPUT
-          else
-            # New product with no existing computed file
-            echo "changed=true" >> $GITHUB_OUTPUT
-          fi
-
-      # If product is unchanged on PR, reuse the committed computed file
-      - name: Reuse existing computed file (unchanged product)
-        if: github.event_name == 'pull_request' && steps.needs_rescore.outputs.changed == 'false'
-        uses: actions/upload-artifact@v4
-        with:
-          name: computed-${{ matrix.product }}
-          path: computed/${{ matrix.product }}.json
-          retention-days: 1
-
       - uses: actions/setup-python@v5
-        if: github.event_name != 'pull_request' || steps.needs_rescore.outputs.changed == 'true'
         with:
           python-version: '3.11'
           cache: pip
 
       - name: Install dependencies
-        if: github.event_name != 'pull_request' || steps.needs_rescore.outputs.changed == 'true'
         run: pip install -e ".[dev]"
 
-      - name: Create scorer output directory
-        if: github.event_name != 'pull_request' || steps.needs_rescore.outputs.changed == 'true'
-        run: mkdir -p /tmp/scorers/${{ matrix.product }}
-
-      - name: Run test_verification scorer
-        if: github.event_name != 'pull_request' || steps.needs_rescore.outputs.changed == 'true'
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Generate semantic change report
         run: |
-          python scorers/test_verification/scorer.py \
-            --product-yaml products/${{ matrix.product }}.yaml \
-            --products-dir products/ \
-            > /tmp/scorers/${{ matrix.product }}/test_verification.json
+          {
+            echo "## PQF semantic change report"
+            python3 -m engine.change_report --base-ref "origin/${{ github.base_ref }}"
+          } >> "$GITHUB_STEP_SUMMARY"
 
-      - name: Run documentation scorer
-        if: github.event_name != 'pull_request' || steps.needs_rescore.outputs.changed == 'true'
+  # ── 1. Determine the framework/product matrix ──────────────────────────────
+  # Rows are (framework_version, product) only: each compute job loops over that
+  # version's dimensions itself, which keeps the matrix at one job per product per
+  # selected version and amortizes checkout/install across all dimensions.
+  determine-matrix:
+    if: github.event_name != 'pull_request' || github.event.action != 'closed'
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.build.outputs.matrix }}
+      versions: ${{ steps.build.outputs.versions }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0   # Needed to compare against base branch / previous push
+
+      - name: Check whether gh-pages branch exists
+        id: pages_exists
+        run: |
+          set -euo pipefail
+          if git ls-remote --exit-code --heads origin gh-pages >/dev/null 2>&1; then
+            echo "exists=true" >> "$GITHUB_OUTPUT"
+          else
+            status=$?
+            if [ "$status" -eq 2 ]; then
+              echo "exists=false" >> "$GITHUB_OUTPUT"
+            else
+              exit "$status"
+            fi
+          fi
+
+      - name: Check out current Pages data
+        if: steps.pages_exists.outputs.exists == 'true'
+        uses: actions/checkout@v4
+        with:
+          ref: gh-pages
+          path: .gh-pages-data
+          fetch-depth: 1
+          persist-credentials: false
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: pip
+
+      - name: Install dependencies
+        run: pip install -e ".[dev]"
+
+      - name: Build framework/product matrix
+        id: build
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          EVENT_SCHEDULE: ${{ github.event.schedule }}
+          DISPATCH_VERSION: ${{ github.event.inputs.framework_version }}
+          BASE_REF: ${{ github.base_ref }}
+          HEAD_SHA: ${{ github.sha }}
+        run: |
+          set -euo pipefail
+
+          # Live framework versions with no portfolio published here are added to
+          # the matrix automatically, so the version index can always be rebuilt.
+          mkdir -p .gh-pages-data
+          published_args=(--published-dir .gh-pages-data)
+
+          write_changes_since_published() {
+            # Compare main against the last successfully published active
+            # portfolio, not merely this event's immediate predecessor. GitHub
+            # retains only one pending run per concurrency group, so this recovers
+            # scoring changes from failed or superseded runs.
+            published_revision=""
+            if [ -f .gh-pages-data/portfolio.json ]; then
+              published_revision=$(jq -r '.source_revision // empty' \
+                .gh-pages-data/portfolio.json)
+            fi
+
+            if [[ "$published_revision" =~ ^[0-9a-fA-F]{40}$ ]] \
+              && git cat-file -e "$published_revision^{commit}" 2>/dev/null \
+              && git merge-base --is-ancestor "$published_revision" "$HEAD_SHA"; then
+              git diff --name-only "$published_revision...$HEAD_SHA" > changed-paths.txt
+            else
+              # First publish / force-push / pruned history: no usable published
+              # base commit, so treat the whole tree as changed.
+              git ls-files > changed-paths.txt
+            fi
+          }
+
+          if [ "$EVENT_NAME" = "schedule" ]; then
+            # Cadence is derived from the cron literal by an exact, tested mapping.
+            write_changes_since_published
+            matrix=$(python3 -m engine.workflow_matrix \
+              --schedule "$EVENT_SCHEDULE" \
+              --changed-paths-file changed-paths.txt "${published_args[@]}")
+
+          elif [ "$EVENT_NAME" = "workflow_dispatch" ]; then
+            write_changes_since_published
+            matrix=$(python3 -m engine.workflow_matrix --cadence manual \
+              --framework-version "$DISPATCH_VERSION" \
+              --changed-paths-file changed-paths.txt "${published_args[@]}")
+
+          else
+            # push / pull_request: include every live framework version whose
+            # framework, scorer, engine, or catalog inputs changed.
+            if [ "$EVENT_NAME" = "pull_request" ]; then
+              git diff --name-only "origin/$BASE_REF...HEAD" > changed-paths.txt
+            else
+              write_changes_since_published
+            fi
+
+            matrix=$(python3 -m engine.workflow_matrix --cadence changed \
+              --changed-paths-file changed-paths.txt "${published_args[@]}")
+          fi
+
+          versions=$(echo "$matrix" | jq -c '[.include[].framework_version] | unique')
+
+          echo "matrix=$matrix" >> "$GITHUB_OUTPUT"
+          echo "versions=$versions" >> "$GITHUB_OUTPUT"
+          echo "Selected versions: $versions" >> "$GITHUB_STEP_SUMMARY"
+          echo "Matrix jobs: $(echo "$matrix" | jq '.include | length')" >> "$GITHUB_STEP_SUMMARY"
+
+  # ── 2. Run every dimension for one (framework version, product) ────────────
+  compute-metrics:
+    if: >
+      (github.event_name != 'pull_request' || github.event.action != 'closed') &&
+      needs.determine-matrix.outputs.versions != '[]'
+    needs: determine-matrix
+    runs-on: ubuntu-latest
+    strategy:
+      matrix: ${{ fromJson(needs.determine-matrix.outputs.matrix) }}
+      fail-fast: false
+      max-parallel: 10   # Limit concurrent jobs to avoid GitHub API rate limits (1000 req/hr)
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: pip
+
+      - name: Install dependencies
+        run: pip install -e ".[dev]"
+
+      - name: Run every dimension for this framework version
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+          FRAMEWORK_VERSION: ${{ matrix.framework_version }}
+          PRODUCT: ${{ matrix.product }}
         run: |
-          python scorers/documentation/scorer.py \
-            --product-yaml products/${{ matrix.product }}.yaml \
-            --products-dir products/ \
-            > /tmp/scorers/${{ matrix.product }}/documentation.json
+          set -euo pipefail
+          mkdir -p /tmp/scorer-output
 
-      - name: Run substrate_compat scorer
-        if: github.event_name != 'pull_request' || steps.needs_rescore.outputs.changed == 'true'
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          python scorers/substrate_compat/scorer.py \
-            --product-yaml products/${{ matrix.product }}.yaml \
-            --products-dir products/ \
-            > /tmp/scorers/${{ matrix.product }}/substrate_compat.json
+          dimensions=$(python3 -m engine.framework \
+            --root framework/versions \
+            --version "$FRAMEWORK_VERSION" \
+            --list-dimensions)
 
-      - name: Run security_ssdlc scorer
-        if: github.event_name != 'pull_request' || steps.needs_rescore.outputs.changed == 'true'
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          python scorers/security_ssdlc/scorer.py \
-            --product-yaml products/${{ matrix.product }}.yaml \
-            --products-dir products/ \
-            > /tmp/scorers/${{ matrix.product }}/security_ssdlc.json
+          for dimension in $dimensions; do
+            echo "── $FRAMEWORK_VERSION / $PRODUCT / $dimension ──"
+            python scorers/run.py \
+              --framework-root framework/versions \
+              --framework-version "$FRAMEWORK_VERSION" \
+              --dimension "$dimension" \
+              --product-yaml "products/$PRODUCT.yaml" \
+              --products-dir products/ \
+              > "/tmp/scorer-output/${FRAMEWORK_VERSION}__${PRODUCT}__${dimension}.json"
+          done
 
-      - name: Run engagement scorer
-        if: github.event_name != 'pull_request' || steps.needs_rescore.outputs.changed == 'true'
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          python scorers/engagement/scorer.py \
-            --product-yaml products/${{ matrix.product }}.yaml \
-            --products-dir products/ \
-            > /tmp/scorers/${{ matrix.product }}/engagement.json
-
-      - name: Merge scorer outputs into computed/${{ matrix.product }}.json
-        if: github.event_name != 'pull_request' || steps.needs_rescore.outputs.changed == 'true'
-        run: |
-          python engine/merge_computed.py \
-            --product-id ${{ matrix.product }} \
-            --scorers-output-dir /tmp/scorers/${{ matrix.product }} \
-            --dimensions config/dimensions.yaml \
-            --output computed/${{ matrix.product }}.json
-
-      - name: Upload computed artifact
-        if: github.event_name != 'pull_request' || steps.needs_rescore.outputs.changed == 'true'
+      - name: Upload scorer output
         uses: actions/upload-artifact@v4
         with:
-          name: computed-${{ matrix.product }}
-          path: computed/${{ matrix.product }}.json
+          name: scorer-output-${{ matrix.framework_version }}-${{ matrix.product }}
+          path: /tmp/scorer-output/
           retention-days: 1
 
-  # ── 3. Run medal engine + generate badges ───────────────────────────────────
-  run-engine:
-    if: github.event_name != 'pull_request' || github.event.action != 'closed'
-    needs: compute-metrics
+  # ── 3. Merge per-dimension scorer outputs into one envelope per product ────
+  merge-computed:
+    if: >
+      (github.event_name != 'pull_request' || github.event.action != 'closed') &&
+      needs.determine-matrix.outputs.versions != '[]'
+    needs: [determine-matrix, compute-metrics]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -199,40 +270,265 @@ jobs:
       - name: Install dependencies
         run: pip install -e ".[dev]"
 
-      - name: Download all computed artifacts
+      - name: Download all scorer outputs
         uses: actions/download-artifact@v4
         with:
-          pattern: computed-*
-          path: computed/
+          pattern: scorer-output-*
+          path: /tmp/scorer-output
           merge-multiple: true
 
-      - name: Run portfolio assembler (updates drift-history.json)
+      - name: Route scorer outputs into per-version/per-product directories
+        run: |
+          python3 - <<'EOF'
+          import shutil
+          import sys
+          from pathlib import Path
+
+          src_dir = Path("/tmp/scorer-output")
+          dst_root = Path("/tmp/scorers")
+          for path in sorted(src_dir.glob("*.json")):
+              parts = path.stem.split("__")
+              if len(parts) != 3 or not all(parts):
+                  sys.exit(
+                      f"Unexpected scorer artifact name {path.name!r}; "
+                      "expected <framework_version>__<product>__<dimension>.json"
+                  )
+              framework_version, product, dimension = parts
+              dst_dir = dst_root / framework_version / product
+              dst_dir.mkdir(parents=True, exist_ok=True)
+              shutil.copy(path, dst_dir / f"{dimension}.json")
+          EOF
+
+      - name: Merge scorer outputs into versioned computed envelopes
+        run: |
+          set -euo pipefail
+          for version_dir in /tmp/scorers/*/; do
+            version=$(basename "$version_dir")
+            contract_digest=$(python3 -c "
+          from pathlib import Path
+          from engine.framework import contract_digest, discover_frameworks, get_framework
+          framework = get_framework(discover_frameworks(Path('framework/versions')), '$version')
+          print(contract_digest(framework))
+          ")
+            fingerprints=$(python3 -c "
+          import json
+          from pathlib import Path
+          from engine.framework import discover_frameworks, get_framework
+          from scorers.registry import implementation_fingerprints
+          framework = get_framework(discover_frameworks(Path('framework/versions')), '$version')
+          fingerprints = {}
+          for dimension_config in framework.dimensions['dimensions'].values():
+              fingerprints.update(implementation_fingerprints(dimension_config))
+          print(json.dumps(fingerprints, sort_keys=True))
+          ")
+
+            mkdir -p "computed/versions/$version"
+            for product_dir in "$version_dir"*/; do
+              product=$(basename "$product_dir")
+              python3 engine/merge_computed.py \
+                --product-id "$product" \
+                --scorers-output-dir "$product_dir" \
+                --dimensions "framework/versions/$version/dimensions.yaml" \
+                --framework-version "$version" \
+                --contract-digest "$contract_digest" \
+                --implementation-fingerprints "$fingerprints" \
+                --output "computed/versions/$version/$product.json"
+            done
+          done
+
+      - name: Upload merged computed artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: computed-versions
+          path: computed/versions
+          retention-days: 1
+
+  # ── 4. Assemble each selected framework version's portfolio ────────────────
+  assemble-versions:
+    if: >
+      (github.event_name != 'pull_request' || github.event.action != 'closed') &&
+      needs.determine-matrix.outputs.versions != '[]'
+    needs: [determine-matrix, merge-computed]
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        framework_version: ${{ fromJson(needs.determine-matrix.outputs.versions) }}
+      fail-fast: false
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: pip
+
+      - name: Install dependencies
+        run: pip install -e ".[dev]"
+
+      - name: Download merged computed artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: computed-versions
+          path: computed/versions
+
+      - name: Assemble versioned portfolio
         run: |
           python engine/assemble.py \
             --products-dir products/ \
             --computed-dir computed/ \
-            --dimensions config/dimensions.yaml \
-            --drift-history drift-history.json \
-            --output public/portfolio.json \
-            --update-drift
+            --framework-root framework/versions \
+            --framework-version ${{ matrix.framework_version }} \
+            --source-revision "${{ github.sha }}" \
+            --output public/versions/${{ matrix.framework_version }}/portfolio.json
 
-      - name: Generate badges
+      - name: Upload versioned public artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: public-version-${{ matrix.framework_version }}
+          path: public/versions
+          retention-days: 1
+
+  # ── 5. Publish: preserve archived/untouched versions, rebuild version index ─
+  run-engine:
+    needs: [determine-matrix, compute-metrics, merge-computed, assemble-versions]
+    # Runs when every upstream compute step succeeded, or when there was genuinely
+    # no work to do (empty version selection => upstream jobs legitimately skipped).
+    # A failure or cancellation anywhere upstream must block publishing and deploying.
+    if: |
+      always() &&
+      (github.event_name != 'pull_request' || github.event.action != 'closed') &&
+      needs.determine-matrix.result == 'success' &&
+      (
+        (needs.determine-matrix.outputs.versions == '[]' &&
+         needs.compute-metrics.result == 'skipped' &&
+         needs.merge-computed.result == 'skipped' &&
+         needs.assemble-versions.result == 'skipped') ||
+        (needs.determine-matrix.outputs.versions != '[]' &&
+         needs.compute-metrics.result == 'success' &&
+         needs.merge-computed.result == 'success' &&
+         needs.assemble-versions.result == 'success')
+      )
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check whether gh-pages branch exists
+        id: pages_exists
         run: |
-          python engine/badges.py \
-            --portfolio public/portfolio.json \
-            --output-dir public/badges/
+          set -euo pipefail
+          if git ls-remote --exit-code --heads origin gh-pages >/dev/null 2>&1; then
+            echo "exists=true" >> "$GITHUB_OUTPUT"
+          else
+            status=$?
+            if [ "$status" -eq 2 ]; then
+              echo "exists=false" >> "$GITHUB_OUTPUT"
+            else
+              exit "$status"
+            fi
+          fi
+
+      - name: Check out current Pages data
+        if: steps.pages_exists.outputs.exists == 'true'
+        uses: actions/checkout@v4
+        with:
+          ref: gh-pages
+          path: .gh-pages-data
+          fetch-depth: 1
+          persist-credentials: false
+
+      - name: Carry forward previously published artifacts
+        # Framework versions not recomputed this run — including archived versions,
+        # which are never rescored — are copied from the published site as-is;
+        # freshly computed versions are overlaid on top in the next step. The
+        # repo-tracked root portfolio/badges are cleared here because they are
+        # regenerated from the active version below, so products removed from the
+        # catalog cannot accumulate. `/legacy/` lives only on gh-pages and is
+        # preserved by keep_files on deploy.
+        run: |
+          set -euo pipefail
+          mkdir -p public/versions
+          rm -f public/portfolio.json public/framework-versions.json
+          rm -rf public/badges
+          if [ -d .gh-pages-data/versions ]; then
+            cp -R .gh-pages-data/versions/. public/versions/
+          fi
+
+      - name: Verify carried-forward archived versions
+        if: steps.pages_exists.outputs.exists == 'true'
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+
+          from engine.framework import FrameworkStatus, discover_frameworks
+
+          frameworks = discover_frameworks(Path("framework/versions"))
+          missing = [
+              framework.id
+              for framework in frameworks
+              if framework.status == FrameworkStatus.ARCHIVED
+              and not (Path("public/versions") / framework.id / "portfolio.json").is_file()
+          ]
+          if missing:
+              raise SystemExit(
+                  "Missing carried-forward archived portfolios: " + ", ".join(missing)
+              )
+          PY
+
+      - name: Download freshly computed framework versions
+        if: needs.determine-matrix.outputs.versions != '[]'
+        uses: actions/download-artifact@v4
+        with:
+          pattern: public-version-*
+          path: public/versions
+          merge-multiple: true
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: pip
+
+      - name: Install dependencies
+        run: pip install -e ".[dev]"
+
+      - name: Publish active version at the stable root paths
+        # Badge URLs are external contracts, so the active version's badges always
+        # live at public/badges/. They are regenerated from scratch into a cleared
+        # directory, so badges for removed products never accumulate.
+        run: |
+          set -euo pipefail
+          active=$(python3 -c "
+          from pathlib import Path
+          from engine.framework import FrameworkStatus, discover_frameworks
+          frameworks = discover_frameworks(Path('framework/versions'))
+          print(next(f.id for f in frameworks if f.status == FrameworkStatus.ACTIVE))
+          ")
+          portfolio="public/versions/$active/portfolio.json"
+          if [ ! -f "$portfolio" ]; then
+            echo "Missing portfolio for active framework version $active" >&2
+            exit 1
+          fi
+          cp "$portfolio" public/portfolio.json
+          rm -rf public/badges
+          python engine/badges.py --portfolio "$portfolio" --output-dir public/badges/
+
+      - name: Regenerate framework version index
+        run: |
+          python engine/version_index.py \
+            --framework-root framework/versions \
+            --public-dir public/ \
+            --output public/framework-versions.json
 
       - name: Upload engine artifacts
+        # Artifact root is the contents of public/, so consumers must extract it
+        # back into public/ (Vite's publicDir) — see the download steps below.
         uses: actions/upload-artifact@v4
         with:
           name: engine-artifacts
-          path: |
-            computed/
-            public/
-            drift-history.json
+          path: public/
           retention-days: 1
 
-  # ── 4. Build and deploy PR preview ─────────────────────────────────────────
+  # ── 6. Build and deploy PR preview ─────────────────────────────────────────
   build-preview:
     needs: run-engine
     if: >
@@ -249,10 +545,16 @@ jobs:
         with:
           ref: ${{ github.head_ref }}
 
+      - name: Reset public data
+        # The engine artifact is the sole source of published data; clear the
+        # repo-tracked copies so stale badges/portfolios cannot survive into dist/.
+        run: rm -rf public/badges public/versions public/portfolio.json public/framework-versions.json
+
       - name: Download engine artifacts (fresh medals)
         uses: actions/download-artifact@v4
         with:
           name: engine-artifacts
+          path: public
 
       - uses: actions/setup-node@v4
         with:
@@ -267,7 +569,8 @@ jobs:
       - name: Build UI
         run: npm run build
         working-directory: ui
-        # Vite copies ../public/ (containing fresh portfolio.json from artifacts) into dist/
+        # Vite copies ../public/ (containing fresh portfolio.json, badges/,
+        # versions/ and framework-versions.json from artifacts) into dist/
 
       - name: Deploy PR preview
         uses: peaceiris/actions-gh-pages@v4
@@ -286,20 +589,121 @@ jobs:
           body="Preview deployed: $url"
           gh pr comment ${{ github.event.pull_request.number }} --edit-last --create-if-none --body "$body"
 
-  # ── 5. Build and deploy production site from fresh engine artifacts ───────────
-  deploy-production:
+  # ── 7. Confirm this run still represents the production branch tip ─────────
+  check-production-tip:
     needs: run-engine
     if: >
-      github.event_name == 'schedule' || github.event_name == 'workflow_dispatch' ||
-      (github.event_name == 'push' && github.ref == 'refs/heads/main' && github.repository == 'canonical/pqf')
+      github.repository == 'canonical/pqf' &&
+      github.ref == 'refs/heads/main' &&
+      (github.event_name == 'push' || github.event_name == 'schedule' ||
+       github.event_name == 'workflow_dispatch')
     runs-on: ubuntu-latest
+    outputs:
+      current: ${{ steps.tip.outputs.current }}
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Check current main revision
+        id: tip
+        env:
+          GITHUB_SHA: ${{ github.sha }}
+        run: |
+          set -euo pipefail
+          main_tip=$(git ls-remote origin refs/heads/main | cut -f1)
+          if [ "$main_tip" = "$GITHUB_SHA" ]; then
+            echo "current=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "current=false" >> "$GITHUB_OUTPUT"
+            echo "Skipping production deploy: $GITHUB_SHA is no longer the main tip."
+          fi
+
+  # ── 8. Build and deploy production site from fresh engine artifacts ───────────
+  deploy-production:
+    needs: [determine-matrix, run-engine, check-production-tip]
+    if: needs.check-production-tip.outputs.current == 'true'
+    runs-on: ubuntu-latest
+    concurrency:
+      group: gh-pages
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Reset public data
+        # The engine artifact is the sole source of published data; clear the
+        # repo-tracked copies so stale badges/portfolios cannot survive into dist/.
+        run: rm -rf public/badges public/versions public/portfolio.json public/framework-versions.json
 
       - name: Download engine artifacts
         uses: actions/download-artifact@v4
         with:
           name: engine-artifacts
+          path: public
+
+      - name: Check whether gh-pages branch exists
+        id: pages_exists
+        run: |
+          set -euo pipefail
+          if git ls-remote --exit-code --heads origin gh-pages >/dev/null 2>&1; then
+            echo "exists=true" >> "$GITHUB_OUTPUT"
+          else
+            status=$?
+            if [ "$status" -eq 2 ]; then
+              echo "exists=false" >> "$GITHUB_OUTPUT"
+            else
+              exit "$status"
+            fi
+          fi
+
+      - name: Check out latest Pages data
+        if: steps.pages_exists.outputs.exists == 'true'
+        uses: actions/checkout@v4
+        with:
+          ref: gh-pages
+          path: .gh-pages-latest
+          fetch-depth: 1
+          persist-credentials: false
+
+      - name: Merge concurrently published versions
+        if: steps.pages_exists.outputs.exists == 'true'
+        env:
+          SELECTED_VERSIONS: ${{ needs.determine-matrix.outputs.versions }}
+        run: |
+          python3 -m engine.publish_merge \
+            --public-dir public \
+            --latest-dir .gh-pages-latest \
+            --selected-versions-json "$SELECTED_VERSIONS"
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: pip
+
+      - name: Install Python dependencies
+        run: pip install -e ".[dev]"
+
+      - name: Regenerate stable publication metadata
+        run: |
+          set -euo pipefail
+          active=$(python3 -c "
+          from pathlib import Path
+          from engine.framework import FrameworkStatus, discover_frameworks
+          frameworks = discover_frameworks(Path('framework/versions'))
+          print(next(f.id for f in frameworks if f.status == FrameworkStatus.ACTIVE))
+          ")
+          portfolio="public/versions/$active/portfolio.json"
+          if [ ! -f "$portfolio" ]; then
+            echo "Missing portfolio for active framework version $active" >&2
+            exit 1
+          fi
+          cp "$portfolio" public/portfolio.json
+          rm -rf public/badges
+          python engine/badges.py --portfolio "$portfolio" --output-dir public/badges/
+          python engine/version_index.py \
+            --framework-root framework/versions \
+            --public-dir public/ \
+            --output public/framework-versions.json
 
       - uses: actions/setup-node@v4
         with:
@@ -324,6 +728,7 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ui/dist
           destination_dir: .
+          # Preserve /legacy/ and any other already-published Pages content.
           keep_files: true
 
       - name: Wait before deploy retry
@@ -337,4 +742,5 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ui/dist
           destination_dir: .
+          # Preserve /legacy/ and any other already-published Pages content.
           keep_files: true

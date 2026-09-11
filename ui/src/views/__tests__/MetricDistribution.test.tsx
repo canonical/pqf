@@ -2,10 +2,28 @@ import { fireEvent, render, screen } from '@testing-library/react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { describe, expect, it, vi } from 'vitest'
 import App from '../../App'
-import type { Portfolio } from '../../types'
+import type { FrameworkVersionIndex, Portfolio } from '../../types'
 
 vi.mock('../../hooks/usePortfolio')
 import { usePortfolio } from '../../hooks/usePortfolio'
+
+vi.mock('../../hooks/useFrameworkVersions')
+import { useFrameworkVersions } from '../../hooks/useFrameworkVersions'
+
+const mockFrameworkVersions: FrameworkVersionIndex = {
+  versions: [
+    {
+      id: 'v0',
+      sequence: 0,
+      label: 'PQF V0',
+      status: 'active',
+      description: 'Current framework revision',
+      portfolio_url: 'versions/v0/portfolio.json',
+      generated_at: '2026-07-23T00:00:00Z',
+      contract_digest: 'digest-v0',
+    },
+  ],
+}
 
 const mockPortfolio: Portfolio = {
   generated_at: '2026-07-23T00:00:00Z',
@@ -19,13 +37,14 @@ const mockPortfolio: Portfolio = {
       current_result: 'bronze',
       squad: 'americas',
       is_portfolio_entry: true,
+      meets_target: true,
       composed_of: [{ product_id: 'discourse-k8s', excluded_from_parent_medal: false }],
       context_refs: [],
       parent_product_ids: [],
       dimensions: {
         test_verification: {
           result: 'bronze',
-          drift: null,
+          meets_target: true,
           metrics: {},
           composition: [
             {
@@ -48,13 +67,14 @@ const mockPortfolio: Portfolio = {
       current_result: 'bronze',
       squad: 'americas',
       is_portfolio_entry: true,
+      meets_target: true,
       composed_of: [{ product_id: 'aardvark-agent', excluded_from_parent_medal: false }],
       context_refs: [],
       parent_product_ids: [],
       dimensions: {
         test_verification: {
           result: 'bronze',
-          drift: null,
+          meets_target: true,
           metrics: {},
           composition: [
             {
@@ -77,6 +97,7 @@ const mockPortfolio: Portfolio = {
       current_result: 'bronze',
       squad: '',
       is_portfolio_entry: false,
+      meets_target: true,
       composed_of: null,
       context_refs: [],
       parent_product_ids: ['aardvark'],
@@ -84,7 +105,7 @@ const mockPortfolio: Portfolio = {
       dimensions: {
         test_verification: {
           result: 'bronze',
-          drift: null,
+          meets_target: true,
           metrics: { coverage_pct: 75, latest_build_passing: false },
           composition: null,
         },
@@ -99,6 +120,7 @@ const mockPortfolio: Portfolio = {
       current_result: 'silver',
       squad: '',
       is_portfolio_entry: false,
+      meets_target: true,
       composed_of: null,
       context_refs: [],
       parent_product_ids: ['discourse'],
@@ -106,7 +128,7 @@ const mockPortfolio: Portfolio = {
       dimensions: {
         test_verification: {
           result: 'silver',
-          drift: null,
+          meets_target: true,
           metrics: { coverage_pct: 83, latest_build_passing: true },
           composition: null,
         },
@@ -121,13 +143,14 @@ const mockPortfolio: Portfolio = {
       current_result: 'bronze',
       squad: 'emea',
       is_portfolio_entry: true,
+      meets_target: true,
       composed_of: [{ product_id: 'landscape-server', excluded_from_parent_medal: false }],
       context_refs: [],
       parent_product_ids: [],
       dimensions: {
         test_verification: {
           result: 'bronze',
-          drift: null,
+          meets_target: true,
           metrics: {},
           composition: [
             {
@@ -150,6 +173,7 @@ const mockPortfolio: Portfolio = {
       current_result: 'bronze',
       squad: '',
       is_portfolio_entry: false,
+      meets_target: true,
       composed_of: null,
       context_refs: [],
       parent_product_ids: ['landscape'],
@@ -157,7 +181,7 @@ const mockPortfolio: Portfolio = {
       dimensions: {
         test_verification: {
           result: 'bronze',
-          drift: null,
+          meets_target: true,
           metrics: { coverage_pct: 75, latest_build_passing: false },
           composition: null,
         },
@@ -172,6 +196,7 @@ const mockPortfolio: Portfolio = {
       current_result: 'bronze',
       squad: '',
       is_portfolio_entry: false,
+      meets_target: true,
       composed_of: null,
       context_refs: [],
       parent_product_ids: [],
@@ -179,7 +204,7 @@ const mockPortfolio: Portfolio = {
       dimensions: {
         test_verification: {
           result: 'silver',
-          drift: null,
+          meets_target: true,
           metrics: { coverage_pct: 85, latest_build_passing: true, has_release_notes: true },
           composition: null,
         },
@@ -218,6 +243,11 @@ const mockPortfolio: Portfolio = {
       },
     },
   },
+  framework: { id: 'v0', sequence: 0, label: 'PQF V0', status: 'active', description: 'Current framework revision' },
+  contract_digest: 'digest-v0',
+  source_revision: 'abc123',
+  implementation_fingerprints: {},
+  compliance_summary: { total: 3, meeting_target: 3, below_target: 0, insufficient_data: 0 },
 }
 
 function wrap(path: string) {
@@ -228,8 +258,15 @@ function wrap(path: string) {
     isError: false,
     error: null,
   } as ReturnType<typeof usePortfolio>)
+  vi.mocked(useFrameworkVersions).mockReturnValue({
+    data: mockFrameworkVersions,
+    isLoading: false,
+    isError: false,
+    error: null,
+  } as ReturnType<typeof useFrameworkVersions>)
 
-  window.location.hash = `#${path}`
+  // Routes are version-scoped (Task 9); tests target the sole active version below.
+  window.location.hash = `#/v0${path}`
 
   return render(
     <QueryClientProvider client={queryClient}>
@@ -248,6 +285,16 @@ describe('MetricDistribution route', () => {
     expect(screen.queryByText('latest_build_passing = true')).not.toBeInTheDocument()
     const headers = screen.getAllByRole('columnheader').map((header) => header.textContent?.trim())
     expect(headers).toEqual(['Product', 'Threshold result', 'Gap to target', 'Value'])
+  })
+
+  it('scopes the back-to-dimension link and product links to the selected framework version', async () => {
+    wrap('/dimensions/test_verification/metrics/coverage_pct')
+    await screen.findByRole('heading', { name: /Coverage \(coverage_pct\)/i })
+    const table = screen.getByRole('table')
+    const productLinks = table.querySelectorAll('tbody a')
+    productLinks.forEach(link => expect(link.getAttribute('href')).toMatch(/^#\/v0\/products\//))
+    const backLink = screen.getByRole('link', { name: /test verification/i })
+    expect(backLink).toHaveAttribute('href', '#/v0/dimensions/test_verification')
   })
 
   it('hides medal criteria wall for informational metrics', async () => {
@@ -303,7 +350,14 @@ describe('MetricDistribution route', () => {
 
   it('does not crash when route transitions from loading to loaded state', async () => {
     const queryClient = new QueryClient()
-    window.location.hash = '#/dimensions/test_verification/metrics/coverage_pct'
+    window.location.hash = '#/v0/dimensions/test_verification/metrics/coverage_pct'
+
+    vi.mocked(useFrameworkVersions).mockReturnValue({
+      data: mockFrameworkVersions,
+      isLoading: false,
+      isError: false,
+      error: null,
+    } as ReturnType<typeof useFrameworkVersions>)
 
     vi.mocked(usePortfolio)
       .mockReturnValueOnce({

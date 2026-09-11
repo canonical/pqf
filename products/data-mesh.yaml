@@ -4,32 +4,40 @@ name: Data Mesh
 description: Charmed data platform components for ingestion, cataloguing, query and
   access control.
 lifecycle: stable
-target_medal: gold
+introduced_in: v1
+targets:
+  v1: gold
 ownership:
   squad: business-data
 composed_of:
   - id: airbyte-k8s
     product_type: charm
+    introduced_in: v1
     source:
       repo: canonical/airbyte-k8s-operator
   - id: trino-k8s
     product_type: charm
+    introduced_in: v1
     source:
       repo: canonical/trino-k8s-operator
   - id: superset-k8s
     product_type: charm
+    introduced_in: v1
     source:
       repo: canonical/superset-k8s-operator
   - id: ranger-k8s
     product_type: charm
+    introduced_in: v1
     source:
       repo: canonical/ranger-k8s-operator
   - id: datahub-k8s
     product_type: charm
+    introduced_in: v1
     source:
       repo: canonical/datahub-k8s-operator
   - id: hive-metastore-k8s
     product_type: charm
+    introduced_in: v1
     source:
       repo: canonical/hive-metastore-k8s-operator
 documentation_url: https://canonical-data-mesh-documentation.readthedocs-hosted.com

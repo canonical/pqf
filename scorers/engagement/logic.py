@@ -1,10 +1,13 @@
 # scorers/engagement/logic.py
+import sys
+from collections.abc import Callable
 from datetime import UTC, datetime, timedelta
 from typing import Any
 
 import requests
 
 from engine.models import EvaluationUnit
+from scorers.shared.github_signals import github_session_get
 
 _GITHUB_API = "https://api.github.com"
 _LOOKBACK_DAYS = 90
@@ -37,19 +40,39 @@ def _try_parse_dt(iso_str: str | None) -> datetime | None:
 
 
 def _paginate_json_array(
-    session: requests.Session, url: str, params: dict[str, Any], timeout: int = 30
+    session: requests.Session,
+    url: str,
+    params: dict[str, Any],
+    timeout: int = 30,
+    stop_when: Callable[[dict[str, Any]], bool] | None = None,
 ) -> list[dict[str, Any]]:
     page = 1
     items: list[dict[str, Any]] = []
     per_page = int(params.get("per_page", 100))
     while True:
-        resp = session.get(url, params={**params, "page": page}, timeout=timeout)
+        resp = github_session_get(
+            session,
+            url,
+            params={**params, "page": page},
+            timeout=timeout,
+        )
         if not resp.ok:
+            print(
+                "GitHub API request failed: "
+                f"status={resp.status_code} url={url} "
+                f"rate_remaining={resp.headers.get('X-RateLimit-Remaining', 'unknown')} "
+                f"rate_reset={resp.headers.get('X-RateLimit-Reset', 'unknown')} "
+                f"retry_after={resp.headers.get('Retry-After', 'none')}",
+                file=sys.stderr,
+            )
             break
         page_items = resp.json()
         if not isinstance(page_items, list):
             break
-        items.extend(page_items)
+        for item in page_items:
+            if stop_when and stop_when(item):
+                return items
+            items.append(item)
         if len(page_items) < per_page:
             break
         page += 1
@@ -58,7 +81,8 @@ def _paginate_json_array(
 
 def _has_squad_topic(owner_repo: str, session: requests.Session) -> bool:
     """True if the repo has a GitHub topic matching 'squad-*'."""
-    resp = session.get(
+    resp = github_session_get(
+        session,
         f"{_GITHUB_API}/repos/{owner_repo}/topics",
         headers={"Accept": "application/vnd.github.mercy-preview+json"},
         timeout=15,
@@ -71,7 +95,8 @@ def _has_squad_topic(owner_repo: str, session: requests.Session) -> bool:
 
 def _has_jira_sync(owner_repo: str, session: requests.Session) -> bool:
     """True if .github/.jira_sync_config.yaml exists in the repo."""
-    resp = session.get(
+    resp = github_session_get(
+        session,
         f"{_GITHUB_API}/repos/{owner_repo}/contents/.github/.jira_sync_config.yaml",
         timeout=15,
     )
@@ -99,7 +124,7 @@ def _compute_issue_triage_stats(
         author = issue["user"]["login"]
         number = issue["number"]
         comments_url = f"{_GITHUB_API}/repos/{owner_repo}/issues/{number}/comments"
-        resp = session.get(comments_url, timeout=15)
+        resp = github_session_get(session, comments_url, timeout=15)
         if not resp.ok:
             continue
         for comment in resp.json():
@@ -128,7 +153,7 @@ def _compute_pr_review_stats(
         created = _parse_dt(pr["created_at"])
         number = pr["number"]
         reviews_url = f"{_GITHUB_API}/repos/{owner_repo}/pulls/{number}/reviews"
-        resp = session.get(reviews_url, timeout=15)
+        resp = github_session_get(session, reviews_url, timeout=15)
         if not resp.ok:
             continue
         reviews = resp.json()
@@ -161,6 +186,7 @@ def compute_metrics(unit: EvaluationUnit, github_token: str) -> dict[str, Any]:
 
     session = _make_github_session(github_token)
     since = (datetime.now(UTC) - timedelta(days=_LOOKBACK_DAYS)).isoformat()
+    since_dt = _parse_dt(since)
 
     triage_avg = 0.0
     pr_avg = 0.0
@@ -184,13 +210,16 @@ def compute_metrics(unit: EvaluationUnit, github_token: str) -> dict[str, Any]:
     pulls = _paginate_json_array(
         session,
         pulls_url,
-        {"state": "all", "per_page": 100},
+        {
+            "state": "all",
+            "sort": "created",
+            "direction": "desc",
+            "per_page": 100,
+        },
+        stop_when=lambda pull: _parse_dt(pull["created_at"]) < since_dt,
     )
     if pulls:
-        # Filter PRs by 90-day window (since param not supported on /pulls endpoint)
-        since_dt = _parse_dt(since)
-        filtered_pulls = [p for p in pulls if _parse_dt(p["created_at"]) >= since_dt]
-        pr_avg, pr_responded, pr_total = _compute_pr_review_stats(filtered_pulls, session, repo)
+        pr_avg, pr_responded, pr_total = _compute_pr_review_stats(pulls, session, repo)
 
     total_items = issue_total + pr_total
     total_responded = issue_responded + pr_responded
@@ -221,7 +250,8 @@ def _fetch_repo_views_14d(owner_repo: str, session: requests.Session) -> int | N
     Fetch total repository views from the last 14 days.
     Returns None if the API is unavailable or returns an error.
     """
-    resp = session.get(
+    resp = github_session_get(
+        session,
         f"{_GITHUB_API}/repos/{owner_repo}/traffic/views",
         timeout=15,
     )

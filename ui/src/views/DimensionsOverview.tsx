@@ -1,4 +1,4 @@
-import { Link } from 'react-router'
+import VersionLink from '../components/VersionLink'
 import { usePortfolio } from '../hooks/usePortfolio'
 import MedalBadge from '../components/MedalBadge'
 import LoadingSpinner from '../components/LoadingSpinner'
@@ -73,12 +73,12 @@ export default function DimensionsOverview() {
                  return (
                    <tr key={id} style={{ borderBottom: '1px solid #e5e5e5', background: idx % 2 === 0 ? '#fafafa' : '#fff' }}>
                      <td style={{ padding: '0.65rem 0.75rem', verticalAlign: 'top', minWidth: 0 }}>
-                       <Link
+                       <VersionLink
                          to={`/dimensions/${id}`}
                          style={{ display: 'block', fontWeight: 600, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}
                        >
                          {meta.label ?? id.replace(/_/g, ' ')}
-                       </Link>
+                       </VersionLink>
                        <code style={{ fontSize: '0.75rem', color: '#888' }}>{id}</code>
                      </td>
                      <td style={{ padding: '0.65rem 0.75rem', verticalAlign: 'top', fontSize: '0.875rem', color: '#333' }}>
@@ -121,7 +121,7 @@ export default function DimensionsOverview() {
         </div>
 
         <p className="u-sv2">
-          <Link to="/about">Learn more about the framework →</Link>
+          <VersionLink to="/about">Learn more about the framework →</VersionLink>
         </p>
 
       </div>

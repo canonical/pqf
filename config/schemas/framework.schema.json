@@ -1,0 +1,36 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://github.com/srbouffard/pqf/config/schemas/framework.schema.json",
+  "title": "PQF Framework Version Metadata",
+  "description": "Schema for framework/versions/*/framework.yaml metadata files.",
+  "type": "object",
+  "required": ["id", "sequence", "label", "status", "description"],
+  "additionalProperties": false,
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^v[0-9]+$",
+      "description": "Framework version identifier."
+    },
+    "sequence": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Monotonic framework ordering used for lifecycle transitions."
+    },
+    "label": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Human-readable framework label shown in the UI."
+    },
+    "status": {
+      "type": "string",
+      "enum": ["upcoming", "active", "archived"],
+      "description": "Framework lifecycle state."
+    },
+    "description": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Short description of the framework version."
+    }
+  }
+}

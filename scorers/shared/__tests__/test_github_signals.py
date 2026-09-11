@@ -1,12 +1,51 @@
 import responses
 
+from scorers.shared import github_signals
 from scorers.shared.github_signals import (
+    build_github_session,
     default_branch_check_runs,
     repo_file_exists,
     repo_topics,
     search_code_count,
     workflow_files,
 )
+
+
+@responses.activate
+def test_session_get_retries_rate_limited_request_anonymously():
+    url = "https://api.github.com/repos/canonical/example/issues"
+    responses.add(
+        responses.GET,
+        url,
+        json={"message": "API rate limit exceeded"},
+        status=403,
+        headers={"X-RateLimit-Remaining": "0"},
+    )
+    responses.add(responses.GET, url, json=[], status=200)
+
+    response = github_signals.github_session_get(build_github_session("gh-token"), url)
+
+    assert response.ok
+    assert len(responses.calls) == 2
+    assert responses.calls[0].request.headers["Authorization"] == "token gh-token"
+    assert "Authorization" not in responses.calls[1].request.headers
+
+
+@responses.activate
+def test_session_get_does_not_retry_permission_failure():
+    url = "https://api.github.com/repos/canonical/example/traffic/views"
+    responses.add(
+        responses.GET,
+        url,
+        json={"message": "Resource not accessible by integration"},
+        status=403,
+        headers={"X-RateLimit-Remaining": "999"},
+    )
+
+    response = github_signals.github_session_get(build_github_session("gh-token"), url)
+
+    assert response.status_code == 403
+    assert len(responses.calls) == 1
 
 
 @responses.activate

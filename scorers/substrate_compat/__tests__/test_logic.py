@@ -4,7 +4,7 @@ import base64
 import responses
 
 from engine.models import EvaluationUnit, ProductType
-from scorers.substrate_compat.logic import compute_metrics
+from scorers.substrate_compat.logic import _make_github_session, compute_metrics
 
 _GITHUB_API = "https://api.github.com"
 
@@ -262,6 +262,11 @@ UNIT_EMPTY = EvaluationUnit(
     product_type=ProductType.CHARM,
     repo="",
 )
+
+
+def test_github_session_uses_supplied_token():
+    session = _make_github_session("test-token")
+    assert session.headers["Authorization"] == "token test-token"
 
 
 @responses.activate

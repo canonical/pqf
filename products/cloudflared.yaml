@@ -1,26 +1,34 @@
 id: cloudflared
 product_type: root
 name: Cloudflared
-description: |-
-  Cloudflared is a lightweight daemon that routes traffic through Cloudflare's global network,
-  enabling secure, reliable access to applications without exposing infrastructure directly to the internet.
+description: 'Cloudflared is a lightweight daemon that routes traffic through Cloudflare''s
+  global network,
+
+  enabling secure, reliable access to applications without exposing infrastructure
+  directly to the internet.'
 lifecycle: stable
-target_medal: gold
+introduced_in: v0
+targets:
+  v0: gold
+  v1: gold
 ownership:
   squad: apac
   stakeholders:
-    - IS
-composed_of:
-  - id: cloudflared-charm
-    product_type: charm
-    source:
-      repo: canonical/cloudflared-operator
-  - id: cloudflare-configurator
-    product_type: charm
-    source:
-      repo: canonical/cloudflare-configurator-operator
-  - id: charmed-cloudflared
-    product_type: snap
-    source:
-      repo: canonical/charmed-cloudflared-snap
+  - IS
 documentation_url: https://github.com/canonical/cloudflared-operator
+composed_of:
+- id: cloudflared-charm
+  product_type: charm
+  introduced_in: v0
+  source:
+    repo: canonical/cloudflared-operator
+- id: cloudflare-configurator
+  product_type: charm
+  introduced_in: v0
+  source:
+    repo: canonical/cloudflare-configurator-operator
+- id: charmed-cloudflared
+  product_type: snap
+  introduced_in: v0
+  source:
+    repo: canonical/charmed-cloudflared-snap

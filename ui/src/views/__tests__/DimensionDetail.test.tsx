@@ -8,6 +8,13 @@ import type { Portfolio } from '../../types'
 vi.mock('../../hooks/usePortfolio')
 import { usePortfolio } from '../../hooks/usePortfolio'
 
+vi.mock('../../providers/FrameworkVersionProvider', () => ({
+  useFrameworkVersion: () => ({
+    current: { id: 'v0', sequence: 0, label: 'PQF V0', status: 'active', description: '', portfolio_url: '', generated_at: '', contract_digest: 'digest-v0' },
+    versions: [],
+  }),
+}))
+
 const mockPortfolio: Portfolio = {
   generated_at: '2026-06-30T00:00:00Z',
   products: [
@@ -21,11 +28,12 @@ const mockPortfolio: Portfolio = {
       current_result: 'bronze',
       squad: 'americas',
       is_portfolio_entry: true,
+      meets_target: true,
       composed_of: [{ product_id: 'synapse', excluded_from_parent_medal: false }],
       context_refs: [],
       parent_product_ids: [],
       dimensions: {
-        documentation: { result: 'bronze', drift: null, metrics: {}, composition: [] },
+        documentation: { result: 'bronze', meets_target: true, metrics: {}, composition: [] },
       },
     },
     {
@@ -33,10 +41,11 @@ const mockPortfolio: Portfolio = {
       product_type: 'charm',
       name: 'Synapse Charm',
       lifecycle: 'stable',
-      target_result: 'gold',
+      target_result: 'silver',
       current_result: 'silver',
       squad: '',
       is_portfolio_entry: false,
+      meets_target: true,
       composed_of: null,
       context_refs: [],
       parent_product_ids: ['matrix'],
@@ -44,7 +53,7 @@ const mockPortfolio: Portfolio = {
       dimensions: {
         documentation: {
           result: 'silver',
-          drift: null,
+          meets_target: true,
           metrics: {},
           composition: null,
         },
@@ -60,13 +69,14 @@ const mockPortfolio: Portfolio = {
       current_result: 'silver',
       squad: 'emea',
       is_portfolio_entry: true,
+      meets_target: false,
       composed_of: [],
       context_refs: [],
       parent_product_ids: [],
       dimensions: {
         documentation: {
           result: 'silver',
-          drift: { status: 'remediating', first_seen_at: '2026-06-01T00:00:00Z', deadline: '2027-06-30T00:00:00Z' },
+          meets_target: false,
           metrics: {},
           composition: [],
         },
@@ -82,13 +92,14 @@ const mockPortfolio: Portfolio = {
       current_result: 'below_minimum',
       squad: 'apac',
       is_portfolio_entry: true,
+      meets_target: false,
       composed_of: [],
       context_refs: [],
       parent_product_ids: [],
       dimensions: {
         documentation: {
           result: 'below_minimum',
-          drift: { status: 'overdue', first_seen_at: '2025-06-01T00:00:00Z', deadline: '2026-06-30T00:00:00Z' },
+          meets_target: false,
           metrics: {},
           composition: [],
         },
@@ -129,6 +140,11 @@ const mockPortfolio: Portfolio = {
       },
     },
   },
+  framework: { id: 'v0', sequence: 0, label: 'PQF V0', status: 'active', description: 'Current framework revision' },
+  contract_digest: 'digest-v0',
+  source_revision: 'abc123',
+  implementation_fingerprints: {},
+  compliance_summary: { total: 3, meeting_target: 1, below_target: 2, insufficient_data: 0 },
 }
 
 function wrap(id: string) {
@@ -179,14 +195,21 @@ describe('DimensionDetail', () => {
     expect(screen.getAllByText('A README.md exists in the primary component repository.')).toHaveLength(1)
   })
 
-  it('renders product table without target column and with drift deadlines', () => {
+  it('renders a target column with medal badges for each product row', () => {
     wrap('documentation')
-    expect(screen.queryByRole('columnheader', { name: 'Target' })).not.toBeInTheDocument()
-    expect(screen.getByRole('columnheader', { name: 'Drift / Deadline' })).toBeInTheDocument()
+    expect(screen.getByRole('columnheader', { name: 'Target' })).toBeInTheDocument()
     expect(screen.getByRole('link', { name: 'Matrix (Synapse)' })).toBeInTheDocument()
-    expect(screen.getAllByText('✓').length).toBeGreaterThan(0)
-    expect(screen.getByText(/🟡 Remediating · 2027-06-30/)).toBeInTheDocument()
-    expect(screen.getByText(/🔴 Overdue · 2026-06-30/)).toBeInTheDocument()
+    const rootRow = screen.getByRole('link', { name: 'Matrix (Synapse)' }).closest('tr')
+    expect(rootRow).toHaveTextContent('Gold')
+    expect(rootRow).toHaveTextContent('Bronze')
+
+    const leafRow = screen.getByRole('link', { name: '↳ Synapse Charm' }).closest('tr')
+    expect(within(leafRow as HTMLElement).getAllByText('Silver')).toHaveLength(2)
+  })
+
+  it('does not render data-meets-target attributes anywhere in the dimension detail view', () => {
+    const { container } = wrap('documentation')
+    expect(container.querySelectorAll('[data-meets-target]')).toHaveLength(0)
   })
 
   it('renders product scores grouped by root with nested leaf rows', () => {
@@ -195,8 +218,19 @@ describe('DimensionDetail', () => {
     expect(screen.getByText('↳ Synapse Charm')).toBeInTheDocument()
   })
 
+  it('scopes product links and the back-to-overview link to the selected framework version', () => {
+    wrap('documentation')
+    expect(screen.getByRole('link', { name: '← Overview' })).toHaveAttribute('href', '/v0')
+    expect(screen.getByRole('link', { name: 'Matrix (Synapse)' })).toHaveAttribute('href', '/v0/products/matrix')
+  })
+
   it('shows not found for unknown dimension', () => {
     wrap('unknown')
     expect(screen.getByText(/not found/i)).toBeInTheDocument()
+  })
+
+  it('scopes the not-found recovery link to the selected framework version', () => {
+    wrap('unknown')
+    expect(screen.getByRole('link', { name: /back to overview/i })).toHaveAttribute('href', '/v0')
   })
 })

@@ -50,14 +50,61 @@ jobs:
       - name: Install dependencies
         run: make install-ui
 
-      - name: Type check
-        run: cd ui && npx tsc --noEmit
+      # `npm run build` runs `tsc -b && vite build`: this single step owns both the
+      # project-reference typecheck (app + node + e2e, per ui/tsconfig.json's references) and the
+      # production build. A prior separate `npx tsc --noEmit` step against the root tsconfig (which
+      # only declares "references", no "files") was a no-op that silently checked nothing — see
+      # engine/__tests__/test_ci_workflow.py for the regression test. Do not add a second `tsc`
+      # invocation here; that would just recompile the same project references twice in one job.
+      - name: Type check + build
+        run: make build
 
       - name: Tests
         run: make test-ui
 
-      - name: Build
-        run: make build
+  e2e:
+    name: UI (E2E tests)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: ui/package-lock.json
+
+      - name: Install dependencies
+        run: make install-ui
+
+      - name: Cache Playwright browsers
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-chromium-${{ runner.os }}-${{ hashFiles('ui/package-lock.json') }}
+
+      - name: Install Playwright Chromium
+        run: cd ui && npx playwright install --with-deps chromium
+
+      - name: E2E tests
+        run: make e2e
+
+      # Playwright writes traces/screenshots into playwright-report/ (the HTML report, per
+      # playwright.config.ts's `reporter: 'html'`) and test-results/ (per-test artifacts,
+      # including traces since `trace: 'on-first-retry'`). Upload both so a CI failure is
+      # debuggable without reproducing it locally; `if: always()` so they're captured on failure,
+      # not just success (the case that actually matters here).
+      - name: Upload Playwright report and test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: |
+            ui/playwright-report/
+            ui/test-results/
+          retention-days: 14
+          if-no-files-found: ignore
 
   security:
     name: Security scan

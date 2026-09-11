@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react'
-import { Link, useParams } from 'react-router'
+import { useParams } from 'react-router'
+import VersionLink from '../components/VersionLink'
 import MedalBadge from '../components/MedalBadge'
 import LoadingSpinner from '../components/LoadingSpinner'
 import { usePortfolio } from '../hooks/usePortfolio'
@@ -298,7 +299,7 @@ export default function MetricDistribution() {
           <p>
             Metric <strong>{metricKey}</strong> in dimension <strong>{dimensionId}</strong> not found.
             {' '}
-            <Link to={`/dimensions/${dimensionId}`}>Back to dimension</Link>
+            <VersionLink to={`/dimensions/${dimensionId}`}>Back to dimension</VersionLink>
           </p>
         </div>
       </div>
@@ -322,7 +323,7 @@ export default function MetricDistribution() {
   return (
     <div className="row" style={{ paddingTop: '1.5rem' }}>
       <div className="col-12">
-        <p style={{ marginBottom: '1rem' }}><Link to={`/dimensions/${dimensionId}`}>← {meta.label ?? dimensionId}</Link></p>
+        <p style={{ marginBottom: '1rem' }}><VersionLink to={`/dimensions/${dimensionId}`}>← {meta.label ?? dimensionId}</VersionLink></p>
 
         <div className="p-card u-sv3">
           <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr) 320px', gap: '1.5rem', alignItems: 'start' }}>
@@ -463,12 +464,12 @@ export default function MetricDistribution() {
                         <tr key={group.root.product.id} style={{ borderBottom: '1px solid #e5e5e5', background: '#fafafa' }}>
                           <td style={{ padding: '0.65rem 0.75rem', minWidth: 0 }}>
                             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
-                              <Link
+                              <VersionLink
                                 to={`/products/${group.root.product.id}`}
                                 style={{ display: 'block', fontWeight: 600, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}
                               >
                                 {group.root.product.name}
-                              </Link>
+                              </VersionLink>
                             </div>
                           </td>
                           <td style={{ padding: '0.65rem 0.75rem', verticalAlign: 'top' }}>
@@ -519,12 +520,12 @@ export default function MetricDistribution() {
                                   }}
                                 />
                               </div>
-                              <Link
+                              <VersionLink
                                 to={`/products/${leaf.product.id}`}
                                 style={{ display: 'block', minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontSize: '0.875rem' }}
                               >
                                 {leaf.product.name}
-                              </Link>
+                              </VersionLink>
                             </div>
                           </td>
                           <td style={{ padding: '0.65rem 0.75rem', verticalAlign: 'top' }}>

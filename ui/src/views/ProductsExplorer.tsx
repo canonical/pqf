@@ -1,5 +1,5 @@
 import { useState, useMemo, Fragment } from 'react'
-import { Link } from 'react-router'
+import VersionLink from '../components/VersionLink'
 import { usePortfolio } from '../hooks/usePortfolio'
 import MedalBadge from '../components/MedalBadge'
 import LoadingSpinner from '../components/LoadingSpinner'
@@ -258,7 +258,7 @@ export default function ProductsExplorer() {
                         background: '#fafafa',
                       }}>
                         <td style={{ padding: '0.65rem 0.75rem', minWidth: 0 }}>
-                          <Link
+                          <VersionLink
                             to={`/products/${root.id}`}
                             style={{
                               display: 'block',
@@ -269,7 +269,7 @@ export default function ProductsExplorer() {
                             }}
                           >
                             {root.name}
-                          </Link>
+                          </VersionLink>
                         </td>
                         <td style={{ padding: '0.65rem 0.75rem', whiteSpace: 'nowrap' }}>
                           <span className="p-label" style={{ fontSize: '0.75rem', whiteSpace: 'nowrap' }}>
@@ -331,12 +331,12 @@ export default function ProductsExplorer() {
                                    pointerEvents: 'none',
                                  }} />
                                </div>
-                               <Link
+                               <VersionLink
                                  to={`/products/${leaf.id}`}
                                  style={{ display: 'block', minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontSize: '0.875rem' }}
                                >
                                  {leaf.name}
-                               </Link>
+                               </VersionLink>
                              </div>
                             </td>
                             <td style={{ padding: '0.45rem 0.75rem', whiteSpace: 'nowrap' }}>
@@ -373,12 +373,12 @@ export default function ProductsExplorer() {
                 {filteredData.type === 'flat' && filteredData.products.map(p => (
                   <tr key={p.id} style={{ borderBottom: '1px solid #e5e5e5' }}>
                     <td style={{ padding: '0.6rem 0.75rem', minWidth: 0 }}>
-                      <Link
+                      <VersionLink
                         to={`/products/${p.id}`}
                         style={{ display: 'block', fontWeight: p.product_type === 'root' ? 600 : 400, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}
                       >
                         {p.name}
-                      </Link>
+                      </VersionLink>
                     </td>
                     <td style={{ padding: '0.6rem 0.75rem', whiteSpace: 'nowrap' }}>
                       <span

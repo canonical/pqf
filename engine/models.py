@@ -63,18 +63,11 @@ class EvaluationUnit:
 
 
 @dataclass
-class DriftState:
-    status: str  # "remediating" | "overdue"
-    first_seen_at: str  # ISO 8601 with UTC timezone
-    deadline: str  # ISO 8601 with UTC timezone
-
-
-@dataclass
 class DimensionResult:
     medal: Medal
     target: Medal
+    meets_target: bool
     metrics: dict
-    drift: DriftState | None
     applicability: ApplicabilityOutcome = ApplicabilityOutcome.SCORED
     result: Result = Result.GOLD
     composition: list["LeafDimensionResult"] | None = None
@@ -98,6 +91,7 @@ class ProductResult:
     product_id: str
     current_medal: Medal
     target_medal: Medal
+    meets_target: bool
     current_result: Result
     target_result: Result
     dimensions: dict[str, DimensionResult]

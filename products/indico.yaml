@@ -1,34 +1,40 @@
 id: indico
 product_type: root
 name: Indico
-description: |-
-  Indico charm makes it easy for those looking to take control of their own
+description: 'Indico charm makes it easy for those looking to take control of their
+  own
+
   events management system whilst keeping operations simple, and gives them the
-  freedom to deploy on the Kubernetes platform of their choice.
+
+  freedom to deploy on the Kubernetes platform of their choice.'
 lifecycle: stable
-target_medal: silver
+introduced_in: v0
+targets:
+  v0: silver
+  v1: silver
 ownership:
   squad: americas
   stakeholders:
-    - Jay Madden-Aberdein
-    - Sarah Craddock
-    - Anthony Dillon
-    - IS
-composed_of:
-  - id: indico-charm
-    product_type: charm
-    source:
-      repo: canonical/indico-operator
-    allure_report_url: "https://canonical.github.io/indico-operator/_latest"
+  - Jay Madden-Aberdein
+  - Sarah Craddock
+  - Anthony Dillon
+  - IS
 documentation_url: https://github.com/kewisch/indico-cli
+composed_of:
+- id: indico-charm
+  product_type: charm
+  introduced_in: v0
+  source:
+    repo: canonical/indico-operator
+  allure_report_url: https://canonical.github.io/indico-operator/_latest
 context_refs:
-  - label: Smtp Integrator
-    repo: canonical/smtp-integrator-operator
-  - label: Saml Integrator
-    repo: canonical/saml-integrator-operator
-  - label: S3 Integrator
-    repo: canonical/s3-integrator
-  - label: Postgresql K8S
-    repo: canonical/postgresql-k8s-operator
-  - label: Redis K8S
-    repo: canonical/postgresql-k8s-operator
+- label: Smtp Integrator
+  repo: canonical/smtp-integrator-operator
+- label: Saml Integrator
+  repo: canonical/saml-integrator-operator
+- label: S3 Integrator
+  repo: canonical/s3-integrator
+- label: Postgresql K8S
+  repo: canonical/postgresql-k8s-operator
+- label: Redis K8S
+  repo: canonical/postgresql-k8s-operator

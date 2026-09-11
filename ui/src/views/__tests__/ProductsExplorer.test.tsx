@@ -8,6 +8,13 @@ import type { Portfolio } from '../../types'
 vi.mock('../../hooks/usePortfolio')
 import { usePortfolio } from '../../hooks/usePortfolio'
 
+vi.mock('../../providers/FrameworkVersionProvider', () => ({
+  useFrameworkVersion: () => ({
+    current: { id: 'v0', sequence: 0, label: 'PQF V0', status: 'active', description: '', portfolio_url: '', generated_at: '', contract_digest: 'digest-v0' },
+    versions: [],
+  }),
+}))
+
 const mockPortfolio: Portfolio = {
   generated_at: '2026-06-30T00:00:00Z',
   dimensions_meta: {},
@@ -21,6 +28,7 @@ const mockPortfolio: Portfolio = {
       current_result: 'bronze',
       squad: 'americas',
       is_portfolio_entry: true,
+      meets_target: false,
       context_refs: [],
       parent_product_ids: [],
       composed_of: [{ product_id: 'synapse', excluded_from_parent_medal: false }],
@@ -35,6 +43,7 @@ const mockPortfolio: Portfolio = {
       current_result: 'below_minimum',
       squad: '',
       is_portfolio_entry: false,
+      meets_target: false,
       context_refs: [],
       parent_product_ids: ['matrix'],
       composed_of: null,
@@ -50,12 +59,18 @@ const mockPortfolio: Portfolio = {
       current_result: 'bronze',
       squad: 'emea',
       is_portfolio_entry: true,
+      meets_target: false,
       context_refs: [],
       parent_product_ids: [],
       composed_of: null,
       dimensions: {},
     },
   ],
+  framework: { id: 'v0', sequence: 0, label: 'PQF V0', status: 'active', description: 'Current framework revision' },
+  contract_digest: 'digest-v0',
+  source_revision: 'abc123',
+  implementation_fingerprints: {},
+  compliance_summary: { total: 2, meeting_target: 0, below_target: 2, insufficient_data: 0 },
 }
 
 function wrap() {
@@ -136,7 +151,7 @@ describe('ProductsExplorer', () => {
           dimensions: {
             documentation: {
               result: 'below_minimum',
-              drift: null,
+              meets_target: false,
               metrics: {},
               composition: null,
             },
@@ -224,6 +239,11 @@ describe('ProductsExplorer', () => {
     expect(cols[3]).toHaveStyle({ width: '7rem' })
     expect(cols[4]).toHaveStyle({ width: '6rem' })
     expect(cols[5]).toHaveStyle({ width: '26%' })
+  })
+
+  it('scopes product links to the selected framework version', () => {
+    wrap()
+    expect(screen.getByRole('link', { name: 'Matrix (Synapse)' })).toHaveAttribute('href', '/v0/products/matrix')
   })
 
   it('keeps product and repo cells overflow-safe in grouped rows', () => {

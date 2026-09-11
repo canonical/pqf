@@ -8,6 +8,13 @@ import type { Portfolio } from '../../types'
 vi.mock('../../hooks/usePortfolio')
 import { usePortfolio } from '../../hooks/usePortfolio'
 
+vi.mock('../../providers/FrameworkVersionProvider', () => ({
+  useFrameworkVersion: () => ({
+    current: { id: 'v0', sequence: 0, label: 'PQF V0', status: 'active', description: '', portfolio_url: '', generated_at: '', contract_digest: 'digest-v0' },
+    versions: [],
+  }),
+}))
+
 const mockPortfolio: Portfolio = {
   generated_at: '2026-06-30T00:00:00Z',
   products: [],
@@ -18,6 +25,11 @@ const mockPortfolio: Portfolio = {
       medals: { bronze: { criteria: [] } },
     },
   },
+  framework: { id: 'v0', sequence: 0, label: 'PQF V0', status: 'active', description: 'Current framework revision' },
+  contract_digest: 'digest-v0',
+  source_revision: 'abc123',
+  implementation_fingerprints: {},
+  compliance_summary: { total: 0, meeting_target: 0, below_target: 0, insufficient_data: 0 },
 }
 
 function wrap() {
@@ -61,6 +73,12 @@ describe('About', () => {
   it('links to overview', () => {
     wrap()
     expect(screen.getByRole('link', { name: /overview/i })).toBeInTheDocument()
+  })
+
+  it('scopes internal links to the selected framework version', () => {
+    wrap()
+    expect(screen.getByRole('link', { name: /overview/i })).toHaveAttribute('href', '/v0')
+    expect(screen.getByRole('link', { name: 'Documentation' })).toHaveAttribute('href', '/v0/dimensions/documentation')
   })
 
   it('links framework specification to the canonical repo', () => {

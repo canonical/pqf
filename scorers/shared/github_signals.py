@@ -21,6 +21,20 @@ def build_github_session(github_token: str | None) -> requests.Session:
     return session
 
 
+def github_session_get(
+    session: requests.Session,
+    url: str,
+    **kwargs: Any,
+) -> requests.Response:
+    response = session.get(url, **kwargs)
+    rate_limited = response.status_code == 429 or (
+        response.status_code == 403 and response.headers.get("X-RateLimit-Remaining") == "0"
+    )
+    if rate_limited and session.headers.get("Authorization"):
+        return build_github_session(None).get(url, **kwargs)
+    return response
+
+
 def github_get(
     url: str,
     github_token: str | None,

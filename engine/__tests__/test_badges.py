@@ -2,63 +2,42 @@ from engine.badges import badge_state, generate_badge
 
 _GOLD_PRODUCT = {
     "id": "matrix",
-    "current_medal": "gold",
+    "current_result": "gold",
     "dimensions": {
-        "test_verification": {"drift": None},
-        "documentation": {"drift": None},
+        "test_verification": {"meets_target": True},
+        "documentation": {"meets_target": True},
     },
 }
 
-_BRONZE_REMEDIATING = {
+_BRONZE_PRODUCT = {
     "id": "indico",
-    "current_medal": "bronze",
+    "current_result": "bronze",
     "dimensions": {
-        "test_verification": {"drift": None},
-        "documentation": {
-            "drift": {"status": "remediating", "first_seen_at": "...", "deadline": "..."}
-        },
+        "test_verification": {"meets_target": False},
+        "documentation": {"meets_target": True},
     },
 }
 
-_BRONZE_OVERDUE = {
+_INSUFFICIENT_DATA_PRODUCT = {
     "id": "indico",
-    "current_medal": "bronze",
+    "current_result": "insufficient_data",
     "dimensions": {
-        "test_verification": {
-            "drift": {"status": "overdue", "first_seen_at": "...", "deadline": "..."}
-        },
-        "documentation": {"drift": None},
+        "test_verification": {"meets_target": False},
+        "documentation": {"meets_target": True},
     },
 }
 
 
-def test_badge_state_gold_when_no_drift():
+def test_badge_state_uses_current_result():
     assert badge_state(_GOLD_PRODUCT) == "gold"
 
 
-def test_badge_state_bronze_when_no_drift():
-    product = {**_GOLD_PRODUCT, "current_medal": "bronze"}
-    assert badge_state(product) == "bronze"
+def test_badge_state_handles_bronze_result():
+    assert badge_state(_BRONZE_PRODUCT) == "bronze"
 
 
-def test_badge_state_remediating_when_any_dimension_remediating():
-    assert badge_state(_BRONZE_REMEDIATING) == "remediating"
-
-
-def test_badge_state_overdue_when_any_dimension_overdue():
-    assert badge_state(_BRONZE_OVERDUE) == "overdue"
-
-
-def test_overdue_takes_priority_over_remediating():
-    product = {
-        "id": "test",
-        "current_medal": "bronze",
-        "dimensions": {
-            "a": {"drift": {"status": "remediating", "first_seen_at": "...", "deadline": "..."}},
-            "b": {"drift": {"status": "overdue", "first_seen_at": "...", "deadline": "..."}},
-        },
-    }
-    assert badge_state(product) == "overdue"
+def test_badge_state_handles_insufficient_data_result():
+    assert badge_state(_INSUFFICIENT_DATA_PRODUCT) == "insufficient_data"
 
 
 def test_generate_badge_returns_svg_string():
@@ -69,13 +48,7 @@ def test_generate_badge_returns_svg_string():
     assert "#FFB700" in svg
 
 
-def test_generate_badge_remediating_uses_orange():
-    svg = generate_badge(_BRONZE_REMEDIATING)
-    assert "remediating" in svg
-    assert "#E98B06" in svg
-
-
-def test_generate_badge_overdue_uses_red():
-    svg = generate_badge(_BRONZE_OVERDUE)
-    assert "overdue" in svg
-    assert "#E05252" in svg
+def test_generate_badge_uses_neutral_color_for_insufficient_data():
+    svg = generate_badge(_INSUFFICIENT_DATA_PRODUCT)
+    assert "insufficient_data" in svg
+    assert "#9F9F9F" in svg

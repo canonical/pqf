@@ -1,19 +1,25 @@
 id: penpot
 product_type: root
 name: Penpot
-description: |-
-  Penpot is a web-based, open-source design and prototyping tool that enables designers
+description: 'Penpot is a web-based, open-source design and prototyping tool that
+  enables designers
+
   and teams to collaborate on UI/UX projects. The penpot charm deploys Penpot on Kubernetes,
-  providing a scalable design collaboration platform.
+
+  providing a scalable design collaboration platform.'
 lifecycle: stable
-target_medal: bronze
+introduced_in: v0
+targets:
+  v0: bronze
+  v1: bronze
 ownership:
   squad: emea
   stakeholders:
-    - IS
-composed_of:
-  - id: penpot-charm
-    product_type: charm
-    source:
-      repo: canonical/penpot-operator
+  - IS
 documentation_url: https://github.com/canonical/penpot-operator
+composed_of:
+- id: penpot-charm
+  product_type: charm
+  introduced_in: v0
+  source:
+    repo: canonical/penpot-operator

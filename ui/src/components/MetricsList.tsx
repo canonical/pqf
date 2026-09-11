@@ -1,4 +1,5 @@
 import React from 'react'
+import type { MetricValue } from '../types'
 
 interface ThresholdInfo {
   operator: string
@@ -17,7 +18,7 @@ interface OutputMetaLocal {
 }
 
 interface Props {
-  metrics: Record<string, string | number | boolean>
+  metrics: Record<string, MetricValue>
   thresholds?: Record<string, ThresholdInfo>
   metaOutputs?: Record<string, OutputMetaLocal>
 }
@@ -69,10 +70,14 @@ function meetsThreshold(val: string | number | boolean, op: string, threshold: n
 }
 
 function formatValue(
-  val: string | number | boolean,
+  val: MetricValue,
   threshold?: ThresholdInfo,
   unit?: string | null,
 ): React.ReactNode {
+  if (val === null) {
+    return <span style={{ color: '#999' }}>—</span>
+  }
+
   if (typeof val === 'boolean') {
     if (threshold === undefined) {
       return val

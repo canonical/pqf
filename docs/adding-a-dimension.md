@@ -24,17 +24,24 @@ Add a **new dimension** when:
 
 ## Overview
 
-A quality dimension is one axis of the result rubric (e.g., Test Verification, Documentation, Security). Adding a dimension requires:
+A quality dimension is one axis of the result rubric (e.g., Test Verification, Documentation, Security). Dimensions are declared **per framework version**, so adding a dimension requires:
 
-1. An entry in `config/dimensions.yaml` — declares the dimension's outputs and result criteria
+1. An entry in one framework version's `framework/versions/<version>/dimensions.yaml` — declares the dimension's outputs (each selecting a metric implementation revision) and result criteria
 2. A new `scorers/<name>/` directory with `logic.py`, `scorer.py`, and tests
-3. Registration in the `Makefile`
+3. Metric implementation bindings and the runner registration in `scorers/registry.py` so the dimension can be dispatched
+
+> **Which framework version?** Add new dimensions to the **upcoming** version
+> (`framework/versions/v1/`). Adding a scored dimension to the **active** version changes today's
+> official compliance view and needs explicit framework-owner review; CI's semantic change report
+> flags it as a scoring-semantic change. **Archived** versions are frozen and must never be edited
+> to change scoring. A framework contract is a full snapshot — editing one version never affects
+> another.
 
 ---
 
-## Step 1: Add the dimension to `config/dimensions.yaml`
+## Step 1: Add the dimension to the framework contract
 
-Add a new top-level entry under `dimensions:`:
+Add a new top-level entry under `dimensions:` in `framework/versions/<version>/dimensions.yaml`:
 
 ```yaml
   my_dimension:
@@ -44,13 +51,17 @@ Add a new top-level entry under `dimensions:`:
     applies_to:
       product_types: [charm, snap]   # which product types this dimension scores
     aggregation: worst_in_scope
+    required_metrics_for_scoring:
+      - some_boolean
     outputs:
       some_boolean:
+        implementation: "my-boolean-signal/v1"
         type: boolean
         label: "Human-readable label"
         description: "What this metric checks and how."
         # ai_assisted: true   # Uncomment if scored by LLM, not GitHub API
       some_number:
+        implementation: "my-number-signal/v1"
         type: number
         range: "0–100"
         label: "Human-readable label"
@@ -63,6 +74,15 @@ Add a new top-level entry under `dimensions:`:
       gold:
         - some_number >= 90
 ```
+
+Each output selects an immutable **metric implementation revision**. The metric ID (`some_number`)
+is the stable, user-facing concept; the implementation ID (`my-number-signal/v1`) identifies the
+concrete measurement logic. Changing how a metric is measured means publishing a new revision
+(`.../v2`) and pointing a contract at it — never editing an existing revision's behaviour in place.
+
+`required_metrics_for_scoring` lists the keys that must be measurable for the dimension to be
+scored; a `null` value for any of them makes the dimension `insufficient_data` / `unrated`. Keep
+that list to signals you can measure reliably across the fleet.
 
 If your dimension only applies to charms, set `applies_to.product_types: [charm]`. Root products automatically return `not_applicable` for this dimension and are not penalized in their result calculation.
 
@@ -213,111 +233,122 @@ def test_llm_scorer(mocker):
 
 ---
 
-## Step 5: Write `scorer.py` (IO wrapper)
+## Step 5: Write `scorer.py` (thin wrapper)
 
-`scorer.py` is thin: it reads env vars, resolves leaf units, calls `compute_metrics`, and prints
-JSON. Copy the pattern used by existing scorers exactly. In particular, keep the CLI arguments
-and the `resolve_leaf_units_for(...)` call unchanged unless you have a specific reason to alter
-them: PQF relies on that shape to resolve `ref:` entries and the correct set of leaf products.
+Scorer execution is centralised in the version-aware runner `scorers/run.py`. It resolves the
+framework contract, rejects archived versions, builds the version-filtered product graph, resolves
+leaf units, reads credentials from the environment, and dispatches the implementation revisions the
+selected contract declares. Your `scorer.py` is a four-line compatibility wrapper that pins the
+dimension:
 
 ```python
 #!/usr/bin/env python3
-"""my_dimension scorer — iterates leaf products and outputs per-leaf metrics."""
+"""my_dimension scorer compatibility wrapper."""
 
-import argparse
-import json
-import os
 import sys
 from pathlib import Path
-
-import yaml
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 if str(REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(REPO_ROOT))
 
-
-def _load_all_products(products_dir: Path) -> list[dict]:
-    return [yaml.safe_load(f.read_text()) for f in sorted(products_dir.glob("*.yaml"))]
+from scorers.run import main as run_main  # noqa: E402
 
 
 def main() -> int:
-    from engine.graph import build_graph, resolve_leaf_units_for
-    from scorers.my_dimension.logic import compute_metrics
-
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--product-yaml", required=True)
-    parser.add_argument("--products-dir", default=None)
-    args = parser.parse_args()
-
-    github_token = os.environ["GITHUB_TOKEN"]
-
-    product_path = Path(args.product_yaml)
-    product = yaml.safe_load(product_path.read_text())
-    product_id = product["id"]
-
-    products_dir = Path(args.products_dir) if args.products_dir else product_path.parent
-    all_products = _load_all_products(products_dir)
-    graph = build_graph(all_products)
-    units = resolve_leaf_units_for(graph, product_id)
-
-    results = {}
-    for unit in units:
-        results[unit.product_id] = compute_metrics(unit, github_token)
-
-    print(json.dumps(results, indent=2))
-    return 0
+    return run_main(fixed_dimension="my_dimension")
 
 
 if __name__ == "__main__":
     sys.exit(main())
 ```
 
-If your scorer requires additional credentials (e.g., `OPENROUTER_API_KEY`), read them from env
-vars in `main()` and pass them as parameters to `compute_metrics` — never read them in `logic.py`.
+Do not read credentials in `logic.py`, and never branch on the framework version inside metric
+logic. If your dimension needs an additional credential, add it to `ScorerContext` in
+`scorers/registry.py` and pass it through the runner function.
 
 ---
 
-## Step 6: Register the scorer in `Makefile`
+## Step 6: Register the runner and metric implementations
 
-Add the new scorer to the `score` and `score-no-llm` targets in `Makefile`. Find the existing
-scorer lines (they all follow the same pattern) and add yours in alphabetical order:
+`scorers/registry.py` is the dispatch table. Add three things:
 
-```makefile
-	$(PYTHON) scorers/my_dimension/scorer.py --product-yaml products/$(PRODUCT).yaml \
-		--products-dir products \
-		> $(SCORE_DIR)/$(PRODUCT)/my_dimension.json
+```python
+# 1. a runner that calls your pure logic
+def _run_my_dimension(unit: EvaluationUnit, context: ScorerContext) -> dict[str, Any]:
+    return my_dimension_logic.compute_metrics(unit, context.github_token)
+
+
+# 2. register it and every scoring-relevant source used by the runner
+RUNNERS = MappingProxyType({..., "my_dimension": _run_my_dimension})
+RUNNER_SOURCE_FILES = MappingProxyType({
+    ...,
+    "my_dimension": (
+        Path(my_dimension_logic.__file__).resolve(),
+        Path(shared_helper.__file__).resolve(),  # omit when no shared helper is used
+        Path(my_dimension_logic.__file__).resolve().parent / "prompts" / "review.md",  # omit when no prompt is used
+    ),
+})
+
+
+# 3. bind each implementation revision declared by the contract
+METRIC_BINDINGS = MappingProxyType({
+    ...,
+    "my-boolean-signal/v1": MetricBinding(
+        dimension="my_dimension",
+        output_key="some_boolean",
+        runner_key="my_dimension",
+    ),
+    "my-number-signal/v1": MetricBinding(
+        dimension="my_dimension",
+        output_key="some_number",
+        runner_key="my_dimension",
+    ),
+})
 ```
 
-Add it to **both** `score` and `score-no-llm` targets so `make score-all-no-llm` runs your scorer.
+List every file whose contents can change the metric result, including shared helpers and prompt
+assets. Their contents form the implementation fingerprint recorded with computed results.
+
+`make validate` fails if a contract declares an unknown implementation, one that belongs to another
+dimension, one that resolves to a different output key, or one whose runner is not registered. No
+`Makefile` change is needed: `make score` discovers the selected framework version's dimensions
+with `python -m engine.framework --list-dimensions` and loops over them.
 
 ---
 
 ## Step 7: Verify locally
 
-Run the full pipeline to see your new dimension appear in the dashboard:
+Run the full pipeline against the framework version you edited to see your new dimension in the
+dashboard. Every runtime command takes an explicit `FRAMEWORK_VERSION`:
 
 ```bash
-make score-no-llm PRODUCT=<any-product>
-make _merge PRODUCT=<any-product>
-make _assemble
-make dev   # → http://localhost:5173
+make validate
+make score-no-llm PRODUCT=<any-product> FRAMEWORK_VERSION=<version>
+make _merge PRODUCT=<any-product> FRAMEWORK_VERSION=<version>
+make _assemble FRAMEWORK_VERSION=<version>
+make _version-index
+make dev   # → http://localhost:5173, then pick that version in the framework selector
 ```
 
-See [Run PQF locally](local-scoring.md) for AI-assisted scoring, full-portfolio runs, and
-generated-artifact guidance.
+The generated `computed/`, `public/`, and `.pqf-score/` files are GHA-maintained previews —
+inspect them locally, but never commit them. See [Run PQF locally](local-scoring.md) for
+AI-assisted scoring, full-portfolio runs, and generated-artifact guidance.
 
 ---
 
 ## Step 8: Checklist before opening a PR
 
-- [ ] `config/dimensions.yaml` has the new dimension with `label`, `description`, `applies_to`, `aggregation`, `outputs`, and `medals`
-- [ ] `scorers/my_dimension/logic.py` is a pure function — no `os.environ`, no file I/O; returns exactly the keys declared in `outputs`
-- [ ] `scorers/my_dimension/scorer.py` reads env vars and calls `compute_metrics`; uses `resolve_leaf_units_for`
+- [ ] `framework/versions/<version>/dimensions.yaml` has the new dimension with `label`, `description`, `applies_to`, `aggregation`, `required_metrics_for_scoring`, `outputs` (each with an `implementation`), and `medals`
+- [ ] The dimension was added to the **upcoming** version, or an active-contract change was explicitly agreed with framework owners
+- [ ] `scorers/registry.py` — runner, complete scoring-relevant source tuple, and one `MetricBinding` per declared implementation
+- [ ] `scorers/my_dimension/logic.py` is a pure function — no `os.environ`, no file I/O, no framework-version branching; returns exactly the keys declared in `outputs`
+- [ ] `scorers/my_dimension/scorer.py` delegates to `scorers.run.main(fixed_dimension=...)`
 - [ ] `scorers/my_dimension/__tests__/test_logic.py` tests all main code paths (signals present, signals missing)
-- [ ] `Makefile` — scorer added to both `score` and `score-no-llm` targets
+- [ ] `make validate` passes
 - [ ] `make test` passes (all Python tests)
 - [ ] `make lint` passes
-- [ ] `make score-no-llm PRODUCT=<any-product>` runs without error
-- [ ] `make _merge PRODUCT=<any-product> && make _assemble` updates `public/portfolio.json`
-- [ ] New dimension appears correctly in the dashboard (`make dev`)
+- [ ] `make score-no-llm PRODUCT=<any-product> FRAMEWORK_VERSION=<version>` runs without error
+- [ ] `make _merge PRODUCT=<any-product> FRAMEWORK_VERSION=<version> && make _assemble FRAMEWORK_VERSION=<version>` updates `public/versions/<version>/portfolio.json`
+- [ ] New dimension appears correctly in the dashboard under that framework version (`make dev`)
+- [ ] No generated `computed/`, `public/`, or `.pqf-score/` preview files are staged

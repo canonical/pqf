@@ -1,50 +1,64 @@
 id: self-hosted-github-runner
 product_type: root
 name: Self-hosted GitHub Actions Runner
-description: |-
-  The Self-Hosted GitHub Runner provides self-hosted GitHub Actions Runners. Note, that there is a dedicated
-  documentation for our end-users available at https://documentation.ubuntu.com/self-hosted-runners/en/latest/ .
-  The documentation hosted here is mainly used for operational and team-internal information only.
+description: 'The Self-Hosted GitHub Runner provides self-hosted GitHub Actions Runners.
+  Note, that there is a dedicated
+
+  documentation for our end-users available at https://documentation.ubuntu.com/self-hosted-runners/en/latest/
+  .
+
+  The documentation hosted here is mainly used for operational and team-internal information
+  only.'
 lifecycle: stable
-target_medal: gold
+introduced_in: v0
+targets:
+  v0: gold
+  v1: gold
 ownership:
   squad: apac
   stakeholders:
-    - IS
-composed_of:
-  - id: github-runner
-    product_type: charm
-    source:
-      repo: canonical/github-runner-operator
-  - id: github-runner-image-builder
-    product_type: charm
-    source:
-      repo: canonical/github-runner-image-builder-operator
-  - id: github-runner-webhook-router
-    product_type: charm
-    source:
-      repo: canonical/github-runner-webhook-router
-  - id: tmate-ssh-server
-    product_type: charm
-    source:
-      repo: canonical/tmate-ssh-server-operator
-  - id: repo-policy-compliance
-    product_type: charm
-    source:
-      repo: canonical/repo-policy-compliance
-  - id: github-runner-planner
-    product_type: charm
-    source:
-      repo: canonical/github-runner-operators
-      subpath: charms/planner-operator
-  - id: github-runner-webhook-gateway
-    product_type: charm
-    source:
-      repo: canonical/github-runner-operators
-      subpath: charms/webhook-gateway-operator
+  - IS
 documentation_url: https://documentation.ubuntu.com/self-hosted-runners/en/latest/
+composed_of:
+- id: github-runner
+  product_type: charm
+  introduced_in: v0
+  source:
+    repo: canonical/github-runner-operator
+- id: github-runner-image-builder
+  product_type: charm
+  introduced_in: v0
+  source:
+    repo: canonical/github-runner-image-builder-operator
+- id: github-runner-webhook-router
+  product_type: charm
+  introduced_in: v0
+  source:
+    repo: canonical/github-runner-webhook-router
+- id: tmate-ssh-server
+  product_type: charm
+  introduced_in: v0
+  source:
+    repo: canonical/tmate-ssh-server-operator
+- id: repo-policy-compliance
+  product_type: charm
+  introduced_in: v0
+  source:
+    repo: canonical/repo-policy-compliance
+- id: github-runner-planner
+  product_type: charm
+  introduced_in: v0
+  source:
+    repo: canonical/github-runner-operators
+    subpath: charms/planner-operator
+- id: github-runner-webhook-gateway
+  product_type: charm
+  introduced_in: v0
+  source:
+    repo: canonical/github-runner-operators
+    subpath: charms/webhook-gateway-operator
 context_refs:
-  - label: Github Actions Runner
-    repo: canonical/github-actions-runner
-  - label: Action Tmate
-    repo: canonical/action-tmate
+- label: Github Actions Runner
+  repo: canonical/github-actions-runner
+- label: Action Tmate
+  repo: canonical/action-tmate

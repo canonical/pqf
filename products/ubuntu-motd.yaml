@@ -1,18 +1,24 @@
 id: ubuntu-motd
 product_type: root
 name: Ubuntu MOTD
-description: |-
-  Ubuntu servers connect to motd.ubuntu.com to retrieve the Message Of The Day (MOTD).
-  The MOTD may be different based on the architecture, the Ubuntu release or the public cloud.
+description: 'Ubuntu servers connect to motd.ubuntu.com to retrieve the Message Of
+  The Day (MOTD).
+
+  The MOTD may be different based on the architecture, the Ubuntu release or the public
+  cloud.'
 lifecycle: stable
-target_medal: bronze
+introduced_in: v0
+targets:
+  v0: bronze
+  v1: bronze
 ownership:
   squad: emea
   stakeholders:
-    - Christian Ehrhardt
-composed_of:
-  - id: ubuntu-motd-server
-    product_type: charm
-    source:
-      repo: canonical/ubuntu-motd-server-operator
+  - Christian Ehrhardt
 documentation_url: https://motd.ubuntu.com/
+composed_of:
+- id: ubuntu-motd-server
+  product_type: charm
+  introduced_in: v0
+  source:
+    repo: canonical/ubuntu-motd-server-operator
