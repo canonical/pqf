@@ -2,10 +2,28 @@ import { fireEvent, render, screen } from '@testing-library/react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { describe, expect, it, vi } from 'vitest'
 import App from '../../App'
-import type { Portfolio } from '../../types'
+import type { FrameworkVersionIndex, Portfolio } from '../../types'
 
 vi.mock('../../hooks/usePortfolio')
 import { usePortfolio } from '../../hooks/usePortfolio'
+
+vi.mock('../../hooks/useFrameworkVersions')
+import { useFrameworkVersions } from '../../hooks/useFrameworkVersions'
+
+const mockFrameworkVersions: FrameworkVersionIndex = {
+  versions: [
+    {
+      id: 'v0',
+      sequence: 0,
+      label: 'PQF V0',
+      status: 'active',
+      description: 'Current framework revision',
+      portfolio_url: 'versions/v0/portfolio.json',
+      generated_at: '2026-07-23T00:00:00Z',
+      contract_digest: 'digest-v0',
+    },
+  ],
+}
 
 const mockPortfolio: Portfolio = {
   generated_at: '2026-07-23T00:00:00Z',
@@ -228,8 +246,15 @@ function wrap(path: string) {
     isError: false,
     error: null,
   } as ReturnType<typeof usePortfolio>)
+  vi.mocked(useFrameworkVersions).mockReturnValue({
+    data: mockFrameworkVersions,
+    isLoading: false,
+    isError: false,
+    error: null,
+  } as ReturnType<typeof useFrameworkVersions>)
 
-  window.location.hash = `#${path}`
+  // Routes are version-scoped (Task 9); tests target the sole active version below.
+  window.location.hash = `#/v0${path}`
 
   return render(
     <QueryClientProvider client={queryClient}>
@@ -303,7 +328,14 @@ describe('MetricDistribution route', () => {
 
   it('does not crash when route transitions from loading to loaded state', async () => {
     const queryClient = new QueryClient()
-    window.location.hash = '#/dimensions/test_verification/metrics/coverage_pct'
+    window.location.hash = '#/v0/dimensions/test_verification/metrics/coverage_pct'
+
+    vi.mocked(useFrameworkVersions).mockReturnValue({
+      data: mockFrameworkVersions,
+      isLoading: false,
+      isError: false,
+      error: null,
+    } as ReturnType<typeof useFrameworkVersions>)
 
     vi.mocked(usePortfolio)
       .mockReturnValueOnce({

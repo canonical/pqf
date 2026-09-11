@@ -1,11 +1,16 @@
 import { useLocation, Link } from 'react-router'
+import { useFrameworkVersion } from '../providers/FrameworkVersionProvider'
+import VersionSelector from './VersionSelector'
 
 export default function GlobalNav() {
   const location = useLocation()
-  
+  const { current } = useFrameworkVersion()
+  const base = `/${current.id}`
+
   const isActive = (path: string) => {
-    if (path === '/') return location.pathname === '/'
-    return location.pathname.startsWith(path)
+    const target = path === '' ? base : `${base}${path}`
+    if (path === '') return location.pathname === base
+    return location.pathname.startsWith(target)
   }
 
   return (
@@ -13,7 +18,7 @@ export default function GlobalNav() {
       <div className="p-navigation__row">
         <div className="p-navigation__banner">
           <div className="p-navigation__tagged-logo">
-            <Link className="p-navigation__link" to="/">
+            <Link className="p-navigation__link" to={base}>
               <div className="p-navigation__logo-tag" style={{ background: '#E95420' }}>
                 <img
                   className="p-navigation__logo-icon"
@@ -31,8 +36,8 @@ export default function GlobalNav() {
           <ul className="p-navigation__items">
             <li className="p-navigation__item">
               <Link 
-                className={`p-navigation__link ${isActive('/') ? 'is-selected' : ''}`}
-                to="/"
+                className={`p-navigation__link ${isActive('') ? 'is-selected' : ''}`}
+                to={base}
               >
                 Overview
               </Link>
@@ -40,7 +45,7 @@ export default function GlobalNav() {
             <li className="p-navigation__item">
               <Link 
                 className={`p-navigation__link ${isActive('/products') ? 'is-selected' : ''}`}
-                to="/products"
+                to={`${base}/products`}
               >
                 Products
               </Link>
@@ -48,7 +53,7 @@ export default function GlobalNav() {
             <li className="p-navigation__item">
               <Link 
                 className={`p-navigation__link ${isActive('/dimensions') ? 'is-selected' : ''}`}
-                to="/dimensions"
+                to={`${base}/dimensions`}
               >
                 Dimensions
               </Link>
@@ -56,7 +61,7 @@ export default function GlobalNav() {
             <li className="p-navigation__item">
               <Link 
                 className={`p-navigation__link ${isActive('/about') ? 'is-selected' : ''}`}
-                to="/about"
+                to={`${base}/about`}
               >
                 About
               </Link>
@@ -73,6 +78,9 @@ export default function GlobalNav() {
             </li>
           </ul>
         </nav>
+        <div className="p-navigation__nav-selector-wrapper" style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', padding: '0.5rem 1rem' }}>
+          <VersionSelector />
+        </div>
       </div>
     </header>
   )
