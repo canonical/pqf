@@ -149,7 +149,7 @@ export default function Overview() {
             </thead>
             <tbody>
               {products.map(product => (
-                <tr key={product.id} data-meets-target={product.meets_target}>
+                <tr key={product.id}>
                   <td>
                     <VersionLink to={`/products/${product.id}`}>{product.name}</VersionLink>
                   </td>

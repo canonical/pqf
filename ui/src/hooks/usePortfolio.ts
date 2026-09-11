@@ -32,7 +32,8 @@ async function fetchPortfolio(version: FrameworkVersionSummary): Promise<Portfol
   const summary = portfolio.compliance_summary
   const summaryFields = ['total', 'meeting_target', 'below_target', 'insufficient_data'] as const
   const isValidSummary =
-    summary != null && summaryFields.every(field => typeof summary[field] === 'number')
+    summary != null &&
+    summaryFields.every(field => typeof summary[field] === 'number' && Number.isFinite(summary[field]))
   if (!isValidSummary) {
     throw new Error(
       `Portfolio at ${version.portfolio_url} is missing a valid compliance_summary ` +

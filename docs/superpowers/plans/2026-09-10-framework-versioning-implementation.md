@@ -1115,6 +1115,7 @@ git commit -m "test: cover framework version navigation"
 - Modify: `docs/adding-a-product.md`
 - Modify: `docs/adding-a-metric.md`
 - Modify: `docs/adding-a-dimension.md`
+- Modify: `docs/views/overview.md`
 - Modify: `README.md`
 - Modify: `AGENTS.md` if it still names `config/dimensions.yaml` as the single contract.
 
@@ -1135,6 +1136,7 @@ Document:
 - explicit local `FRAMEWORK_VERSION`,
 - `/legacy/` purpose,
 - prohibition on archived recomputation.
+- framework compliance summaries in `docs/views/overview.md` replacing stale drift wording.
 
 Replace statements that `config/dimensions.yaml` is the single config knob.
 

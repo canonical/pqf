@@ -29,16 +29,18 @@ The **Products** table lists every tracked product with its current quality stat
 | ⬇ Below minimum | `#C7162B` | Measured, but did not meet minimum criteria |
 | — No data | `#666` | Scoring data not yet available |
 
-### Drift indicators
+### Framework compliance summary
 
-Drift tracks whether a product is moving toward or away from its target result over time.
+The overview includes the framework compliance summary from the selected portfolio artifact. It
+shows aggregate counts for products meeting target, falling below target, or lacking sufficient
+data. This summary is rendered directly from the portfolio payload and is not recomputed in the
+UI.
 
-| Indicator | Meaning |
-|-----------|---------|
-| ⬆ | Result improved since last week |
-| ⬇ Remediating | Result dropped below target — team has time to fix |
-| ⬇ Overdue | Remediation window has expired without recovery |
-| — | No change |
+| Field | Meaning |
+|-------|---------|
+| Meeting target | Products at or above their target result |
+| Below target | Products measured below target |
+| Insufficient data | Products that could not be scored confidently |
 
 ---
 

@@ -168,4 +168,22 @@ describe('usePortfolio', () => {
     await waitFor(() => expect(result.current.isError).toBe(true))
     expect(result.current.error?.message).toMatch(/compliance_summary/i)
   })
+
+  it('errors with a friendly message when compliance_summary has non-finite numeric fields', async () => {
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockResolvedValue({
+        ok: true,
+        json: async () => ({
+          ...basePortfolio,
+          compliance_summary: { total: Number.NaN, meeting_target: 0, below_target: 0, insufficient_data: 0 },
+        }),
+      }),
+    )
+
+    const { result } = renderHook(() => usePortfolio(version), { wrapper })
+
+    await waitFor(() => expect(result.current.isError).toBe(true))
+    expect(result.current.error?.message).toMatch(/compliance_summary/i)
+  })
 })

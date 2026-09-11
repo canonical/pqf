@@ -41,7 +41,7 @@ const mockPortfolio: Portfolio = {
       product_type: 'charm',
       name: 'Synapse Charm',
       lifecycle: 'stable',
-      target_result: 'gold',
+      target_result: 'silver',
       current_result: 'silver',
       squad: '',
       is_portfolio_entry: false,
@@ -195,25 +195,21 @@ describe('DimensionDetail', () => {
     expect(screen.getAllByText('A README.md exists in the primary component repository.')).toHaveLength(1)
   })
 
-  it('renders product table without target column, with result badges as the only per-row status', () => {
+  it('renders a target column with medal badges for each product row', () => {
     wrap('documentation')
-    expect(screen.queryByRole('columnheader', { name: 'Target' })).not.toBeInTheDocument()
-    expect(screen.queryByRole('columnheader', { name: 'Status' })).not.toBeInTheDocument()
-    expect(screen.queryByRole('columnheader', { name: 'Drift / Deadline' })).not.toBeInTheDocument()
+    expect(screen.getByRole('columnheader', { name: 'Target' })).toBeInTheDocument()
     expect(screen.getByRole('link', { name: 'Matrix (Synapse)' })).toBeInTheDocument()
-    expect(screen.queryByText('Meets target')).not.toBeInTheDocument()
-    expect(screen.queryByText('Below target')).not.toBeInTheDocument()
-    expect(screen.queryByText(/remediating/i)).not.toBeInTheDocument()
-    expect(screen.queryByText(/overdue/i)).not.toBeInTheDocument()
-    expect(screen.queryByText(/deadline/i)).not.toBeInTheDocument()
+    const rootRow = screen.getByRole('link', { name: 'Matrix (Synapse)' }).closest('tr')
+    expect(rootRow).toHaveTextContent('Gold')
+    expect(rootRow).toHaveTextContent('Bronze')
+
+    const leafRow = screen.getByRole('link', { name: '↳ Synapse Charm' }).closest('tr')
+    expect(within(leafRow as HTMLElement).getAllByText('Silver')).toHaveLength(2)
   })
 
-  it('marks rows that do not meet target with a non-visible accessibility attribute', () => {
-    wrap('documentation')
-    // landscape's documentation entry has meets_target: false
-    const row = screen.getByRole('link', { name: 'Landscape' }).closest('tr')
-    expect(row).not.toBeNull()
-    expect(row).toHaveAttribute('data-meets-target', 'false')
+  it('does not render data-meets-target attributes anywhere in the dimension detail view', () => {
+    const { container } = wrap('documentation')
+    expect(container.querySelectorAll('[data-meets-target]')).toHaveLength(0)
   })
 
   it('renders product scores grouped by root with nested leaf rows', () => {

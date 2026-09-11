@@ -8,8 +8,9 @@ import type { FrameworkVersionSummary } from '../types'
  * `toLocaleString()` call in tests, which always agreed with itself but never verified an actual
  * stable format.
  */
-function formatDate(iso: string): string {
+function formatDate(iso: string): string | undefined {
   const date = new Date(iso)
+  if (!Number.isFinite(date.getTime())) return undefined
   const year = date.getUTCFullYear()
   const month = String(date.getUTCMonth() + 1).padStart(2, '0')
   const day = String(date.getUTCDate()).padStart(2, '0')
@@ -26,9 +27,9 @@ export function describeFrameworkContext(version: FrameworkVersionSummary): stri
   const date = formatDate(version.generated_at)
   switch (version.status) {
     case 'upcoming':
-      return `Planning against ${version.label} · refreshed ${date}`
+      return date ? `Planning against ${version.label} · refreshed ${date}` : `Planning against ${version.label}`
     case 'archived':
-      return `Archived snapshot · generated ${date}`
+      return date ? `Archived snapshot · generated ${date}` : 'Archived snapshot'
     case 'active':
     default:
       return `Current framework · ${version.label}`

@@ -173,6 +173,14 @@ describe('ProductDetail', () => {
     expect(row).toHaveTextContent('N/A')
   })
 
+  it('shows the product target in the header for leaf products', () => {
+    wrap('synapse')
+    const headerCard = screen.getByRole('heading', { name: 'Synapse Charm' }).closest('.p-card') as HTMLElement
+    expect(headerCard).not.toBeNull()
+    expect(within(headerCard).getByText('TARGET')).toBeInTheDocument()
+    expect(within(headerCard).getByText('Gold')).toBeInTheDocument()
+  })
+
   it('renders scored unrated dimensions as below minimum', () => {
     const unratedPortfolio: Portfolio = {
       ...mockPortfolio,
@@ -320,13 +328,9 @@ describe('ProductDetail', () => {
     expect(screen.queryByText(/deadline/i)).not.toBeInTheDocument()
   })
 
-  it('marks a dimension row that does not meet target with a non-visible accessibility attribute', () => {
-    wrap('synapse')
-
-    // synapse's test_verification entry has meets_target: false
-    const row = screen.getByRole('link', { name: 'test verification' }).closest('tr')
-    expect(row).not.toBeNull()
-    expect(row).toHaveAttribute('data-meets-target', 'false')
+  it('does not render data-meets-target attributes anywhere in the product detail view', () => {
+    const { container } = wrap('synapse')
+    expect(container.querySelectorAll('[data-meets-target]')).toHaveLength(0)
   })
 
   it('renders linked product from context refs', () => {

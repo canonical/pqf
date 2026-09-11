@@ -210,14 +210,9 @@ describe('Overview', () => {
     expect(screen.queryByText(/overdue/i)).not.toBeInTheDocument()
   })
 
-  it('marks rows that do not meet target with a non-visible accessibility attribute, not a second badge', () => {
+  it('does not render data-meets-target attributes anywhere in the overview', () => {
     const { container } = wrap(<Overview />)
-
-    const productsTable = container.querySelectorAll('table')[0]
-    const row = within(productsTable).getByRole('link', { name: 'Matrix (Synapse)' }).closest('tr')
-    expect(row).not.toBeNull()
-    // mockPortfolio's matrix product has meets_target: false
-    expect(row).toHaveAttribute('data-meets-target', 'false')
+    expect(container.querySelectorAll('[data-meets-target]')).toHaveLength(0)
   })
 
   it('sorts products by target medal when the target header is clicked', async () => {

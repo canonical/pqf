@@ -109,16 +109,14 @@ export default function ProductDetail() {
           <div style={{ display: 'flex', gap: '2rem', flexWrap: 'wrap' }}>
             <div>
               <span className="u-text--muted" style={{ fontSize: '0.75rem', display: 'block', marginBottom: '0.25rem' }}>
-                {isRoot ? 'CURRENT' : 'MEDAL'}
+                CURRENT
               </span>
               <MedalBadge medal={product.current_result} />
             </div>
-            {isRoot && (
-              <div>
-                <span className="u-text--muted" style={{ fontSize: '0.75rem', display: 'block', marginBottom: '0.25rem' }}>TARGET</span>
-                <MedalBadge medal={product.target_result} />
-              </div>
-            )}
+            <div>
+              <span className="u-text--muted" style={{ fontSize: '0.75rem', display: 'block', marginBottom: '0.25rem' }}>TARGET</span>
+              <MedalBadge medal={product.target_result} />
+            </div>
             <div>
               <span className="u-text--muted" style={{ fontSize: '0.75rem', display: 'block', marginBottom: '0.25rem' }}>LIFECYCLE</span>
               <span className="p-label">{product.lifecycle}</span>
@@ -214,7 +212,6 @@ export default function ProductDetail() {
                   return (
                     <tr
                       key={dim}
-                      data-meets-target={entry.meets_target}
                       style={{ borderBottom: '1px solid #e5e5e5', background: idx % 2 === 0 ? '#fafafa' : '#fff' }}
                     >
                       <td style={{ padding: '0.75rem', verticalAlign: 'top' }}>

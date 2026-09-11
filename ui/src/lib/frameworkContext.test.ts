@@ -48,4 +48,26 @@ describe('describeFrameworkContext', () => {
     expect(describeFrameworkContext(midnightUtc)).toBe(describeFrameworkContext(lateUtc))
     expect(describeFrameworkContext(midnightUtc)).toBe('Planning against PQF V2 · refreshed 2026-03-10')
   })
+
+  it('omits the generated suffix when generated_at is invalid for an upcoming version', () => {
+    const invalid: FrameworkVersionSummary = {
+      ...base,
+      id: 'v3',
+      label: 'PQF V3',
+      status: 'upcoming',
+      generated_at: 'not-a-date',
+    }
+    expect(describeFrameworkContext(invalid)).toBe('Planning against PQF V3')
+  })
+
+  it('omits the generated suffix when generated_at is invalid for an archived version', () => {
+    const invalid: FrameworkVersionSummary = {
+      ...base,
+      id: 'v-2',
+      label: 'PQF V-2',
+      status: 'archived',
+      generated_at: '2026-13-40T00:00:00Z',
+    }
+    expect(describeFrameworkContext(invalid)).toBe('Archived snapshot')
+  })
 })
