@@ -42,7 +42,7 @@ on:
 # scorer/catalog changes from an earlier commit. Other branch runs are superseded
 # normally; schedules have a unique group per run.
 concurrency:
-  group: compute-metrics-${{ github.ref }}-${{ github.event_name == 'schedule' && github.run_id || 'push' }}
+  group: compute-metrics-${{ github.ref }}-${{ github.ref == 'refs/heads/main' && 'publish' || (github.event_name == 'schedule' && github.run_id || 'push') }}
   cancel-in-progress: ${{ github.event_name != 'schedule' && github.ref != 'refs/heads/main' }}
 
 permissions:
@@ -166,8 +166,10 @@ jobs:
 
           if [ "$EVENT_NAME" = "schedule" ]; then
             # Cadence is derived from the cron literal by an exact, tested mapping.
+            write_changes_since_published
             matrix=$(python3 -m engine.workflow_matrix \
-              --schedule "$EVENT_SCHEDULE" "${published_args[@]}")
+              --schedule "$EVENT_SCHEDULE" \
+              --changed-paths-file changed-paths.txt "${published_args[@]}")
 
           elif [ "$EVENT_NAME" = "workflow_dispatch" ]; then
             write_changes_since_published

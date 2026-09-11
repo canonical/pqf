@@ -239,6 +239,19 @@ def test_scheduled_cadences_reject_explicit_framework_version(fixtures):
         select_frameworks(frameworks, cadence="nightly", framework_version="v1")
 
 
+def test_scheduled_cadence_also_includes_unpublished_changed_versions(fixtures):
+    framework_root, _ = fixtures
+    frameworks = discover_frameworks(framework_root)
+
+    selected = select_frameworks(
+        frameworks,
+        cadence="weekly",
+        changed_paths=["framework/versions/v1/dimensions.yaml"],
+    )
+
+    assert [f.id for f in selected] == ["v1", "v2"]
+
+
 def test_unknown_cadence_is_rejected(fixtures):
     framework_root, _ = fixtures
     frameworks = discover_frameworks(framework_root)

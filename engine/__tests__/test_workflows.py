@@ -148,6 +148,13 @@ def test_compute_metrics_deploys_production_from_engine_artifacts() -> None:
     # Cadence for scheduled runs is derived from the cron literal by the tested
     # mapping, never by comparing cron strings in YAML.
     assert '--schedule "$EVENT_SCHEDULE"' in build_run
+    schedule_block = build_run[
+        build_run.index('if [ "$EVENT_NAME" = "schedule" ]') : build_run.index(
+            'elif [ "$EVENT_NAME" = "workflow_dispatch" ]'
+        )
+    ]
+    assert "write_changes_since_published" in schedule_block
+    assert "--changed-paths-file changed-paths.txt" in schedule_block
     assert "0 3 * * 1" not in build_run, (
         "cadence must be derived by engine.workflow_matrix, not by a cron literal "
         "duplicated in shell"
@@ -506,6 +513,10 @@ def test_compute_metrics_is_the_only_production_pages_publisher() -> None:
     compute_workflow = load_workflow(".github/workflows/compute-metrics.yml")
     on = compute_workflow.get("on") or compute_workflow.get(True) or {}
     assert "ui/**" in on["push"]["paths"]
+    assert compute_workflow["concurrency"]["group"] == (
+        "compute-metrics-${{ github.ref }}-${{ github.ref == 'refs/heads/main' "
+        "&& 'publish' || (github.event_name == 'schedule' && github.run_id || 'push') }}"
+    )
     assert compute_workflow["concurrency"]["cancel-in-progress"] == (
         "${{ github.event_name != 'schedule' && github.ref != 'refs/heads/main' }}"
     )

@@ -261,9 +261,10 @@ newest pending checkout compares itself with the last successfully published `so
 That range includes scoring changes from failed or superseded runs before it carries artifacts
 forward and deploys the latest UI. Immediately before production publication, the workflow also
 checks that its source SHA is still the current `main` tip. Older scheduled runs are skipped, and
-manual runs from non-main refs can compute but cannot publish to the production root. A manual run
-on `main` is serialized with push runs and selects both the requested version and any live versions
-affected by changes since the last successful publication.
+manual runs from non-main refs can compute but cannot publish to the production root. Every
+production-capable run shares the main publication queue. Scheduled runs select their lifecycle
+cadence plus any live versions affected since the last successful publication; manual runs select
+the requested version plus those unpublished changes.
 
 ### `deploy-legacy.yml` — one-off legacy snapshot
 

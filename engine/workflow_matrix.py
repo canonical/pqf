@@ -123,6 +123,20 @@ def select_changed_frameworks(
     return selected
 
 
+def _include_changed_frameworks(
+    frameworks: list[FrameworkVersion],
+    selected: list[FrameworkVersion],
+    changed_paths: list[str] | None,
+) -> list[FrameworkVersion]:
+    if changed_paths is None:
+        return sorted(selected, key=lambda framework: framework.sequence)
+
+    selected_by_id = {framework.id: framework for framework in selected}
+    for changed in select_changed_frameworks(frameworks, changed_paths):
+        selected_by_id.setdefault(changed.id, changed)
+    return sorted(selected_by_id.values(), key=lambda framework: framework.sequence)
+
+
 def select_frameworks(
     frameworks: list[FrameworkVersion],
     *,
@@ -146,13 +160,7 @@ def select_frameworks(
             raise ValueError(
                 f"Framework version {requested.id} is archived and cannot be scheduled for scoring."
             )
-        selected = [requested]
-        if changed_paths is not None:
-            selected_ids = {requested.id}
-            for changed in select_changed_frameworks(frameworks, changed_paths):
-                if changed.id not in selected_ids:
-                    selected.append(changed)
-        return sorted(selected, key=lambda framework: framework.sequence)
+        return _include_changed_frameworks(frameworks, [requested], changed_paths)
 
     if framework_version:
         raise ValueError(f"--framework-version is not supported for {cadence} cadence")
@@ -163,7 +171,8 @@ def select_frameworks(
         return select_changed_frameworks(frameworks, changed_paths)
 
     status = _CADENCE_STATUS[cadence]
-    return [framework for framework in frameworks if framework.status == status]
+    selected = [framework for framework in frameworks if framework.status == status]
+    return _include_changed_frameworks(frameworks, selected, changed_paths)
 
 
 def missing_live_versions(
