@@ -147,7 +147,8 @@ _score-product:
 	@echo "$(SCORE_MESSAGE)"
 	@mkdir -p $(VERSION_SCORE_DIR)
 	@set -e; \
-	for dimension in $$($(PYTHON) -m engine.framework --root $(FRAMEWORK_ROOT) --version $(FRAMEWORK_VERSION) --list-dimensions); do \
+	dimensions="$$( $(PYTHON) -m engine.framework --root $(FRAMEWORK_ROOT) --version $(FRAMEWORK_VERSION) --list-dimensions )"; \
+	for dimension in $$dimensions; do \
 		$(SCORE_RUNNER_ENV) $(PYTHON) scorers/run.py \
 			--framework-root $(FRAMEWORK_ROOT) \
 			--framework-version $(FRAMEWORK_VERSION) \

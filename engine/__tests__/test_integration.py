@@ -239,3 +239,20 @@ def test_versioned_local_commands_reject_archived_framework_scoring(tmp_path):
 
     assert completed.returncode != 0
     assert "Framework version v0 is archived" in completed.stderr
+
+
+def test_versioned_local_commands_fail_fast_for_unknown_framework_version(tmp_path):
+    project_root = _create_temp_project(tmp_path)
+
+    completed = _run_make(
+        project_root,
+        "score-no-llm",
+        "PRODUCT=matrix",
+        "FRAMEWORK_VERSION=v9",
+    )
+
+    assert completed.returncode != 0
+    assert "Results in" not in completed.stdout
+    assert (
+        project_root / ".pqf-score" / "v9" / "matrix" / "test_verification.json"
+    ).exists() is False
