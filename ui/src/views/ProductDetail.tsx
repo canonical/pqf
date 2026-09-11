@@ -109,7 +109,7 @@ export default function ProductDetail() {
           <div style={{ display: 'flex', gap: '2rem', flexWrap: 'wrap' }}>
             <div>
               <span className="u-text--muted" style={{ fontSize: '0.75rem', display: 'block', marginBottom: '0.25rem' }}>
-                CURRENT
+                {isRoot ? 'CURRENT' : 'MEDAL'}
               </span>
               <MedalBadge medal={product.current_result} />
             </div>
