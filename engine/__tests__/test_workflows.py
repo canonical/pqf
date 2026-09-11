@@ -507,6 +507,10 @@ def test_compute_metrics_is_the_only_production_pages_publisher() -> None:
     compute_workflow = load_workflow(".github/workflows/compute-metrics.yml")
     on = compute_workflow.get("on") or compute_workflow.get(True) or {}
     assert "ui/**" in on["push"]["paths"]
+    assert compute_workflow["concurrency"]["cancel-in-progress"] == (
+        "${{ github.event_name != 'schedule' && "
+        "(github.event_name != 'push' || github.ref != 'refs/heads/main') }}"
+    )
 
     compute_deploy = compute_workflow["jobs"]["deploy-production"]
     assert compute_deploy["concurrency"] == {

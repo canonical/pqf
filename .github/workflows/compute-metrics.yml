@@ -38,12 +38,12 @@ on:
       - 'ui/**'
       - '.github/workflows/compute-metrics.yml'
 
-# Cancel any in-progress run on the same branch when a new push arrives.
-# This prevents N sequential LLM runs when multiple commits land quickly.
-# The nightly/weekly schedule runs are never cancelled (unique group per run_id).
+# Main pushes are serialized so a later UI-only commit cannot cancel unpublished
+# scorer/catalog changes from an earlier commit. Other branch runs are superseded
+# normally; schedules have a unique group per run.
 concurrency:
   group: compute-metrics-${{ github.ref }}-${{ github.event_name == 'schedule' && github.run_id || 'push' }}
-  cancel-in-progress: ${{ github.event_name != 'schedule' }}
+  cancel-in-progress: ${{ github.event_name != 'schedule' && (github.event_name != 'push' || github.ref != 'refs/heads/main') }}
 
 permissions:
   contents: write            # needed for the deploy jobs

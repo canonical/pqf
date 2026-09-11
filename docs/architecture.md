@@ -255,7 +255,9 @@ built from a different scoring contract — so the version index can always be r
 For a UI-only push with current live artifacts, the selected matrix is empty, current versioned
 artifacts are carried forward, and the latest UI is deployed without invoking repository scorers.
 Keeping production publication in this single workflow also ensures a newer main-branch run cancels
-an older in-flight run, so an older scoring build cannot overwrite a newer UI.
+an older pending run while the active run completes. Main-branch runs are serialized so a newer
+UI-only commit cannot discard unpublished scoring changes; after the active run publishes, the
+newest pending checkout carries those artifacts forward and deploys the latest UI.
 
 ### `deploy-legacy.yml` — one-off legacy snapshot
 
