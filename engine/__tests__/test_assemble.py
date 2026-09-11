@@ -1,24 +1,27 @@
 import json
+import sys
 from pathlib import Path
 
 import pytest
+import yaml
 
-from engine.assemble import assemble_portfolio
-from engine.framework import FrameworkStatus, FrameworkVersion
+from engine import assemble
+from engine.framework import contract_digest, discover_frameworks, get_framework
 
 DIMS_CONFIG = {
     "dimensions": {
         "test_verification": {
             "label": "Test Verification",
-            "description": "...",
+            "description": "Automated test health.",
             "scorer": "scorers/test_verification/scorer.py",
             "applies_to": {"product_types": ["charm", "snap"]},
             "aggregation": "worst_in_scope",
             "outputs": {
                 "coverage_pct": {
+                    "implementation": "coverage-pct/v1",
                     "type": "number",
                     "label": "Coverage",
-                    "description": "...",
+                    "description": "Coverage percentage.",
                     "range": "0-100",
                 }
             },
@@ -26,7 +29,26 @@ DIMS_CONFIG = {
                 "silver": ["coverage_pct >= 80"],
                 "bronze": ["coverage_pct >= 70"],
             },
-        }
+        },
+        "documentation": {
+            "label": "Documentation",
+            "description": "Documentation baseline.",
+            "scorer": "scorers/documentation/scorer.py",
+            "applies_to": {"product_types": ["charm", "snap"]},
+            "aggregation": "worst_in_scope",
+            "outputs": {
+                "has_readme": {
+                    "implementation": "readme-present/v1",
+                    "type": "boolean",
+                    "label": "README present",
+                    "description": "README.md exists.",
+                }
+            },
+            "medals": {
+                "gold": ["has_readme == true"],
+                "bronze": ["has_readme == true"],
+            },
+        },
     }
 }
 
@@ -52,47 +74,112 @@ context_refs:
     repo: canonical/postgresql-k8s-operator
 """
 
-COMPUTED_JSON = {
-    "product_id": "matrix",
-    "computed_at": "2026-01-01T00:00:00+00:00",
-    "leaf_metrics": {"synapse": {"test_verification": {"coverage_pct": 75}}},
+IMPLEMENTATION_FINGERPRINTS = {
+    "coverage-pct/v1": "coverage-sha",
+    "readme-present/v1": "readme-sha",
 }
 
 
-def _framework(version_id: str, sequence: int, status: FrameworkStatus) -> FrameworkVersion:
-    return FrameworkVersion(
-        id=version_id,
-        sequence=sequence,
-        label=f"PQF {version_id.upper()}",
-        status=status,
-        description=f"{version_id} contract",
-        directory=Path("."),
-        dimensions={"dimensions": {}},
+def _write_framework_version(root: Path, *, version_id: str, sequence: int, status: str) -> None:
+    version_dir = root / version_id
+    version_dir.mkdir(parents=True)
+    (version_dir / "framework.yaml").write_text(
+        yaml.safe_dump(
+            {
+                "id": version_id,
+                "sequence": sequence,
+                "label": f"PQF {version_id.upper()}",
+                "status": status,
+                "description": f"{version_id} contract",
+            },
+            sort_keys=False,
+        )
     )
+    (version_dir / "dimensions.yaml").write_text(yaml.safe_dump(DIMS_CONFIG, sort_keys=False))
 
 
-FRAMEWORKS = [
-    _framework("v0", 0, FrameworkStatus.ACTIVE),
-    _framework("v1", 1, FrameworkStatus.UPCOMING),
-]
-FRAMEWORK_BY_ID = {framework.id: framework for framework in FRAMEWORKS}
+def _write_computed_file(
+    root: Path,
+    *,
+    framework_version: str,
+    selected_framework,
+    product_id: str = "matrix",
+    test_coverage: int = 75,
+    has_readme: bool = True,
+    contract_digest_override: str | None = None,
+) -> None:
+    version_dir = root / "versions" / framework_version
+    version_dir.mkdir(parents=True, exist_ok=True)
+    payload = {
+        "framework_version": framework_version,
+        "contract_digest": contract_digest_override or contract_digest(selected_framework),
+        "implementation_fingerprints": IMPLEMENTATION_FINGERPRINTS,
+        "product_id": product_id,
+        "computed_at": "2026-01-01T00:00:00+00:00",
+        "leaf_metrics": {
+            "synapse": {
+                "test_verification": {"coverage_pct": test_coverage},
+                "documentation": {"has_readme": has_readme},
+            }
+        },
+    }
+    (version_dir / f"{product_id}.json").write_text(json.dumps(payload))
 
 
 @pytest.fixture
-def portfolio(tmp_path):
-    (tmp_path / "products").mkdir()
-    (tmp_path / "products" / "matrix.yaml").write_text(ROOT_YAML)
-    (tmp_path / "computed").mkdir()
-    (tmp_path / "computed" / "matrix.json").write_text(json.dumps(COMPUTED_JSON))
-    return assemble_portfolio(
-        products_dir=tmp_path / "products",
-        computed_dir=tmp_path / "computed",
-        dimensions_config=DIMS_CONFIG,
-        drift_history={},
-        update_drift=False,
-        frameworks=FRAMEWORKS,
-        selected_framework=FRAMEWORK_BY_ID["v0"],
+def repo_fixture(tmp_path):
+    products_dir = tmp_path / "products"
+    products_dir.mkdir()
+    (products_dir / "matrix.yaml").write_text(ROOT_YAML)
+
+    framework_root = tmp_path / "framework" / "versions"
+    _write_framework_version(framework_root, version_id="v0", sequence=0, status="active")
+    _write_framework_version(framework_root, version_id="v1", sequence=1, status="upcoming")
+
+    frameworks = discover_frameworks(framework_root)
+    return {
+        "products_dir": products_dir,
+        "computed_dir": tmp_path / "computed",
+        "framework_root": framework_root,
+        "frameworks": frameworks,
+        "v0": get_framework(frameworks, "v0"),
+        "v1": get_framework(frameworks, "v1"),
+    }
+
+
+@pytest.fixture
+def portfolio(repo_fixture):
+    _write_computed_file(
+        repo_fixture["computed_dir"],
+        framework_version="v0",
+        selected_framework=repo_fixture["v0"],
     )
+    return assemble.assemble_portfolio(
+        products_dir=repo_fixture["products_dir"],
+        computed_dir=repo_fixture["computed_dir"],
+        frameworks=repo_fixture["frameworks"],
+        selected_framework=repo_fixture["v0"],
+        source_revision="deadbeef",
+    )
+
+
+def test_portfolio_embeds_framework_and_compliance_metadata(portfolio, repo_fixture):
+    assert portfolio["framework"] == {
+        "id": "v0",
+        "sequence": 0,
+        "label": "PQF V0",
+        "status": "active",
+        "description": "v0 contract",
+    }
+    assert portfolio["contract_digest"] == contract_digest(repo_fixture["v0"])
+    assert portfolio["source_revision"] == "deadbeef"
+    assert portfolio["implementation_fingerprints"] == IMPLEMENTATION_FINGERPRINTS
+    assert portfolio["compliance_summary"] == {
+        "total": 1,
+        "meeting_target": 0,
+        "below_target": 1,
+        "insufficient_data": 0,
+    }
 
 
 def test_portfolio_contains_root_product(portfolio):
@@ -104,10 +191,10 @@ def test_root_product_has_correct_type(portfolio):
     matrix = next(p for p in portfolio["products"] if p["id"] == "matrix")
     assert matrix["product_type"] == "root"
     assert matrix["is_portfolio_entry"] is True
+    assert matrix["meets_target"] is False
 
 
 def test_inline_leaf_included_in_products_but_not_portfolio_entry(portfolio):
-    """Inline leaves are included so their detail page is accessible, but not portfolio entries."""
     ids = [p["id"] for p in portfolio["products"]]
     assert "synapse" in ids
     synapse = next(p for p in portfolio["products"] if p["id"] == "synapse")
@@ -118,15 +205,17 @@ def test_root_dimension_has_composition(portfolio):
     matrix = next(p for p in portfolio["products"] if p["id"] == "matrix")
     dim = matrix["dimensions"]["test_verification"]
     assert dim["result"] == "bronze"
+    assert dim["meets_target"] is False
     assert dim["composition"] is not None
     assert len(dim["composition"]) == 1
     assert dim["composition"][0]["product_id"] == "synapse"
-    assert dim["composition"][0]["result"] == "bronze"  # 75 >= 70
+    assert dim["composition"][0]["result"] == "bronze"
 
 
 def test_root_product_has_current_status(portfolio):
     matrix = next(p for p in portfolio["products"] if p["id"] == "matrix")
     assert matrix["current_result"] == "bronze"
+    assert matrix["target_result"] == "gold"
 
 
 def test_context_refs_in_portfolio(portfolio):
@@ -141,63 +230,71 @@ def test_dimensions_meta_has_applies_to(portfolio):
     assert meta["aggregation"] == "worst_in_scope"
 
 
-def test_migrate_legacy_dimension_keys_support_engagement_to_engagement():
-    """Drift history with support_engagement key is migrated to engagement."""
-    from engine.assemble import _migrate_legacy_dimension_keys
+def test_assemble_portfolio_rejects_mismatched_contract_digest(repo_fixture):
+    _write_computed_file(
+        repo_fixture["computed_dir"],
+        framework_version="v0",
+        selected_framework=repo_fixture["v0"],
+        contract_digest_override="not-the-real-digest",
+    )
 
-    drift_history = {
-        "product1": {
-            "support_engagement": {
-                "status": "remediating",
-                "first_seen_at": "2026-06-01T00:00:00+00:00",
-                "deadline": "2026-06-15T00:00:00+00:00",
-            },
-            "test_verification": {"status": "resolved"},
-        },
-        "product2": {
-            "support_engagement": {"status": "resolved"},
-        },
-    }
-
-    _migrate_legacy_dimension_keys(drift_history)
-
-    # Old keys should be gone
-    assert "support_engagement" not in drift_history["product1"]
-    assert "support_engagement" not in drift_history["product2"]
-
-    # New keys should exist with same data
-    assert drift_history["product1"]["engagement"]["status"] == "remediating"
-    assert drift_history["product1"]["engagement"]["first_seen_at"] == "2026-06-01T00:00:00+00:00"
-    assert drift_history["product1"]["engagement"]["deadline"] == "2026-06-15T00:00:00+00:00"
-    assert drift_history["product2"]["engagement"]["status"] == "resolved"
-
-    # Other dimensions should be untouched
-    assert drift_history["product1"]["test_verification"]["status"] == "resolved"
+    with pytest.raises(ValueError, match="contract digest"):
+        assemble.assemble_portfolio(
+            products_dir=repo_fixture["products_dir"],
+            computed_dir=repo_fixture["computed_dir"],
+            frameworks=repo_fixture["frameworks"],
+            selected_framework=repo_fixture["v0"],
+            source_revision="deadbeef",
+        )
 
 
-def test_migrate_legacy_dimension_keys_no_op_if_no_legacy_keys():
-    """Migration is a no-op if no legacy keys are present."""
-    from engine.assemble import _migrate_legacy_dimension_keys
-
-    drift_history = {
-        "product1": {
-            "engagement": {"status": "resolved"},
-            "test_verification": {"status": "resolved"},
-        }
-    }
-    original = json.loads(json.dumps(drift_history))  # deep copy
-
-    _migrate_legacy_dimension_keys(drift_history)
-
-    assert drift_history == original
+def test_assemble_portfolio_requires_selected_version_directory(repo_fixture):
+    with pytest.raises(ValueError, match="Missing computed version directory"):
+        assemble.assemble_portfolio(
+            products_dir=repo_fixture["products_dir"],
+            computed_dir=repo_fixture["computed_dir"],
+            frameworks=repo_fixture["frameworks"],
+            selected_framework=repo_fixture["v0"],
+            source_revision="deadbeef",
+        )
 
 
-def test_migrate_legacy_dimension_keys_handles_empty_drift_history():
-    """Migration handles empty drift history gracefully."""
-    from engine.assemble import _migrate_legacy_dimension_keys
+def test_assemble_cli_writes_selected_version_without_touching_existing_portfolio(
+    tmp_path, monkeypatch, repo_fixture
+):
+    _write_computed_file(
+        repo_fixture["computed_dir"],
+        framework_version="v1",
+        selected_framework=repo_fixture["v1"],
+        test_coverage=85,
+    )
+    existing_v0 = tmp_path / "public" / "versions" / "v0" / "portfolio.json"
+    existing_v0.parent.mkdir(parents=True)
+    existing_v0.write_text('{"sentinel": "keep-me"}\n')
 
-    drift_history = {}
+    output = tmp_path / "public" / "versions" / "v1" / "portfolio.json"
+    monkeypatch.setattr(
+        sys,
+        "argv",
+        [
+            "assemble.py",
+            "--products-dir",
+            str(repo_fixture["products_dir"]),
+            "--computed-dir",
+            str(repo_fixture["computed_dir"]),
+            "--framework-root",
+            str(repo_fixture["framework_root"]),
+            "--framework-version",
+            "v1",
+            "--source-revision",
+            "cafebabe",
+            "--output",
+            str(output),
+        ],
+    )
 
-    _migrate_legacy_dimension_keys(drift_history)
-
-    assert drift_history == {}
+    assert assemble.main() == 0
+    assert existing_v0.read_text() == '{"sentinel": "keep-me"}\n'
+    written = json.loads(output.read_text())
+    assert written["framework"]["id"] == "v1"
+    assert written["source_revision"] == "cafebabe"

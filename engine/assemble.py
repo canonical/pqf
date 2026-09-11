@@ -1,41 +1,22 @@
-# engine/assemble.py
 import argparse
 import json
 import sys
 from datetime import UTC, datetime
 from pathlib import Path
+from typing import Any
 
 import yaml
 
-from engine.drift_tracker import update_drift_history
-from engine.framework import discover_frameworks, get_framework
+from engine.framework import FrameworkVersion, contract_digest, discover_frameworks, get_framework
 from engine.graph import build_graph
 from engine.medal_engine import compute_leaf_product, compute_root_product
-from engine.models import ProductType
+from engine.models import ApplicabilityOutcome, ProductType
 
 
-def _migrate_legacy_dimension_keys(drift_history: dict) -> None:
-    """
-    Migrate legacy dimension keys in drift history to new names.
-    Mutates drift_history in place.
-
-    Current migrations:
-    - support_engagement → engagement
-    """
-    legacy_key_mapping = {
-        "support_engagement": "engagement",
-    }
-
-    for product_id, product_history in drift_history.items():
-        for old_key, new_key in legacy_key_mapping.items():
-            if old_key in product_history:
-                product_history[new_key] = product_history.pop(old_key)
-
-
-def _build_dimensions_meta(dimensions_config: dict) -> dict:
-    meta = {}
+def _build_dimensions_meta(dimensions_config: dict[str, Any]) -> dict[str, Any]:
+    meta: dict[str, Any] = {}
     for dim_name, dim_config in dimensions_config.get("dimensions", {}).items():
-        medals_meta: dict = {}
+        medals_meta: dict[str, Any] = {}
         for tier, conditions in dim_config.get("medals", {}).items():
             medals_meta[tier] = {"criteria": conditions}
         outputs_meta = {}
@@ -61,42 +42,44 @@ def _build_dimensions_meta(dimensions_config: dict) -> dict:
     return meta
 
 
-def _dim_to_dict(dim_result) -> dict:
+def _dim_to_dict(dim_result) -> dict[str, Any]:
     composition = None
     if dim_result.composition is not None:
         composition = [
             {
-                "product_id": lr.product_id,
-                "repo": lr.repo,
-                "result": lr.result.value,
-                "metrics": lr.metrics,
-                "excluded_from_parent_medal": lr.excluded_from_parent_medal,
+                "product_id": leaf_result.product_id,
+                "repo": leaf_result.repo,
+                "medal": leaf_result.medal.value,
+                "result": leaf_result.result.value,
+                "applicability": leaf_result.applicability.value,
+                "metrics": leaf_result.metrics,
+                "excluded_from_parent_medal": leaf_result.excluded_from_parent_medal,
             }
-            for lr in dim_result.composition
+            for leaf_result in dim_result.composition
         ]
     return {
+        "medal": dim_result.medal.value,
+        "target": dim_result.target.value,
+        "applicability": dim_result.applicability.value,
+        "meets_target": dim_result.meets_target,
         "result": dim_result.result.value,
         "metrics": dim_result.metrics,
-        "drift": {
-            "status": dim_result.drift.status,
-            "first_seen_at": dim_result.drift.first_seen_at,
-            "deadline": dim_result.drift.deadline,
-        }
-        if dim_result.drift
-        else None,
         "composition": composition,
     }
 
 
-def _result_to_dict(result, node) -> dict:
+def _result_to_dict(result, node) -> dict[str, Any]:
     return {
         "id": result.product_id,
         "product_type": node.product_type.value,
         "name": node.name,
         "description": node.description,
         "lifecycle": node.lifecycle,
+        "current_medal": result.current_medal.value,
+        "target_medal": result.target_medal.value,
         "current_result": result.current_result.value,
         "target_result": result.target_result.value,
+        "meets_target": result.meets_target,
         "squad": node.ownership_squad,
         "is_portfolio_entry": node.is_portfolio_entry,
         "documentation_url": node.documentation_url,
@@ -104,53 +87,151 @@ def _result_to_dict(result, node) -> dict:
             {"repo": node.source_repo, "subpath": node.source_subpath} if node.source_repo else None
         ),
         "composed_of": [
-            {"product_id": e.product_id, "excluded_from_parent_medal": e.excluded_from_parent_medal}
-            for e in node.composed_of
+            {
+                "product_id": edge.product_id,
+                "excluded_from_parent_medal": edge.excluded_from_parent_medal,
+            }
+            for edge in node.composed_of
         ]
         if node.product_type == ProductType.ROOT
         else None,
-        "context_refs": [{"label": cr.label, "repo": cr.repo} for cr in node.context_refs],
+        "context_refs": [
+            {"label": context_ref.label, "repo": context_ref.repo}
+            for context_ref in node.context_refs
+        ],
         "parent_product_ids": node.parent_ids,
         "dimensions": {name: _dim_to_dict(dim) for name, dim in result.dimensions.items()},
+    }
+
+
+def _framework_to_dict(framework: FrameworkVersion) -> dict[str, Any]:
+    return {
+        "id": framework.id,
+        "sequence": framework.sequence,
+        "label": framework.label,
+        "status": framework.status.value,
+        "description": framework.description,
+    }
+
+
+def _versioned_computed_dir(computed_dir: Path, selected_framework: FrameworkVersion) -> Path:
+    version_dir = computed_dir / "versions" / selected_framework.id
+    if not version_dir.exists():
+        raise ValueError(f"Missing computed version directory {version_dir}")
+    return version_dir
+
+
+def _validate_envelope(
+    path: Path,
+    payload: dict[str, Any],
+    *,
+    selected_framework: FrameworkVersion,
+    expected_contract_digest: str,
+) -> dict[str, str]:
+    if payload.get("framework_version") != selected_framework.id:
+        raise ValueError(
+            f"{path} targets framework version {payload.get('framework_version')!r}, "
+            f"expected {selected_framework.id!r}"
+        )
+
+    actual_digest = payload.get("contract_digest")
+    if actual_digest != expected_contract_digest:
+        raise ValueError(
+            f"{path} has contract digest {actual_digest!r}; expected contract digest "
+            f"{expected_contract_digest!r}"
+        )
+
+    implementation_fingerprints = payload.get("implementation_fingerprints")
+    if not isinstance(implementation_fingerprints, dict):
+        raise ValueError(f"{path} is missing implementation_fingerprints")
+
+    return implementation_fingerprints
+
+
+def _load_leaf_metrics(
+    computed_dir: Path,
+    *,
+    selected_framework: FrameworkVersion,
+) -> tuple[dict[str, dict[str, dict[str, Any]]], dict[str, str]]:
+    expected_digest = contract_digest(selected_framework)
+    implementation_fingerprints: dict[str, str] | None = None
+    leaf_computed: dict[str, dict[str, dict[str, Any]]] = {}
+    version_dir = _versioned_computed_dir(computed_dir, selected_framework)
+    computed_paths = sorted(version_dir.glob("*.json"))
+    if not computed_paths:
+        raise ValueError(f"No computed envelopes found in {version_dir}")
+
+    for path in computed_paths:
+        try:
+            payload = json.loads(path.read_text())
+        except json.JSONDecodeError as exc:
+            raise ValueError(f"Invalid computed JSON in {path}: {exc}") from exc
+
+        envelope_fingerprints = _validate_envelope(
+            path,
+            payload,
+            selected_framework=selected_framework,
+            expected_contract_digest=expected_digest,
+        )
+        if implementation_fingerprints is None:
+            implementation_fingerprints = envelope_fingerprints
+        elif envelope_fingerprints != implementation_fingerprints:
+            raise ValueError(f"{path} has mismatched implementation fingerprints")
+
+        for leaf_id, leaf_data in payload.get("leaf_metrics", {}).items():
+            if leaf_id not in leaf_computed:
+                leaf_computed[leaf_id] = {}
+            for dimension_name, metrics in leaf_data.items():
+                if isinstance(metrics, dict):
+                    leaf_computed[leaf_id][dimension_name] = metrics
+
+    return leaf_computed, implementation_fingerprints or {}
+
+
+def _compliance_summary(products: list[dict[str, Any]]) -> dict[str, int]:
+    portfolio_entries = [product for product in products if product["is_portfolio_entry"]]
+    total = len(portfolio_entries)
+    meeting_target = sum(1 for product in portfolio_entries if product["meets_target"])
+    insufficient_data = sum(
+        1
+        for product in portfolio_entries
+        if not product["meets_target"]
+        and any(
+            dimension["applicability"] == ApplicabilityOutcome.INSUFFICIENT_DATA.value
+            for dimension in product["dimensions"].values()
+        )
+    )
+    return {
+        "total": total,
+        "meeting_target": meeting_target,
+        "below_target": total - meeting_target - insufficient_data,
+        "insufficient_data": insufficient_data,
     }
 
 
 def assemble_portfolio(
     products_dir,
     computed_dir,
-    dimensions_config,
-    drift_history,
-    update_drift,
     frameworks,
     selected_framework,
+    source_revision: str,
 ) -> dict:
     products_dir = Path(products_dir)
     computed_dir = Path(computed_dir)
     now = datetime.now(UTC)
 
     product_dicts = [
-        yaml.safe_load(p.read_text())
-        for p in sorted(products_dir.glob("*.yaml"))
-        if not p.name.startswith(".")
+        yaml.safe_load(path.read_text())
+        for path in sorted(products_dir.glob("*.yaml"))
+        if not path.name.startswith(".")
     ]
+    dimensions_config = selected_framework.dimensions
     graph = build_graph(product_dicts, frameworks, selected_framework)
+    leaf_computed, implementation_fingerprints = _load_leaf_metrics(
+        computed_dir,
+        selected_framework=selected_framework,
+    )
 
-    # Load leaf metrics from computed files:
-    # computed/{root-id}.json → {"leaf_metrics": {"leaf-id": {"dim": {metrics}}}}
-    leaf_computed: dict[str, dict[str, dict]] = {}  # leaf_id -> dim_name -> metrics
-    for path in sorted(computed_dir.glob("*.json")):
-        try:
-            data = json.loads(path.read_text())
-        except (json.JSONDecodeError, OSError):
-            continue
-        for leaf_id, leaf_data in data.get("leaf_metrics", {}).items():
-            if leaf_id not in leaf_computed:
-                leaf_computed[leaf_id] = {}
-            for key, value in leaf_data.items():
-                if isinstance(value, dict):  # only dimension metric dicts
-                    leaf_computed[leaf_id][key] = value
-
-    # Compute leaf product results
     leaf_results = {}
     for node in graph.nodes.values():
         if node.product_type in (ProductType.CHARM, ProductType.SNAP):
@@ -159,11 +240,9 @@ def assemble_portfolio(
                 node.product_type.value,
                 leaf_computed.get(node.id, {}),
                 dimensions_config,
-                drift_history,
                 node.target_medal,
             )
 
-    # Compute root product results
     root_results = {}
     for node in graph.nodes.values():
         if node.product_type == ProductType.ROOT:
@@ -172,20 +251,9 @@ def assemble_portfolio(
                 graph,
                 leaf_results,
                 dimensions_config,
-                drift_history,
                 node.target_medal,
-                now,
             )
 
-    if update_drift:
-        for pid, result in {**root_results, **leaf_results}.items():
-            for dim_name, dim_result in result.dimensions.items():
-                update_drift_history(
-                    pid, dim_name, dim_result.medal, result.target_medal, drift_history, now
-                )
-
-    # Emit all computed products: portfolio entries (root/standalone) AND inline leaves.
-    # The UI overview filters by is_portfolio_entry; leaf detail pages need inline products too.
     all_results = {**root_results, **leaf_results}
     products_out = [
         _result_to_dict(all_results[node.id], node)
@@ -195,6 +263,11 @@ def assemble_portfolio(
 
     return {
         "generated_at": now.isoformat(),
+        "framework": _framework_to_dict(selected_framework),
+        "contract_digest": contract_digest(selected_framework),
+        "source_revision": source_revision,
+        "implementation_fingerprints": implementation_fingerprints,
+        "compliance_summary": _compliance_summary(products_out),
         "products": products_out,
         "dimensions_meta": _build_dimensions_meta(dimensions_config),
     }
@@ -204,39 +277,30 @@ def main() -> int:
     parser = argparse.ArgumentParser(description="PQF portfolio assembler")
     parser.add_argument("--products-dir", required=True)
     parser.add_argument("--computed-dir", required=True)
-    parser.add_argument("--dimensions", required=True)
-    parser.add_argument("--drift-history", required=True, dest="drift_history")
     parser.add_argument("--output", required=True)
-    parser.add_argument("--update-drift", action="store_true", dest="update_drift")
     parser.add_argument("--framework-root", required=True)
     parser.add_argument("--framework-version", required=True)
+    parser.add_argument("--source-revision", required=True)
     args = parser.parse_args()
 
-    dimensions_config = yaml.safe_load(Path(args.dimensions).read_text())
-    drift_history_path = Path(args.drift_history)
-    drift_history = json.loads(drift_history_path.read_text())
     frameworks = discover_frameworks(Path(args.framework_root))
     selected_framework = get_framework(frameworks, args.framework_version)
 
-    # Migrate legacy dimension keys in drift history
-    _migrate_legacy_dimension_keys(drift_history)
+    try:
+        portfolio = assemble_portfolio(
+            products_dir=Path(args.products_dir),
+            computed_dir=Path(args.computed_dir),
+            frameworks=frameworks,
+            selected_framework=selected_framework,
+            source_revision=args.source_revision,
+        )
+    except ValueError as exc:
+        print(str(exc), file=sys.stderr)
+        return 1
 
-    portfolio = assemble_portfolio(
-        products_dir=Path(args.products_dir),
-        computed_dir=Path(args.computed_dir),
-        dimensions_config=dimensions_config,
-        drift_history=drift_history,
-        update_drift=args.update_drift,
-        frameworks=frameworks,
-        selected_framework=selected_framework,
-    )
-
-    Path(args.output).parent.mkdir(parents=True, exist_ok=True)
-    Path(args.output).write_text(json.dumps(portfolio, indent=2) + "\n")
-
-    if args.update_drift:
-        drift_history_path.write_text(json.dumps(drift_history, indent=2) + "\n")
-
+    output_path = Path(args.output)
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    output_path.write_text(json.dumps(portfolio, indent=2) + "\n")
     return 0
 
 

@@ -1,7 +1,6 @@
 # engine/aggregation.py
 from __future__ import annotations
 
-from datetime import datetime
 from typing import Any
 
 from engine.models import (
@@ -11,7 +10,6 @@ from engine.models import (
     LeafDimensionResult,
     Medal,
     Result,
-    Status,
 )
 
 
@@ -20,9 +18,9 @@ def _compute_result(medal: Medal, applicability: ApplicabilityOutcome) -> Result
     Map (medal, applicability) pair to canonical result.
 
     Hierarchy:
-    1. If not_applicable → result = not_applicable
-    2. If insufficient_data → result = insufficient_data
-    3. If scored and medal is unrated → result = below_minimum
+    1. If not_applicable -> result = not_applicable
+    2. If insufficient_data -> result = insufficient_data
+    3. If scored and medal is unrated -> result = below_minimum
     4. Otherwise, result matches medal value (gold/silver/bronze)
     """
     match applicability:
@@ -36,14 +34,12 @@ def _compute_result(medal: Medal, applicability: ApplicabilityOutcome) -> Result
             return Result(medal.value)
 
 
-def _dimension_status(medal: Medal, applicability: ApplicabilityOutcome) -> Status:
-    if applicability == ApplicabilityOutcome.NOT_APPLICABLE:
-        return Status.NOT_APPLICABLE
-    if applicability == ApplicabilityOutcome.INSUFFICIENT_DATA:
-        return Status.INSUFFICIENT_DATA
-    if medal == Medal.UNRATED:
-        return Status.BELOW_MINIMUM
-    return Status(medal.value)
+def _meets_target(
+    medal: Medal,
+    applicability: ApplicabilityOutcome,
+    target: Medal,
+) -> bool:
+    return applicability == ApplicabilityOutcome.SCORED and MEDAL_RANK[medal] >= MEDAL_RANK[target]
 
 
 def compute_leaf_applicability(
@@ -68,15 +64,13 @@ def compute_leaf_applicability(
 def aggregate_root_dimension(
     leaf_results: list[LeafDimensionResult],
     dim_config: dict[str, Any],
-    drift_history: dict,
-    product_id: str,
     target_medal: str,
-    now: datetime | None,
 ) -> DimensionResult:
     """
     Aggregate per-leaf dimension results into a root DimensionResult.
     Rule: minimum medal among in-scope (not excluded, scored) leaves.
     """
+    del dim_config
     target = Medal(target_medal)
 
     in_scope = [
@@ -97,21 +91,22 @@ def aggregate_root_dimension(
         return DimensionResult(
             medal=Medal.UNRATED,
             target=target,
+            meets_target=False,
             applicability=applicability,
             result=_compute_result(Medal.UNRATED, applicability),
             metrics={},
-            drift=None,
             composition=list(leaf_results),
         )
 
     worst = min(in_scope, key=lambda r: MEDAL_RANK[r.medal])
+    applicability = ApplicabilityOutcome.SCORED
 
     return DimensionResult(
         medal=worst.medal,
         target=target,
-        applicability=ApplicabilityOutcome.SCORED,
-        result=_compute_result(worst.medal, ApplicabilityOutcome.SCORED),
+        meets_target=_meets_target(worst.medal, applicability, target),
+        applicability=applicability,
+        result=_compute_result(worst.medal, applicability),
         metrics={},
-        drift=None,  # root drift tracked by assemble.py after full assembly
         composition=list(leaf_results),
     )

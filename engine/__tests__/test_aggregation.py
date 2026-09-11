@@ -79,7 +79,7 @@ def _leaf(product_id, medal, applicability=ApplicabilityOutcome.SCORED, excluded
 
 def test_worst_in_scope_picks_minimum():
     leaves = [_leaf("a", Medal.GOLD), _leaf("b", Medal.BRONZE)]
-    result = aggregate_root_dimension(leaves, DIM_CHARM_ONLY, {}, "root", "gold", None)
+    result = aggregate_root_dimension(leaves, DIM_CHARM_ONLY, "gold")
     assert result.medal == Medal.BRONZE
     assert result.applicability == ApplicabilityOutcome.SCORED
     assert result.result == Result.BRONZE
@@ -87,9 +87,10 @@ def test_worst_in_scope_picks_minimum():
 
 def test_excluded_leaf_does_not_affect_roll_up():
     leaves = [_leaf("a", Medal.SILVER), _leaf("b", Medal.BRONZE, excluded=True)]
-    result = aggregate_root_dimension(leaves, DIM_CHARM_ONLY, {}, "root", "gold", None)
+    result = aggregate_root_dimension(leaves, DIM_CHARM_ONLY, "gold")
     assert result.medal == Medal.SILVER
     assert result.result == Result.SILVER
+    assert result.meets_target is False
 
 
 def test_not_applicable_leaf_excluded_from_roll_up():
@@ -97,28 +98,30 @@ def test_not_applicable_leaf_excluded_from_roll_up():
         _leaf("a", Medal.GOLD),
         _leaf("b", Medal.UNRATED, ApplicabilityOutcome.NOT_APPLICABLE),
     ]
-    result = aggregate_root_dimension(leaves, DIM_CHARM_ONLY, {}, "root", "gold", None)
+    result = aggregate_root_dimension(leaves, DIM_CHARM_ONLY, "gold")
     assert result.medal == Medal.GOLD
     assert result.result == Result.GOLD
+    assert result.meets_target is True
 
 
 def test_all_not_applicable_returns_unrated_and_not_applicable():
     leaves = [_leaf("a", Medal.UNRATED, ApplicabilityOutcome.NOT_APPLICABLE)]
-    result = aggregate_root_dimension(leaves, DIM_CHARM_ONLY, {}, "root", "gold", None)
+    result = aggregate_root_dimension(leaves, DIM_CHARM_ONLY, "gold")
     assert result.medal == Medal.UNRATED
     assert result.applicability == ApplicabilityOutcome.NOT_APPLICABLE
     assert result.result == Result.NOT_APPLICABLE
+    assert result.meets_target is False
 
 
 def test_empty_leaf_list_returns_unrated():
-    result = aggregate_root_dimension([], DIM_CHARM_ONLY, {}, "root", "gold", None)
+    result = aggregate_root_dimension([], DIM_CHARM_ONLY, "gold")
     assert result.medal == Medal.UNRATED
     assert result.result == Result.NOT_APPLICABLE
 
 
 def test_composition_included_in_result():
     leaves = [_leaf("a", Medal.GOLD), _leaf("b", Medal.SILVER)]
-    result = aggregate_root_dimension(leaves, DIM_CHARM_ONLY, {}, "root", "gold", None)
+    result = aggregate_root_dimension(leaves, DIM_CHARM_ONLY, "gold")
     assert result.composition is not None
     assert len(result.composition) == 2
 
@@ -198,10 +201,10 @@ DIMS_WITH_APPLICABILITY = {
 def test_compute_root_product_aggregates_leaf():
     graph = build_graph([ROOT_GRAPH_DICT], FRAMEWORKS, FRAMEWORK_BY_ID["v0"])
     leaf_result = compute_leaf_product(
-        "synapse", "charm", LEAF_METRICS, DIMS_WITH_APPLICABILITY, {}, "gold"
+        "synapse", "charm", LEAF_METRICS, DIMS_WITH_APPLICABILITY, "gold"
     )
     result = compute_root_product(
-        "matrix", graph, {"synapse": leaf_result}, DIMS_WITH_APPLICABILITY, {}, "gold"
+        "matrix", graph, {"synapse": leaf_result}, DIMS_WITH_APPLICABILITY, "gold"
     )
     assert result.product_id == "matrix"
     assert result.dimensions["test_verification"].medal.value == "bronze"
@@ -211,7 +214,7 @@ def test_compute_root_product_aggregates_leaf():
 
 def test_compute_root_product_missing_leaf_skipped():
     graph = build_graph([ROOT_GRAPH_DICT], FRAMEWORKS, FRAMEWORK_BY_ID["v0"])
-    result = compute_root_product("matrix", graph, {}, DIMS_WITH_APPLICABILITY, {}, "gold")
+    result = compute_root_product("matrix", graph, {}, DIMS_WITH_APPLICABILITY, "gold")
     assert result.dimensions["test_verification"].medal.value == "unrated"
 
 
@@ -227,9 +230,9 @@ def test_compute_root_product_excluded_leaf_not_counted():
     }
     graph = build_graph([excluded_dict], FRAMEWORKS, FRAMEWORK_BY_ID["v0"])
     leaf_result = compute_leaf_product(
-        "synapse", "charm", LEAF_METRICS, DIMS_WITH_APPLICABILITY, {}, "gold"
+        "synapse", "charm", LEAF_METRICS, DIMS_WITH_APPLICABILITY, "gold"
     )
     result = compute_root_product(
-        "matrix", graph, {"synapse": leaf_result}, DIMS_WITH_APPLICABILITY, {}, "gold"
+        "matrix", graph, {"synapse": leaf_result}, DIMS_WITH_APPLICABILITY, "gold"
     )
     assert result.dimensions["test_verification"].medal.value == "unrated"

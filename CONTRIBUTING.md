@@ -56,7 +56,6 @@ To change metric logic, medal criteria, or product definitions and preview the r
 | `computed/*.json` | GHA nightly scorer | ❌ Never |
 | `public/portfolio.json` | GHA nightly scorer | ❌ Never |
 | `public/badges/` | GHA nightly scorer | ❌ Never |
-| `drift-history.json` | GHA drift tracker | ❌ Never |
 
 ---
 
