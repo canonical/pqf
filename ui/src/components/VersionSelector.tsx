@@ -69,14 +69,12 @@ export default function VersionSelector() {
           </div>
         </div>
       </div>
-      {current.status === 'upcoming' && (
-        <span
-          className="version-selector__meta"
-          style={{ fontSize: '0.75rem', color: '#f2f2f2', marginTop: '0.25rem' }}
-        >
-          Refreshed {new Date(current.generated_at).toLocaleString()}
-        </span>
-      )}
+      <span
+        className="version-selector__meta"
+        style={{ fontSize: '0.75rem', color: '#f2f2f2', marginTop: '0.25rem' }}
+      >
+        Refreshed {new Date(current.generated_at).toLocaleString()}
+      </span>
     </div>
   )
 }

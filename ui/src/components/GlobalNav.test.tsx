@@ -63,8 +63,8 @@ describe('GlobalNav', () => {
     expect(screen.getByRole('combobox', { name: /framework version/i })).toHaveValue('v0')
   })
 
-  it('renders the framework context label for the selected active version', () => {
+  it('does not render a separate framework context label', () => {
     wrap(<GlobalNav />)
-    expect(screen.getByText('Current framework · PQF V0')).toBeInTheDocument()
+    expect(screen.queryByText('Current framework · PQF V0')).not.toBeInTheDocument()
   })
 })

@@ -1,12 +1,9 @@
 import { useLocation, Link } from 'react-router'
-import { useFrameworkVersion } from '../providers/FrameworkVersionProvider'
 import { useVersionedPath } from '../hooks/useVersionedPath'
-import { describeFrameworkContext } from '../lib/frameworkContext'
 import VersionSelector from './VersionSelector'
 
 export default function GlobalNav() {
   const location = useLocation()
-  const { current } = useFrameworkVersion()
   const toVersionedPath = useVersionedPath()
   const base = toVersionedPath('/')
 
@@ -82,9 +79,6 @@ export default function GlobalNav() {
           </ul>
         </nav>
         <div className="p-navigation__nav-selector-wrapper">
-          <span className="p-text--small">
-            {describeFrameworkContext(current)}
-          </span>
           <VersionSelector />
         </div>
       </div>

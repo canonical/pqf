@@ -95,16 +95,10 @@ describe('VersionSelector', () => {
     expect(screen.getByTestId('location')).toHaveTextContent('/v1/products/matrix')
   })
 
-  it('shows the refreshed timestamp when the selected version is upcoming', async () => {
-    renderSelector('/v1/products/matrix')
-    await screen.findByRole('combobox', { name: /framework version/i })
-    expect(screen.getByText(/Refreshed/)).toBeInTheDocument()
-  })
-
-  it('does not show a refreshed timestamp for the active version', async () => {
+  it('shows the refreshed timestamp when the selected version is active', async () => {
     renderSelector('/v0/products/matrix')
     await screen.findByRole('combobox', { name: /framework version/i })
-    expect(screen.queryByText(/Refreshed/)).not.toBeInTheDocument()
+    expect(screen.getByText(/Refreshed/)).toBeInTheDocument()
   })
 
   it('wraps the select in Canonical/Vanilla form-validation markup with a labelled control', async () => {
