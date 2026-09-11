@@ -6,7 +6,7 @@ from pathlib import Path
 import pytest
 import yaml
 
-from engine.framework import discover_frameworks
+from engine.framework import contract_digest, discover_frameworks, get_framework
 from engine.versioning import is_in_version
 from engine.workflow_matrix import (
     SCHEDULE_CADENCES,
@@ -15,6 +15,7 @@ from engine.workflow_matrix import (
     cadence_for_schedule,
     missing_live_versions,
     select_frameworks,
+    stale_live_versions,
 )
 
 REPO_ROOT = Path(__file__).parent.parent.parent
@@ -91,10 +92,24 @@ def _write_product(
     (products_dir / f"{product_id}.yaml").write_text(yaml.safe_dump(data, sort_keys=False))
 
 
-def _write_published_portfolio(published_dir: Path, version_id: str) -> None:
+def _write_published_portfolio(
+    published_dir: Path,
+    frameworks: list,
+    version_id: str,
+    *,
+    digest: str | None = None,
+) -> None:
+    """Publish a portfolio for `version_id`, recording its current contract digest."""
     version_dir = published_dir / "versions" / version_id
     version_dir.mkdir(parents=True, exist_ok=True)
-    (version_dir / "portfolio.json").write_text(json.dumps({"framework": {"id": version_id}}))
+    (version_dir / "portfolio.json").write_text(
+        json.dumps(
+            {
+                "framework": {"id": version_id},
+                "contract_digest": digest or contract_digest(get_framework(frameworks, version_id)),
+            }
+        )
+    )
 
 
 @pytest.fixture
@@ -334,7 +349,7 @@ def test_bootstrap_adds_live_version_absent_from_published_site(fixtures, tmp_pa
     framework_root, _ = fixtures
     frameworks = discover_frameworks(framework_root)
     published = tmp_path / "gh-pages"
-    _write_published_portfolio(published, "v1")
+    _write_published_portfolio(published, frameworks, "v1")
 
     selected = select_frameworks(frameworks, cadence="nightly")
     bootstrapped = bootstrap_selection(frameworks, selected, published)
@@ -349,8 +364,8 @@ def test_bootstrap_is_a_noop_when_every_live_version_is_published(fixtures, tmp_
     framework_root, _ = fixtures
     frameworks = discover_frameworks(framework_root)
     published = tmp_path / "gh-pages"
-    _write_published_portfolio(published, "v1")
-    _write_published_portfolio(published, "v2")
+    _write_published_portfolio(published, frameworks, "v1")
+    _write_published_portfolio(published, frameworks, "v2")
 
     selected = select_frameworks(frameworks, cadence="nightly")
     bootstrapped = bootstrap_selection(frameworks, selected, published)
@@ -365,6 +380,100 @@ def test_bootstrap_never_adds_archived_versions(fixtures, tmp_path):
 
     bootstrapped = bootstrap_selection(frameworks, [], published)
     assert "v0" not in [f.id for f in bootstrapped]
+
+
+def test_stale_live_versions_flags_a_published_portfolio_with_an_outdated_digest(
+    fixtures, tmp_path
+):
+    framework_root, _ = fixtures
+    frameworks = discover_frameworks(framework_root)
+    published = tmp_path / "gh-pages"
+    _write_published_portfolio(published, frameworks, "v1", digest="superseded-contract")
+    _write_published_portfolio(published, frameworks, "v2")
+
+    stale = stale_live_versions(frameworks, published)
+    assert [f.id for f in stale] == ["v1"]
+
+
+def test_stale_live_versions_ignores_versions_matching_the_current_contract(fixtures, tmp_path):
+    framework_root, _ = fixtures
+    frameworks = discover_frameworks(framework_root)
+    published = tmp_path / "gh-pages"
+    _write_published_portfolio(published, frameworks, "v1")
+    _write_published_portfolio(published, frameworks, "v2")
+
+    assert stale_live_versions(frameworks, published) == []
+
+
+def test_stale_live_versions_flags_unreadable_or_digestless_portfolios(fixtures, tmp_path):
+    framework_root, _ = fixtures
+    frameworks = discover_frameworks(framework_root)
+    published = tmp_path / "gh-pages"
+    _write_published_portfolio(published, frameworks, "v2")
+
+    broken = published / "versions" / "v1" / "portfolio.json"
+    broken.parent.mkdir(parents=True, exist_ok=True)
+    broken.write_text("{not json")
+    assert [f.id for f in stale_live_versions(frameworks, published)] == ["v1"]
+
+    broken.write_text(json.dumps({"framework": {"id": "v1"}}))
+    assert [f.id for f in stale_live_versions(frameworks, published)] == ["v1"]
+
+
+def test_stale_live_versions_never_reports_archived_versions(fixtures, tmp_path):
+    framework_root, _ = fixtures
+    frameworks = discover_frameworks(framework_root)
+    published = tmp_path / "gh-pages"
+    _write_published_portfolio(published, frameworks, "v0", digest="superseded-contract")
+    _write_published_portfolio(published, frameworks, "v1")
+    _write_published_portfolio(published, frameworks, "v2")
+
+    assert stale_live_versions(frameworks, published) == [], (
+        "archived measurements are frozen: a stale archived artifact is never rescored"
+    )
+
+
+def test_bootstrap_adds_live_version_with_a_stale_contract_digest(fixtures, tmp_path):
+    framework_root, _ = fixtures
+    frameworks = discover_frameworks(framework_root)
+    published = tmp_path / "gh-pages"
+    _write_published_portfolio(published, frameworks, "v1")
+    _write_published_portfolio(published, frameworks, "v2", digest="superseded-contract")
+
+    selected = select_frameworks(frameworks, cadence="nightly")
+    bootstrapped = bootstrap_selection(frameworks, selected, published)
+
+    assert [f.id for f in bootstrapped] == ["v1", "v2"], (
+        "v2 is published but was scored against a superseded contract, so it must be "
+        "recomputed even though nightly only selects the active version"
+    )
+
+
+def test_cli_bootstraps_live_versions_with_a_stale_published_digest(fixtures, tmp_path):
+    framework_root, products_dir = fixtures
+    frameworks = discover_frameworks(framework_root)
+    changed = tmp_path / "changed.txt"
+    changed.write_text("docs/readme.md\n")
+    published = tmp_path / "gh-pages"
+    _write_published_portfolio(published, frameworks, "v1")
+    _write_published_portfolio(published, frameworks, "v2", digest="superseded-contract")
+
+    completed = _run_cli(
+        "--framework-root",
+        str(framework_root),
+        "--products-dir",
+        str(products_dir),
+        "--cadence",
+        "changed",
+        "--changed-paths-file",
+        str(changed),
+        "--published-dir",
+        str(published),
+    )
+
+    assert completed.returncode == 0, completed.stderr
+    payload = json.loads(completed.stdout)
+    assert {row["framework_version"] for row in payload["include"]} == {"v2"}
 
 
 def test_bootstrap_does_not_duplicate_already_selected_versions(fixtures, tmp_path):
@@ -435,6 +544,11 @@ def test_real_catalog_matrix_is_one_job_per_version_and_product():
     assert len(rows) < _real_dimension_matrix_size(live_ids), (
         "the version/product matrix must be strictly smaller than the previous "
         "version/product/dimension matrix"
+    )
+
+    assert len(rows) <= 256, (
+        f"GitHub Actions refuses a matrix with more than 256 jobs; the real catalog "
+        f"produces {len(rows)} rows for live versions {sorted(live_ids)}"
     )
 
 
@@ -534,11 +648,12 @@ def test_cli_requires_exactly_one_of_cadence_or_schedule(fixtures):
 
 def test_cli_changed_cadence_reads_changed_paths_file(fixtures, tmp_path):
     framework_root, products_dir = fixtures
+    frameworks = discover_frameworks(framework_root)
     changed = tmp_path / "changed.txt"
     changed.write_text("framework/versions/v2/dimensions.yaml\n")
     published = tmp_path / "gh-pages"
-    _write_published_portfolio(published, "v1")
-    _write_published_portfolio(published, "v2")
+    _write_published_portfolio(published, frameworks, "v1")
+    _write_published_portfolio(published, frameworks, "v2")
 
     completed = _run_cli(
         "--framework-root",
@@ -560,10 +675,11 @@ def test_cli_changed_cadence_reads_changed_paths_file(fixtures, tmp_path):
 
 def test_cli_bootstraps_live_versions_missing_from_published_dir(fixtures, tmp_path):
     framework_root, products_dir = fixtures
+    frameworks = discover_frameworks(framework_root)
     changed = tmp_path / "changed.txt"
     changed.write_text("docs/readme.md\n")
     published = tmp_path / "gh-pages"
-    _write_published_portfolio(published, "v1")
+    _write_published_portfolio(published, frameworks, "v1")
 
     completed = _run_cli(
         "--framework-root",
@@ -604,9 +720,10 @@ def test_cli_manual_cadence_requires_framework_version_argument(fixtures):
 
 def test_cli_rejects_archived_manual_selection(fixtures, tmp_path):
     framework_root, products_dir = fixtures
+    frameworks = discover_frameworks(framework_root)
     published = tmp_path / "gh-pages"
-    _write_published_portfolio(published, "v1")
-    _write_published_portfolio(published, "v2")
+    _write_published_portfolio(published, frameworks, "v1")
+    _write_published_portfolio(published, frameworks, "v2")
 
     completed = _run_cli(
         "--framework-root",

@@ -149,8 +149,11 @@ class FrameworkVersion:
 
 `discover_frameworks()` must load `*/framework.yaml` and the sibling `dimensions.yaml`, sort by
 `sequence`, validate the collection, and raise `ValueError` with all conflicting IDs named.
-`contract_digest()` must SHA-256 a canonical JSON encoding of metadata plus dimensions using
-`sort_keys=True` and compact separators.
+`contract_digest()` must SHA-256 a canonical JSON encoding, using `sort_keys=True` and compact
+separators, of the scoring contract only: `id`, `sequence`, and the complete `dimensions`
+contract. Lifecycle and display metadata (`status`, `label`, `description`) must be excluded, so
+activation from active to archived and label/description edits leave the digest unchanged while
+criteria or implementation changes alter it.
 
 Add a small module CLI whose `--list-dimensions` mode prints selected dimension IDs separated by
 spaces for Makefile and workflow loops.
@@ -535,7 +538,11 @@ version, emit:
 ```
 
 Fail when an active/upcoming portfolio is absent or has a mismatched digest. Permit archived
-entries only when their frozen portfolio exists.
+entries only when their frozen portfolio exists. Archived entries are read as-is — never
+recomputed — and the index publishes the scoring-contract digest and generation time recorded in
+the payload, so a reviewed format migration of an archived artifact is accepted as long as it
+preserves them. A mismatched archived digest still fails, because it means the archived scoring
+rules changed.
 
 - [ ] **Step 7: Keep badge URLs active-only**
 
@@ -776,6 +783,22 @@ git commit -m "ci: preserve pre-versioning site"
 > sequentially. This caps push/PR at 68 jobs (34 products x 2 live versions) instead of
 > 306, amortizes checkout/install across all dimensions, and merges once per run.
 
+> **Clarified archive policy (user-approved):**
+> - **Frozen measurements** — archived repository scorers must never run, on any cadence,
+>   dispatch, or bootstrap path.
+> - **Migratable payload format** — archived portfolio payloads are not write-protected. A
+>   reviewed format migration may transform an archived artifact for a newer UI schema as long
+>   as it preserves recorded metric values, results, product membership, generation time, and
+>   the original scoring-contract identity. PR review is the governance gate; the engine adds
+>   no hard lock on archive files.
+> - **No archived rescoring** — digest validation is not relaxed for archives. A digest
+>   mismatch on an archived artifact means the archived scoring rules changed, which is an
+>   error, not a trigger to recompute.
+> - **Scoring-only digest** — `contract_digest` hashes only scoring semantics (the complete
+>   dimensions contract, plus `id` and `sequence`, which scope it and resolve catalog
+>   membership). `status`, `label`, and `description` are excluded, so activation from active
+>   to archived and label/description edits preserve the digest.
+
 - [ ] **Step 1: Write failing matrix tests**
 
 Assert nightly selection returns only active rows, weekly selection returns only upcoming rows,
@@ -783,8 +806,9 @@ manual selection accepts active/upcoming, archived selection fails, and catalog 
 products outside the selected version.
 
 Also assert, on the real catalog, that the matrix is one row per
-(framework version, product) with no `dimension` key and no duplicates, and that it is
-strictly smaller than the equivalent version/product/dimension matrix.
+(framework version, product) with no `dimension` key and no duplicates, that it is
+strictly smaller than the equivalent version/product/dimension matrix, and that it stays within
+GitHub Actions' hard limit (`len(rows) <= 256`).
 
 - [ ] **Step 2: Implement matrix generation**
 
@@ -823,8 +847,9 @@ missing/zero `github.event.before` by treating the whole tree as changed.
 - [ ] **Step 4: Bootstrap, preserve, and publish**
 
 `determine-matrix` checks out the published `gh-pages` data (tolerating a missing branch) and
-passes it as `--published-dir`. Every live version with no published portfolio there is added to
-the matrix automatically, so the version index can always be rebuilt instead of failing late.
+passes it as `--published-dir`. Every live version whose portfolio there is missing, unreadable,
+or recorded against a different contract digest is added to the matrix automatically, so the
+version index can always be rebuilt instead of failing late. Archived versions are never added.
 
 Before publishing, copy the published `versions/<id>` directories into the deployment artifact,
 which is what preserves archived versions; never schedule or matrix archived scorer jobs.

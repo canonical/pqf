@@ -24,6 +24,17 @@ def _load_portfolio(path: Path) -> dict[str, Any]:
 
 
 def build_version_index(frameworks, public_dir: Path) -> dict[str, list[dict[str, Any]]]:
+    """Index every framework version that has a published portfolio.
+
+    Archived measurements are frozen: their scorers are never re-run, so their
+    portfolio is read as-is and the scoring-contract digest recorded in it is what
+    the index publishes. A reviewed format migration may rewrite an archived payload
+    for a newer UI schema, but it must preserve the recorded values, results,
+    product membership, generation time, and contract digest — so digest validation
+    is applied to archived payloads exactly as it is to live ones. A mismatch means
+    the version's scoring rules changed after the fact, which is an error rather than
+    a reason to rescore.
+    """
     versions: list[dict[str, Any]] = []
     public_dir = Path(public_dir)
 
@@ -39,8 +50,19 @@ def build_version_index(frameworks, public_dir: Path) -> dict[str, list[dict[str
             raise ValueError(f"{portfolio_path} does not match framework version {framework.id}")
 
         expected_digest = contract_digest(framework)
-        if portfolio.get("contract_digest") != expected_digest:
-            raise ValueError(f"{portfolio_path} has a contract digest mismatch")
+        recorded_digest = portfolio.get("contract_digest")
+        if recorded_digest != expected_digest:
+            detail = (
+                " Archived measurements are frozen and are never recomputed, so the "
+                "archived scoring contract must not change."
+                if framework.status == FrameworkStatus.ARCHIVED
+                else ""
+            )
+            raise ValueError(f"{portfolio_path} has a contract digest mismatch.{detail}")
+
+        generated_at = portfolio.get("generated_at")
+        if not isinstance(generated_at, str) or not generated_at:
+            raise ValueError(f"{portfolio_path} is missing generated_at")
 
         versions.append(
             {
@@ -50,8 +72,8 @@ def build_version_index(frameworks, public_dir: Path) -> dict[str, list[dict[str
                 "status": framework.status.value,
                 "description": framework.description,
                 "portfolio_url": f"versions/{framework.id}/portfolio.json",
-                "generated_at": portfolio["generated_at"],
-                "contract_digest": expected_digest,
+                "generated_at": generated_at,
+                "contract_digest": recorded_digest,
             }
         )
 

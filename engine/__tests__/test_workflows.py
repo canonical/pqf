@@ -223,6 +223,18 @@ def test_compute_metrics_deploys_production_from_engine_artifacts() -> None:
         for step in merge_computed["steps"]
         if step.get("name") == "Merge scorer outputs into versioned computed envelopes"
     )
+    route_step = next(
+        step
+        for step in merge_computed["steps"]
+        if step.get("name") == "Route scorer outputs into per-version/per-product directories"
+    )
+    assert "sys.exit(" in route_step["run"], (
+        "a malformed scorer artifact name must fail with an explicit error, not an "
+        "unpacking traceback"
+    )
+    assert "len(parts) != 3" in route_step["run"]
+    assert "Unexpected scorer artifact name" in route_step["run"]
+
     assert "engine/merge_computed.py" in merge_step["run"]
     assert "--framework-version" in merge_step["run"]
     assert "--contract-digest" in merge_step["run"]

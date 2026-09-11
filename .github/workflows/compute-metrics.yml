@@ -251,12 +251,19 @@ jobs:
         run: |
           python3 - <<'EOF'
           import shutil
+          import sys
           from pathlib import Path
 
           src_dir = Path("/tmp/scorer-output")
           dst_root = Path("/tmp/scorers")
-          for path in src_dir.glob("*.json"):
-              framework_version, product, dimension = path.stem.split("__")
+          for path in sorted(src_dir.glob("*.json")):
+              parts = path.stem.split("__")
+              if len(parts) != 3 or not all(parts):
+                  sys.exit(
+                      f"Unexpected scorer artifact name {path.name!r}; "
+                      "expected <framework_version>__<product>__<dimension>.json"
+                  )
+              framework_version, product, dimension = parts
               dst_dir = dst_root / framework_version / product
               dst_dir.mkdir(parents=True, exist_ok=True)
               shutil.copy(path, dst_dir / f"{dimension}.json")

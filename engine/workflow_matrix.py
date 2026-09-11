@@ -9,10 +9,12 @@ Selection rules:
       catalog inputs changed (used for push/pull_request events).
 
 Whatever the cadence selects is then unioned with the *bootstrap* set: every live
-(active or upcoming) framework version that has no published portfolio yet. That
-guarantees the publish job can always rebuild a complete version index, because
-each live version is either computed in this run or carried forward from the
-previously published site.
+(active or upcoming) framework version whose published portfolio is missing or was
+built from a different scoring contract. That guarantees the publish job can always
+rebuild a complete version index, because each live version is either computed in
+this run or carried forward unchanged from the previously published site. Archived
+versions are never selected: their measurements are frozen and their scorers must
+never run again.
 
 Each selected framework version contributes one matrix row per product, for every
 product whose introduced_in/retired_in boundaries include that framework version.
@@ -32,7 +34,13 @@ from typing import Any
 
 import yaml
 
-from engine.framework import FrameworkStatus, FrameworkVersion, discover_frameworks, get_framework
+from engine.framework import (
+    FrameworkStatus,
+    FrameworkVersion,
+    contract_digest,
+    discover_frameworks,
+    get_framework,
+)
 from engine.versioning import is_in_version
 
 CADENCES = ("nightly", "weekly", "manual", "changed")
@@ -171,23 +179,65 @@ def missing_live_versions(
     ]
 
 
+def _published_contract_digest(published_dir: Path, version_id: str) -> str | None:
+    """Read the scoring-contract digest recorded in a published portfolio.
+
+    Returns None when the portfolio is absent, unreadable, not an object, or does not
+    record a digest — all of which mean the published artifact cannot be shown to
+    match the current contract and must be recomputed.
+    """
+    path = Path(published_dir) / "versions" / version_id / "portfolio.json"
+    try:
+        payload = json.loads(path.read_text())
+    except (OSError, json.JSONDecodeError):
+        return None
+    if not isinstance(payload, dict):
+        return None
+    digest = payload.get("contract_digest")
+    return digest if isinstance(digest, str) and digest else None
+
+
+def stale_live_versions(
+    frameworks: list[FrameworkVersion],
+    published_dir: Path,
+) -> list[FrameworkVersion]:
+    """Return live versions whose published portfolio is missing or built from another contract.
+
+    A portfolio that exists but records a different `contract_digest` was produced by
+    a superseded scoring contract, so serving it alongside the current contract would
+    misrepresent the framework version. Such versions are recomputed like missing ones.
+
+    Archived versions are never returned: their measurements are frozen and their
+    scorers must never run again.
+    """
+    published_dir = Path(published_dir)
+    return [
+        framework
+        for framework in frameworks
+        if _is_live(framework)
+        and _published_contract_digest(published_dir, framework.id) != contract_digest(framework)
+    ]
+
+
 def bootstrap_selection(
     frameworks: list[FrameworkVersion],
     selected: list[FrameworkVersion],
     published_dir: Path | None,
 ) -> list[FrameworkVersion]:
-    """Union the cadence selection with live versions absent from the published site.
+    """Union the cadence selection with live versions the published site cannot serve.
 
     Without this, a run that only recomputes some versions would leave the version
     index generator with no portfolio for a live version it must describe, failing
-    late in the publish job instead of simply scoring the missing version.
+    late in the publish job instead of simply scoring the missing version. The same
+    applies to a published portfolio whose contract digest is stale: the index
+    generator rejects it, so the version is recomputed instead.
     """
     if published_dir is None:
         return sorted(selected, key=lambda framework: framework.sequence)
 
     selected_ids = {framework.id for framework in selected}
     combined = list(selected)
-    for framework in missing_live_versions(frameworks, published_dir):
+    for framework in stale_live_versions(frameworks, published_dir):
         if framework.id not in selected_ids:
             combined.append(framework)
     return sorted(combined, key=lambda framework: framework.sequence)
@@ -258,8 +308,9 @@ def main(argv: list[str] | None = None) -> int:
         "--published-dir",
         default=None,
         help=(
-            "Checkout of the currently published site. Live framework versions with no "
-            "portfolio there are added to the matrix so the version index can be rebuilt."
+            "Checkout of the currently published site. Live framework versions whose "
+            "portfolio there is missing or built from a different contract digest are "
+            "added to the matrix so the version index can be rebuilt."
         ),
     )
     args = parser.parse_args(argv)

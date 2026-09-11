@@ -48,6 +48,8 @@ def _write_framework_version(
     sequence: int,
     status: str,
     dimensions: dict | None = None,
+    label: str | None = None,
+    description: str | None = None,
 ) -> None:
     version_dir = root / version_id
     version_dir.mkdir(parents=True)
@@ -57,9 +59,9 @@ def _write_framework_version(
             {
                 "id": version_id,
                 "sequence": sequence,
-                "label": f"PQF {version_id.upper()}",
+                "label": label or f"PQF {version_id.upper()}",
                 "status": status,
-                "description": f"{version_id} contract",
+                "description": description or f"{version_id} contract",
             },
             sort_keys=False,
         )
@@ -183,6 +185,142 @@ def test_contract_digest_is_stable_for_equivalent_contracts(tmp_path):
 
     assert digest_one == digest_two
     assert len(digest_one) == 64
+
+
+def _digest_for(root: Path, *, target: str, versions: list[dict]) -> str:
+    """Digest of `target` in a catalog built from `versions` (a valid lifecycle set)."""
+    for version in versions:
+        _write_framework_version(root, **version)
+    return contract_digest(get_framework(discover_frameworks(root), target))
+
+
+def test_contract_digest_survives_activation_to_archived(tmp_path):
+    """Archiving a version freezes its measurements; it must not restate the contract."""
+    before = _digest_for(
+        tmp_path / "before",
+        target="v0",
+        versions=[
+            {"version_id": "v0", "sequence": 0, "status": "active"},
+            {"version_id": "v1", "sequence": 1, "status": "upcoming"},
+        ],
+    )
+    after = _digest_for(
+        tmp_path / "after",
+        target="v0",
+        versions=[
+            {"version_id": "v0", "sequence": 0, "status": "archived"},
+            {"version_id": "v1", "sequence": 1, "status": "active"},
+        ],
+    )
+
+    assert before == after
+
+
+def test_contract_digest_ignores_upcoming_to_active_activation(tmp_path):
+    before = _digest_for(
+        tmp_path / "before",
+        target="v1",
+        versions=[
+            {"version_id": "v0", "sequence": 0, "status": "active"},
+            {"version_id": "v1", "sequence": 1, "status": "upcoming"},
+        ],
+    )
+    after = _digest_for(
+        tmp_path / "after",
+        target="v1",
+        versions=[
+            {"version_id": "v0", "sequence": 0, "status": "archived"},
+            {"version_id": "v1", "sequence": 1, "status": "active"},
+        ],
+    )
+
+    assert before == after
+
+
+def test_contract_digest_ignores_label_and_description_edits(tmp_path):
+    original = _digest_for(
+        tmp_path / "original",
+        target="v0",
+        versions=[
+            {
+                "version_id": "v0",
+                "sequence": 0,
+                "status": "active",
+                "label": "PQF V0",
+                "description": "First contract",
+            }
+        ],
+    )
+    relabelled = _digest_for(
+        tmp_path / "relabelled",
+        target="v0",
+        versions=[
+            {
+                "version_id": "v0",
+                "sequence": 0,
+                "status": "active",
+                "label": "PQF V0 (2026 edition)",
+                "description": "First contract, clarified wording.",
+            }
+        ],
+    )
+
+    assert original == relabelled
+
+
+def test_contract_digest_changes_when_medal_criteria_change(tmp_path):
+    stricter = _minimal_dimensions()
+    stricter["dimensions"]["test_verification"]["medals"] = {
+        "bronze": ["latest_build_passing == true"],
+        "silver": ["latest_build_passing == true"],
+    }
+
+    baseline = _digest_for(
+        tmp_path / "baseline",
+        target="v0",
+        versions=[{"version_id": "v0", "sequence": 0, "status": "active"}],
+    )
+    changed = _digest_for(
+        tmp_path / "changed",
+        target="v0",
+        versions=[
+            {
+                "version_id": "v0",
+                "sequence": 0,
+                "status": "active",
+                "dimensions": stricter["dimensions"],
+            }
+        ],
+    )
+
+    assert baseline != changed
+
+
+def test_contract_digest_changes_when_metric_implementation_changes(tmp_path):
+    revised = _minimal_dimensions()
+    revised["dimensions"]["test_verification"]["outputs"]["latest_build_passing"][
+        "implementation"
+    ] = "latest-build-passing/v2"
+
+    baseline = _digest_for(
+        tmp_path / "baseline",
+        target="v0",
+        versions=[{"version_id": "v0", "sequence": 0, "status": "active"}],
+    )
+    changed = _digest_for(
+        tmp_path / "changed",
+        target="v0",
+        versions=[
+            {
+                "version_id": "v0",
+                "sequence": 0,
+                "status": "active",
+                "dimensions": revised["dimensions"],
+            }
+        ],
+    )
+
+    assert baseline != changed
 
 
 def test_framework_cli_lists_selected_dimension_ids(tmp_path):

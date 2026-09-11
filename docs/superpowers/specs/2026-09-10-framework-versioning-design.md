@@ -139,6 +139,33 @@ Archived result artifacts remain authoritative and are never regenerated. Change
 source contracts are strongly flagged because they cannot change historical results. Every
 portfolio artifact embeds the resolved contract metadata and digest used to produce it.
 
+### Archive policy
+
+The archive policy has four rules.
+
+**Frozen measurements.** Archived repository scorers must never run. No cadence, manual dispatch,
+bootstrap, or recovery path may schedule an archived version for scoring, so the measured values
+in an archived artifact can never change.
+
+**Migratable payload format.** Archived portfolio payloads are not write-protected. A reviewed
+format migration may transform an archived artifact so a newer UI schema can read it, provided it
+preserves the recorded metric values, results, product membership, generation time, and the
+original scoring-contract identity (framework ID and contract digest). PR review is the governance
+gate for such a migration; the engine deliberately does not add a hard lock preventing changes to
+archived files.
+
+**No archived rescoring.** Because the payload's contract digest must survive a migration, digest
+validation is applied to archived artifacts exactly as to live ones. A digest mismatch on an
+archived artifact means the archived scoring rules were changed after the fact. That is an error,
+never a trigger to recompute.
+
+**Scoring-only digest.** `contract_digest` hashes only what determines how a version scores: the
+complete dimensions contract plus the identity fields that scope it (`id`, and `sequence`, which
+resolves catalog membership boundaries). Lifecycle and display metadata — `status`, `label`,
+`description` — is excluded, so activation from `active` to `archived`, and label or description
+edits, leave the digest of already-published artifacts unchanged. Live versions whose published
+portfolio records a stale digest are recomputed automatically; archived versions never are.
+
 ## Version-Aware Product Catalog
 
 Product catalog definitions remain in `products/*.yaml`; they are not duplicated into each

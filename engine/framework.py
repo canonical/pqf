@@ -131,12 +131,24 @@ def get_framework(frameworks: list[FrameworkVersion], version_id: str) -> Framew
 
 
 def contract_digest(framework: FrameworkVersion) -> str:
+    """Hash only what determines how a framework version scores products.
+
+    The digest covers the complete dimensions contract (metrics, implementations,
+    applicability, aggregation, medal criteria) plus the identity fields that scope
+    it: `id`, which binds computed envelopes and portfolios to one contract, and
+    `sequence`, which resolves the catalog's introduced_in/retired_in membership
+    boundaries for this version.
+
+    Lifecycle and display metadata — `status`, `label`, `description` — is
+    deliberately excluded. Measurements are frozen when a version is archived, so
+    activation (active -> archived) and label/description edits must leave the
+    scoring-contract digest of already-published artifacts unchanged. Any change to
+    scoring semantics still changes the digest, which is what fails validation of a
+    stale artifact.
+    """
     payload = {
         "id": framework.id,
         "sequence": framework.sequence,
-        "label": framework.label,
-        "status": framework.status.value,
-        "description": framework.description,
         "dimensions": framework.dimensions,
     }
     encoded = json.dumps(payload, sort_keys=True, separators=(",", ":")).encode("utf-8")
