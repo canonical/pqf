@@ -15,7 +15,6 @@ The **Products** table lists every tracked product with its current quality stat
 | **Product** | Product name, linking to its detail page |
 | **Current** | Current overall result (gold / silver / bronze / below minimum / no data) |
 | **Target** | The result the team has committed to achieving |
-| **Drift** | Whether the product is falling behind its target (see below) |
 | **Squad** | Owning team (AMER / EMEA / APAC), linked to the GitHub team |
 | **Actions** | Link to the Product Detail page |
 
