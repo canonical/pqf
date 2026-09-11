@@ -6,6 +6,7 @@ import argparse
 import hashlib
 import json
 import sys
+from copy import deepcopy
 from dataclasses import dataclass
 from enum import StrEnum
 from pathlib import Path
@@ -146,10 +147,18 @@ def contract_digest(framework: FrameworkVersion) -> str:
     scoring semantics still changes the digest, which is what fails validation of a
     stale artifact.
     """
+    dimensions = deepcopy(framework.dimensions)
+    for dimension in dimensions.get("dimensions", {}).values():
+        dimension.pop("label", None)
+        dimension.pop("description", None)
+        for output in dimension.get("outputs", {}).values():
+            for field in ("label", "description", "range", "ai_assisted"):
+                output.pop(field, None)
+
     payload = {
         "id": framework.id,
         "sequence": framework.sequence,
-        "dimensions": framework.dimensions,
+        "dimensions": dimensions,
     }
     encoded = json.dumps(payload, sort_keys=True, separators=(",", ":")).encode("utf-8")
     return hashlib.sha256(encoded).hexdigest()

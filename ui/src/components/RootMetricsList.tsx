@@ -1,6 +1,6 @@
 import React from 'react'
 import VersionLink from './VersionLink'
-import type { LeafDimensionResult, OutputMeta } from '../types'
+import type { LeafDimensionResult, MetricValue, OutputMeta } from '../types'
 
 interface ThresholdInfo {
   operator: string
@@ -37,10 +37,14 @@ function meetsThreshold(
 }
 
 function formatValue(
-  val: string | number | boolean,
+  val: MetricValue,
   threshold?: ThresholdInfo,
   unit?: string | null,
 ): React.ReactNode {
+  if (val === null) {
+    return <span style={{ color: '#999' }}>—</span>
+  }
+
   const unitSuffix = unit ? <span style={{ color: '#999', fontWeight: 400, fontSize: '0.75rem' }}> {unit}</span> : null
 
   if (typeof val === 'boolean') {
@@ -76,7 +80,9 @@ function getWorstEntry(
 ): { value: string | number | boolean; leafId: string } | null {
   const entries = inScope
     .map(leaf => ({ value: leaf.metrics[metricKey], leafId: leaf.product_id }))
-    .filter((e): e is { value: string | number | boolean; leafId: string } => e.value !== undefined)
+    .filter(
+      (e): e is { value: string | number | boolean; leafId: string } => e.value != null,
+    )
 
   if (entries.length === 0) return null
 
@@ -248,7 +254,7 @@ export default function RootMetricsList({ composition, thresholds, metaOutputs }
                         {leaf.product_id}
                       </VersionLink>
                       <span style={{ fontVariantNumeric: 'tabular-nums' }}>
-                        {val !== undefined
+                        {val != null
                           ? formatValue(val, threshold, unit)
                           : <span style={{ color: '#999' }}>—</span>
                         }
@@ -264,4 +270,3 @@ export default function RootMetricsList({ composition, thresholds, metaOutputs }
     </div>
   )
 }
-

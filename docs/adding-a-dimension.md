@@ -279,9 +279,16 @@ def _run_my_dimension(unit: EvaluationUnit, context: ScorerContext) -> dict[str,
     return my_dimension_logic.compute_metrics(unit, context.github_token)
 
 
-# 2. register it (and its source file, used for implementation fingerprints)
+# 2. register it and every scoring-relevant source used by the runner
 RUNNERS = MappingProxyType({..., "my_dimension": _run_my_dimension})
-RUNNER_SOURCE_FILES = MappingProxyType({..., "my_dimension": Path(my_dimension_logic.__file__).resolve()})
+RUNNER_SOURCE_FILES = MappingProxyType({
+    ...,
+    "my_dimension": (
+        Path(my_dimension_logic.__file__).resolve(),
+        Path(shared_helper.__file__).resolve(),  # omit when no shared helper is used
+        Path(my_dimension_logic.__file__).resolve().parent / "prompts" / "review.md",  # omit when no prompt is used
+    ),
+})
 
 
 # 3. bind each implementation revision declared by the contract
@@ -299,6 +306,9 @@ METRIC_BINDINGS = MappingProxyType({
     ),
 })
 ```
+
+List every file whose contents can change the metric result, including shared helpers and prompt
+assets. Their contents form the implementation fingerprint recorded with computed results.
 
 `make validate` fails if a contract declares an unknown implementation, one that belongs to another
 dimension, one that resolves to a different output key, or one whose runner is not registered. No
@@ -331,7 +341,7 @@ AI-assisted scoring, full-portfolio runs, and generated-artifact guidance.
 
 - [ ] `framework/versions/<version>/dimensions.yaml` has the new dimension with `label`, `description`, `applies_to`, `aggregation`, `required_metrics_for_scoring`, `outputs` (each with an `implementation`), and `medals`
 - [ ] The dimension was added to the **upcoming** version, or an active-contract change was explicitly agreed with framework owners
-- [ ] `scorers/registry.py` — runner, runner source file, and one `MetricBinding` per declared implementation
+- [ ] `scorers/registry.py` — runner, complete scoring-relevant source tuple, and one `MetricBinding` per declared implementation
 - [ ] `scorers/my_dimension/logic.py` is a pure function — no `os.environ`, no file I/O, no framework-version branching; returns exactly the keys declared in `outputs`
 - [ ] `scorers/my_dimension/scorer.py` delegates to `scorers.run.main(fixed_dimension=...)`
 - [ ] `scorers/my_dimension/__tests__/test_logic.py` tests all main code paths (signals present, signals missing)

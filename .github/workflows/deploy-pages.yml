@@ -3,6 +3,8 @@ name: Deploy to GitHub Pages
 on:
   push:
     branches: [main]
+    paths:
+      - 'ui/**'
 
 permissions:
   contents: write
@@ -12,7 +14,32 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  detect-scope:
+    runs-on: ubuntu-latest
+    outputs:
+      eligible: ${{ steps.scope.outputs.eligible }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Detect scoring changes
+        id: scope
+        env:
+          BEFORE: ${{ github.event.before }}
+          AFTER: ${{ github.sha }}
+        run: |
+          set -euo pipefail
+          changed="$(git diff --name-only "$BEFORE" "$AFTER")"
+          if grep -Eq '^(products/|framework/|config/|scorers/|engine/|\.github/workflows/compute-metrics\.yml$)' <<< "$changed"; then
+            echo "eligible=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "eligible=true" >> "$GITHUB_OUTPUT"
+          fi
+
   deploy:
+    needs: detect-scope
+    if: needs.detect-scope.outputs.eligible == 'true'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4

@@ -160,10 +160,11 @@ archived artifact means the archived scoring rules were changed after the fact. 
 never a trigger to recompute.
 
 **Scoring-only digest.** `contract_digest` hashes only what determines how a version scores: the
-complete dimensions contract plus the identity fields that scope it (`id`, and `sequence`, which
-resolves catalog membership boundaries). Lifecycle and display metadata — `status`, `label`,
-`description` — is excluded, so activation from `active` to `archived`, and label or description
-edits, leave the digest of already-published artifacts unchanged. Live versions whose published
+semantic dimensions contract plus the identity fields that scope it (`id`, and `sequence`, which
+resolves catalog membership boundaries). Lifecycle and display metadata is excluded: framework
+`status`, `label`, and `description`, dimension `label` and `description`, and output `label`,
+`description`, `range`, and `ai_assisted`. Activation from `active` to `archived` and UI-copy edits
+therefore leave the digest of already-published artifacts unchanged. Live versions whose published
 portfolio records a stale digest are recomputed automatically; archived versions never are.
 
 ## Version-Aware Product Catalog
@@ -319,7 +320,8 @@ Active and upcoming versions are independent computation targets. A framework ma
 
 The engine therefore must not assume that raw metric results can be reused across versions. Exact
 implementation results may be cached later using an implementation ID and input fingerprint, but
-cache reuse is an internal optimization and never part of correctness.
+cache reuse is an internal optimization and never part of correctness. Recorded implementation
+fingerprints cover each runner's logic plus scoring-relevant shared helpers and prompt assets.
 
 ### Cadence
 

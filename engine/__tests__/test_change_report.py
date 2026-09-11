@@ -312,7 +312,35 @@ def test_read_git_snapshot_loads_framework_and_product_yaml(monkeypatch):
     assert snapshot["products"]["test-charm"]["targets"] == {"v0": "bronze"}
 
 
-def test_read_git_snapshot_rejects_missing_snapshot_roots(monkeypatch):
+def test_read_git_snapshot_accepts_pre_versioning_base(monkeypatch):
+    product_yaml = yaml.safe_dump(
+        {
+            "id": "test-charm",
+            "product_type": "charm",
+            "name": "Test Charm",
+            "lifecycle": "stable",
+            "ownership": {"squad": "team-a"},
+            "source": {"repo": "canonical/test-charm"},
+        },
+        sort_keys=False,
+    )
+
+    def fake_git_command(*args: str) -> str:
+        if args[0] == "ls-tree":
+            return "products/test-charm.yaml"
+        if args[0] == "show":
+            return product_yaml
+        raise AssertionError(f"Unexpected git command: {args}")
+
+    monkeypatch.setattr(change_report, "_git_command", fake_git_command)
+
+    snapshot = _read_git_snapshot("base")
+
+    assert snapshot["frameworks"] == {}
+    assert snapshot["products"]["test-charm"]["id"] == "test-charm"
+
+
+def test_read_git_snapshot_rejects_missing_product_catalog(monkeypatch):
     def fake_git_command(*args: str) -> str:
         if args[0] == "ls-tree":
             return ""
@@ -320,7 +348,7 @@ def test_read_git_snapshot_rejects_missing_snapshot_roots(monkeypatch):
 
     monkeypatch.setattr(change_report, "_git_command", fake_git_command)
 
-    with pytest.raises(ValueError, match="base:framework/versions"):
+    with pytest.raises(ValueError, match="base:products"):
         _read_git_snapshot("base")
 
 

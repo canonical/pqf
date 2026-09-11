@@ -23,7 +23,7 @@ const THRESHOLDS = {
 
 function leaf(
   id: string,
-  metrics: Record<string, string | number | boolean>,
+  metrics: Record<string, string | number | boolean | null>,
   excluded = false,
 ): LeafDimensionResult {
   return {
@@ -55,6 +55,37 @@ describe('RootMetricsList', () => {
     const container = screen.getByText('Coverage').closest('div[style]')!.parentElement!
     expect(container).toHaveTextContent('0')
     expect(container).toHaveTextContent('/ 70')
+  })
+
+  it('ignores null values when selecting the worst component metric', () => {
+    const missing = leaf('missing', { coverage_pct: null, latest_build_passing: true })
+    render(
+      <RootMetricsList
+        composition={[missing, HIGH_LEAF]}
+        thresholds={THRESHOLDS}
+        metaOutputs={OUTPUTS}
+      />,
+    )
+
+    const container = screen.getByText('Coverage').closest('div[style]')!.parentElement!
+    expect(container).toHaveTextContent('70')
+    expect(container).not.toHaveTextContent('null')
+  })
+
+  it('renders null component values as missing data in the expanded breakdown', () => {
+    const missing = leaf('missing', { coverage_pct: null, latest_build_passing: true })
+    render(
+      <MemoryRouter>
+        <RootMetricsList
+          composition={[missing, HIGH_LEAF]}
+          thresholds={THRESHOLDS}
+          metaOutputs={OUTPUTS}
+        />
+      </MemoryRouter>,
+    )
+
+    fireEvent.click(screen.getAllByRole('button', { name: /2 components/i })[0])
+    expect(screen.getByText('—')).toHaveStyle({ color: '#999' })
   })
 
   it('shows expand button when leaves disagree on a metric', () => {

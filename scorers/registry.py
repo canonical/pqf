@@ -10,6 +10,7 @@ from engine.models import EvaluationUnit
 from scorers.documentation import logic as documentation_logic
 from scorers.engagement import logic as engagement_logic
 from scorers.security_ssdlc import logic as security_ssdlc_logic
+from scorers.shared import github_signals
 from scorers.substrate_compat import logic as substrate_compat_logic
 from scorers.test_verification import logic as test_verification_logic
 
@@ -67,11 +68,21 @@ RUNNERS = MappingProxyType(
 
 RUNNER_SOURCE_FILES = MappingProxyType(
     {
-        "test_verification": Path(test_verification_logic.__file__).resolve(),
-        "documentation": Path(documentation_logic.__file__).resolve(),
-        "substrate_compat": Path(substrate_compat_logic.__file__).resolve(),
-        "security_ssdlc": Path(security_ssdlc_logic.__file__).resolve(),
-        "engagement": Path(engagement_logic.__file__).resolve(),
+        "test_verification": (
+            Path(test_verification_logic.__file__).resolve(),
+            Path(github_signals.__file__).resolve(),
+        ),
+        "documentation": (
+            Path(documentation_logic.__file__).resolve(),
+            Path(github_signals.__file__).resolve(),
+            Path(documentation_logic.__file__).resolve().parent / "prompts" / "diataxis_check.md",
+        ),
+        "substrate_compat": (Path(substrate_compat_logic.__file__).resolve(),),
+        "security_ssdlc": (
+            Path(security_ssdlc_logic.__file__).resolve(),
+            Path(github_signals.__file__).resolve(),
+        ),
+        "engagement": (Path(engagement_logic.__file__).resolve(),),
     }
 )
 
@@ -288,6 +299,10 @@ def run_dimension(
 def implementation_fingerprints(dimension_config: dict[str, Any]) -> dict[str, str]:
     fingerprints: dict[str, str] = {}
     for implementation_id, binding in _selected_bindings(dimension_config):
-        source_path = RUNNER_SOURCE_FILES[binding.runner_key]
-        fingerprints[implementation_id] = hashlib.sha256(source_path.read_bytes()).hexdigest()
+        digest = hashlib.sha256()
+        for source_path in RUNNER_SOURCE_FILES[binding.runner_key]:
+            content = source_path.read_bytes()
+            digest.update(len(content).to_bytes(8, byteorder="big"))
+            digest.update(content)
+        fingerprints[implementation_id] = digest.hexdigest()
     return fingerprints

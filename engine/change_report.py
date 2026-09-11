@@ -25,8 +25,9 @@ def _validate_snapshot_roots(
     *,
     framework_source: str,
     products_source: str,
+    require_frameworks: bool = True,
 ) -> None:
-    if not snapshot["frameworks"]:
+    if require_frameworks and not snapshot["frameworks"]:
         raise ValueError(f"Missing required framework snapshot root: {framework_source}")
     if not snapshot["products"]:
         raise ValueError(f"Missing required product catalog snapshot root: {products_source}")
@@ -143,6 +144,7 @@ def _read_git_snapshot(base_ref: str) -> dict[str, Any]:
         snapshot,
         framework_source=f"{base_ref}:framework/versions",
         products_source=f"{base_ref}:products",
+        require_frameworks=False,
     )
     return snapshot
 

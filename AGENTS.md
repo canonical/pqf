@@ -43,7 +43,7 @@ archived version directories intact, mirrors the active version at the root comp
   = publish a new revision and point a contract at it, never edit a revision in place.
 - `FRAMEWORK_VERSION` is always explicit in local commands — nothing defaults to a version.
 - `framework-versions.json` is authoritative for lifecycle/display metadata. The contract digest
-  covers scoring semantics only (it excludes `status`, `label`, `description`).
+  covers scoring semantics only; it excludes framework, dimension, and output display metadata.
 - Tests mock all HTTP with `responses` (`@responses.activate`); mock LLM clients with `pytest-mock`.
 - `computed/versions/` files are GHA-written. Never hand-edit or commit them.
 - `public/versions/<version>/portfolio.json` and `public/framework-versions.json` are GHA-written.

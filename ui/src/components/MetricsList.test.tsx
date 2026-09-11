@@ -16,6 +16,19 @@ describe('MetricsList', () => {
     expect(screen.getByText('✗')).toBeInTheDocument()
   })
 
+  it('renders null as missing data without applying a threshold', () => {
+    render(
+      <MetricsList
+        metrics={{ avg_triage_days: null }}
+        thresholds={{ avg_triage_days: { operator: '<=', value: 3 } }}
+      />,
+    )
+
+    expect(screen.getByText('Avg. triage')).toBeInTheDocument()
+    expect(screen.getByText('—')).toHaveStyle({ color: '#999' })
+    expect(screen.queryByText(/\/ 3/)).not.toBeInTheDocument()
+  })
+
   it('shows threshold comparisons for numeric metrics', () => {
     render(
       <MetricsList

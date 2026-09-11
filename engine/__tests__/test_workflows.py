@@ -507,14 +507,20 @@ def test_deploy_pages_only_runs_for_ui_changes_and_skips_mixed_commits() -> None
     on = workflow.get("on") or workflow.get(True) or {}
     push = on.get("push", {})
     assert push["branches"] == ["main"]
-    assert "paths" not in push
+    assert push["paths"] == ["ui/**"]
 
     jobs = workflow["jobs"]
-    assert "detect-scope" not in jobs
+    detect_scope = jobs["detect-scope"]
+    scope_step = next(step for step in detect_scope["steps"] if step.get("id") == "scope")
+    assert "products/" in scope_step["run"]
+    assert "framework/" in scope_step["run"]
+    assert "scorers/" in scope_step["run"]
+    assert "engine/" in scope_step["run"]
+    assert "eligible=false" in scope_step["run"]
 
     deploy_job = jobs["deploy"]
-    assert "needs" not in deploy_job
-    assert "if" not in deploy_job
+    assert deploy_job["needs"] == "detect-scope"
+    assert deploy_job["if"] == "needs.detect-scope.outputs.eligible == 'true'"
 
     pages_checkout = next(
         step for step in deploy_job["steps"] if step.get("name") == "Check out current Pages data"
@@ -544,6 +550,13 @@ def test_deploy_pages_only_runs_for_ui_changes_and_skips_mixed_commits() -> None
     assert "Deploy to GitHub Pages (retry)" in names
 
     assert names.index("Sync deployed public data") < names.index("Build UI")
+
+    compute_workflow = load_workflow(".github/workflows/compute-metrics.yml")
+    compute_deploy = compute_workflow["jobs"]["deploy-production"]
+    assert compute_deploy["concurrency"] == {
+        "group": "gh-pages",
+        "cancel-in-progress": False,
+    }
 
 
 def test_cleanup_preview_workflow_runs_only_on_pr_close() -> None:

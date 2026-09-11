@@ -98,11 +98,12 @@ upcoming version `active`.
 
 ### Contract digest and archives
 
-`contract_digest` hashes only what determines **how a version scores**: the complete dimensions
-contract plus the identity fields that scope it (`id` and `sequence`, which resolves catalog
-membership boundaries). Lifecycle and display metadata — `status`, `label`, `description` — is
-deliberately excluded, so activating a version or editing its label does not invalidate artifacts
-that were already published.
+`contract_digest` hashes only what determines **how a version scores**: the semantic parts of the
+dimensions contract plus the identity fields that scope it (`id` and `sequence`, which resolves
+catalog membership boundaries). Lifecycle and display metadata is deliberately excluded:
+framework `status`, `label`, and `description`, dimension `label` and `description`, and output
+`label`, `description`, `range`, and `ai_assisted`. Activating a version or clarifying UI copy
+therefore does not invalidate artifacts that were already published.
 
 Archived versions follow four rules:
 
@@ -138,7 +139,8 @@ outputs:
 receive a framework version and never branch on version IDs. A changed detector becomes a **new**
 implementation revision (`.../v2`), and a contract opts into it explicitly — which keeps the
 semantic change visible in review instead of silently changing every version that references the
-existing ID. Implementation revision IDs are immutable, and unknown IDs are validation errors.
+existing ID. Its fingerprint covers the runner logic plus scoring-relevant shared helpers and
+prompt assets. Implementation revision IDs are immutable, and unknown IDs are validation errors.
 
 Archived versions do not require their implementations to stay executable, because archived
 artifacts are never recomputed. Implementations must remain available while the active or upcoming

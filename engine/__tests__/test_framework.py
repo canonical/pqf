@@ -268,6 +268,46 @@ def test_contract_digest_ignores_label_and_description_edits(tmp_path):
     assert original == relabelled
 
 
+def test_contract_digest_ignores_dimension_and_output_display_metadata(tmp_path):
+    baseline_dimensions = _minimal_dimensions()
+    relabelled_dimensions = _minimal_dimensions()
+    dimension = relabelled_dimensions["dimensions"]["test_verification"]
+    dimension["label"] = "CI verification"
+    dimension["description"] = "Clarified dimension copy."
+    output = dimension["outputs"]["latest_build_passing"]
+    output["label"] = "Main branch passing"
+    output["description"] = "Clarified metric copy."
+    output["range"] = "boolean"
+    output["ai_assisted"] = False
+
+    baseline = _digest_for(
+        tmp_path / "baseline",
+        target="v0",
+        versions=[
+            {
+                "version_id": "v0",
+                "sequence": 0,
+                "status": "active",
+                "dimensions": baseline_dimensions["dimensions"],
+            }
+        ],
+    )
+    relabelled = _digest_for(
+        tmp_path / "relabelled",
+        target="v0",
+        versions=[
+            {
+                "version_id": "v0",
+                "sequence": 0,
+                "status": "active",
+                "dimensions": relabelled_dimensions["dimensions"],
+            }
+        ],
+    )
+
+    assert baseline == relabelled
+
+
 def test_contract_digest_changes_when_medal_criteria_change(tmp_path):
     stricter = _minimal_dimensions()
     stricter["dimensions"]["test_verification"]["medals"] = {

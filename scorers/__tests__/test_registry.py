@@ -95,7 +95,19 @@ def test_run_dimension_rejects_missing_output_from_runner(monkeypatch):
         )
 
 
-def test_implementation_fingerprints_hash_selected_source_files():
+def test_implementation_fingerprints_hash_complete_runner_sources(tmp_path, monkeypatch):
+    logic = tmp_path / "logic.py"
+    helper = tmp_path / "helper.py"
+    prompt = tmp_path / "prompt.md"
+    logic.write_text("logic-v1")
+    helper.write_text("helper-v1")
+    prompt.write_text("prompt-v1")
+    monkeypatch.setattr(
+        registry,
+        "RUNNER_SOURCE_FILES",
+        {**registry.RUNNER_SOURCE_FILES, "test_verification": (logic, helper, prompt)},
+    )
+
     fingerprints = registry.implementation_fingerprints(
         {
             "outputs": {
@@ -111,6 +123,28 @@ def test_implementation_fingerprints_hash_selected_source_files():
     }
     assert len(fingerprints["latest-build-passing/v1"]) == 64
     assert fingerprints["latest-build-passing/v1"] == fingerprints["uses-jubilant/v1"]
+
+    initial = fingerprints["latest-build-passing/v1"]
+    helper.write_text("helper-v2")
+    helper_changed = registry.implementation_fingerprints(
+        {
+            "outputs": {
+                "latest_build_passing": {"implementation": "latest-build-passing/v1"},
+            }
+        }
+    )
+    assert helper_changed["latest-build-passing/v1"] != initial
+
+    helper.write_text("helper-v1")
+    prompt.write_text("prompt-v2")
+    prompt_changed = registry.implementation_fingerprints(
+        {
+            "outputs": {
+                "latest_build_passing": {"implementation": "latest-build-passing/v1"},
+            }
+        }
+    )
+    assert prompt_changed["latest-build-passing/v1"] != initial
 
 
 @pytest.mark.parametrize("framework_id", ["v0", "v1"])
