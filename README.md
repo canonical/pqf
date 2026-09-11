@@ -1,7 +1,7 @@
 # PQF — Product Quality Framework
 
 [![CI](https://github.com/canonical/pqf/actions/workflows/ci.yml/badge.svg)](https://github.com/canonical/pqf/actions/workflows/ci.yml)
-[![Deploy](https://github.com/canonical/pqf/actions/workflows/deploy-pages.yml/badge.svg)](https://github.com/canonical/pqf/actions/workflows/deploy-pages.yml)
+[![Deploy](https://github.com/canonical/pqf/actions/workflows/compute-metrics.yml/badge.svg)](https://github.com/canonical/pqf/actions/workflows/compute-metrics.yml)
 
 PQF tracks the quality and compliance state of Canonical Platform Engineering's tracked products. Products are scored automatically across a set of quality dimensions (test verification, documentation, security & SSDLC, engagement, and — from v1 — substrate compatibility) and awarded a **bronze / silver / gold** result based on the criteria declared by a framework version.
 

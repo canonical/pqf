@@ -232,7 +232,7 @@ public/framework-versions.json # GHA-generated version index (lifecycle authorit
 public/badges/              # GHA-generated badges
 public/legacy/              # gh-pages-only frozen pre-versioning snapshot, served at /legacy/, not linked in the new UI
 ui/                         # React 19 + Vite dashboard
-.github/workflows/          # compute-metrics.yml, deploy-pages.yml, deploy-legacy.yml, preview, ci
+.github/workflows/          # compute-metrics.yml, deploy-legacy.yml, preview, ci
 docs/                       # Architecture, how-to guides, view documentation
 docs/superpowers/           # Design specs and implementation plans (AI agent artifacts)
 Makefile                    # Single source of truth for all dev commands
@@ -244,8 +244,7 @@ Makefile                    # Single source of truth for all dev commands
 
 | Workflow | Trigger | What it does |
 |----------|---------|--------------|
-| `compute-metrics.yml` | Nightly (active version), weekly (upcoming version), push to `products/**`, `framework/**` or `config/**`, manual (`framework_version` input) | Runs scorers per version → engine → uploads artifacts for Pages publication. Archived versions are never selected. |
-| `deploy-pages.yml` | Push to `main` | Builds `ui/` → deploys to GitHub Pages |
+| `compute-metrics.yml` | Nightly (active version), weekly (upcoming version), relevant push to `main`, manual (`framework_version` input) | Runs affected scorers, carries forward unchanged artifacts, builds `ui/`, and deploys the complete site. UI-only pushes skip scoring. Archived versions are never selected. |
 | `deploy-legacy.yml` | Manual | Publishes the frozen pre-versioning snapshot under `/legacy/` |
 | `ci.yml` | Push / PR | Validate, lint, tests, semantic change report, security audit |
 

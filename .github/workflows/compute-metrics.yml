@@ -23,6 +23,7 @@ on:
       - '!scorers/**/__tests__/**'
       - 'engine/**'          # re-run when assembly logic changes
       - '!engine/__tests__/**'
+      - 'ui/**'              # rebuild UI while carrying forward current metric artifacts
       - '.github/workflows/compute-metrics.yml'  # re-run when workflow behavior changes
   pull_request:
     types: [opened, reopened, synchronize]

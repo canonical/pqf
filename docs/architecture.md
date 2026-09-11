@@ -235,7 +235,7 @@ Inline leaves are the common case. Use standalone leaves only when the same char
 - `0 3 * * 1` — weekly Monday, every **upcoming** framework version
 - `workflow_dispatch` with a `framework_version` input (must be active or upcoming)
 - push to `main` and pull requests touching `products/**`, `framework/**`, `config/**`,
-  `scorers/**`, `engine/**`, or the workflow itself
+  `scorers/**`, `engine/**`, `ui/**`, or the workflow itself
 
 **Steps:**
 1. On pull requests, publish a semantic change report classifying framework/catalog changes as
@@ -246,23 +246,16 @@ Inline leaves are the common case. Use standalone leaves only when the same char
 5. Carry forward archived version directories from the published site, regenerate the active root
    compatibility mirror at `public/portfolio.json`, rebuild `public/badges/`, and run
    `engine/version_index.py` → `public/framework-versions.json`
-6. Upload the `public/` artifact for the Pages deploy workflow; nothing is committed to `main`
+6. Upload the `public/` artifact, build the UI from it, and deploy the complete site to Pages;
+   nothing is committed to `main`
 
 Archived versions are never selected: their measurements are frozen. Whatever the cadence selects
 is unioned with a bootstrap set — every live version whose published portfolio is missing or was
 built from a different scoring contract — so the version index can always be rebuilt completely.
-
-### `deploy-pages.yml` — UI build and deploy
-
-**Triggers:** Push to `main`
-
-**Steps:**
-1. Check out the repo and the current Pages data
-2. Install Node dependencies (`npm install`)
-3. Build Vite app (`npm run build`) → `ui/dist/`
-4. Sync every published version directory plus `framework-versions.json`, the active root mirror,
-   and badges into the build
-5. Deploy to GitHub Pages, preserving `/legacy/` and archived version directories
+For a UI-only push with current live artifacts, the selected matrix is empty, current versioned
+artifacts are carried forward, and the latest UI is deployed without invoking repository scorers.
+Keeping production publication in this single workflow also ensures a newer main-branch run cancels
+an older in-flight run, so an older scoring build cannot overwrite a newer UI.
 
 ### `deploy-legacy.yml` — one-off legacy snapshot
 

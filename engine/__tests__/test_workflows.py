@@ -501,57 +501,13 @@ def test_compute_metrics_never_schedules_archived_framework_versions() -> None:
             select_frameworks(frameworks, cadence="manual", framework_version=archived_id)
 
 
-def test_deploy_pages_only_runs_for_ui_changes_and_skips_mixed_commits() -> None:
-    workflow = load_workflow(".github/workflows/deploy-pages.yml")
-
-    on = workflow.get("on") or workflow.get(True) or {}
-    push = on.get("push", {})
-    assert push["branches"] == ["main"]
-    assert push["paths"] == ["ui/**"]
-
-    jobs = workflow["jobs"]
-    detect_scope = jobs["detect-scope"]
-    scope_step = next(step for step in detect_scope["steps"] if step.get("id") == "scope")
-    assert "products/" in scope_step["run"]
-    assert "framework/" in scope_step["run"]
-    assert "scorers/" in scope_step["run"]
-    assert "engine/" in scope_step["run"]
-    assert "eligible=false" in scope_step["run"]
-
-    deploy_job = jobs["deploy"]
-    assert deploy_job["needs"] == "detect-scope"
-    assert deploy_job["if"] == "needs.detect-scope.outputs.eligible == 'true'"
-
-    pages_checkout = next(
-        step for step in deploy_job["steps"] if step.get("name") == "Check out current Pages data"
-    )
-    assert pages_checkout["uses"] == "actions/checkout@v4"
-    assert pages_checkout["with"]["ref"] == "gh-pages"
-    assert pages_checkout["with"]["path"] == ".gh-pages-data"
-
-    sync_step = next(
-        step for step in deploy_job["steps"] if step.get("name") == "Sync deployed public data"
-    )
-    assert "cp .gh-pages-data/portfolio.json public/portfolio.json" in sync_step["run"]
-    assert "cp -R .gh-pages-data/badges public/badges" in sync_step["run"]
-    assert "framework-versions.json" in sync_step["run"], (
-        "deploy-pages must also carry forward the framework version index"
-    )
-    assert ".gh-pages-data/versions/." in sync_step["run"], (
-        "deploy-pages must also carry forward public/versions/ (active/upcoming/archived)"
-    )
-
-    names = step_names(deploy_job)
-    assert "Check out current Pages data" in names
-    assert "Sync deployed public data" in names
-    assert "Build UI" in names
-    assert "Deploy to GitHub Pages (attempt 1)" in names
-    assert "Wait before deploy retry" in names
-    assert "Deploy to GitHub Pages (retry)" in names
-
-    assert names.index("Sync deployed public data") < names.index("Build UI")
+def test_compute_metrics_is_the_only_production_pages_publisher() -> None:
+    assert not Path(".github/workflows/deploy-pages.yml").exists()
 
     compute_workflow = load_workflow(".github/workflows/compute-metrics.yml")
+    on = compute_workflow.get("on") or compute_workflow.get(True) or {}
+    assert "ui/**" in on["push"]["paths"]
+
     compute_deploy = compute_workflow["jobs"]["deploy-production"]
     assert compute_deploy["concurrency"] == {
         "group": "gh-pages",
