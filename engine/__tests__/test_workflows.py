@@ -60,13 +60,24 @@ def test_compute_metrics_deploys_production_from_engine_artifacts() -> None:
     # YAML 1.1 treats the bare key 'on' as a boolean, so it can be parsed as True.
     on = workflow.get("on") or workflow.get(True) or {}
     assert "schedule" in on, "expected 'schedule' trigger at workflow level"
+
+    # Two cron entries: nightly (active) + weekly (upcoming), distinguished
+    # at runtime by github.event.schedule.
+    crons = [entry["cron"] for entry in on["schedule"]]
+    assert "0 2 * * *" in crons, "expected nightly cron for active framework version"
+    assert "0 3 * * 1" in crons, "expected weekly cron for upcoming framework version"
+
     assert "workflow_dispatch" in on, "expected 'workflow_dispatch' trigger at workflow level"
+    dispatch_inputs = on["workflow_dispatch"]["inputs"]
+    assert "framework_version" in dispatch_inputs
+    assert dispatch_inputs["framework_version"]["required"] is True
 
     push = on.get("push", {})
     assert push["branches"] == ["main"]
     paths = push.get("paths", [])
     for pattern in [
         "products/**",
+        "framework/**",
         "config/**",
         "scorers/**",
         "!scorers/**/__tests__/**",
@@ -83,6 +94,7 @@ def test_compute_metrics_deploys_production_from_engine_artifacts() -> None:
     pr_paths = pull_request.get("paths", [])
     for pattern in [
         "products/**",
+        "framework/**",
         "config/**",
         "scorers/**",
         "!scorers/**/__tests__/**",
@@ -92,8 +104,127 @@ def test_compute_metrics_deploys_production_from_engine_artifacts() -> None:
     ]:
         assert pattern in pr_paths, f"pull_request.paths must include '{pattern}'"
 
-    assert "deploy-production" in jobs
+    for job_name in [
+        "change-report",
+        "determine-matrix",
+        "compute-metrics",
+        "merge-computed",
+        "assemble-versions",
+        "run-engine",
+        "build-preview",
+        "deploy-production",
+    ]:
+        assert job_name in jobs, f"expected '{job_name}' job"
     assert "commit-artifacts" not in jobs
+    assert "discover-products" not in jobs, "discover-products replaced by determine-matrix"
+
+    # ---- change-report: semantic change summary posted to PR ----
+    change_report = jobs["change-report"]
+    assert change_report["if"] == "github.event_name == 'pull_request'"
+    change_report_run = next(
+        step["run"] for step in change_report["steps"] if "change_report" in step.get("run", "")
+    )
+    assert "python3 -m engine.change_report --base-ref" in change_report_run
+    assert "origin/${{ github.base_ref }}" in change_report_run
+    assert "$GITHUB_STEP_SUMMARY" in change_report_run
+
+    # ---- determine-matrix: builds the framework/product/dimension matrix ----
+    determine_matrix = jobs["determine-matrix"]
+    assert determine_matrix["outputs"]["matrix"] == "${{ steps.build.outputs.matrix }}"
+    assert determine_matrix["outputs"]["versions"] == "${{ steps.build.outputs.versions }}"
+    build_step = next(step for step in determine_matrix["steps"] if step.get("id") == "build")
+    assert "engine.workflow_matrix --cadence" in build_step["run"]
+    assert "nightly" in build_step["run"]
+    assert "weekly" in build_step["run"]
+    assert "manual" in build_step["run"]
+    assert "github.event.inputs.framework_version" in build_step["run"]
+
+    # ---- compute-metrics: runs the generic scorer per matrix row ----
+    compute_metrics = jobs["compute-metrics"]
+    assert compute_metrics["needs"] == "determine-matrix"
+    assert (
+        compute_metrics["strategy"]["matrix"]
+        == "${{ fromJson(needs.determine-matrix.outputs.matrix) }}"
+    )
+    scorer_step = next(
+        step for step in compute_metrics["steps"] if step.get("name") == "Run generic scorer"
+    )
+    assert "scorers/run.py" in scorer_step["run"]
+    assert "--framework-version ${{ matrix.framework_version }}" in scorer_step["run"]
+    assert "--dimension ${{ matrix.dimension }}" in scorer_step["run"]
+    assert "--product-yaml products/${{ matrix.product }}.yaml" in scorer_step["run"]
+    assert "Check if product needs rescoring" not in step_names(compute_metrics), (
+        "per-product PR rescore skip removed; filtering is now version-level via determine-matrix"
+    )
+
+    # ---- merge-computed: merges per-dimension outputs into per-version/product envelopes ----
+    merge_computed = jobs["merge-computed"]
+    assert merge_computed["needs"] == ["determine-matrix", "compute-metrics"]
+    merge_step = next(
+        step
+        for step in merge_computed["steps"]
+        if step.get("name") == "Merge scorer outputs into versioned computed envelopes"
+    )
+    assert "engine/merge_computed.py" in merge_step["run"]
+    assert "--framework-version" in merge_step["run"]
+    assert "--contract-digest" in merge_step["run"]
+    assert "--implementation-fingerprints" in merge_step["run"]
+
+    # ---- assemble-versions: one assemble + badges run per selected version ----
+    assemble_versions = jobs["assemble-versions"]
+    assert assemble_versions["needs"] == ["determine-matrix", "merge-computed"]
+    assert assemble_versions["strategy"]["matrix"]["framework_version"] == (
+        "${{ fromJson(needs.determine-matrix.outputs.versions) }}"
+    )
+    assemble_step = next(
+        step
+        for step in assemble_versions["steps"]
+        if step.get("name") == "Assemble versioned portfolio"
+    )
+    assert "engine/assemble.py" in assemble_step["run"]
+    assert "--framework-version ${{ matrix.framework_version }}" in assemble_step["run"]
+    assert "public/versions/${{ matrix.framework_version }}/portfolio.json" in assemble_step["run"]
+
+    badges_step = next(
+        step for step in assemble_versions["steps"] if step.get("name") == "Generate active badges"
+    )
+    assert badges_step["if"] == "steps.status.outputs.status == 'active'", (
+        "badges must only be generated for the active framework version"
+    )
+
+    # ---- run-engine: preserves archived/untouched versions, rebuilds version index ----
+    run_engine = jobs["run-engine"]
+    assert run_engine["needs"] == ["determine-matrix", "assemble-versions"]
+    carry_forward_step = next(
+        step
+        for step in run_engine["steps"]
+        if step.get("name") == "Carry forward previously published artifacts"
+    )
+    assert ".gh-pages-data/versions/." in carry_forward_step["run"]
+    assert "cp .gh-pages-data/portfolio.json public/portfolio.json" in carry_forward_step["run"]
+    assert "cp -R .gh-pages-data/badges public/badges" in carry_forward_step["run"]
+
+    version_index_step = next(
+        step
+        for step in run_engine["steps"]
+        if step.get("name") == "Regenerate framework version index"
+    )
+    assert "engine/version_index.py" in version_index_step["run"]
+    assert "public/framework-versions.json" in version_index_step["run"]
+
+    pages_checkout = next(
+        step for step in run_engine["steps"] if step.get("name") == "Check out current Pages data"
+    )
+    assert pages_checkout["with"]["ref"] == "gh-pages"
+    assert pages_checkout["with"]["path"] == ".gh-pages-data"
+
+    names = step_names(run_engine)
+    assert names.index("Check out current Pages data") < names.index(
+        "Carry forward previously published artifacts"
+    )
+    assert names.index("Carry forward previously published artifacts") < names.index(
+        "Regenerate framework version index"
+    )
 
     deploy_job = jobs["deploy-production"]
     assert deploy_job["needs"] == "run-engine"
@@ -161,15 +292,6 @@ def test_compute_metrics_deploys_production_from_engine_artifacts() -> None:
 
     assert "github.event.action != 'closed'" in preview_if
 
-    needs_rescore = next(
-        step
-        for step in jobs["compute-metrics"]["steps"]
-        if step.get("name") == "Check if product needs rescoring"
-    )
-    assert "grep -Ev" in needs_rescore["run"]
-    assert "engine/__tests__/" in needs_rescore["run"]
-    assert "scorers/.*/__tests__/" in needs_rescore["run"]
-
     preview_deploy_step = next(
         step for step in preview["steps"] if step.get("name") == "Deploy PR preview"
     )
@@ -208,6 +330,12 @@ def test_deploy_pages_only_runs_for_ui_changes_and_skips_mixed_commits() -> None
     )
     assert "cp .gh-pages-data/portfolio.json public/portfolio.json" in sync_step["run"]
     assert "cp -R .gh-pages-data/badges public/badges" in sync_step["run"]
+    assert "framework-versions.json" in sync_step["run"], (
+        "deploy-pages must also carry forward the framework version index"
+    )
+    assert ".gh-pages-data/versions/." in sync_step["run"], (
+        "deploy-pages must also carry forward public/versions/ (active/upcoming/archived)"
+    )
 
     names = step_names(deploy_job)
     assert "Check out current Pages data" in names
