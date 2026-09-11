@@ -239,6 +239,44 @@ Archived framework results do not require their scorer implementations to remain
 forever because archived artifacts are never recomputed. Implementations must remain available
 while referenced by the active or upcoming contract.
 
+## Initial V0 and V1 Contracts
+
+V0 and V1 preserve the current target medal declared by each product. The migration converts each
+existing `target_medal` into identical `v0` and `v1` entries. Teams may change those targets through
+normal framework-owner review later.
+
+### V0 bedrock
+
+V0 provides a useful three-medal portfolio distribution with a deliberately small set of
+deterministic requirements.
+
+| Dimension | Bronze | Silver | Gold | Informational |
+|---|---|---|---|---|
+| Test verification | Latest build passing | No separate tier | Latest build passing and uses Jubilant | None |
+| Documentation | README present | README and CONTRIBUTING present | README, CONTRIBUTING, and SECURITY present | Diátaxis coverage (AI), RTD hosting |
+| Security | Renovate enabled | Renovate and branch protection enabled | Renovate, branch protection, and signed commits enabled | None |
+| Engagement | Ownership signal present | Ownership and response coverage at least 80% | Ownership and response coverage at least 90% | None |
+
+The absent test-verification silver criterion is intentional. A silver-target product satisfies
+that dimension only by reaching its gold tier.
+
+V0 does not include substrate compatibility as a scored dimension.
+
+### V1 first operational bar
+
+V1 copies V0 and promotes a conservative set of existing, deterministic signals:
+
+| Dimension | Bronze | Silver | Gold | Informational |
+|---|---|---|---|---|
+| Test verification | Latest build passing | Latest build passing and integration-test evidence present | Silver criteria and uses Jubilant | Coverage, stability |
+| Documentation | README present | README and CONTRIBUTING present | Silver criteria, SECURITY present, and release-notes process implemented | Documentation workflow status, Diátaxis coverage (AI), RTD hosting, CHANGELOG presence |
+| Substrate compatibility | Juju 3 support | Juju 3 support and substrate test evidence present | Juju 4 support and substrate test evidence present | Canonical Kubernetes usage |
+| Security | Renovate enabled | Renovate and branch protection enabled | Silver criteria, signed commits, and SAST workflow present | CVE-process evidence |
+| Engagement | Ownership signal present | Ownership, response coverage at least 80%, average triage at most 3 days, and average PR review at most 5 days | Ownership, response coverage at least 90%, average triage at most 2 days, and average PR review at most 3 days | Jira sync, repository views |
+
+Signals remain visible when informational. Promoting any of them into scoring requires a later
+framework version or an explicitly reviewed active-contract correction.
+
 ## Computation and Artifact Lifecycle
 
 ### Independent computation
