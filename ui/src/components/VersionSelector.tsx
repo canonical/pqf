@@ -29,7 +29,7 @@ function formatRefreshTime(generatedAt: string): string {
   if (!Number.isFinite(timestamp.getTime())) {
     return 'Refresh time unavailable'
   }
-  return timestamp.toLocaleString()
+  return `Refreshed ${timestamp.toLocaleString()}`
 }
 
 /**
@@ -77,11 +77,8 @@ export default function VersionSelector() {
           </div>
         </div>
       </div>
-      <span
-        className="version-selector__meta"
-        style={{ fontSize: '0.75rem', color: '#f2f2f2', marginTop: '0.25rem' }}
-      >
-        Refreshed {formatRefreshTime(current.generated_at)}
+      <span className="version-selector__meta" style={{ fontSize: '0.75rem', color: '#f2f2f2', marginTop: '0.25rem' }}>
+        {formatRefreshTime(current.generated_at)}
       </span>
     </div>
   )

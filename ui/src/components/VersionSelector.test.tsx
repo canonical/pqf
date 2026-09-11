@@ -145,7 +145,7 @@ describe('VersionSelector', () => {
 
     await screen.findByRole('combobox', { name: /framework version/i })
 
-    expect(screen.getByText(/Refresh time unavailable/)).toBeInTheDocument()
+    expect(screen.getByText('Refresh time unavailable')).toBeInTheDocument()
     expect(screen.queryByText(/Invalid Date/)).not.toBeInTheDocument()
   })
 
