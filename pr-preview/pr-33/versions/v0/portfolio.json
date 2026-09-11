@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-11T20:42:47.950472+00:00",
+  "generated_at": "2026-09-11T21:01:11.836877+00:00",
   "framework": {
     "id": "v0",
     "sequence": 0,
@@ -8,26 +8,26 @@
     "description": "The dependable minimum PQF quality baseline."
   },
   "contract_digest": "06db4a3d26d7ef10560341964f9a39f86cf9f13a5ed3f1627ec996c69c38cb0c",
-  "source_revision": "fc5a037e859a14e3fc2ca7cc7b2f66efc1077ba1",
+  "source_revision": "be9062f1a0540b6bab13ba146827f21133fa1864",
   "implementation_fingerprints": {
-    "branch-protection-required-checks/v1": "4bdd70fc77a438d4ef155b3f0624c276967f9e06afcae10f6635eb9319b79f77",
-    "contributing-present/v1": "e6c8580f21eb25ccb253b90357227ad5adb17e7cea586e95a5ce870d420e8214",
-    "diataxis-coverage-ai/v1": "e6c8580f21eb25ccb253b90357227ad5adb17e7cea586e95a5ce870d420e8214",
-    "latest-build-passing/v1": "a740623d8b3fd8eb0150e271b5c22a0da111f4fd834ca64fbfb5a3842f6b4bd4",
-    "ownership-signal/v1": "8ad5a0ba97c3e699d700fcf3002482bf13d684537fa80f3d48afc32e66a5089c",
-    "readme-present/v1": "e6c8580f21eb25ccb253b90357227ad5adb17e7cea586e95a5ce870d420e8214",
-    "renovate-enabled/v1": "4bdd70fc77a438d4ef155b3f0624c276967f9e06afcae10f6635eb9319b79f77",
-    "response-coverage-rate/v1": "8ad5a0ba97c3e699d700fcf3002482bf13d684537fa80f3d48afc32e66a5089c",
-    "security-file-present/v1": "e6c8580f21eb25ccb253b90357227ad5adb17e7cea586e95a5ce870d420e8214",
-    "signed-commits-required/v1": "4bdd70fc77a438d4ef155b3f0624c276967f9e06afcae10f6635eb9319b79f77",
-    "uses-jubilant/v1": "a740623d8b3fd8eb0150e271b5c22a0da111f4fd834ca64fbfb5a3842f6b4bd4",
-    "uses-rtd-hosting/v1": "e6c8580f21eb25ccb253b90357227ad5adb17e7cea586e95a5ce870d420e8214"
+    "branch-protection-required-checks/v1": "12bcc72d65c0ed6b9fc8b0f8d87383f53da30f2bdd0d67ac68022696ca923646",
+    "contributing-present/v1": "41b5a11e8a7c623338e70df86a32973853ae80ba7d02a8287e9ba5d69078c257",
+    "diataxis-coverage-ai/v1": "41b5a11e8a7c623338e70df86a32973853ae80ba7d02a8287e9ba5d69078c257",
+    "latest-build-passing/v1": "30e03746df2c6d4c9d6b28cca4e70c631a6e2f1b217a4f14f12da72e28d03826",
+    "ownership-signal/v1": "292287a13d24a68c7fd50345f25e018553022d1872e7c5d92bf57034b9ea60f1",
+    "readme-present/v1": "41b5a11e8a7c623338e70df86a32973853ae80ba7d02a8287e9ba5d69078c257",
+    "renovate-enabled/v1": "12bcc72d65c0ed6b9fc8b0f8d87383f53da30f2bdd0d67ac68022696ca923646",
+    "response-coverage-rate/v1": "292287a13d24a68c7fd50345f25e018553022d1872e7c5d92bf57034b9ea60f1",
+    "security-file-present/v1": "41b5a11e8a7c623338e70df86a32973853ae80ba7d02a8287e9ba5d69078c257",
+    "signed-commits-required/v1": "12bcc72d65c0ed6b9fc8b0f8d87383f53da30f2bdd0d67ac68022696ca923646",
+    "uses-jubilant/v1": "30e03746df2c6d4c9d6b28cca4e70c631a6e2f1b217a4f14f12da72e28d03826",
+    "uses-rtd-hosting/v1": "41b5a11e8a7c623338e70df86a32973853ae80ba7d02a8287e9ba5d69078c257"
   },
   "compliance_summary": {
     "total": 34,
-    "meeting_target": 0,
-    "below_target": 0,
-    "insufficient_data": 34
+    "meeting_target": 4,
+    "below_target": 12,
+    "insufficient_data": 18
   },
   "products": [
     {
@@ -36,9 +36,9 @@
       "name": "12-Factor app support",
       "description": "12-Factor app support includes several Charmcraft and Rockcraft extensions and the paas-charm library to make the crafting of 12-factor applications easier.",
       "lifecycle": "stable",
-      "current_medal": "bronze",
+      "current_medal": "unrated",
       "target_medal": "gold",
-      "current_result": "bronze",
+      "current_result": "below_minimum",
       "target_result": "gold",
       "meets_target": false,
       "squad": "emea",
@@ -215,20 +215,20 @@
         "engagement": {
           "medal": "unrated",
           "target": "gold",
-          "applicability": "insufficient_data",
+          "applicability": "scored",
           "meets_target": false,
-          "result": "insufficient_data",
+          "result": "below_minimum",
           "metrics": {},
           "composition": [
             {
               "product_id": "rockcraft",
               "repo": "canonical/rockcraft",
               "medal": "unrated",
-              "result": "insufficient_data",
-              "applicability": "insufficient_data",
+              "result": "below_minimum",
+              "applicability": "scored",
               "metrics": {
                 "ownership_signal": false,
-                "response_coverage_rate": null
+                "response_coverage_rate": 56.7
               },
               "excluded_from_parent_medal": false
             },
@@ -304,7 +304,7 @@
               "applicability": "insufficient_data",
               "metrics": {
                 "latest_build_passing": null,
-                "uses_jubilant": true
+                "uses_jubilant": false
               },
               "excluded_from_parent_medal": false
             },
@@ -399,22 +399,22 @@
           ]
         },
         "engagement": {
-          "medal": "unrated",
+          "medal": "gold",
           "target": "silver",
-          "applicability": "insufficient_data",
-          "meets_target": false,
-          "result": "insufficient_data",
+          "applicability": "scored",
+          "meets_target": true,
+          "result": "gold",
           "metrics": {},
           "composition": [
             {
               "product_id": "aproxy-charm",
               "repo": "canonical/aproxy-operator",
-              "medal": "unrated",
-              "result": "insufficient_data",
-              "applicability": "insufficient_data",
+              "medal": "gold",
+              "result": "gold",
+              "applicability": "scored",
               "metrics": {
-                "ownership_signal": false,
-                "response_coverage_rate": null
+                "ownership_signal": true,
+                "response_coverage_rate": 96.7
               },
               "excluded_from_parent_medal": false
             },
@@ -473,19 +473,19 @@
         "test_verification": {
           "medal": "unrated",
           "target": "silver",
-          "applicability": "scored",
+          "applicability": "insufficient_data",
           "meets_target": false,
-          "result": "below_minimum",
+          "result": "insufficient_data",
           "metrics": {},
           "composition": [
             {
               "product_id": "bacula-server",
               "repo": "canonical/backup-operators",
               "medal": "unrated",
-              "result": "below_minimum",
-              "applicability": "scored",
+              "result": "insufficient_data",
+              "applicability": "insufficient_data",
               "metrics": {
-                "latest_build_passing": false,
+                "latest_build_passing": null,
                 "uses_jubilant": true
               },
               "excluded_from_parent_medal": false
@@ -494,10 +494,10 @@
               "product_id": "bacula-fd",
               "repo": "canonical/backup-operators",
               "medal": "unrated",
-              "result": "below_minimum",
-              "applicability": "scored",
+              "result": "insufficient_data",
+              "applicability": "insufficient_data",
               "metrics": {
-                "latest_build_passing": false,
+                "latest_build_passing": null,
                 "uses_jubilant": true
               },
               "excluded_from_parent_medal": false
@@ -506,10 +506,10 @@
               "product_id": "backup-integrator",
               "repo": "canonical/backup-operators",
               "medal": "unrated",
-              "result": "below_minimum",
-              "applicability": "scored",
+              "result": "insufficient_data",
+              "applicability": "insufficient_data",
               "metrics": {
-                "latest_build_passing": false,
+                "latest_build_passing": null,
                 "uses_jubilant": true
               },
               "excluded_from_parent_medal": false
@@ -663,20 +663,20 @@
         "engagement": {
           "medal": "unrated",
           "target": "silver",
-          "applicability": "insufficient_data",
+          "applicability": "scored",
           "meets_target": false,
-          "result": "insufficient_data",
+          "result": "below_minimum",
           "metrics": {},
           "composition": [
             {
               "product_id": "bacula-server",
               "repo": "canonical/backup-operators",
               "medal": "unrated",
-              "result": "insufficient_data",
-              "applicability": "insufficient_data",
+              "result": "below_minimum",
+              "applicability": "scored",
               "metrics": {
                 "ownership_signal": false,
-                "response_coverage_rate": null
+                "response_coverage_rate": 85.7
               },
               "excluded_from_parent_medal": false
             },
@@ -726,9 +726,9 @@
       "name": "Chrony",
       "description": "The Chrony operators deploy and manage the Chrony NTP server and client\nacross a range of environments, providing time provision and synchronisation\nwith NTP servers.\n\nThe chrony charm acts as an NTP server, while the chrony-client subordinate\ncharm configures Chrony as an NTP client on any principal charm, replacing\nthe system default NTP client.",
       "lifecycle": "stable",
-      "current_medal": "bronze",
+      "current_medal": "unrated",
       "target_medal": "silver",
-      "current_result": "bronze",
+      "current_result": "below_minimum",
       "target_result": "silver",
       "meets_target": false,
       "squad": "apac",
@@ -783,46 +783,6 @@
           ]
         },
         "documentation": {
-          "medal": "silver",
-          "target": "silver",
-          "applicability": "scored",
-          "meets_target": true,
-          "result": "silver",
-          "metrics": {},
-          "composition": [
-            {
-              "product_id": "chrony-charm",
-              "repo": "canonical/chrony-operator",
-              "medal": "silver",
-              "result": "silver",
-              "applicability": "scored",
-              "metrics": {
-                "readme_present": true,
-                "contributing_present": true,
-                "has_security": false,
-                "diataxis_coverage_ai": 0,
-                "uses_rtd_hosting": false
-              },
-              "excluded_from_parent_medal": false
-            },
-            {
-              "product_id": "chrony-client",
-              "repo": "canonical/chrony-client-operator",
-              "medal": "silver",
-              "result": "silver",
-              "applicability": "scored",
-              "metrics": {
-                "readme_present": true,
-                "contributing_present": true,
-                "has_security": false,
-                "diataxis_coverage_ai": 0,
-                "uses_rtd_hosting": false
-              },
-              "excluded_from_parent_medal": false
-            }
-          ]
-        },
-        "security_ssdlc": {
           "medal": "bronze",
           "target": "silver",
           "applicability": "scored",
@@ -833,13 +793,15 @@
             {
               "product_id": "chrony-charm",
               "repo": "canonical/chrony-operator",
-              "medal": "bronze",
-              "result": "bronze",
+              "medal": "silver",
+              "result": "silver",
               "applicability": "scored",
               "metrics": {
-                "renovate_enabled": true,
-                "branch_protection_required_checks": false,
-                "signed_commits_required": false
+                "readme_present": true,
+                "contributing_present": true,
+                "has_security": false,
+                "diataxis_coverage_ai": 0,
+                "uses_rtd_hosting": false
               },
               "excluded_from_parent_medal": false
             },
@@ -850,7 +812,45 @@
               "result": "bronze",
               "applicability": "scored",
               "metrics": {
-                "renovate_enabled": true,
+                "readme_present": true,
+                "contributing_present": false,
+                "has_security": false,
+                "diataxis_coverage_ai": 0,
+                "uses_rtd_hosting": false
+              },
+              "excluded_from_parent_medal": false
+            }
+          ]
+        },
+        "security_ssdlc": {
+          "medal": "unrated",
+          "target": "silver",
+          "applicability": "scored",
+          "meets_target": false,
+          "result": "below_minimum",
+          "metrics": {},
+          "composition": [
+            {
+              "product_id": "chrony-charm",
+              "repo": "canonical/chrony-operator",
+              "medal": "unrated",
+              "result": "below_minimum",
+              "applicability": "scored",
+              "metrics": {
+                "renovate_enabled": false,
+                "branch_protection_required_checks": false,
+                "signed_commits_required": false
+              },
+              "excluded_from_parent_medal": false
+            },
+            {
+              "product_id": "chrony-client",
+              "repo": "canonical/chrony-client-operator",
+              "medal": "unrated",
+              "result": "below_minimum",
+              "applicability": "scored",
+              "metrics": {
+                "renovate_enabled": false,
                 "branch_protection_required_checks": false,
                 "signed_commits_required": false
               },
@@ -1091,7 +1091,7 @@
               "result": "insufficient_data",
               "applicability": "insufficient_data",
               "metrics": {
-                "ownership_signal": false,
+                "ownership_signal": true,
                 "response_coverage_rate": null
               },
               "excluded_from_parent_medal": false
@@ -1103,7 +1103,7 @@
               "result": "insufficient_data",
               "applicability": "insufficient_data",
               "metrics": {
-                "ownership_signal": false,
+                "ownership_signal": true,
                 "response_coverage_rate": null
               },
               "excluded_from_parent_medal": false
@@ -1115,7 +1115,7 @@
               "result": "insufficient_data",
               "applicability": "insufficient_data",
               "metrics": {
-                "ownership_signal": false,
+                "ownership_signal": true,
                 "response_coverage_rate": null
               },
               "excluded_from_parent_medal": false
@@ -1219,22 +1219,22 @@
           ]
         },
         "engagement": {
-          "medal": "unrated",
+          "medal": "bronze",
           "target": "bronze",
-          "applicability": "insufficient_data",
-          "meets_target": false,
-          "result": "insufficient_data",
+          "applicability": "scored",
+          "meets_target": true,
+          "result": "bronze",
           "metrics": {},
           "composition": [
             {
               "product_id": "content-cache-k8s-charm",
               "repo": "canonical/content-cache-k8s-operator",
-              "medal": "unrated",
-              "result": "insufficient_data",
-              "applicability": "insufficient_data",
+              "medal": "bronze",
+              "result": "bronze",
+              "applicability": "scored",
               "metrics": {
-                "ownership_signal": false,
-                "response_coverage_rate": null
+                "ownership_signal": true,
+                "response_coverage_rate": 66.7
               },
               "excluded_from_parent_medal": false
             }
@@ -1248,9 +1248,9 @@
       "name": "Content cache operators",
       "description": "The Content Cache Operators provide a static web content cache backed by nginx.\nThe ``content-cache`` machine charm manages the nginx instance, while the\n``content-cache-backends-config`` subordinate charm provides configuration for\nthe backend services to expose behind the cache.",
       "lifecycle": "stable",
-      "current_medal": "bronze",
+      "current_medal": "unrated",
       "target_medal": "silver",
-      "current_result": "bronze",
+      "current_result": "below_minimum",
       "target_result": "silver",
       "meets_target": false,
       "squad": "apac",
@@ -1383,20 +1383,20 @@
         "engagement": {
           "medal": "unrated",
           "target": "silver",
-          "applicability": "insufficient_data",
+          "applicability": "scored",
           "meets_target": false,
-          "result": "insufficient_data",
+          "result": "below_minimum",
           "metrics": {},
           "composition": [
             {
               "product_id": "content-cache-charm",
               "repo": "canonical/content-cache-operator",
-              "medal": "unrated",
-              "result": "insufficient_data",
-              "applicability": "insufficient_data",
+              "medal": "bronze",
+              "result": "bronze",
+              "applicability": "scored",
               "metrics": {
-                "ownership_signal": false,
-                "response_coverage_rate": null
+                "ownership_signal": true,
+                "response_coverage_rate": 76.9
               },
               "excluded_from_parent_medal": false
             },
@@ -1404,11 +1404,11 @@
               "product_id": "content-cache-backends-config",
               "repo": "canonical/content-cache-operator",
               "medal": "unrated",
-              "result": "insufficient_data",
-              "applicability": "insufficient_data",
+              "result": "below_minimum",
+              "applicability": "scored",
               "metrics": {
                 "ownership_signal": false,
-                "response_coverage_rate": null
+                "response_coverage_rate": 19.2
               },
               "excluded_from_parent_medal": false
             }
@@ -1422,9 +1422,9 @@
       "name": "Digest Squid auth helper",
       "description": "A Juju subordinate charm for the Squid reverse proxy charm that enables digest or basic authentication using squid-auth-helper relation.",
       "lifecycle": "stable",
-      "current_medal": "unrated",
+      "current_medal": "bronze",
       "target_medal": "bronze",
-      "current_result": "below_minimum",
+      "current_result": "bronze",
       "target_result": "bronze",
       "meets_target": false,
       "squad": "emea",
@@ -1443,19 +1443,19 @@
         "test_verification": {
           "medal": "unrated",
           "target": "bronze",
-          "applicability": "scored",
+          "applicability": "insufficient_data",
           "meets_target": false,
-          "result": "below_minimum",
+          "result": "insufficient_data",
           "metrics": {},
           "composition": [
             {
               "product_id": "digest-squid-auth-helper-charm",
               "repo": "canonical/digest-squid-auth-helper",
               "medal": "unrated",
-              "result": "below_minimum",
-              "applicability": "scored",
+              "result": "insufficient_data",
+              "applicability": "insufficient_data",
               "metrics": {
-                "latest_build_passing": false,
+                "latest_build_passing": null,
                 "uses_jubilant": false
               },
               "excluded_from_parent_medal": false
@@ -1525,7 +1525,7 @@
               "result": "insufficient_data",
               "applicability": "insufficient_data",
               "metrics": {
-                "ownership_signal": false,
+                "ownership_signal": true,
                 "response_coverage_rate": null
               },
               "excluded_from_parent_medal": false
@@ -1644,20 +1644,20 @@
         "engagement": {
           "medal": "unrated",
           "target": "silver",
-          "applicability": "insufficient_data",
+          "applicability": "scored",
           "meets_target": false,
-          "result": "insufficient_data",
+          "result": "below_minimum",
           "metrics": {},
           "composition": [
             {
               "product_id": "discourse-k8s",
               "repo": "canonical/discourse-k8s-operator",
               "medal": "unrated",
-              "result": "insufficient_data",
-              "applicability": "insufficient_data",
+              "result": "below_minimum",
+              "applicability": "scored",
               "metrics": {
                 "ownership_signal": false,
-                "response_coverage_rate": null
+                "response_coverage_rate": 61.3
               },
               "excluded_from_parent_medal": false
             }
@@ -1716,19 +1716,19 @@
         "test_verification": {
           "medal": "unrated",
           "target": "bronze",
-          "applicability": "insufficient_data",
+          "applicability": "scored",
           "meets_target": false,
-          "result": "insufficient_data",
+          "result": "below_minimum",
           "metrics": {},
           "composition": [
             {
               "product_id": "bind",
               "repo": "canonical/dns-operators",
               "medal": "unrated",
-              "result": "insufficient_data",
-              "applicability": "insufficient_data",
+              "result": "below_minimum",
+              "applicability": "scored",
               "metrics": {
-                "latest_build_passing": null,
+                "latest_build_passing": false,
                 "uses_jubilant": true
               },
               "excluded_from_parent_medal": false
@@ -1737,10 +1737,10 @@
               "product_id": "dns-policy",
               "repo": "canonical/dns-operators",
               "medal": "unrated",
-              "result": "insufficient_data",
-              "applicability": "insufficient_data",
+              "result": "below_minimum",
+              "applicability": "scored",
               "metrics": {
-                "latest_build_passing": null,
+                "latest_build_passing": false,
                 "uses_jubilant": true
               },
               "excluded_from_parent_medal": false
@@ -1808,11 +1808,11 @@
           ]
         },
         "documentation": {
-          "medal": "unrated",
+          "medal": "bronze",
           "target": "bronze",
           "applicability": "scored",
-          "meets_target": false,
-          "result": "below_minimum",
+          "meets_target": true,
+          "result": "bronze",
           "metrics": {},
           "composition": [
             {
@@ -1878,11 +1878,11 @@
             {
               "product_id": "dns-secondary",
               "repo": "canonical/dns-operators",
-              "medal": "unrated",
-              "result": "below_minimum",
+              "medal": "bronze",
+              "result": "bronze",
               "applicability": "scored",
               "metrics": {
-                "readme_present": false,
+                "readme_present": true,
                 "contributing_present": false,
                 "has_security": false,
                 "diataxis_coverage_ai": 0,
@@ -1893,11 +1893,11 @@
             {
               "product_id": "charmed-bind",
               "repo": "canonical/dns-operators",
-              "medal": "unrated",
-              "result": "below_minimum",
+              "medal": "bronze",
+              "result": "bronze",
               "applicability": "scored",
               "metrics": {
-                "readme_present": false,
+                "readme_present": true,
                 "contributing_present": false,
                 "has_security": false,
                 "diataxis_coverage_ai": 0,
@@ -1908,11 +1908,11 @@
             {
               "product_id": "charmed-dns-policy",
               "repo": "canonical/dns-operators",
-              "medal": "unrated",
-              "result": "below_minimum",
+              "medal": "bronze",
+              "result": "bronze",
               "applicability": "scored",
               "metrics": {
-                "readme_present": false,
+                "readme_present": true,
                 "contributing_present": false,
                 "has_security": false,
                 "diataxis_coverage_ai": 0,
@@ -1923,11 +1923,11 @@
           ]
         },
         "security_ssdlc": {
-          "medal": "bronze",
+          "medal": "unrated",
           "target": "bronze",
           "applicability": "scored",
-          "meets_target": true,
-          "result": "bronze",
+          "meets_target": false,
+          "result": "below_minimum",
           "metrics": {},
           "composition": [
             {
@@ -1946,11 +1946,11 @@
             {
               "product_id": "dns-policy",
               "repo": "canonical/dns-operators",
-              "medal": "bronze",
-              "result": "bronze",
+              "medal": "unrated",
+              "result": "below_minimum",
               "applicability": "scored",
               "metrics": {
-                "renovate_enabled": true,
+                "renovate_enabled": false,
                 "branch_protection_required_checks": false,
                 "signed_commits_required": false
               },
@@ -1985,11 +1985,11 @@
             {
               "product_id": "dns-secondary",
               "repo": "canonical/dns-operators",
-              "medal": "bronze",
-              "result": "bronze",
+              "medal": "unrated",
+              "result": "below_minimum",
               "applicability": "scored",
               "metrics": {
-                "renovate_enabled": true,
+                "renovate_enabled": false,
                 "branch_protection_required_checks": false,
                 "signed_commits_required": false
               },
@@ -2026,20 +2026,20 @@
         "engagement": {
           "medal": "unrated",
           "target": "bronze",
-          "applicability": "insufficient_data",
+          "applicability": "scored",
           "meets_target": false,
-          "result": "insufficient_data",
+          "result": "below_minimum",
           "metrics": {},
           "composition": [
             {
               "product_id": "bind",
               "repo": "canonical/dns-operators",
               "medal": "unrated",
-              "result": "insufficient_data",
-              "applicability": "insufficient_data",
+              "result": "below_minimum",
+              "applicability": "scored",
               "metrics": {
                 "ownership_signal": false,
-                "response_coverage_rate": null
+                "response_coverage_rate": 3.1
               },
               "excluded_from_parent_medal": false
             },
@@ -2125,9 +2125,9 @@
       "name": "Falco",
       "description": "Falco is an open-source runtime security tool for physical and virtual machines.\nIt detects anomalous activity and potential security threats in real time.\nThe Falco operators include a subordinate machine charm for Falco and a Kubernetes\ncharm for Falcosidekick, which connects Falco to external ecosystems.",
       "lifecycle": "stable",
-      "current_medal": "bronze",
+      "current_medal": "unrated",
       "target_medal": "silver",
-      "current_result": "bronze",
+      "current_result": "below_minimum",
       "target_result": "silver",
       "meets_target": false,
       "squad": "emea",
@@ -2163,7 +2163,7 @@
               "applicability": "insufficient_data",
               "metrics": {
                 "latest_build_passing": null,
-                "uses_jubilant": false
+                "uses_jubilant": true
               },
               "excluded_from_parent_medal": false
             },
@@ -2175,7 +2175,7 @@
               "applicability": "insufficient_data",
               "metrics": {
                 "latest_build_passing": null,
-                "uses_jubilant": false
+                "uses_jubilant": true
               },
               "excluded_from_parent_medal": false
             }
@@ -2222,11 +2222,11 @@
           ]
         },
         "security_ssdlc": {
-          "medal": "bronze",
+          "medal": "unrated",
           "target": "silver",
           "applicability": "scored",
           "meets_target": false,
-          "result": "bronze",
+          "result": "below_minimum",
           "metrics": {},
           "composition": [
             {
@@ -2245,11 +2245,11 @@
             {
               "product_id": "falcosidekick-k8s",
               "repo": "canonical/falco-operators",
-              "medal": "bronze",
-              "result": "bronze",
+              "medal": "unrated",
+              "result": "below_minimum",
               "applicability": "scored",
               "metrics": {
-                "renovate_enabled": true,
+                "renovate_enabled": false,
                 "branch_protection_required_checks": false,
                 "signed_commits_required": false
               },
@@ -2258,22 +2258,22 @@
           ]
         },
         "engagement": {
-          "medal": "unrated",
+          "medal": "gold",
           "target": "silver",
-          "applicability": "insufficient_data",
-          "meets_target": false,
-          "result": "insufficient_data",
+          "applicability": "scored",
+          "meets_target": true,
+          "result": "gold",
           "metrics": {},
           "composition": [
             {
               "product_id": "falco-charm",
               "repo": "canonical/falco-operators",
-              "medal": "unrated",
-              "result": "insufficient_data",
-              "applicability": "insufficient_data",
+              "medal": "gold",
+              "result": "gold",
+              "applicability": "scored",
               "metrics": {
-                "ownership_signal": false,
-                "response_coverage_rate": null
+                "ownership_signal": true,
+                "response_coverage_rate": 96.9
               },
               "excluded_from_parent_medal": false
             },
@@ -2320,19 +2320,19 @@
         "test_verification": {
           "medal": "unrated",
           "target": "gold",
-          "applicability": "scored",
+          "applicability": "insufficient_data",
           "meets_target": false,
-          "result": "below_minimum",
+          "result": "insufficient_data",
           "metrics": {},
           "composition": [
             {
               "product_id": "gateway-api-integrator-charm",
               "repo": "canonical/gateway-api-integrator-operator",
               "medal": "unrated",
-              "result": "below_minimum",
-              "applicability": "scored",
+              "result": "insufficient_data",
+              "applicability": "insufficient_data",
               "metrics": {
-                "latest_build_passing": false,
+                "latest_build_passing": null,
                 "uses_jubilant": true
               },
               "excluded_from_parent_medal": false
@@ -2390,20 +2390,20 @@
         "engagement": {
           "medal": "unrated",
           "target": "gold",
-          "applicability": "insufficient_data",
+          "applicability": "scored",
           "meets_target": false,
-          "result": "insufficient_data",
+          "result": "below_minimum",
           "metrics": {},
           "composition": [
             {
               "product_id": "gateway-api-integrator-charm",
               "repo": "canonical/gateway-api-integrator-operator",
               "medal": "unrated",
-              "result": "insufficient_data",
-              "applicability": "insufficient_data",
+              "result": "below_minimum",
+              "applicability": "scored",
               "metrics": {
                 "ownership_signal": false,
-                "response_coverage_rate": null
+                "response_coverage_rate": 37.0
               },
               "excluded_from_parent_medal": false
             }
@@ -2417,9 +2417,9 @@
       "name": "HAProxy",
       "description": "HAProxy is a TCP/HTTP reverse proxy which is particularly suited for high availability environments.\nIt features connection persistence through HTTP cookies, load balancing, header addition, modification, deletion both ways.\nIt has request blocking capabilities and provides interface to display server status.",
       "lifecycle": "stable",
-      "current_medal": "bronze",
+      "current_medal": "unrated",
       "target_medal": "gold",
-      "current_result": "bronze",
+      "current_result": "below_minimum",
       "target_result": "gold",
       "meets_target": false,
       "squad": "emea",
@@ -2463,7 +2463,7 @@
               "applicability": "insufficient_data",
               "metrics": {
                 "latest_build_passing": null,
-                "uses_jubilant": false
+                "uses_jubilant": true
               },
               "excluded_from_parent_medal": false
             },
@@ -2475,7 +2475,7 @@
               "applicability": "insufficient_data",
               "metrics": {
                 "latest_build_passing": null,
-                "uses_jubilant": false
+                "uses_jubilant": true
               },
               "excluded_from_parent_medal": false
             },
@@ -2487,7 +2487,7 @@
               "applicability": "insufficient_data",
               "metrics": {
                 "latest_build_passing": null,
-                "uses_jubilant": false
+                "uses_jubilant": true
               },
               "excluded_from_parent_medal": false
             },
@@ -2499,7 +2499,7 @@
               "applicability": "insufficient_data",
               "metrics": {
                 "latest_build_passing": null,
-                "uses_jubilant": false
+                "uses_jubilant": true
               },
               "excluded_from_parent_medal": false
             }
@@ -2640,20 +2640,20 @@
         "engagement": {
           "medal": "unrated",
           "target": "gold",
-          "applicability": "insufficient_data",
+          "applicability": "scored",
           "meets_target": false,
-          "result": "insufficient_data",
+          "result": "below_minimum",
           "metrics": {},
           "composition": [
             {
               "product_id": "haproxy-charm",
               "repo": "canonical/haproxy-operator",
               "medal": "unrated",
-              "result": "insufficient_data",
-              "applicability": "insufficient_data",
+              "result": "below_minimum",
+              "applicability": "scored",
               "metrics": {
                 "ownership_signal": false,
-                "response_coverage_rate": null
+                "response_coverage_rate": 93.3
               },
               "excluded_from_parent_medal": false
             },
@@ -2707,7 +2707,7 @@
       "target_medal": "bronze",
       "current_result": "bronze",
       "target_result": "bronze",
-      "meets_target": false,
+      "meets_target": true,
       "squad": "emea",
       "is_portfolio_entry": true,
       "documentation_url": "https://hockeypuck.io/",
@@ -2792,22 +2792,22 @@
           ]
         },
         "engagement": {
-          "medal": "unrated",
+          "medal": "gold",
           "target": "bronze",
-          "applicability": "insufficient_data",
-          "meets_target": false,
-          "result": "insufficient_data",
+          "applicability": "scored",
+          "meets_target": true,
+          "result": "gold",
           "metrics": {},
           "composition": [
             {
               "product_id": "hockeypuck-k8s-charm",
               "repo": "canonical/hockeypuck-k8s-operator",
-              "medal": "unrated",
-              "result": "insufficient_data",
-              "applicability": "insufficient_data",
+              "medal": "gold",
+              "result": "gold",
+              "applicability": "scored",
               "metrics": {
-                "ownership_signal": false,
-                "response_coverage_rate": null
+                "ownership_signal": true,
+                "response_coverage_rate": 91.7
               },
               "excluded_from_parent_medal": false
             }
@@ -2852,22 +2852,22 @@
       "parent_product_ids": [],
       "dimensions": {
         "test_verification": {
-          "medal": "bronze",
+          "medal": "unrated",
           "target": "silver",
-          "applicability": "scored",
+          "applicability": "insufficient_data",
           "meets_target": false,
-          "result": "bronze",
+          "result": "insufficient_data",
           "metrics": {},
           "composition": [
             {
               "product_id": "squid-forward-proxy",
               "repo": "canonical/http-proxy-operators",
-              "medal": "bronze",
-              "result": "bronze",
-              "applicability": "scored",
+              "medal": "unrated",
+              "result": "insufficient_data",
+              "applicability": "insufficient_data",
               "metrics": {
-                "latest_build_passing": true,
-                "uses_jubilant": false
+                "latest_build_passing": null,
+                "uses_jubilant": true
               },
               "excluded_from_parent_medal": false
             },
@@ -2879,7 +2879,7 @@
               "applicability": "insufficient_data",
               "metrics": {
                 "latest_build_passing": null,
-                "uses_jubilant": false
+                "uses_jubilant": true
               },
               "excluded_from_parent_medal": false
             },
@@ -2891,7 +2891,7 @@
               "applicability": "insufficient_data",
               "metrics": {
                 "latest_build_passing": null,
-                "uses_jubilant": false
+                "uses_jubilant": true
               },
               "excluded_from_parent_medal": false
             },
@@ -3042,46 +3042,46 @@
           ]
         },
         "engagement": {
-          "medal": "unrated",
+          "medal": "silver",
           "target": "silver",
-          "applicability": "insufficient_data",
-          "meets_target": false,
-          "result": "insufficient_data",
+          "applicability": "scored",
+          "meets_target": true,
+          "result": "silver",
           "metrics": {},
           "composition": [
             {
               "product_id": "squid-forward-proxy",
               "repo": "canonical/http-proxy-operators",
-              "medal": "unrated",
-              "result": "insufficient_data",
-              "applicability": "insufficient_data",
+              "medal": "silver",
+              "result": "silver",
+              "applicability": "scored",
               "metrics": {
-                "ownership_signal": false,
-                "response_coverage_rate": null
+                "ownership_signal": true,
+                "response_coverage_rate": 80.0
               },
               "excluded_from_parent_medal": false
             },
             {
               "product_id": "http-proxy-policy",
               "repo": "canonical/http-proxy-operators",
-              "medal": "unrated",
-              "result": "insufficient_data",
-              "applicability": "insufficient_data",
+              "medal": "silver",
+              "result": "silver",
+              "applicability": "scored",
               "metrics": {
-                "ownership_signal": false,
-                "response_coverage_rate": null
+                "ownership_signal": true,
+                "response_coverage_rate": 80.0
               },
               "excluded_from_parent_medal": false
             },
             {
               "product_id": "http-proxy-configurator",
               "repo": "canonical/http-proxy-operators",
-              "medal": "unrated",
-              "result": "insufficient_data",
-              "applicability": "insufficient_data",
+              "medal": "silver",
+              "result": "silver",
+              "applicability": "scored",
               "metrics": {
-                "ownership_signal": false,
-                "response_coverage_rate": null
+                "ownership_signal": true,
+                "response_coverage_rate": 80.0
               },
               "excluded_from_parent_medal": false
             },
@@ -3205,22 +3205,22 @@
           ]
         },
         "engagement": {
-          "medal": "unrated",
+          "medal": "gold",
           "target": "gold",
-          "applicability": "insufficient_data",
-          "meets_target": false,
-          "result": "insufficient_data",
+          "applicability": "scored",
+          "meets_target": true,
+          "result": "gold",
           "metrics": {},
           "composition": [
             {
               "product_id": "httprequest-lego-provider-charm",
               "repo": "canonical/httprequest-lego-provider",
-              "medal": "unrated",
-              "result": "insufficient_data",
-              "applicability": "insufficient_data",
+              "medal": "gold",
+              "result": "gold",
+              "applicability": "scored",
               "metrics": {
-                "ownership_signal": false,
-                "response_coverage_rate": null
+                "ownership_signal": true,
+                "response_coverage_rate": 90.5
               },
               "excluded_from_parent_medal": false
             }
@@ -3289,7 +3289,7 @@
               "applicability": "scored",
               "metrics": {
                 "latest_build_passing": false,
-                "uses_jubilant": false
+                "uses_jubilant": true
               },
               "excluded_from_parent_medal": false
             }
@@ -3344,22 +3344,22 @@
           ]
         },
         "engagement": {
-          "medal": "unrated",
+          "medal": "bronze",
           "target": "silver",
-          "applicability": "insufficient_data",
+          "applicability": "scored",
           "meets_target": false,
-          "result": "insufficient_data",
+          "result": "bronze",
           "metrics": {},
           "composition": [
             {
               "product_id": "indico-charm",
               "repo": "canonical/indico-operator",
-              "medal": "unrated",
-              "result": "insufficient_data",
-              "applicability": "insufficient_data",
+              "medal": "bronze",
+              "result": "bronze",
+              "applicability": "scored",
               "metrics": {
-                "ownership_signal": false,
-                "response_coverage_rate": null
+                "ownership_signal": true,
+                "response_coverage_rate": 76.2
               },
               "excluded_from_parent_medal": false
             }
@@ -3373,9 +3373,9 @@
       "name": "Jenkins",
       "description": "Jenkins is an extendable continuous integration server that monitors executions of repeated jobs.\nThe focus of Jenkins is the building/testing of software projects continuously, and monitoring\nexecutions of externally-run jobs. This product provides the Jenkins server service with both\nKubernetes and machine agent support for flexible automation environments.",
       "lifecycle": "stable",
-      "current_medal": "bronze",
+      "current_medal": "unrated",
       "target_medal": "bronze",
-      "current_result": "bronze",
+      "current_result": "below_minimum",
       "target_result": "bronze",
       "meets_target": false,
       "squad": "apac",
@@ -3400,22 +3400,22 @@
       "parent_product_ids": [],
       "dimensions": {
         "test_verification": {
-          "medal": "gold",
+          "medal": "bronze",
           "target": "bronze",
           "applicability": "scored",
           "meets_target": true,
-          "result": "gold",
+          "result": "bronze",
           "metrics": {},
           "composition": [
             {
               "product_id": "jenkins-k8s",
               "repo": "canonical/jenkins-k8s-operator",
-              "medal": "gold",
-              "result": "gold",
+              "medal": "bronze",
+              "result": "bronze",
               "applicability": "scored",
               "metrics": {
                 "latest_build_passing": true,
-                "uses_jubilant": true
+                "uses_jubilant": false
               },
               "excluded_from_parent_medal": false
             },
@@ -3439,7 +3439,7 @@
               "applicability": "insufficient_data",
               "metrics": {
                 "latest_build_passing": null,
-                "uses_jubilant": true
+                "uses_jubilant": false
               },
               "excluded_from_parent_medal": false
             }
@@ -3501,21 +3501,21 @@
           ]
         },
         "security_ssdlc": {
-          "medal": "bronze",
+          "medal": "unrated",
           "target": "bronze",
           "applicability": "scored",
-          "meets_target": true,
-          "result": "bronze",
+          "meets_target": false,
+          "result": "below_minimum",
           "metrics": {},
           "composition": [
             {
               "product_id": "jenkins-k8s",
               "repo": "canonical/jenkins-k8s-operator",
-              "medal": "bronze",
-              "result": "bronze",
+              "medal": "unrated",
+              "result": "below_minimum",
               "applicability": "scored",
               "metrics": {
-                "renovate_enabled": true,
+                "renovate_enabled": false,
                 "branch_protection_required_checks": false,
                 "signed_commits_required": false
               },
@@ -3552,20 +3552,20 @@
         "engagement": {
           "medal": "unrated",
           "target": "bronze",
-          "applicability": "insufficient_data",
+          "applicability": "scored",
           "meets_target": false,
-          "result": "insufficient_data",
+          "result": "below_minimum",
           "metrics": {},
           "composition": [
             {
               "product_id": "jenkins-k8s",
               "repo": "canonical/jenkins-k8s-operator",
               "medal": "unrated",
-              "result": "insufficient_data",
-              "applicability": "insufficient_data",
+              "result": "below_minimum",
+              "applicability": "scored",
               "metrics": {
                 "ownership_signal": false,
-                "response_coverage_rate": null
+                "response_coverage_rate": 18.8
               },
               "excluded_from_parent_medal": false
             },
@@ -3640,19 +3640,19 @@
         "test_verification": {
           "medal": "unrated",
           "target": "silver",
-          "applicability": "insufficient_data",
+          "applicability": "scored",
           "meets_target": false,
-          "result": "insufficient_data",
+          "result": "below_minimum",
           "metrics": {},
           "composition": [
             {
               "product_id": "dovecot",
               "repo": "canonical/mailserver-operators",
               "medal": "unrated",
-              "result": "insufficient_data",
-              "applicability": "insufficient_data",
+              "result": "below_minimum",
+              "applicability": "scored",
               "metrics": {
-                "latest_build_passing": null,
+                "latest_build_passing": false,
                 "uses_jubilant": false
               },
               "excluded_from_parent_medal": false
@@ -3661,10 +3661,10 @@
               "product_id": "postfix-relay",
               "repo": "canonical/mailserver-operators",
               "medal": "unrated",
-              "result": "insufficient_data",
-              "applicability": "insufficient_data",
+              "result": "below_minimum",
+              "applicability": "scored",
               "metrics": {
-                "latest_build_passing": null,
+                "latest_build_passing": false,
                 "uses_jubilant": false
               },
               "excluded_from_parent_medal": false
@@ -3673,10 +3673,10 @@
               "product_id": "postfix-relay-configurator",
               "repo": "canonical/mailserver-operators",
               "medal": "unrated",
-              "result": "insufficient_data",
-              "applicability": "insufficient_data",
+              "result": "below_minimum",
+              "applicability": "scored",
               "metrics": {
-                "latest_build_passing": null,
+                "latest_build_passing": false,
                 "uses_jubilant": false
               },
               "excluded_from_parent_medal": false
@@ -3793,11 +3793,11 @@
           ]
         },
         "security_ssdlc": {
-          "medal": "unrated",
+          "medal": "bronze",
           "target": "silver",
           "applicability": "scored",
           "meets_target": false,
-          "result": "below_minimum",
+          "result": "bronze",
           "metrics": {},
           "composition": [
             {
@@ -3816,11 +3816,11 @@
             {
               "product_id": "postfix-relay",
               "repo": "canonical/mailserver-operators",
-              "medal": "unrated",
-              "result": "below_minimum",
+              "medal": "bronze",
+              "result": "bronze",
               "applicability": "scored",
               "metrics": {
-                "renovate_enabled": false,
+                "renovate_enabled": true,
                 "branch_protection_required_checks": false,
                 "signed_commits_required": false
               },
@@ -3855,11 +3855,11 @@
             {
               "product_id": "opendkim-snap",
               "repo": "canonical/mailserver-operators",
-              "medal": "unrated",
-              "result": "below_minimum",
+              "medal": "bronze",
+              "result": "bronze",
               "applicability": "scored",
               "metrics": {
-                "renovate_enabled": false,
+                "renovate_enabled": true,
                 "branch_protection_required_checks": false,
                 "signed_commits_required": false
               },
@@ -4013,11 +4013,11 @@
       "parent_product_ids": [],
       "dimensions": {
         "test_verification": {
-          "medal": "unrated",
+          "medal": "bronze",
           "target": "gold",
           "applicability": "scored",
           "meets_target": false,
-          "result": "below_minimum",
+          "result": "bronze",
           "metrics": {},
           "composition": [
             {
@@ -4036,10 +4036,10 @@
               "product_id": "draupnir",
               "repo": "canonical/draupnir-snap",
               "medal": "unrated",
-              "result": "below_minimum",
-              "applicability": "scored",
+              "result": "insufficient_data",
+              "applicability": "insufficient_data",
               "metrics": {
-                "latest_build_passing": false,
+                "latest_build_passing": null,
                 "uses_jubilant": false
               },
               "excluded_from_parent_medal": false
@@ -4047,11 +4047,11 @@
             {
               "product_id": "mjolnir",
               "repo": "canonical/mjolnir-snap",
-              "medal": "bronze",
-              "result": "bronze",
-              "applicability": "scored",
+              "medal": "unrated",
+              "result": "insufficient_data",
+              "applicability": "insufficient_data",
               "metrics": {
-                "latest_build_passing": true,
+                "latest_build_passing": null,
                 "uses_jubilant": false
               },
               "excluded_from_parent_medal": false
@@ -4059,11 +4059,11 @@
             {
               "product_id": "mas-cli",
               "repo": "canonical/mas-cli-snap",
-              "medal": "bronze",
-              "result": "bronze",
-              "applicability": "scored",
+              "medal": "unrated",
+              "result": "insufficient_data",
+              "applicability": "insufficient_data",
               "metrics": {
-                "latest_build_passing": true,
+                "latest_build_passing": null,
                 "uses_jubilant": false
               },
               "excluded_from_parent_medal": false
@@ -4071,11 +4071,11 @@
             {
               "product_id": "matrix-appservice-irc",
               "repo": "canonical/matrix-appservice-irc",
-              "medal": "bronze",
-              "result": "bronze",
-              "applicability": "scored",
+              "medal": "unrated",
+              "result": "insufficient_data",
+              "applicability": "insufficient_data",
               "metrics": {
-                "latest_build_passing": true,
+                "latest_build_passing": null,
                 "uses_jubilant": false
               },
               "excluded_from_parent_medal": false
@@ -4107,11 +4107,11 @@
             {
               "product_id": "maubot",
               "repo": "canonical/maubot-operator",
-              "medal": "bronze",
-              "result": "bronze",
-              "applicability": "scored",
+              "medal": "unrated",
+              "result": "insufficient_data",
+              "applicability": "insufficient_data",
               "metrics": {
-                "latest_build_passing": true,
+                "latest_build_passing": null,
                 "uses_jubilant": false
               },
               "excluded_from_parent_medal": false
@@ -4299,11 +4299,11 @@
             {
               "product_id": "draupnir",
               "repo": "canonical/draupnir-snap",
-              "medal": "unrated",
-              "result": "below_minimum",
+              "medal": "bronze",
+              "result": "bronze",
               "applicability": "scored",
               "metrics": {
-                "renovate_enabled": false,
+                "renovate_enabled": true,
                 "branch_protection_required_checks": false,
                 "signed_commits_required": false
               },
@@ -4325,11 +4325,11 @@
             {
               "product_id": "mas-cli",
               "repo": "canonical/mas-cli-snap",
-              "medal": "bronze",
-              "result": "bronze",
+              "medal": "unrated",
+              "result": "below_minimum",
               "applicability": "scored",
               "metrics": {
-                "renovate_enabled": true,
+                "renovate_enabled": false,
                 "branch_protection_required_checks": false,
                 "signed_commits_required": false
               },
@@ -4338,11 +4338,11 @@
             {
               "product_id": "matrix-appservice-irc",
               "repo": "canonical/matrix-appservice-irc",
-              "medal": "unrated",
-              "result": "below_minimum",
+              "medal": "bronze",
+              "result": "bronze",
               "applicability": "scored",
               "metrics": {
-                "renovate_enabled": false,
+                "renovate_enabled": true,
                 "branch_protection_required_checks": false,
                 "signed_commits_required": false
               },
@@ -4403,11 +4403,11 @@
           ]
         },
         "engagement": {
-          "medal": "unrated",
+          "medal": "gold",
           "target": "gold",
-          "applicability": "insufficient_data",
-          "meets_target": false,
-          "result": "insufficient_data",
+          "applicability": "scored",
+          "meets_target": true,
+          "result": "gold",
           "metrics": {},
           "composition": [
             {
@@ -4485,12 +4485,12 @@
             {
               "product_id": "saml-integrator",
               "repo": "canonical/saml-integrator-operator",
-              "medal": "unrated",
-              "result": "insufficient_data",
-              "applicability": "insufficient_data",
+              "medal": "gold",
+              "result": "gold",
+              "applicability": "scored",
               "metrics": {
-                "ownership_signal": false,
-                "response_coverage_rate": null
+                "ownership_signal": true,
+                "response_coverage_rate": 92.3
               },
               "excluded_from_parent_medal": false
             },
@@ -4567,7 +4567,7 @@
               "applicability": "insufficient_data",
               "metrics": {
                 "latest_build_passing": null,
-                "uses_jubilant": true
+                "uses_jubilant": false
               },
               "excluded_from_parent_medal": false
             }
@@ -4622,22 +4622,22 @@
           ]
         },
         "engagement": {
-          "medal": "unrated",
+          "medal": "silver",
           "target": "gold",
-          "applicability": "insufficient_data",
+          "applicability": "scored",
           "meets_target": false,
-          "result": "insufficient_data",
+          "result": "silver",
           "metrics": {},
           "composition": [
             {
               "product_id": "mattermost-charm",
               "repo": "canonical/mattermost-k8s-operator",
-              "medal": "unrated",
-              "result": "insufficient_data",
-              "applicability": "insufficient_data",
+              "medal": "silver",
+              "result": "silver",
+              "applicability": "scored",
               "metrics": {
-                "ownership_signal": false,
-                "response_coverage_rate": null
+                "ownership_signal": true,
+                "response_coverage_rate": 82.4
               },
               "excluded_from_parent_medal": false
             }
@@ -4655,7 +4655,7 @@
       "target_medal": "bronze",
       "current_result": "bronze",
       "target_result": "bronze",
-      "meets_target": false,
+      "meets_target": true,
       "squad": "emea",
       "is_portfolio_entry": true,
       "documentation_url": "https://netboxlabs.com/",
@@ -4740,22 +4740,22 @@
           ]
         },
         "engagement": {
-          "medal": "unrated",
+          "medal": "gold",
           "target": "bronze",
-          "applicability": "insufficient_data",
-          "meets_target": false,
-          "result": "insufficient_data",
+          "applicability": "scored",
+          "meets_target": true,
+          "result": "gold",
           "metrics": {},
           "composition": [
             {
               "product_id": "netbox-k8s",
               "repo": "canonical/netbox-k8s-operator",
-              "medal": "unrated",
-              "result": "insufficient_data",
-              "applicability": "insufficient_data",
+              "medal": "gold",
+              "result": "gold",
+              "applicability": "scored",
               "metrics": {
-                "ownership_signal": false,
-                "response_coverage_rate": null
+                "ownership_signal": true,
+                "response_coverage_rate": 94.1
               },
               "excluded_from_parent_medal": false
             }
@@ -4791,21 +4791,21 @@
       ],
       "dimensions": {
         "test_verification": {
-          "medal": "bronze",
+          "medal": "unrated",
           "target": "bronze",
-          "applicability": "scored",
-          "meets_target": true,
-          "result": "bronze",
+          "applicability": "insufficient_data",
+          "meets_target": false,
+          "result": "insufficient_data",
           "metrics": {},
           "composition": [
             {
               "product_id": "nginx-ingress-integrator-charm",
               "repo": "canonical/nginx-ingress-integrator-operator",
-              "medal": "bronze",
-              "result": "bronze",
-              "applicability": "scored",
+              "medal": "unrated",
+              "result": "insufficient_data",
+              "applicability": "insufficient_data",
               "metrics": {
-                "latest_build_passing": true,
+                "latest_build_passing": null,
                 "uses_jubilant": false
               },
               "excluded_from_parent_medal": false
@@ -4861,22 +4861,22 @@
           ]
         },
         "engagement": {
-          "medal": "unrated",
+          "medal": "gold",
           "target": "bronze",
-          "applicability": "insufficient_data",
-          "meets_target": false,
-          "result": "insufficient_data",
+          "applicability": "scored",
+          "meets_target": true,
+          "result": "gold",
           "metrics": {},
           "composition": [
             {
               "product_id": "nginx-ingress-integrator-charm",
               "repo": "canonical/nginx-ingress-integrator-operator",
-              "medal": "unrated",
-              "result": "insufficient_data",
-              "applicability": "insufficient_data",
+              "medal": "gold",
+              "result": "gold",
+              "applicability": "scored",
               "metrics": {
-                "ownership_signal": false,
-                "response_coverage_rate": null
+                "ownership_signal": true,
+                "response_coverage_rate": 91.3
               },
               "excluded_from_parent_medal": false
             }
@@ -4984,22 +4984,22 @@
           ]
         },
         "engagement": {
-          "medal": "unrated",
+          "medal": "silver",
           "target": "silver",
-          "applicability": "insufficient_data",
-          "meets_target": false,
-          "result": "insufficient_data",
+          "applicability": "scored",
+          "meets_target": true,
+          "result": "silver",
           "metrics": {},
           "composition": [
             {
               "product_id": "opencti-charm",
               "repo": "canonical/opencti-operator",
-              "medal": "unrated",
-              "result": "insufficient_data",
-              "applicability": "insufficient_data",
+              "medal": "silver",
+              "result": "silver",
+              "applicability": "scored",
               "metrics": {
-                "ownership_signal": false,
-                "response_coverage_rate": null
+                "ownership_signal": true,
+                "response_coverage_rate": 80.0
               },
               "excluded_from_parent_medal": false
             }
@@ -5017,7 +5017,7 @@
       "target_medal": "bronze",
       "current_result": "bronze",
       "target_result": "bronze",
-      "meets_target": false,
+      "meets_target": true,
       "squad": "emea",
       "is_portfolio_entry": true,
       "documentation_url": "https://github.com/canonical/penpot-operator",
@@ -5032,22 +5032,22 @@
       "parent_product_ids": [],
       "dimensions": {
         "test_verification": {
-          "medal": "bronze",
+          "medal": "gold",
           "target": "bronze",
           "applicability": "scored",
           "meets_target": true,
-          "result": "bronze",
+          "result": "gold",
           "metrics": {},
           "composition": [
             {
               "product_id": "penpot-charm",
               "repo": "canonical/penpot-operator",
-              "medal": "bronze",
-              "result": "bronze",
+              "medal": "gold",
+              "result": "gold",
               "applicability": "scored",
               "metrics": {
                 "latest_build_passing": true,
-                "uses_jubilant": false
+                "uses_jubilant": true
               },
               "excluded_from_parent_medal": false
             }
@@ -5102,22 +5102,22 @@
           ]
         },
         "engagement": {
-          "medal": "unrated",
+          "medal": "silver",
           "target": "bronze",
-          "applicability": "insufficient_data",
-          "meets_target": false,
-          "result": "insufficient_data",
+          "applicability": "scored",
+          "meets_target": true,
+          "result": "silver",
           "metrics": {},
           "composition": [
             {
               "product_id": "penpot-charm",
               "repo": "canonical/penpot-operator",
-              "medal": "unrated",
-              "result": "insufficient_data",
-              "applicability": "insufficient_data",
+              "medal": "silver",
+              "result": "silver",
+              "applicability": "scored",
               "metrics": {
-                "ownership_signal": false,
-                "response_coverage_rate": null
+                "ownership_signal": true,
+                "response_coverage_rate": 88.9
               },
               "excluded_from_parent_medal": false
             }
@@ -5234,7 +5234,7 @@
               "result": "insufficient_data",
               "applicability": "insufficient_data",
               "metrics": {
-                "ownership_signal": false,
+                "ownership_signal": true,
                 "response_coverage_rate": null
               },
               "excluded_from_parent_medal": false
@@ -5308,14 +5308,14 @@
           "composition": null
         },
         "engagement": {
-          "medal": "unrated",
+          "medal": "gold",
           "target": "gold",
-          "applicability": "insufficient_data",
-          "meets_target": false,
-          "result": "insufficient_data",
+          "applicability": "scored",
+          "meets_target": true,
+          "result": "gold",
           "metrics": {
-            "ownership_signal": false,
-            "response_coverage_rate": null
+            "ownership_signal": true,
+            "response_coverage_rate": 92.3
           },
           "composition": null
         }
@@ -5406,7 +5406,7 @@
               "applicability": "insufficient_data",
               "metrics": {
                 "latest_build_passing": null,
-                "uses_jubilant": true
+                "uses_jubilant": false
               },
               "excluded_from_parent_medal": false
             },
@@ -5598,11 +5598,11 @@
             {
               "product_id": "github-runner",
               "repo": "canonical/github-runner-operator",
-              "medal": "bronze",
-              "result": "bronze",
+              "medal": "unrated",
+              "result": "below_minimum",
               "applicability": "scored",
               "metrics": {
-                "renovate_enabled": true,
+                "renovate_enabled": false,
                 "branch_protection_required_checks": false,
                 "signed_commits_required": false
               },
@@ -5611,11 +5611,11 @@
             {
               "product_id": "github-runner-image-builder",
               "repo": "canonical/github-runner-image-builder-operator",
-              "medal": "bronze",
-              "result": "bronze",
+              "medal": "unrated",
+              "result": "below_minimum",
               "applicability": "scored",
               "metrics": {
-                "renovate_enabled": true,
+                "renovate_enabled": false,
                 "branch_protection_required_checks": false,
                 "signed_commits_required": false
               },
@@ -5689,34 +5689,34 @@
           ]
         },
         "engagement": {
-          "medal": "unrated",
+          "medal": "silver",
           "target": "gold",
-          "applicability": "insufficient_data",
+          "applicability": "scored",
           "meets_target": false,
-          "result": "insufficient_data",
+          "result": "silver",
           "metrics": {},
           "composition": [
             {
               "product_id": "github-runner",
               "repo": "canonical/github-runner-operator",
-              "medal": "unrated",
-              "result": "insufficient_data",
-              "applicability": "insufficient_data",
+              "medal": "silver",
+              "result": "silver",
+              "applicability": "scored",
               "metrics": {
-                "ownership_signal": false,
-                "response_coverage_rate": null
+                "ownership_signal": true,
+                "response_coverage_rate": 87.5
               },
               "excluded_from_parent_medal": false
             },
             {
               "product_id": "github-runner-image-builder",
               "repo": "canonical/github-runner-image-builder-operator",
-              "medal": "unrated",
-              "result": "insufficient_data",
-              "applicability": "insufficient_data",
+              "medal": "silver",
+              "result": "silver",
+              "applicability": "scored",
               "metrics": {
-                "ownership_signal": false,
-                "response_coverage_rate": null
+                "ownership_signal": true,
+                "response_coverage_rate": 83.3
               },
               "excluded_from_parent_medal": false
             },
@@ -5727,7 +5727,7 @@
               "result": "insufficient_data",
               "applicability": "insufficient_data",
               "metrics": {
-                "ownership_signal": false,
+                "ownership_signal": true,
                 "response_coverage_rate": null
               },
               "excluded_from_parent_medal": false
@@ -5879,22 +5879,22 @@
           ]
         },
         "engagement": {
-          "medal": "unrated",
+          "medal": "silver",
           "target": "silver",
-          "applicability": "insufficient_data",
-          "meets_target": false,
-          "result": "insufficient_data",
+          "applicability": "scored",
+          "meets_target": true,
+          "result": "silver",
           "metrics": {},
           "composition": [
             {
               "product_id": "smtp-integrator-charm",
               "repo": "canonical/smtp-integrator-operator",
-              "medal": "unrated",
-              "result": "insufficient_data",
-              "applicability": "insufficient_data",
+              "medal": "silver",
+              "result": "silver",
+              "applicability": "scored",
               "metrics": {
-                "ownership_signal": false,
-                "response_coverage_rate": null
+                "ownership_signal": true,
+                "response_coverage_rate": 88.9
               },
               "excluded_from_parent_medal": false
             }
@@ -5936,19 +5936,19 @@
         "test_verification": {
           "medal": "unrated",
           "target": "gold",
-          "applicability": "scored",
+          "applicability": "insufficient_data",
           "meets_target": false,
-          "result": "below_minimum",
+          "result": "insufficient_data",
           "metrics": {},
           "composition": [
             {
               "product_id": "traefik-k8s-charm",
               "repo": "canonical/traefik-k8s-operator",
               "medal": "unrated",
-              "result": "below_minimum",
-              "applicability": "scored",
+              "result": "insufficient_data",
+              "applicability": "insufficient_data",
               "metrics": {
-                "latest_build_passing": false,
+                "latest_build_passing": null,
                 "uses_jubilant": false
               },
               "excluded_from_parent_medal": false
@@ -5981,21 +5981,21 @@
           ]
         },
         "security_ssdlc": {
-          "medal": "bronze",
+          "medal": "unrated",
           "target": "gold",
           "applicability": "scored",
           "meets_target": false,
-          "result": "bronze",
+          "result": "below_minimum",
           "metrics": {},
           "composition": [
             {
               "product_id": "traefik-k8s-charm",
               "repo": "canonical/traefik-k8s-operator",
-              "medal": "bronze",
-              "result": "bronze",
+              "medal": "unrated",
+              "result": "below_minimum",
               "applicability": "scored",
               "metrics": {
-                "renovate_enabled": true,
+                "renovate_enabled": false,
                 "branch_protection_required_checks": false,
                 "signed_commits_required": false
               },
@@ -6006,20 +6006,20 @@
         "engagement": {
           "medal": "unrated",
           "target": "gold",
-          "applicability": "insufficient_data",
+          "applicability": "scored",
           "meets_target": false,
-          "result": "insufficient_data",
+          "result": "below_minimum",
           "metrics": {},
           "composition": [
             {
               "product_id": "traefik-k8s-charm",
               "repo": "canonical/traefik-k8s-operator",
               "medal": "unrated",
-              "result": "insufficient_data",
-              "applicability": "insufficient_data",
+              "result": "below_minimum",
+              "applicability": "scored",
               "metrics": {
                 "ownership_signal": false,
-                "response_coverage_rate": null
+                "response_coverage_rate": 28.0
               },
               "excluded_from_parent_medal": false
             }
@@ -6052,22 +6052,22 @@
       "parent_product_ids": [],
       "dimensions": {
         "test_verification": {
-          "medal": "bronze",
+          "medal": "unrated",
           "target": "bronze",
-          "applicability": "scored",
-          "meets_target": true,
-          "result": "bronze",
+          "applicability": "insufficient_data",
+          "meets_target": false,
+          "result": "insufficient_data",
           "metrics": {},
           "composition": [
             {
               "product_id": "ubuntu-motd-server",
               "repo": "canonical/ubuntu-motd-server-operator",
-              "medal": "bronze",
-              "result": "bronze",
-              "applicability": "scored",
+              "medal": "unrated",
+              "result": "insufficient_data",
+              "applicability": "insufficient_data",
               "metrics": {
-                "latest_build_passing": true,
-                "uses_jubilant": false
+                "latest_build_passing": null,
+                "uses_jubilant": true
               },
               "excluded_from_parent_medal": false
             }
@@ -6122,22 +6122,22 @@
           ]
         },
         "engagement": {
-          "medal": "unrated",
+          "medal": "silver",
           "target": "bronze",
-          "applicability": "insufficient_data",
-          "meets_target": false,
-          "result": "insufficient_data",
+          "applicability": "scored",
+          "meets_target": true,
+          "result": "silver",
           "metrics": {},
           "composition": [
             {
               "product_id": "ubuntu-motd-server",
               "repo": "canonical/ubuntu-motd-server-operator",
-              "medal": "unrated",
-              "result": "insufficient_data",
-              "applicability": "insufficient_data",
+              "medal": "silver",
+              "result": "silver",
+              "applicability": "scored",
               "metrics": {
-                "ownership_signal": false,
-                "response_coverage_rate": null
+                "ownership_signal": true,
+                "response_coverage_rate": 88.2
               },
               "excluded_from_parent_medal": false
             }
@@ -6182,11 +6182,11 @@
       "parent_product_ids": [],
       "dimensions": {
         "test_verification": {
-          "medal": "bronze",
+          "medal": "unrated",
           "target": "silver",
           "applicability": "scored",
           "meets_target": false,
-          "result": "bronze",
+          "result": "below_minimum",
           "metrics": {},
           "composition": [
             {
@@ -6205,10 +6205,10 @@
               "product_id": "wazuh-indexer",
               "repo": "canonical/wazuh-indexer-operator",
               "medal": "unrated",
-              "result": "insufficient_data",
-              "applicability": "insufficient_data",
+              "result": "below_minimum",
+              "applicability": "scored",
               "metrics": {
-                "latest_build_passing": null,
+                "latest_build_passing": false,
                 "uses_jubilant": false
               },
               "excluded_from_parent_medal": false
@@ -6217,10 +6217,10 @@
               "product_id": "wazuh-dashboard",
               "repo": "canonical/wazuh-dashboard-operator",
               "medal": "unrated",
-              "result": "insufficient_data",
-              "applicability": "insufficient_data",
+              "result": "below_minimum",
+              "applicability": "scored",
               "metrics": {
-                "latest_build_passing": null,
+                "latest_build_passing": false,
                 "uses_jubilant": false
               },
               "excluded_from_parent_medal": false
@@ -6293,11 +6293,11 @@
             {
               "product_id": "wazuh-server",
               "repo": "canonical/wazuh-server-operator",
-              "medal": "bronze",
-              "result": "bronze",
+              "medal": "unrated",
+              "result": "below_minimum",
               "applicability": "scored",
               "metrics": {
-                "renovate_enabled": true,
+                "renovate_enabled": false,
                 "branch_protection_required_checks": false,
                 "signed_commits_required": false
               },
@@ -6334,20 +6334,20 @@
         "engagement": {
           "medal": "unrated",
           "target": "silver",
-          "applicability": "insufficient_data",
+          "applicability": "scored",
           "meets_target": false,
-          "result": "insufficient_data",
+          "result": "below_minimum",
           "metrics": {},
           "composition": [
             {
               "product_id": "wazuh-server",
               "repo": "canonical/wazuh-server-operator",
               "medal": "unrated",
-              "result": "insufficient_data",
-              "applicability": "insufficient_data",
+              "result": "below_minimum",
+              "applicability": "scored",
               "metrics": {
                 "ownership_signal": false,
-                "response_coverage_rate": null
+                "response_coverage_rate": 81.2
               },
               "excluded_from_parent_medal": false
             },
@@ -6355,11 +6355,11 @@
               "product_id": "wazuh-indexer",
               "repo": "canonical/wazuh-indexer-operator",
               "medal": "unrated",
-              "result": "insufficient_data",
-              "applicability": "insufficient_data",
+              "result": "below_minimum",
+              "applicability": "scored",
               "metrics": {
                 "ownership_signal": false,
-                "response_coverage_rate": null
+                "response_coverage_rate": 0.0
               },
               "excluded_from_parent_medal": false
             },
@@ -6370,7 +6370,7 @@
               "result": "insufficient_data",
               "applicability": "insufficient_data",
               "metrics": {
-                "ownership_signal": false,
+                "ownership_signal": true,
                 "response_coverage_rate": null
               },
               "excluded_from_parent_medal": false
@@ -6385,9 +6385,9 @@
       "name": "WireGuard gateway",
       "description": "WireGuard gateway is a machine charm that deploys a highly available site-to-site VPN solution based on WireGuard.\nIt features automatic key exchange, OSPF-based route fault tolerance, and VRRP-based virtual redundant routing for\nenterprise-grade VPN deployments.",
       "lifecycle": "stable",
-      "current_medal": "bronze",
+      "current_medal": "unrated",
       "target_medal": "gold",
-      "current_result": "bronze",
+      "current_result": "below_minimum",
       "target_result": "gold",
       "meets_target": false,
       "squad": "apac",
@@ -6476,20 +6476,20 @@
         "engagement": {
           "medal": "unrated",
           "target": "gold",
-          "applicability": "insufficient_data",
+          "applicability": "scored",
           "meets_target": false,
-          "result": "insufficient_data",
+          "result": "below_minimum",
           "metrics": {},
           "composition": [
             {
               "product_id": "wireguard-gateway",
               "repo": "canonical/wireguard-gateway-operator",
               "medal": "unrated",
-              "result": "insufficient_data",
-              "applicability": "insufficient_data",
+              "result": "below_minimum",
+              "applicability": "scored",
               "metrics": {
                 "ownership_signal": false,
-                "response_coverage_rate": null
+                "response_coverage_rate": 90.0
               },
               "excluded_from_parent_medal": false
             }
@@ -6507,7 +6507,7 @@
       "target_medal": "bronze",
       "current_result": "bronze",
       "target_result": "bronze",
-      "meets_target": false,
+      "meets_target": true,
       "squad": "apac",
       "is_portfolio_entry": true,
       "documentation_url": "https://charmhub.io/wordpress-k8s",
@@ -6605,22 +6605,22 @@
           ]
         },
         "engagement": {
-          "medal": "unrated",
+          "medal": "bronze",
           "target": "bronze",
-          "applicability": "insufficient_data",
-          "meets_target": false,
-          "result": "insufficient_data",
+          "applicability": "scored",
+          "meets_target": true,
+          "result": "bronze",
           "metrics": {},
           "composition": [
             {
               "product_id": "wordpress-k8s-charm",
               "repo": "canonical/wordpress-k8s-operator",
-              "medal": "unrated",
-              "result": "insufficient_data",
-              "applicability": "insufficient_data",
+              "medal": "bronze",
+              "result": "bronze",
+              "applicability": "scored",
               "metrics": {
-                "ownership_signal": false,
-                "response_coverage_rate": null
+                "ownership_signal": true,
+                "response_coverage_rate": 52.4
               },
               "excluded_from_parent_medal": false
             }
@@ -6634,9 +6634,9 @@
       "name": "rockcraft",
       "description": "",
       "lifecycle": "stable",
-      "current_medal": "bronze",
+      "current_medal": "unrated",
       "target_medal": "gold",
-      "current_result": "bronze",
+      "current_result": "below_minimum",
       "target_result": "gold",
       "meets_target": false,
       "squad": "",
@@ -6695,12 +6695,12 @@
         "engagement": {
           "medal": "unrated",
           "target": "gold",
-          "applicability": "insufficient_data",
+          "applicability": "scored",
           "meets_target": false,
-          "result": "insufficient_data",
+          "result": "below_minimum",
           "metrics": {
             "ownership_signal": false,
-            "response_coverage_rate": null
+            "response_coverage_rate": 56.7
           },
           "composition": null
         }
@@ -6894,7 +6894,7 @@
           "result": "insufficient_data",
           "metrics": {
             "latest_build_passing": null,
-            "uses_jubilant": true
+            "uses_jubilant": false
           },
           "composition": null
         },
@@ -6927,14 +6927,14 @@
           "composition": null
         },
         "engagement": {
-          "medal": "unrated",
+          "medal": "gold",
           "target": "silver",
-          "applicability": "insufficient_data",
-          "meets_target": false,
-          "result": "insufficient_data",
+          "applicability": "scored",
+          "meets_target": true,
+          "result": "gold",
           "metrics": {
-            "ownership_signal": false,
-            "response_coverage_rate": null
+            "ownership_signal": true,
+            "response_coverage_rate": 96.7
           },
           "composition": null
         }
@@ -7045,11 +7045,11 @@
         "test_verification": {
           "medal": "unrated",
           "target": "silver",
-          "applicability": "scored",
+          "applicability": "insufficient_data",
           "meets_target": false,
-          "result": "below_minimum",
+          "result": "insufficient_data",
           "metrics": {
-            "latest_build_passing": false,
+            "latest_build_passing": null,
             "uses_jubilant": true
           },
           "composition": null
@@ -7085,12 +7085,12 @@
         "engagement": {
           "medal": "unrated",
           "target": "silver",
-          "applicability": "insufficient_data",
+          "applicability": "scored",
           "meets_target": false,
-          "result": "insufficient_data",
+          "result": "below_minimum",
           "metrics": {
             "ownership_signal": false,
-            "response_coverage_rate": null
+            "response_coverage_rate": 85.7
           },
           "composition": null
         }
@@ -7123,11 +7123,11 @@
         "test_verification": {
           "medal": "unrated",
           "target": "silver",
-          "applicability": "scored",
+          "applicability": "insufficient_data",
           "meets_target": false,
-          "result": "below_minimum",
+          "result": "insufficient_data",
           "metrics": {
-            "latest_build_passing": false,
+            "latest_build_passing": null,
             "uses_jubilant": true
           },
           "composition": null
@@ -7201,11 +7201,11 @@
         "test_verification": {
           "medal": "unrated",
           "target": "silver",
-          "applicability": "scored",
+          "applicability": "insufficient_data",
           "meets_target": false,
-          "result": "below_minimum",
+          "result": "insufficient_data",
           "metrics": {
-            "latest_build_passing": false,
+            "latest_build_passing": null,
             "uses_jubilant": true
           },
           "composition": null
@@ -7336,9 +7336,9 @@
       "name": "chrony-charm",
       "description": "",
       "lifecycle": "stable",
-      "current_medal": "bronze",
+      "current_medal": "unrated",
       "target_medal": "silver",
-      "current_result": "bronze",
+      "current_result": "below_minimum",
       "target_result": "silver",
       "meets_target": false,
       "squad": "",
@@ -7382,13 +7382,13 @@
           "composition": null
         },
         "security_ssdlc": {
-          "medal": "bronze",
+          "medal": "unrated",
           "target": "silver",
           "applicability": "scored",
           "meets_target": false,
-          "result": "bronze",
+          "result": "below_minimum",
           "metrics": {
-            "renovate_enabled": true,
+            "renovate_enabled": false,
             "branch_protection_required_checks": false,
             "signed_commits_required": false
           },
@@ -7414,9 +7414,9 @@
       "name": "chrony-client",
       "description": "",
       "lifecycle": "stable",
-      "current_medal": "bronze",
+      "current_medal": "unrated",
       "target_medal": "silver",
-      "current_result": "bronze",
+      "current_result": "below_minimum",
       "target_result": "silver",
       "meets_target": false,
       "squad": "",
@@ -7445,14 +7445,14 @@
           "composition": null
         },
         "documentation": {
-          "medal": "silver",
+          "medal": "bronze",
           "target": "silver",
           "applicability": "scored",
-          "meets_target": true,
-          "result": "silver",
+          "meets_target": false,
+          "result": "bronze",
           "metrics": {
             "readme_present": true,
-            "contributing_present": true,
+            "contributing_present": false,
             "has_security": false,
             "diataxis_coverage_ai": 0,
             "uses_rtd_hosting": false
@@ -7460,13 +7460,13 @@
           "composition": null
         },
         "security_ssdlc": {
-          "medal": "bronze",
+          "medal": "unrated",
           "target": "silver",
           "applicability": "scored",
           "meets_target": false,
-          "result": "bronze",
+          "result": "below_minimum",
           "metrics": {
-            "renovate_enabled": true,
+            "renovate_enabled": false,
             "branch_protection_required_checks": false,
             "signed_commits_required": false
           },
@@ -7557,7 +7557,7 @@
           "meets_target": false,
           "result": "insufficient_data",
           "metrics": {
-            "ownership_signal": false,
+            "ownership_signal": true,
             "response_coverage_rate": null
           },
           "composition": null
@@ -7635,7 +7635,7 @@
           "meets_target": false,
           "result": "insufficient_data",
           "metrics": {
-            "ownership_signal": false,
+            "ownership_signal": true,
             "response_coverage_rate": null
           },
           "composition": null
@@ -7713,7 +7713,7 @@
           "meets_target": false,
           "result": "insufficient_data",
           "metrics": {
-            "ownership_signal": false,
+            "ownership_signal": true,
             "response_coverage_rate": null
           },
           "composition": null
@@ -7785,14 +7785,14 @@
           "composition": null
         },
         "engagement": {
-          "medal": "unrated",
+          "medal": "bronze",
           "target": "bronze",
-          "applicability": "insufficient_data",
-          "meets_target": false,
-          "result": "insufficient_data",
+          "applicability": "scored",
+          "meets_target": true,
+          "result": "bronze",
           "metrics": {
-            "ownership_signal": false,
-            "response_coverage_rate": null
+            "ownership_signal": true,
+            "response_coverage_rate": 66.7
           },
           "composition": null
         }
@@ -7863,14 +7863,14 @@
           "composition": null
         },
         "engagement": {
-          "medal": "unrated",
+          "medal": "bronze",
           "target": "silver",
-          "applicability": "insufficient_data",
+          "applicability": "scored",
           "meets_target": false,
-          "result": "insufficient_data",
+          "result": "bronze",
           "metrics": {
-            "ownership_signal": false,
-            "response_coverage_rate": null
+            "ownership_signal": true,
+            "response_coverage_rate": 76.9
           },
           "composition": null
         }
@@ -7882,9 +7882,9 @@
       "name": "content-cache-backends-config",
       "description": "",
       "lifecycle": "stable",
-      "current_medal": "bronze",
+      "current_medal": "unrated",
       "target_medal": "silver",
-      "current_result": "bronze",
+      "current_result": "below_minimum",
       "target_result": "silver",
       "meets_target": false,
       "squad": "",
@@ -7943,12 +7943,12 @@
         "engagement": {
           "medal": "unrated",
           "target": "silver",
-          "applicability": "insufficient_data",
+          "applicability": "scored",
           "meets_target": false,
-          "result": "insufficient_data",
+          "result": "below_minimum",
           "metrics": {
             "ownership_signal": false,
-            "response_coverage_rate": null
+            "response_coverage_rate": 19.2
           },
           "composition": null
         }
@@ -7960,9 +7960,9 @@
       "name": "digest-squid-auth-helper-charm",
       "description": "",
       "lifecycle": "stable",
-      "current_medal": "unrated",
+      "current_medal": "bronze",
       "target_medal": "bronze",
-      "current_result": "below_minimum",
+      "current_result": "bronze",
       "target_result": "bronze",
       "meets_target": false,
       "squad": "",
@@ -7981,11 +7981,11 @@
         "test_verification": {
           "medal": "unrated",
           "target": "bronze",
-          "applicability": "scored",
+          "applicability": "insufficient_data",
           "meets_target": false,
-          "result": "below_minimum",
+          "result": "insufficient_data",
           "metrics": {
-            "latest_build_passing": false,
+            "latest_build_passing": null,
             "uses_jubilant": false
           },
           "composition": null
@@ -8025,7 +8025,7 @@
           "meets_target": false,
           "result": "insufficient_data",
           "metrics": {
-            "ownership_signal": false,
+            "ownership_signal": true,
             "response_coverage_rate": null
           },
           "composition": null
@@ -8099,12 +8099,12 @@
         "engagement": {
           "medal": "unrated",
           "target": "silver",
-          "applicability": "insufficient_data",
+          "applicability": "scored",
           "meets_target": false,
-          "result": "insufficient_data",
+          "result": "below_minimum",
           "metrics": {
             "ownership_signal": false,
-            "response_coverage_rate": null
+            "response_coverage_rate": 61.3
           },
           "composition": null
         }
@@ -8116,9 +8116,9 @@
       "name": "bind",
       "description": "",
       "lifecycle": "stable",
-      "current_medal": "bronze",
+      "current_medal": "unrated",
       "target_medal": "bronze",
-      "current_result": "bronze",
+      "current_result": "below_minimum",
       "target_result": "bronze",
       "meets_target": false,
       "squad": "",
@@ -8137,11 +8137,11 @@
         "test_verification": {
           "medal": "unrated",
           "target": "bronze",
-          "applicability": "insufficient_data",
+          "applicability": "scored",
           "meets_target": false,
-          "result": "insufficient_data",
+          "result": "below_minimum",
           "metrics": {
-            "latest_build_passing": null,
+            "latest_build_passing": false,
             "uses_jubilant": true
           },
           "composition": null
@@ -8177,12 +8177,12 @@
         "engagement": {
           "medal": "unrated",
           "target": "bronze",
-          "applicability": "insufficient_data",
+          "applicability": "scored",
           "meets_target": false,
-          "result": "insufficient_data",
+          "result": "below_minimum",
           "metrics": {
             "ownership_signal": false,
-            "response_coverage_rate": null
+            "response_coverage_rate": 3.1
           },
           "composition": null
         }
@@ -8194,9 +8194,9 @@
       "name": "dns-policy",
       "description": "",
       "lifecycle": "stable",
-      "current_medal": "bronze",
+      "current_medal": "unrated",
       "target_medal": "bronze",
-      "current_result": "bronze",
+      "current_result": "below_minimum",
       "target_result": "bronze",
       "meets_target": false,
       "squad": "",
@@ -8215,11 +8215,11 @@
         "test_verification": {
           "medal": "unrated",
           "target": "bronze",
-          "applicability": "insufficient_data",
+          "applicability": "scored",
           "meets_target": false,
-          "result": "insufficient_data",
+          "result": "below_minimum",
           "metrics": {
-            "latest_build_passing": null,
+            "latest_build_passing": false,
             "uses_jubilant": true
           },
           "composition": null
@@ -8240,13 +8240,13 @@
           "composition": null
         },
         "security_ssdlc": {
-          "medal": "bronze",
+          "medal": "unrated",
           "target": "bronze",
           "applicability": "scored",
-          "meets_target": true,
-          "result": "bronze",
+          "meets_target": false,
+          "result": "below_minimum",
           "metrics": {
-            "renovate_enabled": true,
+            "renovate_enabled": false,
             "branch_protection_required_checks": false,
             "signed_commits_required": false
           },
@@ -8459,13 +8459,13 @@
           "composition": null
         },
         "documentation": {
-          "medal": "unrated",
+          "medal": "bronze",
           "target": "bronze",
           "applicability": "scored",
-          "meets_target": false,
-          "result": "below_minimum",
+          "meets_target": true,
+          "result": "bronze",
           "metrics": {
-            "readme_present": false,
+            "readme_present": true,
             "contributing_present": false,
             "has_security": false,
             "diataxis_coverage_ai": 0,
@@ -8474,13 +8474,13 @@
           "composition": null
         },
         "security_ssdlc": {
-          "medal": "bronze",
+          "medal": "unrated",
           "target": "bronze",
           "applicability": "scored",
-          "meets_target": true,
-          "result": "bronze",
+          "meets_target": false,
+          "result": "below_minimum",
           "metrics": {
-            "renovate_enabled": true,
+            "renovate_enabled": false,
             "branch_protection_required_checks": false,
             "signed_commits_required": false
           },
@@ -8506,9 +8506,9 @@
       "name": "charmed-bind",
       "description": "",
       "lifecycle": "stable",
-      "current_medal": "unrated",
+      "current_medal": "bronze",
       "target_medal": "bronze",
-      "current_result": "below_minimum",
+      "current_result": "bronze",
       "target_result": "bronze",
       "meets_target": false,
       "squad": "",
@@ -8537,13 +8537,13 @@
           "composition": null
         },
         "documentation": {
-          "medal": "unrated",
+          "medal": "bronze",
           "target": "bronze",
           "applicability": "scored",
-          "meets_target": false,
-          "result": "below_minimum",
+          "meets_target": true,
+          "result": "bronze",
           "metrics": {
-            "readme_present": false,
+            "readme_present": true,
             "contributing_present": false,
             "has_security": false,
             "diataxis_coverage_ai": 0,
@@ -8584,9 +8584,9 @@
       "name": "charmed-dns-policy",
       "description": "",
       "lifecycle": "stable",
-      "current_medal": "unrated",
+      "current_medal": "bronze",
       "target_medal": "bronze",
-      "current_result": "below_minimum",
+      "current_result": "bronze",
       "target_result": "bronze",
       "meets_target": false,
       "squad": "",
@@ -8615,13 +8615,13 @@
           "composition": null
         },
         "documentation": {
-          "medal": "unrated",
+          "medal": "bronze",
           "target": "bronze",
           "applicability": "scored",
-          "meets_target": false,
-          "result": "below_minimum",
+          "meets_target": true,
+          "result": "bronze",
           "metrics": {
-            "readme_present": false,
+            "readme_present": true,
             "contributing_present": false,
             "has_security": false,
             "diataxis_coverage_ai": 0,
@@ -8688,7 +8688,7 @@
           "result": "insufficient_data",
           "metrics": {
             "latest_build_passing": null,
-            "uses_jubilant": false
+            "uses_jubilant": true
           },
           "composition": null
         },
@@ -8721,14 +8721,14 @@
           "composition": null
         },
         "engagement": {
-          "medal": "unrated",
+          "medal": "gold",
           "target": "silver",
-          "applicability": "insufficient_data",
-          "meets_target": false,
-          "result": "insufficient_data",
+          "applicability": "scored",
+          "meets_target": true,
+          "result": "gold",
           "metrics": {
-            "ownership_signal": false,
-            "response_coverage_rate": null
+            "ownership_signal": true,
+            "response_coverage_rate": 96.9
           },
           "composition": null
         }
@@ -8740,9 +8740,9 @@
       "name": "falcosidekick-k8s",
       "description": "",
       "lifecycle": "stable",
-      "current_medal": "bronze",
+      "current_medal": "unrated",
       "target_medal": "silver",
-      "current_result": "bronze",
+      "current_result": "below_minimum",
       "target_result": "silver",
       "meets_target": false,
       "squad": "",
@@ -8766,7 +8766,7 @@
           "result": "insufficient_data",
           "metrics": {
             "latest_build_passing": null,
-            "uses_jubilant": false
+            "uses_jubilant": true
           },
           "composition": null
         },
@@ -8786,13 +8786,13 @@
           "composition": null
         },
         "security_ssdlc": {
-          "medal": "bronze",
+          "medal": "unrated",
           "target": "silver",
           "applicability": "scored",
           "meets_target": false,
-          "result": "bronze",
+          "result": "below_minimum",
           "metrics": {
-            "renovate_enabled": true,
+            "renovate_enabled": false,
             "branch_protection_required_checks": false,
             "signed_commits_required": false
           },
@@ -8839,11 +8839,11 @@
         "test_verification": {
           "medal": "unrated",
           "target": "gold",
-          "applicability": "scored",
+          "applicability": "insufficient_data",
           "meets_target": false,
-          "result": "below_minimum",
+          "result": "insufficient_data",
           "metrics": {
-            "latest_build_passing": false,
+            "latest_build_passing": null,
             "uses_jubilant": true
           },
           "composition": null
@@ -8879,12 +8879,12 @@
         "engagement": {
           "medal": "unrated",
           "target": "gold",
-          "applicability": "insufficient_data",
+          "applicability": "scored",
           "meets_target": false,
-          "result": "insufficient_data",
+          "result": "below_minimum",
           "metrics": {
             "ownership_signal": false,
-            "response_coverage_rate": null
+            "response_coverage_rate": 37.0
           },
           "composition": null
         }
@@ -8896,9 +8896,9 @@
       "name": "haproxy-charm",
       "description": "",
       "lifecycle": "stable",
-      "current_medal": "bronze",
+      "current_medal": "unrated",
       "target_medal": "gold",
-      "current_result": "bronze",
+      "current_result": "below_minimum",
       "target_result": "gold",
       "meets_target": false,
       "squad": "",
@@ -8922,7 +8922,7 @@
           "result": "insufficient_data",
           "metrics": {
             "latest_build_passing": null,
-            "uses_jubilant": false
+            "uses_jubilant": true
           },
           "composition": null
         },
@@ -8957,12 +8957,12 @@
         "engagement": {
           "medal": "unrated",
           "target": "gold",
-          "applicability": "insufficient_data",
+          "applicability": "scored",
           "meets_target": false,
-          "result": "insufficient_data",
+          "result": "below_minimum",
           "metrics": {
             "ownership_signal": false,
-            "response_coverage_rate": null
+            "response_coverage_rate": 93.3
           },
           "composition": null
         }
@@ -9000,7 +9000,7 @@
           "result": "insufficient_data",
           "metrics": {
             "latest_build_passing": null,
-            "uses_jubilant": false
+            "uses_jubilant": true
           },
           "composition": null
         },
@@ -9078,7 +9078,7 @@
           "result": "insufficient_data",
           "metrics": {
             "latest_build_passing": null,
-            "uses_jubilant": false
+            "uses_jubilant": true
           },
           "composition": null
         },
@@ -9156,7 +9156,7 @@
           "result": "insufficient_data",
           "metrics": {
             "latest_build_passing": null,
-            "uses_jubilant": false
+            "uses_jubilant": true
           },
           "composition": null
         },
@@ -9212,7 +9212,7 @@
       "target_medal": "bronze",
       "current_result": "bronze",
       "target_result": "bronze",
-      "meets_target": false,
+      "meets_target": true,
       "squad": "",
       "is_portfolio_entry": false,
       "documentation_url": "",
@@ -9267,14 +9267,14 @@
           "composition": null
         },
         "engagement": {
-          "medal": "unrated",
+          "medal": "gold",
           "target": "bronze",
-          "applicability": "insufficient_data",
-          "meets_target": false,
-          "result": "insufficient_data",
+          "applicability": "scored",
+          "meets_target": true,
+          "result": "gold",
           "metrics": {
-            "ownership_signal": false,
-            "response_coverage_rate": null
+            "ownership_signal": true,
+            "response_coverage_rate": 91.7
           },
           "composition": null
         }
@@ -9305,14 +9305,14 @@
       ],
       "dimensions": {
         "test_verification": {
-          "medal": "bronze",
+          "medal": "unrated",
           "target": "silver",
-          "applicability": "scored",
+          "applicability": "insufficient_data",
           "meets_target": false,
-          "result": "bronze",
+          "result": "insufficient_data",
           "metrics": {
-            "latest_build_passing": true,
-            "uses_jubilant": false
+            "latest_build_passing": null,
+            "uses_jubilant": true
           },
           "composition": null
         },
@@ -9345,14 +9345,14 @@
           "composition": null
         },
         "engagement": {
-          "medal": "unrated",
+          "medal": "silver",
           "target": "silver",
-          "applicability": "insufficient_data",
-          "meets_target": false,
-          "result": "insufficient_data",
+          "applicability": "scored",
+          "meets_target": true,
+          "result": "silver",
           "metrics": {
-            "ownership_signal": false,
-            "response_coverage_rate": null
+            "ownership_signal": true,
+            "response_coverage_rate": 80.0
           },
           "composition": null
         }
@@ -9390,7 +9390,7 @@
           "result": "insufficient_data",
           "metrics": {
             "latest_build_passing": null,
-            "uses_jubilant": false
+            "uses_jubilant": true
           },
           "composition": null
         },
@@ -9423,14 +9423,14 @@
           "composition": null
         },
         "engagement": {
-          "medal": "unrated",
+          "medal": "silver",
           "target": "silver",
-          "applicability": "insufficient_data",
-          "meets_target": false,
-          "result": "insufficient_data",
+          "applicability": "scored",
+          "meets_target": true,
+          "result": "silver",
           "metrics": {
-            "ownership_signal": false,
-            "response_coverage_rate": null
+            "ownership_signal": true,
+            "response_coverage_rate": 80.0
           },
           "composition": null
         }
@@ -9468,7 +9468,7 @@
           "result": "insufficient_data",
           "metrics": {
             "latest_build_passing": null,
-            "uses_jubilant": false
+            "uses_jubilant": true
           },
           "composition": null
         },
@@ -9501,14 +9501,14 @@
           "composition": null
         },
         "engagement": {
-          "medal": "unrated",
+          "medal": "silver",
           "target": "silver",
-          "applicability": "insufficient_data",
-          "meets_target": false,
-          "result": "insufficient_data",
+          "applicability": "scored",
+          "meets_target": true,
+          "result": "silver",
           "metrics": {
-            "ownership_signal": false,
-            "response_coverage_rate": null
+            "ownership_signal": true,
+            "response_coverage_rate": 80.0
           },
           "composition": null
         }
@@ -9657,14 +9657,14 @@
           "composition": null
         },
         "engagement": {
-          "medal": "unrated",
+          "medal": "gold",
           "target": "gold",
-          "applicability": "insufficient_data",
-          "meets_target": false,
-          "result": "insufficient_data",
+          "applicability": "scored",
+          "meets_target": true,
+          "result": "gold",
           "metrics": {
-            "ownership_signal": false,
-            "response_coverage_rate": null
+            "ownership_signal": true,
+            "response_coverage_rate": 90.5
           },
           "composition": null
         }
@@ -9702,7 +9702,7 @@
           "result": "below_minimum",
           "metrics": {
             "latest_build_passing": false,
-            "uses_jubilant": false
+            "uses_jubilant": true
           },
           "composition": null
         },
@@ -9735,14 +9735,14 @@
           "composition": null
         },
         "engagement": {
-          "medal": "unrated",
+          "medal": "bronze",
           "target": "silver",
-          "applicability": "insufficient_data",
+          "applicability": "scored",
           "meets_target": false,
-          "result": "insufficient_data",
+          "result": "bronze",
           "metrics": {
-            "ownership_signal": false,
-            "response_coverage_rate": null
+            "ownership_signal": true,
+            "response_coverage_rate": 76.2
           },
           "composition": null
         }
@@ -9754,9 +9754,9 @@
       "name": "jenkins-k8s",
       "description": "",
       "lifecycle": "stable",
-      "current_medal": "bronze",
+      "current_medal": "unrated",
       "target_medal": "bronze",
-      "current_result": "bronze",
+      "current_result": "below_minimum",
       "target_result": "bronze",
       "meets_target": false,
       "squad": "",
@@ -9773,14 +9773,14 @@
       ],
       "dimensions": {
         "test_verification": {
-          "medal": "gold",
+          "medal": "bronze",
           "target": "bronze",
           "applicability": "scored",
           "meets_target": true,
-          "result": "gold",
+          "result": "bronze",
           "metrics": {
             "latest_build_passing": true,
-            "uses_jubilant": true
+            "uses_jubilant": false
           },
           "composition": null
         },
@@ -9800,13 +9800,13 @@
           "composition": null
         },
         "security_ssdlc": {
-          "medal": "bronze",
+          "medal": "unrated",
           "target": "bronze",
           "applicability": "scored",
-          "meets_target": true,
-          "result": "bronze",
+          "meets_target": false,
+          "result": "below_minimum",
           "metrics": {
-            "renovate_enabled": true,
+            "renovate_enabled": false,
             "branch_protection_required_checks": false,
             "signed_commits_required": false
           },
@@ -9815,12 +9815,12 @@
         "engagement": {
           "medal": "unrated",
           "target": "bronze",
-          "applicability": "insufficient_data",
+          "applicability": "scored",
           "meets_target": false,
-          "result": "insufficient_data",
+          "result": "below_minimum",
           "metrics": {
             "ownership_signal": false,
-            "response_coverage_rate": null
+            "response_coverage_rate": 18.8
           },
           "composition": null
         }
@@ -9936,7 +9936,7 @@
           "result": "insufficient_data",
           "metrics": {
             "latest_build_passing": null,
-            "uses_jubilant": true
+            "uses_jubilant": false
           },
           "composition": null
         },
@@ -10009,11 +10009,11 @@
         "test_verification": {
           "medal": "unrated",
           "target": "silver",
-          "applicability": "insufficient_data",
+          "applicability": "scored",
           "meets_target": false,
-          "result": "insufficient_data",
+          "result": "below_minimum",
           "metrics": {
-            "latest_build_passing": null,
+            "latest_build_passing": false,
             "uses_jubilant": false
           },
           "composition": null
@@ -10087,11 +10087,11 @@
         "test_verification": {
           "medal": "unrated",
           "target": "silver",
-          "applicability": "insufficient_data",
+          "applicability": "scored",
           "meets_target": false,
-          "result": "insufficient_data",
+          "result": "below_minimum",
           "metrics": {
-            "latest_build_passing": null,
+            "latest_build_passing": false,
             "uses_jubilant": false
           },
           "composition": null
@@ -10112,13 +10112,13 @@
           "composition": null
         },
         "security_ssdlc": {
-          "medal": "unrated",
+          "medal": "bronze",
           "target": "silver",
           "applicability": "scored",
           "meets_target": false,
-          "result": "below_minimum",
+          "result": "bronze",
           "metrics": {
-            "renovate_enabled": false,
+            "renovate_enabled": true,
             "branch_protection_required_checks": false,
             "signed_commits_required": false
           },
@@ -10144,9 +10144,9 @@
       "name": "postfix-relay-configurator",
       "description": "",
       "lifecycle": "stable",
-      "current_medal": "bronze",
+      "current_medal": "unrated",
       "target_medal": "silver",
-      "current_result": "bronze",
+      "current_result": "below_minimum",
       "target_result": "silver",
       "meets_target": false,
       "squad": "",
@@ -10165,11 +10165,11 @@
         "test_verification": {
           "medal": "unrated",
           "target": "silver",
-          "applicability": "insufficient_data",
+          "applicability": "scored",
           "meets_target": false,
-          "result": "insufficient_data",
+          "result": "below_minimum",
           "metrics": {
-            "latest_build_passing": null,
+            "latest_build_passing": false,
             "uses_jubilant": false
           },
           "composition": null
@@ -10346,13 +10346,13 @@
           "composition": null
         },
         "security_ssdlc": {
-          "medal": "unrated",
+          "medal": "bronze",
           "target": "silver",
           "applicability": "scored",
           "meets_target": false,
-          "result": "below_minimum",
+          "result": "bronze",
           "metrics": {
-            "renovate_enabled": false,
+            "renovate_enabled": true,
             "branch_protection_required_checks": false,
             "signed_commits_required": false
           },
@@ -10456,9 +10456,9 @@
       "name": "draupnir",
       "description": "",
       "lifecycle": "stable",
-      "current_medal": "unrated",
+      "current_medal": "bronze",
       "target_medal": "gold",
-      "current_result": "below_minimum",
+      "current_result": "bronze",
       "target_result": "gold",
       "meets_target": false,
       "squad": "",
@@ -10477,11 +10477,11 @@
         "test_verification": {
           "medal": "unrated",
           "target": "gold",
-          "applicability": "scored",
+          "applicability": "insufficient_data",
           "meets_target": false,
-          "result": "below_minimum",
+          "result": "insufficient_data",
           "metrics": {
-            "latest_build_passing": false,
+            "latest_build_passing": null,
             "uses_jubilant": false
           },
           "composition": null
@@ -10502,13 +10502,13 @@
           "composition": null
         },
         "security_ssdlc": {
-          "medal": "unrated",
+          "medal": "bronze",
           "target": "gold",
           "applicability": "scored",
           "meets_target": false,
-          "result": "below_minimum",
+          "result": "bronze",
           "metrics": {
-            "renovate_enabled": false,
+            "renovate_enabled": true,
             "branch_protection_required_checks": false,
             "signed_commits_required": false
           },
@@ -10553,13 +10553,13 @@
       ],
       "dimensions": {
         "test_verification": {
-          "medal": "bronze",
+          "medal": "unrated",
           "target": "gold",
-          "applicability": "scored",
+          "applicability": "insufficient_data",
           "meets_target": false,
-          "result": "bronze",
+          "result": "insufficient_data",
           "metrics": {
-            "latest_build_passing": true,
+            "latest_build_passing": null,
             "uses_jubilant": false
           },
           "composition": null
@@ -10612,9 +10612,9 @@
       "name": "mas-cli",
       "description": "",
       "lifecycle": "stable",
-      "current_medal": "bronze",
+      "current_medal": "unrated",
       "target_medal": "gold",
-      "current_result": "bronze",
+      "current_result": "below_minimum",
       "target_result": "gold",
       "meets_target": false,
       "squad": "",
@@ -10631,13 +10631,13 @@
       ],
       "dimensions": {
         "test_verification": {
-          "medal": "bronze",
+          "medal": "unrated",
           "target": "gold",
-          "applicability": "scored",
+          "applicability": "insufficient_data",
           "meets_target": false,
-          "result": "bronze",
+          "result": "insufficient_data",
           "metrics": {
-            "latest_build_passing": true,
+            "latest_build_passing": null,
             "uses_jubilant": false
           },
           "composition": null
@@ -10658,13 +10658,13 @@
           "composition": null
         },
         "security_ssdlc": {
-          "medal": "bronze",
+          "medal": "unrated",
           "target": "gold",
           "applicability": "scored",
           "meets_target": false,
-          "result": "bronze",
+          "result": "below_minimum",
           "metrics": {
-            "renovate_enabled": true,
+            "renovate_enabled": false,
             "branch_protection_required_checks": false,
             "signed_commits_required": false
           },
@@ -10709,13 +10709,13 @@
       ],
       "dimensions": {
         "test_verification": {
-          "medal": "bronze",
+          "medal": "unrated",
           "target": "gold",
-          "applicability": "scored",
+          "applicability": "insufficient_data",
           "meets_target": false,
-          "result": "bronze",
+          "result": "insufficient_data",
           "metrics": {
-            "latest_build_passing": true,
+            "latest_build_passing": null,
             "uses_jubilant": false
           },
           "composition": null
@@ -10736,13 +10736,13 @@
           "composition": null
         },
         "security_ssdlc": {
-          "medal": "unrated",
+          "medal": "bronze",
           "target": "gold",
           "applicability": "scored",
           "meets_target": false,
-          "result": "below_minimum",
+          "result": "bronze",
           "metrics": {
-            "renovate_enabled": false,
+            "renovate_enabled": true,
             "branch_protection_required_checks": false,
             "signed_commits_required": false
           },
@@ -10865,13 +10865,13 @@
       ],
       "dimensions": {
         "test_verification": {
-          "medal": "bronze",
+          "medal": "unrated",
           "target": "gold",
-          "applicability": "scored",
+          "applicability": "insufficient_data",
           "meets_target": false,
-          "result": "bronze",
+          "result": "insufficient_data",
           "metrics": {
-            "latest_build_passing": true,
+            "latest_build_passing": null,
             "uses_jubilant": false
           },
           "composition": null
@@ -11028,7 +11028,7 @@
           "result": "insufficient_data",
           "metrics": {
             "latest_build_passing": null,
-            "uses_jubilant": true
+            "uses_jubilant": false
           },
           "composition": null
         },
@@ -11061,14 +11061,14 @@
           "composition": null
         },
         "engagement": {
-          "medal": "unrated",
+          "medal": "silver",
           "target": "gold",
-          "applicability": "insufficient_data",
+          "applicability": "scored",
           "meets_target": false,
-          "result": "insufficient_data",
+          "result": "silver",
           "metrics": {
-            "ownership_signal": false,
-            "response_coverage_rate": null
+            "ownership_signal": true,
+            "response_coverage_rate": 82.4
           },
           "composition": null
         }
@@ -11084,7 +11084,7 @@
       "target_medal": "bronze",
       "current_result": "bronze",
       "target_result": "bronze",
-      "meets_target": false,
+      "meets_target": true,
       "squad": "",
       "is_portfolio_entry": false,
       "documentation_url": "",
@@ -11139,14 +11139,14 @@
           "composition": null
         },
         "engagement": {
-          "medal": "unrated",
+          "medal": "gold",
           "target": "bronze",
-          "applicability": "insufficient_data",
-          "meets_target": false,
-          "result": "insufficient_data",
+          "applicability": "scored",
+          "meets_target": true,
+          "result": "gold",
           "metrics": {
-            "ownership_signal": false,
-            "response_coverage_rate": null
+            "ownership_signal": true,
+            "response_coverage_rate": 94.1
           },
           "composition": null
         }
@@ -11177,13 +11177,13 @@
       ],
       "dimensions": {
         "test_verification": {
-          "medal": "bronze",
+          "medal": "unrated",
           "target": "bronze",
-          "applicability": "scored",
-          "meets_target": true,
-          "result": "bronze",
+          "applicability": "insufficient_data",
+          "meets_target": false,
+          "result": "insufficient_data",
           "metrics": {
-            "latest_build_passing": true,
+            "latest_build_passing": null,
             "uses_jubilant": false
           },
           "composition": null
@@ -11217,14 +11217,14 @@
           "composition": null
         },
         "engagement": {
-          "medal": "unrated",
+          "medal": "gold",
           "target": "bronze",
-          "applicability": "insufficient_data",
-          "meets_target": false,
-          "result": "insufficient_data",
+          "applicability": "scored",
+          "meets_target": true,
+          "result": "gold",
           "metrics": {
-            "ownership_signal": false,
-            "response_coverage_rate": null
+            "ownership_signal": true,
+            "response_coverage_rate": 91.3
           },
           "composition": null
         }
@@ -11295,14 +11295,14 @@
           "composition": null
         },
         "engagement": {
-          "medal": "unrated",
+          "medal": "silver",
           "target": "silver",
-          "applicability": "insufficient_data",
-          "meets_target": false,
-          "result": "insufficient_data",
+          "applicability": "scored",
+          "meets_target": true,
+          "result": "silver",
           "metrics": {
-            "ownership_signal": false,
-            "response_coverage_rate": null
+            "ownership_signal": true,
+            "response_coverage_rate": 80.0
           },
           "composition": null
         }
@@ -11318,7 +11318,7 @@
       "target_medal": "bronze",
       "current_result": "bronze",
       "target_result": "bronze",
-      "meets_target": false,
+      "meets_target": true,
       "squad": "",
       "is_portfolio_entry": false,
       "documentation_url": "",
@@ -11333,14 +11333,14 @@
       ],
       "dimensions": {
         "test_verification": {
-          "medal": "bronze",
+          "medal": "gold",
           "target": "bronze",
           "applicability": "scored",
           "meets_target": true,
-          "result": "bronze",
+          "result": "gold",
           "metrics": {
             "latest_build_passing": true,
-            "uses_jubilant": false
+            "uses_jubilant": true
           },
           "composition": null
         },
@@ -11373,14 +11373,14 @@
           "composition": null
         },
         "engagement": {
-          "medal": "unrated",
+          "medal": "silver",
           "target": "bronze",
-          "applicability": "insufficient_data",
-          "meets_target": false,
-          "result": "insufficient_data",
+          "applicability": "scored",
+          "meets_target": true,
+          "result": "silver",
           "metrics": {
-            "ownership_signal": false,
-            "response_coverage_rate": null
+            "ownership_signal": true,
+            "response_coverage_rate": 88.9
           },
           "composition": null
         }
@@ -11457,7 +11457,7 @@
           "meets_target": false,
           "result": "insufficient_data",
           "metrics": {
-            "ownership_signal": false,
+            "ownership_signal": true,
             "response_coverage_rate": null
           },
           "composition": null
@@ -11470,9 +11470,9 @@
       "name": "github-runner",
       "description": "",
       "lifecycle": "stable",
-      "current_medal": "bronze",
+      "current_medal": "unrated",
       "target_medal": "gold",
-      "current_result": "bronze",
+      "current_result": "below_minimum",
       "target_result": "gold",
       "meets_target": false,
       "squad": "",
@@ -11516,27 +11516,27 @@
           "composition": null
         },
         "security_ssdlc": {
-          "medal": "bronze",
+          "medal": "unrated",
           "target": "gold",
           "applicability": "scored",
           "meets_target": false,
-          "result": "bronze",
+          "result": "below_minimum",
           "metrics": {
-            "renovate_enabled": true,
+            "renovate_enabled": false,
             "branch_protection_required_checks": false,
             "signed_commits_required": false
           },
           "composition": null
         },
         "engagement": {
-          "medal": "unrated",
+          "medal": "silver",
           "target": "gold",
-          "applicability": "insufficient_data",
+          "applicability": "scored",
           "meets_target": false,
-          "result": "insufficient_data",
+          "result": "silver",
           "metrics": {
-            "ownership_signal": false,
-            "response_coverage_rate": null
+            "ownership_signal": true,
+            "response_coverage_rate": 87.5
           },
           "composition": null
         }
@@ -11548,9 +11548,9 @@
       "name": "github-runner-image-builder",
       "description": "",
       "lifecycle": "stable",
-      "current_medal": "bronze",
+      "current_medal": "unrated",
       "target_medal": "gold",
-      "current_result": "bronze",
+      "current_result": "below_minimum",
       "target_result": "gold",
       "meets_target": false,
       "squad": "",
@@ -11574,7 +11574,7 @@
           "result": "insufficient_data",
           "metrics": {
             "latest_build_passing": null,
-            "uses_jubilant": true
+            "uses_jubilant": false
           },
           "composition": null
         },
@@ -11594,27 +11594,27 @@
           "composition": null
         },
         "security_ssdlc": {
-          "medal": "bronze",
+          "medal": "unrated",
           "target": "gold",
           "applicability": "scored",
           "meets_target": false,
-          "result": "bronze",
+          "result": "below_minimum",
           "metrics": {
-            "renovate_enabled": true,
+            "renovate_enabled": false,
             "branch_protection_required_checks": false,
             "signed_commits_required": false
           },
           "composition": null
         },
         "engagement": {
-          "medal": "unrated",
+          "medal": "silver",
           "target": "gold",
-          "applicability": "insufficient_data",
+          "applicability": "scored",
           "meets_target": false,
-          "result": "insufficient_data",
+          "result": "silver",
           "metrics": {
-            "ownership_signal": false,
-            "response_coverage_rate": null
+            "ownership_signal": true,
+            "response_coverage_rate": 83.3
           },
           "composition": null
         }
@@ -11691,7 +11691,7 @@
           "meets_target": false,
           "result": "insufficient_data",
           "metrics": {
-            "ownership_signal": false,
+            "ownership_signal": true,
             "response_coverage_rate": null
           },
           "composition": null
@@ -12075,14 +12075,14 @@
           "composition": null
         },
         "engagement": {
-          "medal": "unrated",
+          "medal": "silver",
           "target": "silver",
-          "applicability": "insufficient_data",
-          "meets_target": false,
-          "result": "insufficient_data",
+          "applicability": "scored",
+          "meets_target": true,
+          "result": "silver",
           "metrics": {
-            "ownership_signal": false,
-            "response_coverage_rate": null
+            "ownership_signal": true,
+            "response_coverage_rate": 88.9
           },
           "composition": null
         }
@@ -12115,11 +12115,11 @@
         "test_verification": {
           "medal": "unrated",
           "target": "gold",
-          "applicability": "scored",
+          "applicability": "insufficient_data",
           "meets_target": false,
-          "result": "below_minimum",
+          "result": "insufficient_data",
           "metrics": {
-            "latest_build_passing": false,
+            "latest_build_passing": null,
             "uses_jubilant": false
           },
           "composition": null
@@ -12140,13 +12140,13 @@
           "composition": null
         },
         "security_ssdlc": {
-          "medal": "bronze",
+          "medal": "unrated",
           "target": "gold",
           "applicability": "scored",
           "meets_target": false,
-          "result": "bronze",
+          "result": "below_minimum",
           "metrics": {
-            "renovate_enabled": true,
+            "renovate_enabled": false,
             "branch_protection_required_checks": false,
             "signed_commits_required": false
           },
@@ -12155,12 +12155,12 @@
         "engagement": {
           "medal": "unrated",
           "target": "gold",
-          "applicability": "insufficient_data",
+          "applicability": "scored",
           "meets_target": false,
-          "result": "insufficient_data",
+          "result": "below_minimum",
           "metrics": {
             "ownership_signal": false,
-            "response_coverage_rate": null
+            "response_coverage_rate": 28.0
           },
           "composition": null
         }
@@ -12191,14 +12191,14 @@
       ],
       "dimensions": {
         "test_verification": {
-          "medal": "bronze",
+          "medal": "unrated",
           "target": "bronze",
-          "applicability": "scored",
-          "meets_target": true,
-          "result": "bronze",
+          "applicability": "insufficient_data",
+          "meets_target": false,
+          "result": "insufficient_data",
           "metrics": {
-            "latest_build_passing": true,
-            "uses_jubilant": false
+            "latest_build_passing": null,
+            "uses_jubilant": true
           },
           "composition": null
         },
@@ -12231,14 +12231,14 @@
           "composition": null
         },
         "engagement": {
-          "medal": "unrated",
+          "medal": "silver",
           "target": "bronze",
-          "applicability": "insufficient_data",
-          "meets_target": false,
-          "result": "insufficient_data",
+          "applicability": "scored",
+          "meets_target": true,
+          "result": "silver",
           "metrics": {
-            "ownership_signal": false,
-            "response_coverage_rate": null
+            "ownership_signal": true,
+            "response_coverage_rate": 88.2
           },
           "composition": null
         }
@@ -12250,9 +12250,9 @@
       "name": "wazuh-server",
       "description": "",
       "lifecycle": "stable",
-      "current_medal": "bronze",
+      "current_medal": "unrated",
       "target_medal": "silver",
-      "current_result": "bronze",
+      "current_result": "below_minimum",
       "target_result": "silver",
       "meets_target": false,
       "squad": "",
@@ -12296,13 +12296,13 @@
           "composition": null
         },
         "security_ssdlc": {
-          "medal": "bronze",
+          "medal": "unrated",
           "target": "silver",
           "applicability": "scored",
           "meets_target": false,
-          "result": "bronze",
+          "result": "below_minimum",
           "metrics": {
-            "renovate_enabled": true,
+            "renovate_enabled": false,
             "branch_protection_required_checks": false,
             "signed_commits_required": false
           },
@@ -12311,12 +12311,12 @@
         "engagement": {
           "medal": "unrated",
           "target": "silver",
-          "applicability": "insufficient_data",
+          "applicability": "scored",
           "meets_target": false,
-          "result": "insufficient_data",
+          "result": "below_minimum",
           "metrics": {
             "ownership_signal": false,
-            "response_coverage_rate": null
+            "response_coverage_rate": 81.2
           },
           "composition": null
         }
@@ -12349,11 +12349,11 @@
         "test_verification": {
           "medal": "unrated",
           "target": "silver",
-          "applicability": "insufficient_data",
+          "applicability": "scored",
           "meets_target": false,
-          "result": "insufficient_data",
+          "result": "below_minimum",
           "metrics": {
-            "latest_build_passing": null,
+            "latest_build_passing": false,
             "uses_jubilant": false
           },
           "composition": null
@@ -12389,12 +12389,12 @@
         "engagement": {
           "medal": "unrated",
           "target": "silver",
-          "applicability": "insufficient_data",
+          "applicability": "scored",
           "meets_target": false,
-          "result": "insufficient_data",
+          "result": "below_minimum",
           "metrics": {
             "ownership_signal": false,
-            "response_coverage_rate": null
+            "response_coverage_rate": 0.0
           },
           "composition": null
         }
@@ -12427,11 +12427,11 @@
         "test_verification": {
           "medal": "unrated",
           "target": "silver",
-          "applicability": "insufficient_data",
+          "applicability": "scored",
           "meets_target": false,
-          "result": "insufficient_data",
+          "result": "below_minimum",
           "metrics": {
-            "latest_build_passing": null,
+            "latest_build_passing": false,
             "uses_jubilant": false
           },
           "composition": null
@@ -12471,7 +12471,7 @@
           "meets_target": false,
           "result": "insufficient_data",
           "metrics": {
-            "ownership_signal": false,
+            "ownership_signal": true,
             "response_coverage_rate": null
           },
           "composition": null
@@ -12484,9 +12484,9 @@
       "name": "wireguard-gateway",
       "description": "",
       "lifecycle": "stable",
-      "current_medal": "bronze",
+      "current_medal": "unrated",
       "target_medal": "gold",
-      "current_result": "bronze",
+      "current_result": "below_minimum",
       "target_result": "gold",
       "meets_target": false,
       "squad": "",
@@ -12545,12 +12545,12 @@
         "engagement": {
           "medal": "unrated",
           "target": "gold",
-          "applicability": "insufficient_data",
+          "applicability": "scored",
           "meets_target": false,
-          "result": "insufficient_data",
+          "result": "below_minimum",
           "metrics": {
             "ownership_signal": false,
-            "response_coverage_rate": null
+            "response_coverage_rate": 90.0
           },
           "composition": null
         }
@@ -12566,7 +12566,7 @@
       "target_medal": "bronze",
       "current_result": "bronze",
       "target_result": "bronze",
-      "meets_target": false,
+      "meets_target": true,
       "squad": "",
       "is_portfolio_entry": false,
       "documentation_url": "",
@@ -12621,14 +12621,14 @@
           "composition": null
         },
         "engagement": {
-          "medal": "unrated",
+          "medal": "bronze",
           "target": "bronze",
-          "applicability": "insufficient_data",
-          "meets_target": false,
-          "result": "insufficient_data",
+          "applicability": "scored",
+          "meets_target": true,
+          "result": "bronze",
           "metrics": {
-            "ownership_signal": false,
-            "response_coverage_rate": null
+            "ownership_signal": true,
+            "response_coverage_rate": 52.4
           },
           "composition": null
         }
