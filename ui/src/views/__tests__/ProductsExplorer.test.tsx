@@ -8,6 +8,13 @@ import type { Portfolio } from '../../types'
 vi.mock('../../hooks/usePortfolio')
 import { usePortfolio } from '../../hooks/usePortfolio'
 
+vi.mock('../../providers/FrameworkVersionProvider', () => ({
+  useFrameworkVersion: () => ({
+    current: { id: 'v0', sequence: 0, label: 'PQF V0', status: 'active', description: '', portfolio_url: '', generated_at: '', contract_digest: 'digest-v0' },
+    versions: [],
+  }),
+}))
+
 const mockPortfolio: Portfolio = {
   generated_at: '2026-06-30T00:00:00Z',
   dimensions_meta: {},
@@ -224,6 +231,11 @@ describe('ProductsExplorer', () => {
     expect(cols[3]).toHaveStyle({ width: '7rem' })
     expect(cols[4]).toHaveStyle({ width: '6rem' })
     expect(cols[5]).toHaveStyle({ width: '26%' })
+  })
+
+  it('scopes product links to the selected framework version', () => {
+    wrap()
+    expect(screen.getByRole('link', { name: 'Matrix (Synapse)' })).toHaveAttribute('href', '/v0/products/matrix')
   })
 
   it('keeps product and repo cells overflow-safe in grouped rows', () => {

@@ -44,23 +44,31 @@ export default function VersionSelector() {
 
   return (
     <div className="version-selector" style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
-      <select
-        id="framework-version-select"
-        aria-label="Framework version"
-        className="p-form-validation__input version-selector__select"
-        value={current.id}
-        onChange={handleChange}
-      >
-        {groups.map(group => (
-          <optgroup key={group.status} label={group.label}>
-            {group.versions.map(version => (
-              <option key={version.id} value={version.id}>
-                {version.label}
-              </option>
-            ))}
-          </optgroup>
-        ))}
-      </select>
+      <div className="p-form__group p-form-validation">
+        <label className="p-form__label u-off-screen" htmlFor="framework-version-select">
+          Framework version
+        </label>
+        <div className="p-form__control u-clearfix">
+          <div className="p-form-validation__select-wrapper">
+            <select
+              id="framework-version-select"
+              className="p-form-validation__input version-selector__select"
+              value={current.id}
+              onChange={handleChange}
+            >
+              {groups.map(group => (
+                <optgroup key={group.status} label={group.label}>
+                  {group.versions.map(version => (
+                    <option key={version.id} value={version.id}>
+                      {version.label}
+                    </option>
+                  ))}
+                </optgroup>
+              ))}
+            </select>
+          </div>
+        </div>
+      </div>
       {current.status === 'upcoming' && (
         <span
           className="version-selector__meta"

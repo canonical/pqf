@@ -8,6 +8,13 @@ import type { Portfolio } from '../../types'
 vi.mock('../../hooks/usePortfolio')
 import { usePortfolio } from '../../hooks/usePortfolio'
 
+vi.mock('../../providers/FrameworkVersionProvider', () => ({
+  useFrameworkVersion: () => ({
+    current: { id: 'v0', sequence: 0, label: 'PQF V0', status: 'active', description: '', portfolio_url: '', generated_at: '', contract_digest: 'digest-v0' },
+    versions: [],
+  }),
+}))
+
 const mockPortfolio: Portfolio = {
   generated_at: '2026-06-30T00:00:00Z',
   products: [
@@ -195,8 +202,19 @@ describe('DimensionDetail', () => {
     expect(screen.getByText('↳ Synapse Charm')).toBeInTheDocument()
   })
 
+  it('scopes product links and the back-to-overview link to the selected framework version', () => {
+    wrap('documentation')
+    expect(screen.getByRole('link', { name: '← Overview' })).toHaveAttribute('href', '/v0')
+    expect(screen.getByRole('link', { name: 'Matrix (Synapse)' })).toHaveAttribute('href', '/v0/products/matrix')
+  })
+
   it('shows not found for unknown dimension', () => {
     wrap('unknown')
     expect(screen.getByText(/not found/i)).toBeInTheDocument()
+  })
+
+  it('scopes the not-found recovery link to the selected framework version', () => {
+    wrap('unknown')
+    expect(screen.getByRole('link', { name: /back to overview/i })).toHaveAttribute('href', '/v0')
   })
 })

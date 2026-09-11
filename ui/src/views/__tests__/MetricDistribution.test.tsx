@@ -275,6 +275,16 @@ describe('MetricDistribution route', () => {
     expect(headers).toEqual(['Product', 'Threshold result', 'Gap to target', 'Value'])
   })
 
+  it('scopes the back-to-dimension link and product links to the selected framework version', async () => {
+    wrap('/dimensions/test_verification/metrics/coverage_pct')
+    await screen.findByRole('heading', { name: /Coverage \(coverage_pct\)/i })
+    const table = screen.getByRole('table')
+    const productLinks = table.querySelectorAll('tbody a')
+    productLinks.forEach(link => expect(link.getAttribute('href')).toMatch(/^#\/v0\/products\//))
+    const backLink = screen.getByRole('link', { name: /test verification/i })
+    expect(backLink).toHaveAttribute('href', '#/v0/dimensions/test_verification')
+  })
+
   it('hides medal criteria wall for informational metrics', async () => {
     wrap('/dimensions/test_verification/metrics/latest_build_passing')
     await screen.findByRole('heading', { name: /Latest build passing/i })

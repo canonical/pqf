@@ -1,5 +1,6 @@
 import { Fragment } from 'react'
-import { useParams, Link } from 'react-router'
+import { useParams } from 'react-router'
+import VersionLink from '../components/VersionLink'
 import { usePortfolio } from '../hooks/usePortfolio'
 import MedalBadge from '../components/MedalBadge'
 import LoadingSpinner from '../components/LoadingSpinner'
@@ -40,7 +41,7 @@ export default function DimensionDetail() {
     return (
       <div className="row" style={{ paddingTop: '1.5rem' }}>
         <div className="col-12">
-          <p>Dimension <strong>{id}</strong> not found. <Link to="/">Back to overview</Link></p>
+          <p>Dimension <strong>{id}</strong> not found. <VersionLink to="/">Back to overview</VersionLink></p>
         </div>
       </div>
     )
@@ -56,7 +57,7 @@ export default function DimensionDetail() {
       <div className="col-12">
 
         {/* Back nav */}
-        <p style={{ marginBottom: '1rem' }}><Link to="/">← Overview</Link></p>
+        <p style={{ marginBottom: '1rem' }}><VersionLink to="/">← Overview</VersionLink></p>
 
         {/* Header card */}
         <div className="p-card u-sv3">
@@ -87,9 +88,9 @@ export default function DimensionDetail() {
                 {Object.entries(meta.outputs).map(([key, out], idx) => (
                   <tr key={key} style={{ borderBottom: '1px solid #e5e5e5', background: idx % 2 === 0 ? '#fafafa' : '#fff' }}>
                     <td style={{ padding: '0.75rem', verticalAlign: 'top' }}>
-                      <Link to={`/dimensions/${id}/metrics/${key}`} style={{ fontWeight: 600, display: 'block' }}>
+                      <VersionLink to={`/dimensions/${id}/metrics/${key}`} style={{ fontWeight: 600, display: 'block' }}>
                         {out.label}
-                      </Link>
+                      </VersionLink>
                       <code style={{ fontSize: '0.75rem', color: '#666' }}>{key}</code>
                     </td>
                     <td style={{ padding: '0.75rem', verticalAlign: 'top', fontSize: '0.875rem' }}>
@@ -209,9 +210,9 @@ export default function DimensionDetail() {
                       }}
                     >
                       <td style={{ padding: '0.75rem', verticalAlign: 'top' }}>
-                        <Link to={`/products/${group.root.product.id}`} style={{ fontWeight: 600 }}>
+                        <VersionLink to={`/products/${group.root.product.id}`} style={{ fontWeight: 600 }}>
                           {group.root.product.name}
-                        </Link>
+                        </VersionLink>
                       </td>
                       <td style={{ padding: '0.75rem', verticalAlign: 'top' }}>
                         <MedalBadge medal={group.root.entry.result} size="small" />
@@ -223,9 +224,9 @@ export default function DimensionDetail() {
                     {group.leaves.map((leaf) => (
                       <tr key={leaf.product.id} style={{ borderBottom: '1px solid #e5e5e5', background: '#fff' }}>
                         <td style={{ padding: '0.75rem', verticalAlign: 'top' }}>
-                          <Link to={`/products/${leaf.product.id}`} style={{ fontWeight: 500 }}>
+                          <VersionLink to={`/products/${leaf.product.id}`} style={{ fontWeight: 500 }}>
                             ↳ {leaf.product.name}
-                          </Link>
+                          </VersionLink>
                         </td>
                         <td style={{ padding: '0.75rem', verticalAlign: 'top' }}>
                           <MedalBadge medal={leaf.entry.result} size="small" />
@@ -243,7 +244,7 @@ export default function DimensionDetail() {
         </div>
 
         <p className="u-sv2">
-          <Link to="/about">Learn more about the framework →</Link>
+          <VersionLink to="/about">Learn more about the framework →</VersionLink>
         </p>
 
       </div>

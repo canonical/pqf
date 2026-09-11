@@ -1,4 +1,4 @@
-import { Link } from 'react-router'
+import VersionLink from '../components/VersionLink'
 import { usePortfolio } from '../hooks/usePortfolio'
 import MedalBadge from '../components/MedalBadge'
 import LoadingSpinner from '../components/LoadingSpinner'
@@ -59,7 +59,7 @@ export default function About() {
               {dimensions.map(([key, meta]) => (
                 <tr key={key}>
                   <td>
-                    <Link to={`/dimensions/${key}`}>{meta.label ?? key.replace(/_/g, ' ')}</Link>
+                    <VersionLink to={`/dimensions/${key}`}>{meta.label ?? key.replace(/_/g, ' ')}</VersionLink>
                   </td>
                   <td>{meta.description ?? '—'}</td>
                 </tr>
@@ -82,7 +82,7 @@ export default function About() {
             </a>
           </li>
           <li className="p-list__item">
-            <Link to="/">Overview</Link>
+            <VersionLink to="/">Overview</VersionLink>
           </li>
         </ul>
       </div>

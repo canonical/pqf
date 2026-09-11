@@ -1,5 +1,5 @@
 import React from 'react'
-import { Link } from 'react-router'
+import VersionLink from './VersionLink'
 import type { LeafDimensionResult, OutputMeta } from '../types'
 
 interface ThresholdInfo {
@@ -237,7 +237,7 @@ export default function RootMetricsList({ composition, thresholds, metaOutputs }
                         borderTop: '1px solid #eef0f8',
                       }}
                     >
-                      <Link
+                      <VersionLink
                         to={`/products/${leaf.product_id}`}
                         style={{
                           color: isWorst ? '#c7162b' : '#06c',
@@ -246,7 +246,7 @@ export default function RootMetricsList({ composition, thresholds, metaOutputs }
                         }}
                       >
                         {leaf.product_id}
-                      </Link>
+                      </VersionLink>
                       <span style={{ fontVariantNumeric: 'tabular-nums' }}>
                         {val !== undefined
                           ? formatValue(val, threshold, unit)

@@ -16,10 +16,13 @@ async function fetchPortfolio(version: FrameworkVersionSummary): Promise<Portfol
         `${portfolio.framework?.id ?? 'unknown'}, expected ${version.id}`,
     )
   }
-  if (portfolio.contract_digest !== version.contract_digest) {
+  // Compare with `||` rather than only `!==` — if the runtime JSON payload is missing
+  // `contract_digest` on either side (a malformed artifact, despite the TS types), an
+  // `undefined !== undefined` check would silently pass. Require both sides to be present.
+  if (!version.contract_digest || !portfolio.contract_digest || portfolio.contract_digest !== version.contract_digest) {
     throw new Error(
-      `Portfolio at ${version.portfolio_url} has contract digest ${portfolio.contract_digest ?? 'unknown'}, ` +
-        `expected ${version.contract_digest} from framework-versions.json`,
+      `Portfolio at ${version.portfolio_url} has contract digest ${portfolio.contract_digest ?? 'missing'}, ` +
+        `expected ${version.contract_digest ?? 'missing'} from framework-versions.json`,
     )
   }
 

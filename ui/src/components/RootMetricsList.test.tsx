@@ -1,8 +1,15 @@
 import { render, screen, fireEvent } from '@testing-library/react'
-import { describe, it, expect } from 'vitest'
+import { describe, it, expect, vi } from 'vitest'
 import { MemoryRouter } from 'react-router'
 import RootMetricsList from './RootMetricsList'
 import type { LeafDimensionResult, OutputMeta } from '../types'
+
+vi.mock('../providers/FrameworkVersionProvider', () => ({
+  useFrameworkVersion: () => ({
+    current: { id: 'v0', sequence: 0, label: 'PQF V0', status: 'active', description: '', portfolio_url: '', generated_at: '', contract_digest: 'digest-v0' },
+    versions: [],
+  }),
+}))
 
 const OUTPUTS: Record<string, OutputMeta> = {
   coverage_pct: { label: 'Coverage', description: 'Test coverage %', type: 'number', range: '0-100' },
@@ -79,6 +86,17 @@ describe('RootMetricsList', () => {
     fireEvent.click(btn)
     expect(screen.getByText('synapse')).toBeInTheDocument()
     expect(screen.getByText('saml')).toBeInTheDocument()
+  })
+
+  it('scopes per-leaf product links to the selected framework version', () => {
+    render(
+      <MemoryRouter>
+        <RootMetricsList composition={[LOW_LEAF, HIGH_LEAF]} thresholds={THRESHOLDS} metaOutputs={OUTPUTS} />
+      </MemoryRouter>,
+    )
+    const btn = screen.getAllByRole('button', { name: /2 components/i })[0]
+    fireEvent.click(btn)
+    expect(screen.getByRole('link', { name: 'synapse' })).toHaveAttribute('href', '/v0/products/synapse')
   })
 
   it('excludes leaves with excluded_from_parent_medal=true from in-scope count', () => {

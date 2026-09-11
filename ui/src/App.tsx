@@ -18,7 +18,7 @@ const About = lazy(() => import('./views/About'))
  * `framework-versions.json` is the sole source of truth for which version is active.
  */
 function RootRedirect() {
-  const { data, isLoading, isError, error } = useFrameworkVersions()
+  const { data, isLoading, isError, error, refetch } = useFrameworkVersions()
 
   if (isLoading) return <LoadingSpinner />
 
@@ -26,6 +26,9 @@ function RootRedirect() {
     return (
       <div className="row" style={{ padding: '3rem 1rem', textAlign: 'center' }}>
         <p>Failed to load framework versions{error ? `: ${error.message}` : '.'}</p>
+        <button type="button" className="p-button" onClick={() => refetch()}>
+          Retry
+        </button>
       </div>
     )
   }

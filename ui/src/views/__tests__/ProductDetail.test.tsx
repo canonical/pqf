@@ -8,6 +8,13 @@ import type { Portfolio, LeafDimensionResult } from '../../types'
 vi.mock('../../hooks/usePortfolio')
 import { usePortfolio } from '../../hooks/usePortfolio'
 
+vi.mock('../../providers/FrameworkVersionProvider', () => ({
+  useFrameworkVersion: () => ({
+    current: { id: 'v0', sequence: 0, label: 'PQF V0', status: 'active', description: '', portfolio_url: '', generated_at: '', contract_digest: 'digest-v0' },
+    versions: [],
+  }),
+}))
+
 const mockPortfolio: Portfolio = {
   generated_at: '2026-06-30T00:00:00Z',
   products: [
@@ -300,6 +307,20 @@ describe('ProductDetail', () => {
   it('shows 404 message for unknown product', () => {
     wrap('unknown')
     expect(screen.getByText(/not found/i)).toBeInTheDocument()
+  })
+
+  it('scopes the not-found recovery link and dependency links to the selected framework version', () => {
+    wrap('unknown')
+    expect(screen.getByRole('link', { name: /back to overview/i })).toHaveAttribute('href', '/v0')
+  })
+
+  it('scopes dimension and component links to the selected framework version', () => {
+    wrap('matrix')
+    expect(screen.getByRole('link', { name: 'test verification' })).toHaveAttribute('href', '/v0/dimensions/test_verification')
+    const componentLinks = screen.getAllByRole('link').filter(link =>
+      link.getAttribute('href')?.startsWith('/v0/products/')
+    )
+    expect(componentLinks.length).toBeGreaterThan(0)
   })
 
   it('root product shows linked chips for components in header', () => {

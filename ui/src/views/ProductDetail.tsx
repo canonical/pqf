@@ -1,5 +1,6 @@
 import React from 'react'
-import { useParams, Link } from 'react-router'
+import { useParams } from 'react-router'
+import VersionLink from '../components/VersionLink'
 import { usePortfolio } from '../hooks/usePortfolio'
 import MedalBadge from '../components/MedalBadge'
 import DriftChip from '../components/DriftChip'
@@ -42,7 +43,7 @@ export default function ProductDetail() {
     return (
       <div className="row" style={{ paddingTop: '1.5rem' }}>
         <div className="col-12">
-          <p>Product <strong>{id}</strong> not found. <Link to="/">Back to overview</Link></p>
+          <p>Product <strong>{id}</strong> not found. <VersionLink to="/">Back to overview</VersionLink></p>
         </div>
       </div>
     )
@@ -67,14 +68,14 @@ export default function ProductDetail() {
             {product.parent_product_ids.map(parentId => {
               const parent = portfolio.products.find(p => p.id === parentId)
               return parent ? (
-                <Link key={parentId} to={`/products/${parentId}`}>
+                <VersionLink key={parentId} to={`/products/${parentId}`}>
                   ← {parent.name}
-                </Link>
+                </VersionLink>
               ) : null
             })}
           </p>
         ) : (
-          <p style={{ marginBottom: '1rem' }}><Link to="/">← Overview</Link></p>
+          <p style={{ marginBottom: '1rem' }}><VersionLink to="/">← Overview</VersionLink></p>
         )}
 
         {/* Header card */}
@@ -146,11 +147,11 @@ export default function ProductDetail() {
               {product.parent_product_ids.map(parentId => {
                 const parent = portfolio.products.find(p => p.id === parentId)
                 return parent ? (
-                  <Link key={parentId} to={`/products/${parentId}`}
+                  <VersionLink key={parentId} to={`/products/${parentId}`}
                     className="p-chip"
                     style={{ fontSize: '0.75rem', textDecoration: 'none', padding: '0.15rem 0.5rem' }}>
                     {parent.name} →
-                  </Link>
+                  </VersionLink>
                 ) : null
               })}
             </div>
@@ -164,7 +165,7 @@ export default function ProductDetail() {
                 {product.composed_of!.map(c => {
                   const leafProduct = portfolio.products.find(p => p.id === c.product_id)
                   return (
-                    <Link key={c.product_id} to={`/products/${c.product_id}`}
+                    <VersionLink key={c.product_id} to={`/products/${c.product_id}`}
                       style={{
                         fontSize: '0.8125rem',
                         textDecoration: 'none',
@@ -177,7 +178,7 @@ export default function ProductDetail() {
                         gap: '0.25rem',
                       }}>
                       {leafProduct?.name ?? c.product_id} ↗
-                    </Link>
+                    </VersionLink>
                   )
                 })}
               </div>
@@ -216,7 +217,7 @@ export default function ProductDetail() {
                   return (
                     <tr key={dim} style={{ borderBottom: '1px solid #e5e5e5', background: idx % 2 === 0 ? '#fafafa' : '#fff' }}>
                       <td style={{ padding: '0.75rem', verticalAlign: 'top' }}>
-                        <Link to={`/dimensions/${dim}`} style={{ fontWeight: 500 }}>{dim.replace(/_/g, ' ')}</Link>
+                        <VersionLink to={`/dimensions/${dim}`} style={{ fontWeight: 500 }}>{dim.replace(/_/g, ' ')}</VersionLink>
                       </td>
                       <td style={{ padding: '0.75rem', verticalAlign: 'top' }}>
                         <MedalBadge medal={entry.result as any} size="small" />
@@ -281,9 +282,9 @@ export default function ProductDetail() {
                     {productGroup.leaves.map((leaf, idx) => (
                       <tr key={leaf.id} style={{ borderBottom: '1px solid #e5e5e5', background: idx % 2 === 0 ? '#fafafa' : '#fff' }}>
                         <td style={{ padding: '0.75rem', verticalAlign: 'top' }}>
-                          <Link to={`/products/${leaf.id}`} style={{ fontWeight: 500 }}>
+                          <VersionLink to={`/products/${leaf.id}`} style={{ fontWeight: 500 }}>
                             {leaf.name}
-                          </Link>
+                          </VersionLink>
                         </td>
                         <td style={{ width: '7rem', padding: '0.75rem', verticalAlign: 'top' }}>
                           <span className="p-label--information" style={{ fontSize: '0.7rem', whiteSpace: 'nowrap' }}>
@@ -348,7 +349,7 @@ export default function ProductDetail() {
                               {i > 0 && <span style={{ color: '#ccc', margin: '0 0.4rem' }}>·</span>}
                               <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem' }}>
                                 {linked?.current_result && <MedalBadge medal={linked.current_result} size="small" />}
-                                <Link to={`/products/${linked!.id}`}>{cr.label}</Link>
+                                <VersionLink to={`/products/${linked!.id}`}>{cr.label}</VersionLink>
                               </span>
                             </React.Fragment>
                           )

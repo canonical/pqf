@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react'
-import { Link } from 'react-router'
+import VersionLink from '../components/VersionLink'
 import { usePortfolio } from '../hooks/usePortfolio'
 import MedalBadge from '../components/MedalBadge'
 import LoadingSpinner from '../components/LoadingSpinner'
@@ -193,7 +193,7 @@ export default function Overview() {
                 return (
                   <tr key={product.id}>
                     <td>
-                      <Link to={`/products/${product.id}`}>{product.name}</Link>
+                      <VersionLink to={`/products/${product.id}`}>{product.name}</VersionLink>
                     </td>
                     <td>
                       <span
@@ -228,9 +228,9 @@ export default function Overview() {
                   <th style={{ width: '20%' }}>Product</th>
                   {dimensions.map(dim => (
                     <th key={dim} style={{ width: `${80 / dimensions.length}%` }}>
-                      <Link to={`/dimensions/${dim}`}>
+                      <VersionLink to={`/dimensions/${dim}`}>
                         {portfolio.dimensions_meta[dim]?.label ?? dim.replace(/_/g, ' ')}
-                      </Link>
+                      </VersionLink>
                     </th>
                   ))}
                 </tr>
@@ -239,7 +239,7 @@ export default function Overview() {
                 {products.map(product => (
                   <tr key={product.id}>
                     <td style={{ width: '20%' }}>
-                      <Link to={`/products/${product.id}`}>{product.name}</Link>
+                      <VersionLink to={`/products/${product.id}`}>{product.name}</VersionLink>
                     </td>
                     {dimensions.map(dim => {
                       const d = product.dimensions[dim]
@@ -260,9 +260,9 @@ export default function Overview() {
           <small>Data generated at {new Date(portfolio.generated_at).toLocaleString()}</small>
         </p>
         <p>
-          <Link to="/about" className="p-button--neutral">
+          <VersionLink to="/about" className="p-button--neutral">
             About this framework
-          </Link>
+          </VersionLink>
         </p>
       </div>
     </div>

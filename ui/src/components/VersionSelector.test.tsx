@@ -106,4 +106,20 @@ describe('VersionSelector', () => {
     await screen.findByRole('combobox', { name: /framework version/i })
     expect(screen.queryByText(/Refreshed/)).not.toBeInTheDocument()
   })
+
+  it('wraps the select in Canonical/Vanilla form-validation markup with a labelled control', async () => {
+    renderSelector('/v0/products/matrix')
+    const select = await screen.findByRole('combobox', { name: /framework version/i })
+
+    const selectWrapper = select.closest('.p-form-validation__select-wrapper')
+    expect(selectWrapper).not.toBeNull()
+
+    const formControl = selectWrapper?.closest('.p-form__control')
+    expect(formControl).not.toBeNull()
+
+    const formGroup = formControl?.closest('.p-form-validation')
+    expect(formGroup).not.toBeNull()
+
+    expect(screen.getByText('Framework version', { selector: 'label' })).toBeInTheDocument()
+  })
 })

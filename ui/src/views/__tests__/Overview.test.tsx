@@ -9,6 +9,13 @@ import type { Portfolio, Product } from '../../types'
 vi.mock('../../hooks/usePortfolio')
 import { usePortfolio } from '../../hooks/usePortfolio'
 
+vi.mock('../../providers/FrameworkVersionProvider', () => ({
+  useFrameworkVersion: () => ({
+    current: { id: 'v0', sequence: 0, label: 'PQF V0', status: 'active', description: '', portfolio_url: '', generated_at: '', contract_digest: 'digest-v0' },
+    versions: [],
+  }),
+}))
+
 const mockPortfolio: Portfolio = {
   generated_at: '2026-06-30T00:00:00Z',
   products: [
@@ -86,6 +93,13 @@ describe('Overview', () => {
     wrap(<Overview />)
     const links = screen.getAllByRole('link', { name: 'Matrix (Synapse)' })
     expect(links.length).toBeGreaterThan(0)
+  })
+
+  it('scopes product and dimension links to the selected framework version', () => {
+    wrap(<Overview />)
+    const productLinks = screen.getAllByRole('link', { name: 'Matrix (Synapse)' })
+    productLinks.forEach(link => expect(link).toHaveAttribute('href', '/v0/products/matrix'))
+    expect(screen.getByRole('link', { name: /about this framework/i })).toHaveAttribute('href', '/v0/about')
   })
 
   it('shows current medal', () => {

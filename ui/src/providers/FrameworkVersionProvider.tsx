@@ -1,5 +1,5 @@
 import { createContext, useContext, type ReactNode } from 'react'
-import { useParams } from 'react-router'
+import { useParams, Link } from 'react-router'
 import { useFrameworkVersions } from '../hooks/useFrameworkVersions'
 import LoadingSpinner from '../components/LoadingSpinner'
 import type { FrameworkVersionSummary } from '../types'
@@ -38,7 +38,7 @@ interface FrameworkVersionProviderProps {
  */
 export function FrameworkVersionProvider({ children }: FrameworkVersionProviderProps) {
   const { frameworkVersion } = useParams<{ frameworkVersion: string }>()
-  const { data, isLoading, isError, error } = useFrameworkVersions()
+  const { data, isLoading, isError, error, refetch } = useFrameworkVersions()
 
   if (isLoading) {
     return <LoadingSpinner />
@@ -48,6 +48,9 @@ export function FrameworkVersionProvider({ children }: FrameworkVersionProviderP
     return (
       <div className="row" style={{ padding: '3rem 1rem', textAlign: 'center' }}>
         <p>Failed to load framework versions{error ? `: ${error.message}` : '.'}</p>
+        <button type="button" className="p-button" onClick={() => refetch()}>
+          Retry
+        </button>
       </div>
     )
   }
@@ -55,10 +58,16 @@ export function FrameworkVersionProvider({ children }: FrameworkVersionProviderP
   const current = data.versions.find(version => version.id === frameworkVersion)
 
   if (!current) {
+    const active = data.versions.find(version => version.status === 'active')
     return (
       <div className="row" style={{ padding: '3rem 1rem', textAlign: 'center' }}>
         <h1 className="p-heading--2">Framework version not found</h1>
         <p>&ldquo;{frameworkVersion}&rdquo; is not a published PQF framework version.</p>
+        {active && (
+          <p>
+            <Link to={`/${active.id}`}>Go to the active framework version ({active.label})</Link>
+          </p>
+        )}
       </div>
     )
   }

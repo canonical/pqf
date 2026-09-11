@@ -139,4 +139,10 @@ describe('DimensionsOverview route', () => {
     expect(screen.getByText('Bronze')).toBeInTheDocument()
     expect(screen.getByText('Silver')).toBeInTheDocument()
   })
+
+  it('scopes the dimension link to the selected framework version', async () => {
+    wrap('/dimensions')
+    const link = await screen.findByRole('link', { name: /test verification/i })
+    expect(link).toHaveAttribute('href', '#/v0/dimensions/test_verification')
+  })
 })
