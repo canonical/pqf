@@ -82,7 +82,7 @@ export default function GlobalNav() {
           </ul>
         </nav>
         <div className="p-navigation__nav-selector-wrapper" style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: '1rem', padding: '0.5rem 1rem' }}>
-          <span className="p-text--small" style={{ opacity: 0.8, whiteSpace: 'nowrap' }}>
+          <span className="p-text--small" style={{ opacity: 0.8 }}>
             {describeFrameworkContext(current)}
           </span>
           <VersionSelector />
