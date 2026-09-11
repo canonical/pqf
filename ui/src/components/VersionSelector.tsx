@@ -24,6 +24,14 @@ function groupVersions(versions: FrameworkVersionSummary[]): VersionGroup[] {
   })).filter(group => group.versions.length > 0)
 }
 
+function formatRefreshTime(generatedAt: string): string {
+  const timestamp = new Date(generatedAt)
+  if (!Number.isFinite(timestamp.getTime())) {
+    return 'Refresh time unavailable'
+  }
+  return timestamp.toLocaleString()
+}
+
 /**
  * Persistent top-right control for switching the selected framework version. Preserves the
  * current sub-route by replacing only the first path segment (the version id).
@@ -73,7 +81,7 @@ export default function VersionSelector() {
         className="version-selector__meta"
         style={{ fontSize: '0.75rem', color: '#f2f2f2', marginTop: '0.25rem' }}
       >
-        Refreshed {new Date(current.generated_at).toLocaleString()}
+        Refreshed {formatRefreshTime(current.generated_at)}
       </span>
     </div>
   )

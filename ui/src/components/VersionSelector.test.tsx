@@ -119,6 +119,36 @@ describe('VersionSelector', () => {
     },
   )
 
+  it('falls back to unavailable refresh time when generated_at is malformed', async () => {
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockResolvedValue({
+        ok: true,
+        json: async () => ({
+          versions: [
+            {
+              id: 'v0',
+              sequence: 0,
+              label: 'PQF V0',
+              status: 'active',
+              description: 'Current framework revision',
+              portfolio_url: 'versions/v0/portfolio.json',
+              generated_at: 'not-a-timestamp',
+              contract_digest: 'digest-v0',
+            },
+          ],
+        }),
+      }),
+    )
+
+    renderSelector('/v0/products/matrix')
+
+    await screen.findByRole('combobox', { name: /framework version/i })
+
+    expect(screen.getByText(/Refresh time unavailable/)).toBeInTheDocument()
+    expect(screen.queryByText(/Invalid Date/)).not.toBeInTheDocument()
+  })
+
   it('wraps the select in Canonical/Vanilla form-validation markup with a labelled control', async () => {
     renderSelector('/v0/products/matrix')
     const select = await screen.findByRole('combobox', { name: /framework version/i })
