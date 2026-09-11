@@ -85,9 +85,14 @@
     },
     "OutputMeta": {
       "type": "object",
-      "required": ["type", "label", "description"],
+      "required": ["implementation", "type", "label", "description"],
       "additionalProperties": false,
       "properties": {
+        "implementation": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9-]*/v[1-9][0-9]*$",
+          "description": "Concrete metric implementation revision selected by this framework contract."
+        },
         "type": {
           "type": "string",
           "enum": ["boolean", "number", "string"],
