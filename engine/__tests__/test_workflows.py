@@ -1,6 +1,10 @@
 from pathlib import Path
 
+import pytest
 import yaml
+
+from engine.framework import FrameworkStatus, discover_frameworks
+from engine.workflow_matrix import SCHEDULE_CADENCES, select_frameworks
 
 
 def load_workflow(path: str) -> dict:
@@ -61,11 +65,16 @@ def test_compute_metrics_deploys_production_from_engine_artifacts() -> None:
     on = workflow.get("on") or workflow.get(True) or {}
     assert "schedule" in on, "expected 'schedule' trigger at workflow level"
 
-    # Two cron entries: nightly (active) + weekly (upcoming), distinguished
-    # at runtime by github.event.schedule.
+    # Two cron entries: nightly (active) + weekly (upcoming). The cadence is derived
+    # from the cron literal by engine.workflow_matrix.SCHEDULE_CADENCES, so the
+    # declared crons must match that mapping exactly — otherwise a schedule change
+    # would silently score the wrong framework versions.
     crons = [entry["cron"] for entry in on["schedule"]]
-    assert "0 2 * * *" in crons, "expected nightly cron for active framework version"
-    assert "0 3 * * 1" in crons, "expected weekly cron for upcoming framework version"
+    assert sorted(crons) == sorted(SCHEDULE_CADENCES), (
+        "declared cron entries must match engine.workflow_matrix.SCHEDULE_CADENCES exactly"
+    )
+    assert SCHEDULE_CADENCES["0 2 * * *"] == "nightly"
+    assert SCHEDULE_CADENCES["0 3 * * 1"] == "weekly"
 
     assert "workflow_dispatch" in on, "expected 'workflow_dispatch' trigger at workflow level"
     dispatch_inputs = on["workflow_dispatch"]["inputs"]
@@ -128,18 +137,48 @@ def test_compute_metrics_deploys_production_from_engine_artifacts() -> None:
     assert "origin/${{ github.base_ref }}" in change_report_run
     assert "$GITHUB_STEP_SUMMARY" in change_report_run
 
-    # ---- determine-matrix: builds the framework/product/dimension matrix ----
+    # ---- determine-matrix: builds the framework/product matrix ----
     determine_matrix = jobs["determine-matrix"]
     assert determine_matrix["outputs"]["matrix"] == "${{ steps.build.outputs.matrix }}"
     assert determine_matrix["outputs"]["versions"] == "${{ steps.build.outputs.versions }}"
     build_step = next(step for step in determine_matrix["steps"] if step.get("id") == "build")
-    assert "engine.workflow_matrix --cadence" in build_step["run"]
-    assert "nightly" in build_step["run"]
-    assert "weekly" in build_step["run"]
-    assert "manual" in build_step["run"]
-    assert "github.event.inputs.framework_version" in build_step["run"]
+    build_run = build_step["run"]
+    assert "engine.workflow_matrix" in build_run
+    # Cadence for scheduled runs is derived from the cron literal by the tested
+    # mapping, never by comparing cron strings in YAML.
+    assert '--schedule "$EVENT_SCHEDULE"' in build_run
+    assert "0 3 * * 1" not in build_run, (
+        "cadence must be derived by engine.workflow_matrix, not by a cron literal "
+        "duplicated in shell"
+    )
+    assert "--cadence manual" in build_run
+    assert "--cadence changed" in build_run
+    assert "--changed-paths-file" in build_run
+    assert build_step["env"]["DISPATCH_VERSION"] == "${{ github.event.inputs.framework_version }}"
 
-    # ---- compute-metrics: runs the generic scorer per matrix row ----
+    # First-run bootstrap: the matrix script is told where the published site is so
+    # live versions missing a portfolio there are scored automatically.
+    assert "--published-dir .gh-pages-data" in build_run
+    pages_checkout = next(
+        step
+        for step in determine_matrix["steps"]
+        if step.get("name") == "Check out current Pages data"
+    )
+    assert pages_checkout["with"]["ref"] == "gh-pages"
+    assert pages_checkout["with"]["path"] == ".gh-pages-data"
+    assert pages_checkout["continue-on-error"] is True, (
+        "a missing gh-pages branch must bootstrap every live version, not fail the run"
+    )
+    matrix_names = step_names(determine_matrix)
+    assert matrix_names.index("Check out current Pages data") < matrix_names.index(
+        "Build framework/product matrix"
+    )
+
+    # A force-push / new branch has no usable base commit; the diff must not explode.
+    assert "0000000000000000000000000000000000000000" in build_run
+    assert "git ls-files" in build_run
+
+    # ---- compute-metrics: one job per (version, product), looping dimensions ----
     compute_metrics = jobs["compute-metrics"]
     assert compute_metrics["needs"] == "determine-matrix"
     assert (
@@ -147,14 +186,33 @@ def test_compute_metrics_deploys_production_from_engine_artifacts() -> None:
         == "${{ fromJson(needs.determine-matrix.outputs.matrix) }}"
     )
     scorer_step = next(
-        step for step in compute_metrics["steps"] if step.get("name") == "Run generic scorer"
+        step
+        for step in compute_metrics["steps"]
+        if step.get("name") == "Run every dimension for this framework version"
     )
-    assert "scorers/run.py" in scorer_step["run"]
-    assert "--framework-version ${{ matrix.framework_version }}" in scorer_step["run"]
-    assert "--dimension ${{ matrix.dimension }}" in scorer_step["run"]
-    assert "--product-yaml products/${{ matrix.product }}.yaml" in scorer_step["run"]
+    scorer_run = scorer_step["run"]
+    assert "scorers/run.py" in scorer_run
+    assert "--list-dimensions" in scorer_run, (
+        "each job must discover its framework version's dimensions itself"
+    )
+    assert "for dimension in $dimensions; do" in scorer_run
+    assert '--dimension "$dimension"' in scorer_run
+    assert '--product-yaml "products/$PRODUCT.yaml"' in scorer_run
+    assert "matrix.dimension" not in scorer_run, (
+        "dimension must not be a matrix axis; jobs loop over dimensions instead"
+    )
+    assert "matrix.dimension" not in yaml.safe_dump(compute_metrics), (
+        "the matrix is (framework_version, product) only"
+    )
     assert "Check if product needs rescoring" not in step_names(compute_metrics), (
         "per-product PR rescore skip removed; filtering is now version-level via determine-matrix"
+    )
+
+    upload_step = next(
+        step for step in compute_metrics["steps"] if step.get("name") == "Upload scorer output"
+    )
+    assert upload_step["with"]["name"] == (
+        "scorer-output-${{ matrix.framework_version }}-${{ matrix.product }}"
     )
 
     # ---- merge-computed: merges per-dimension outputs into per-version/product envelopes ----
@@ -170,7 +228,7 @@ def test_compute_metrics_deploys_production_from_engine_artifacts() -> None:
     assert "--contract-digest" in merge_step["run"]
     assert "--implementation-fingerprints" in merge_step["run"]
 
-    # ---- assemble-versions: one assemble + badges run per selected version ----
+    # ---- assemble-versions: one assemble run per selected version ----
     assemble_versions = jobs["assemble-versions"]
     assert assemble_versions["needs"] == ["determine-matrix", "merge-computed"]
     assert assemble_versions["strategy"]["matrix"]["framework_version"] == (
@@ -185,24 +243,67 @@ def test_compute_metrics_deploys_production_from_engine_artifacts() -> None:
     assert "--framework-version ${{ matrix.framework_version }}" in assemble_step["run"]
     assert "public/versions/${{ matrix.framework_version }}/portfolio.json" in assemble_step["run"]
 
-    badges_step = next(
-        step for step in assemble_versions["steps"] if step.get("name") == "Generate active badges"
-    )
-    assert badges_step["if"] == "steps.status.outputs.status == 'active'", (
-        "badges must only be generated for the active framework version"
-    )
-
     # ---- run-engine: preserves archived/untouched versions, rebuilds version index ----
     run_engine = jobs["run-engine"]
-    assert run_engine["needs"] == ["determine-matrix", "assemble-versions"]
+    assert run_engine["needs"] == [
+        "determine-matrix",
+        "compute-metrics",
+        "merge-computed",
+        "assemble-versions",
+    ]
+
+    # Upstream failure must block publishing; 'skipped' only counts as "no work"
+    # when the version selection was genuinely empty.
+    gate = " ".join(run_engine["if"].split())
+    assert "needs.determine-matrix.result == 'success'" in gate
+    assert "needs.determine-matrix.outputs.versions == '[]'" in gate, (
+        "'skipped' upstream jobs may only be tolerated when the selection was empty"
+    )
+    assert "needs.determine-matrix.outputs.versions != '[]'" in gate
+    for upstream in ["compute-metrics", "merge-computed", "assemble-versions"]:
+        assert f"needs.{upstream}.result == 'skipped'" in gate, (
+            f"{upstream} may only be skipped when there is no work"
+        )
+        assert f"needs.{upstream}.result == 'success'" in gate, (
+            f"{upstream} must have succeeded when there is work"
+        )
+        assert f"needs.{upstream}.result == 'failure'" not in gate
+        interchangeable = (
+            f"(needs.{upstream}.result == 'success' || needs.{upstream}.result == 'skipped')"
+        )
+        assert interchangeable not in gate, (
+            f"{upstream} success must not be interchangeable with skipped"
+        )
+
     carry_forward_step = next(
         step
         for step in run_engine["steps"]
         if step.get("name") == "Carry forward previously published artifacts"
     )
-    assert ".gh-pages-data/versions/." in carry_forward_step["run"]
-    assert "cp .gh-pages-data/portfolio.json public/portfolio.json" in carry_forward_step["run"]
-    assert "cp -R .gh-pages-data/badges public/badges" in carry_forward_step["run"]
+    carry_forward_run = carry_forward_step["run"]
+    # Archived versions are never rescored; they survive only via this copy.
+    assert ".gh-pages-data/versions/." in carry_forward_run
+    assert "rm -rf public/badges" in carry_forward_run, (
+        "repo-tracked badges must be cleared so removed products cannot accumulate"
+    )
+    assert "cp -R .gh-pages-data/badges" not in carry_forward_run, (
+        "root badges are regenerated from the active version, not accumulated from gh-pages"
+    )
+
+    root_publish_step = next(
+        step
+        for step in run_engine["steps"]
+        if step.get("name") == "Publish active version at the stable root paths"
+    )
+    root_publish_run = root_publish_step["run"]
+    assert "engine/badges.py" in root_publish_run
+    assert "--output-dir public/badges/" in root_publish_run, (
+        "active badges must stay at the stable root path public/badges/"
+    )
+    assert "rm -rf public/badges" in root_publish_run, (
+        "badges are regenerated into a cleared directory so removed products drop out"
+    )
+    assert 'cp "$portfolio" public/portfolio.json' in root_publish_run
 
     version_index_step = next(
         step
@@ -217,13 +318,31 @@ def test_compute_metrics_deploys_production_from_engine_artifacts() -> None:
     )
     assert pages_checkout["with"]["ref"] == "gh-pages"
     assert pages_checkout["with"]["path"] == ".gh-pages-data"
+    assert pages_checkout["continue-on-error"] is True
 
     names = step_names(run_engine)
     assert names.index("Check out current Pages data") < names.index(
         "Carry forward previously published artifacts"
     )
     assert names.index("Carry forward previously published artifacts") < names.index(
+        "Download freshly computed framework versions"
+    )
+    assert names.index("Download freshly computed framework versions") < names.index(
+        "Publish active version at the stable root paths"
+    )
+    assert names.index("Publish active version at the stable root paths") < names.index(
         "Regenerate framework version index"
+    )
+    assert names.index("Regenerate framework version index") < names.index(
+        "Upload engine artifacts"
+    )
+
+    engine_upload = next(
+        step for step in run_engine["steps"] if step.get("name") == "Upload engine artifacts"
+    )
+    assert engine_upload["with"]["name"] == "engine-artifacts"
+    assert engine_upload["with"]["path"] == "public/", (
+        "the artifact root is the contents of public/, so consumers extract into public/"
     )
 
     deploy_job = jobs["deploy-production"]
@@ -236,23 +355,38 @@ def test_compute_metrics_deploys_production_from_engine_artifacts() -> None:
     assert "github.event_name == 'push'" in expr
     assert "github.ref == 'refs/heads/main'" in expr
     assert "github.repository == 'canonical/pqf'" in expr
+    # 'needs: run-engine' without a status function keeps the implicit success()
+    # gate, so a blocked run-engine also blocks the deploy.
+    assert "always()" not in expr
 
     names = step_names(deploy_job)
+    assert "Reset public data" in names
     assert "Download engine artifacts" in names
     assert "Build UI" in names
     assert "Deploy to GitHub Pages (attempt 1)" in names
     assert "Wait before deploy retry" in names
     assert "Deploy to GitHub Pages (retry)" in names
 
-    # Verify ordering: Download engine artifacts must come before Build UI
-    idx_artifacts = names.index("Download engine artifacts")
-    idx_build = names.index("Build UI")
-    assert idx_artifacts < idx_build, "Download engine artifacts must run before Build UI"
+    # Verify ordering: reset, then download, then build
+    assert names.index("Reset public data") < names.index("Download engine artifacts")
+    assert names.index("Download engine artifacts") < names.index("Build UI"), (
+        "Download engine artifacts must run before Build UI"
+    )
+
+    reset_step = next(
+        step for step in deploy_job["steps"] if step.get("name") == "Reset public data"
+    )
+    for stale in ["public/badges", "public/versions", "public/portfolio.json"]:
+        assert stale in reset_step["run"]
 
     artifact_step = next(
         step for step in deploy_job["steps"] if step.get("name") == "Download engine artifacts"
     )
     assert artifact_step["with"]["name"] == "engine-artifacts"
+    assert artifact_step["with"]["path"] == "public", (
+        "engine-artifacts must be extracted into public/ so framework-versions.json, "
+        "versions/ and badges/ reach Vite's publicDir"
+    )
 
     deploy_step = next(
         step
@@ -261,7 +395,13 @@ def test_compute_metrics_deploys_production_from_engine_artifacts() -> None:
     )
     assert deploy_step["uses"] == "peaceiris/actions-gh-pages@v4"
     assert deploy_step["continue-on-error"] is True
-    assert deploy_step["with"]["keep_files"] is True
+    assert deploy_step["with"]["keep_files"] is True, (
+        "keep_files preserves /legacy/ and other already-published Pages content"
+    )
+    retry_step = next(
+        step for step in deploy_job["steps"] if step.get("name") == "Deploy to GitHub Pages (retry)"
+    )
+    assert retry_step["with"]["keep_files"] is True
 
     # ---- PR preview path must remain artifact-driven ----
     assert "build-preview" in jobs, "expected 'build-preview' job for PR previews"
@@ -271,24 +411,29 @@ def test_compute_metrics_deploys_production_from_engine_artifacts() -> None:
     preview_if = preview.get("if", "")
     assert "github.event_name == 'pull_request'" in preview_if
     assert "github.repository == 'canonical/pqf'" in preview_if
+    assert "always()" not in preview_if
 
     preview_names = step_names(preview)
     # Step name includes extra context in YAML; check substring for robustness
     assert any("Download engine artifacts" in n for n in preview_names), (
         "preview must download engine-artifacts"
     )
+    assert "Reset public data" in preview_names
     assert "Build UI" in preview_names, "preview must build the UI"
 
-    # Verify ordering: download occurs before build in preview job
+    # Verify ordering: reset, download, build
     idx_dl = next(i for i, n in enumerate(preview_names) if "Download engine artifacts" in n)
-    idx_build_preview = preview_names.index("Build UI")
-    assert idx_dl < idx_build_preview, "preview must download engine artifacts before building UI"
+    assert preview_names.index("Reset public data") < idx_dl
+    assert idx_dl < preview_names.index("Build UI"), (
+        "preview must download engine artifacts before building UI"
+    )
 
     dl_step = next(
         step for step in preview["steps"] if "Download engine artifacts" in step.get("name", "")
     )
-    # Confirm it downloads the named artifact
+    # Confirm it downloads the named artifact into Vite's publicDir
     assert dl_step["with"]["name"] == "engine-artifacts"
+    assert dl_step["with"]["path"] == "public"
 
     assert "github.event.action != 'closed'" in preview_if
 
@@ -301,6 +446,20 @@ def test_compute_metrics_deploys_production_from_engine_artifacts() -> None:
     )
 
     assert "cleanup-preview" not in jobs, "cleanup moved to dedicated cleanup-preview workflow"
+
+
+def test_compute_metrics_never_schedules_archived_framework_versions() -> None:
+    """Archived versions must survive only via the gh-pages carry-forward copy."""
+    frameworks = discover_frameworks(Path("framework/versions"))
+    archived_ids = [f.id for f in frameworks if f.status == FrameworkStatus.ARCHIVED]
+
+    for cadence in ("nightly", "weekly"):
+        selected = select_frameworks(frameworks, cadence=cadence)
+        assert not ({f.id for f in selected} & set(archived_ids))
+
+    for archived_id in archived_ids:
+        with pytest.raises(ValueError, match="archived"):
+            select_frameworks(frameworks, cadence="manual", framework_version=archived_id)
 
 
 def test_deploy_pages_only_runs_for_ui_changes_and_skips_mixed_commits() -> None:

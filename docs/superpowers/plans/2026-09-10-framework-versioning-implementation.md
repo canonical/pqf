@@ -768,8 +768,13 @@ git commit -m "ci: preserve pre-versioning site"
 
 **Interfaces:**
 - Consumes: framework discovery and version-aware scorer/merge/assembly commands.
-- Produces: matrix rows shaped as
-  `{"framework_version": "v1", "product": "matrix", "dimension": "documentation"}`.
+- Produces: matrix rows shaped as `{"framework_version": "v1", "product": "matrix"}`.
+
+> **Approved amendment (user-approved):** the matrix is
+> `(framework_version, product)`, **not** `(framework_version, product, dimension)`.
+> Each job discovers and runs every dimension its framework version declares,
+> sequentially. This caps push/PR at 68 jobs (34 products x 2 live versions) instead of
+> 306, amortizes checkout/install across all dimensions, and merges once per run.
 
 - [ ] **Step 1: Write failing matrix tests**
 
@@ -777,10 +782,24 @@ Assert nightly selection returns only active rows, weekly selection returns only
 manual selection accepts active/upcoming, archived selection fails, and catalog filtering excludes
 products outside the selected version.
 
+Also assert, on the real catalog, that the matrix is one row per
+(framework version, product) with no `dimension` key and no duplicates, and that it is
+strictly smaller than the equivalent version/product/dimension matrix.
+
 - [ ] **Step 2: Implement matrix generation**
 
-`python3 -m engine.workflow_matrix --cadence nightly|weekly|manual
---framework-version <optional>` must print compact JSON for `$GITHUB_OUTPUT`.
+`python3 -m engine.workflow_matrix --cadence nightly|weekly|manual|changed
+[--framework-version <id>] [--changed-paths-file <file>] [--published-dir <dir>]` must print
+compact JSON for `$GITHUB_OUTPUT`, with rows containing only `framework_version` and `product`.
+
+Cadence must also be derivable from the schedule cron with
+`--schedule "<cron>"`, resolved through an exact, tested `SCHEDULE_CADENCES` mapping that
+rejects any undeclared cron. Never compare cron literals in workflow shell.
+
+`--cadence changed` selects live versions from a list of changed paths: a change under
+`framework/versions/<id>/` affects only that version; changes to shared inputs
+(`scorers/`, `engine/`, `config/`, `products/`, the workflow, or `framework/` files outside a
+known version directory) affect every live version. `__tests__/` paths are ignored.
 
 - [ ] **Step 3: Refactor the workflow**
 
@@ -791,31 +810,53 @@ Use two cron entries:
 - cron: "0 3 * * 1"
 ```
 
-Distinguish cadence by `github.event.schedule`. Build a version/product/dimension matrix, run the
-generic scorer, merge per version/product, assemble each selected version, generate active badges,
-then regenerate the version index.
+Pass `github.event.schedule` to the matrix script and let it map the cron to a cadence. Build a
+version/product matrix; each compute job lists its framework version's dimensions via
+`python3 -m engine.framework --list-dimensions` and loops `scorers/run.py` over them, uploading
+one artifact per (version, product). Merge per version/product once, assemble each selected
+version, then publish.
 
-On push and PR events, include active and upcoming versions whose framework, scorer, engine, or
-catalog inputs changed. On manual dispatch, require a version choice discovered and validated by
-the matrix script.
+On push and PR events, diff the changed paths into a file and use `--cadence changed`. On manual
+dispatch, require a version choice discovered and validated by the matrix script. Handle a
+missing/zero `github.event.before` by treating the whole tree as changed.
 
-- [ ] **Step 4: Preserve archived artifacts**
+- [ ] **Step 4: Bootstrap, preserve, and publish**
 
-Before publishing, check out current `gh-pages` data and copy archived `public/versions/<id>`
-directories into the deployment artifact. Never schedule or matrix archived scorer jobs.
+`determine-matrix` checks out the published `gh-pages` data (tolerating a missing branch) and
+passes it as `--published-dir`. Every live version with no published portfolio there is added to
+the matrix automatically, so the version index can always be rebuilt instead of failing late.
 
-- [ ] **Step 5: Add semantic change report to pull requests**
+Before publishing, copy the published `versions/<id>` directories into the deployment artifact,
+which is what preserves archived versions; never schedule or matrix archived scorer jobs.
+Regenerate the active version's `portfolio.json` and badges at the stable root paths
+`public/portfolio.json` and `public/badges/`, clearing `public/badges/` first so products removed
+from the catalog cannot accumulate. `keep_files: true` on deploy preserves `/legacy/`.
+
+Upload the publish artifact from `public/`, and have every consumer download it with
+`path: public` (after clearing repo-tracked `public/` data) so `framework-versions.json`,
+`versions/`, badges, and the root portfolio all reach Vite's `publicDir`.
+
+- [ ] **Step 5: Gate publishing and deployment on upstream success**
+
+`run-engine` must run only when `determine-matrix` succeeded and either every upstream compute
+job succeeded, or the version selection was genuinely empty (`versions == '[]'`) and those jobs
+were therefore skipped. Never treat `skipped` as success when there was work to do. Deploy jobs
+keep the implicit `success()` gate on `run-engine`.
+
+- [ ] **Step 6: Add semantic change report to pull requests**
 
 Run `python3 -m engine.change_report --base-ref origin/${{ github.base_ref }}` before compute jobs
 and append its Markdown to `$GITHUB_STEP_SUMMARY`.
 
-- [ ] **Step 6: Run workflow tests**
+- [ ] **Step 7: Run workflow tests**
 
 Run: `pytest engine/__tests__/test_workflow_matrix.py engine/__tests__/test_workflows.py -v`
 
-Expected: all pass.
+Expected: all pass. `test_workflows.py` must assert the workflow's declared cron entries match
+`SCHEDULE_CADENCES` exactly, that artifacts are downloaded with `path: public`, and that the
+`run-engine` gate blocks on upstream failure.
 
-- [ ] **Step 7: Commit**
+- [ ] **Step 8: Commit**
 
 ```bash
 git add engine/workflow_matrix.py engine/__tests__/test_workflow_matrix.py \
