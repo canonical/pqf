@@ -1,8 +1,10 @@
 import json
+from pathlib import Path
 
 import pytest
 
 from engine.assemble import assemble_portfolio
+from engine.framework import FrameworkStatus, FrameworkVersion
 
 DIMS_CONFIG = {
     "dimensions": {
@@ -33,12 +35,16 @@ id: matrix
 product_type: root
 name: Matrix
 lifecycle: stable
-target_medal: gold
+introduced_in: v0
+targets:
+  v0: gold
+  v1: gold
 ownership:
   squad: americas
 composed_of:
   - id: synapse
     product_type: charm
+    introduced_in: v0
     source:
       repo: canonical/synapse-operator
 context_refs:
@@ -53,6 +59,25 @@ COMPUTED_JSON = {
 }
 
 
+def _framework(version_id: str, sequence: int, status: FrameworkStatus) -> FrameworkVersion:
+    return FrameworkVersion(
+        id=version_id,
+        sequence=sequence,
+        label=f"PQF {version_id.upper()}",
+        status=status,
+        description=f"{version_id} contract",
+        directory=Path("."),
+        dimensions={"dimensions": {}},
+    )
+
+
+FRAMEWORKS = [
+    _framework("v0", 0, FrameworkStatus.ACTIVE),
+    _framework("v1", 1, FrameworkStatus.UPCOMING),
+]
+FRAMEWORK_BY_ID = {framework.id: framework for framework in FRAMEWORKS}
+
+
 @pytest.fixture
 def portfolio(tmp_path):
     (tmp_path / "products").mkdir()
@@ -65,6 +90,8 @@ def portfolio(tmp_path):
         dimensions_config=DIMS_CONFIG,
         drift_history={},
         update_drift=False,
+        frameworks=FRAMEWORKS,
+        selected_framework=FRAMEWORK_BY_ID["v0"],
     )
 
 

@@ -1,4 +1,7 @@
+from pathlib import Path
+
 from engine.aggregation import aggregate_root_dimension, compute_leaf_applicability
+from engine.framework import FrameworkStatus, FrameworkVersion
 from engine.graph import build_graph
 from engine.medal_engine import compute_leaf_product, compute_root_product
 from engine.models import (
@@ -7,6 +10,25 @@ from engine.models import (
     Medal,
     Result,
 )
+
+
+def _framework(version_id: str, sequence: int, status: FrameworkStatus) -> FrameworkVersion:
+    return FrameworkVersion(
+        id=version_id,
+        sequence=sequence,
+        label=f"PQF {version_id.upper()}",
+        status=status,
+        description=f"{version_id} contract",
+        directory=Path("."),
+        dimensions={"dimensions": {}},
+    )
+
+
+FRAMEWORKS = [
+    _framework("v0", 0, FrameworkStatus.ACTIVE),
+    _framework("v1", 1, FrameworkStatus.UPCOMING),
+]
+FRAMEWORK_BY_ID = {framework.id: framework for framework in FRAMEWORKS}
 
 DIM_CHARM_ONLY = {
     "applies_to": {"product_types": ["charm", "snap"]},
@@ -144,14 +166,15 @@ ROOT_GRAPH_DICT = {
     "product_type": "root",
     "name": "Matrix",
     "lifecycle": "stable",
-    "target_medal": "gold",
+    "introduced_in": "v0",
+    "targets": {"v0": "gold", "v1": "gold"},
     "ownership": {"squad": "americas"},
     "composed_of": [
         {
             "id": "synapse",
             "product_type": "charm",
+            "introduced_in": "v0",
             "source": {"repo": "canonical/synapse-operator"},
-            "target_medal": "gold",
         }
     ],
 }
@@ -173,7 +196,7 @@ DIMS_WITH_APPLICABILITY = {
 
 
 def test_compute_root_product_aggregates_leaf():
-    graph = build_graph([ROOT_GRAPH_DICT])
+    graph = build_graph([ROOT_GRAPH_DICT], FRAMEWORKS, FRAMEWORK_BY_ID["v0"])
     leaf_result = compute_leaf_product(
         "synapse", "charm", LEAF_METRICS, DIMS_WITH_APPLICABILITY, {}, "gold"
     )
@@ -187,7 +210,7 @@ def test_compute_root_product_aggregates_leaf():
 
 
 def test_compute_root_product_missing_leaf_skipped():
-    graph = build_graph([ROOT_GRAPH_DICT])
+    graph = build_graph([ROOT_GRAPH_DICT], FRAMEWORKS, FRAMEWORK_BY_ID["v0"])
     result = compute_root_product("matrix", graph, {}, DIMS_WITH_APPLICABILITY, {}, "gold")
     assert result.dimensions["test_verification"].medal.value == "unrated"
 
@@ -202,7 +225,7 @@ def test_compute_root_product_excluded_leaf_not_counted():
             }
         ],
     }
-    graph = build_graph([excluded_dict])
+    graph = build_graph([excluded_dict], FRAMEWORKS, FRAMEWORK_BY_ID["v0"])
     leaf_result = compute_leaf_product(
         "synapse", "charm", LEAF_METRICS, DIMS_WITH_APPLICABILITY, {}, "gold"
     )

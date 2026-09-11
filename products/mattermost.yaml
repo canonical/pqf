@@ -4,17 +4,21 @@ name: Mattermost
 description: Mattermost is an open-source chat platform designed for secure, real-time
   communication within teams.
 lifecycle: stable
-target_medal: gold
+introduced_in: v0
+targets:
+  v0: gold
+  v1: gold
 ownership:
   squad: americas
   stakeholders:
-    - IS
-composed_of:
-  - id: mattermost-charm
-    product_type: charm
-    source:
-      repo: canonical/mattermost-k8s-operator
-    allure_report_url: "https://canonical.github.io/mattermost-k8s-operator/_latest"
+  - IS
 documentation_url: https://charmhub.io/mattermost-k8s
+composed_of:
+- id: mattermost-charm
+  product_type: charm
+  introduced_in: v0
+  source:
+    repo: canonical/mattermost-k8s-operator
+  allure_report_url: https://canonical.github.io/mattermost-k8s-operator/_latest
 context_refs:
-  - label: Postgresql K8S
+- label: Postgresql K8S

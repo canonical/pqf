@@ -20,6 +20,7 @@ def _load_all_products(products_dir: Path) -> list[dict]:
 
 
 def main() -> int:
+    from engine.framework import discover_frameworks, get_framework
     from engine.graph import build_graph, resolve_leaf_units_for
     from scorers.documentation.logic import compute_metrics
 
@@ -30,6 +31,8 @@ def main() -> int:
         default=None,
         help="Directory containing all product YAMLs (needed to resolve ref: entries).",
     )
+    parser.add_argument("--framework-root", required=True)
+    parser.add_argument("--framework-version", required=True)
     parser.add_argument(
         "--model",
         default=None,
@@ -47,7 +50,9 @@ def main() -> int:
 
     products_dir = Path(args.products_dir) if args.products_dir else product_path.parent
     all_products = _load_all_products(products_dir)
-    graph = build_graph(all_products)
+    frameworks = discover_frameworks(Path(args.framework_root))
+    selected_framework = get_framework(frameworks, args.framework_version)
+    graph = build_graph(all_products, frameworks, selected_framework)
     units = resolve_leaf_units_for(graph, product_id)
 
     results = {}

@@ -1,27 +1,34 @@
 id: wordpress-k8s
 product_type: root
 name: WordPress
-description: |-
-  A Juju charm deploying and managing WordPress on Kubernetes. It supports scaling,
-  ingress integration, and optional integrations like logging and monitoring. See end-user docs at
-  https://documentation.ubuntu.com/wordpress-k8s-charm/latest/.
+description: 'A Juju charm deploying and managing WordPress on Kubernetes. It supports
+  scaling,
+
+  ingress integration, and optional integrations like logging and monitoring. See
+  end-user docs at
+
+  https://documentation.ubuntu.com/wordpress-k8s-charm/latest/.'
 lifecycle: stable
-target_medal: bronze
+introduced_in: v0
+targets:
+  v0: bronze
+  v1: bronze
 ownership:
   squad: apac
   stakeholders:
-    - IS
-composed_of:
-  - id: wordpress-k8s-charm
-    product_type: charm
-    source:
-      repo: canonical/wordpress-k8s-operator
-    allure_report_url: "https://canonical.github.io/wordpress-k8s-operator/_latest"
+  - IS
 documentation_url: https://charmhub.io/wordpress-k8s
+composed_of:
+- id: wordpress-k8s-charm
+  product_type: charm
+  introduced_in: v0
+  source:
+    repo: canonical/wordpress-k8s-operator
+  allure_report_url: https://canonical.github.io/wordpress-k8s-operator/_latest
 context_refs:
-  - label: Mysql K8S
-    repo: canonical/mysql-k8s-operator
-  - label: Nginx Ingress Integrator
-    repo: canonical/nginx-ingress-integrator-operator
-  - label: Loki K8S
-    repo: canonical/loki-k8s-operator
+- label: Mysql K8S
+  repo: canonical/mysql-k8s-operator
+- label: Nginx Ingress Integrator
+  repo: canonical/nginx-ingress-integrator-operator
+- label: Loki K8S
+  repo: canonical/loki-k8s-operator

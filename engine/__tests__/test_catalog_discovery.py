@@ -253,7 +253,8 @@ def test_load_pqf_schema_fields_from_config():
     # Expect top-level properties from the schema
     assert "id" in fields
     assert "ownership" in fields
-    assert "target_medal" in fields
+    assert "introduced_in" in fields
+    assert "targets" in fields
 
 
 def test_parse_ui_types_fields_from_ui_file():

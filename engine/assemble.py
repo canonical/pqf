@@ -8,6 +8,7 @@ from pathlib import Path
 import yaml
 
 from engine.drift_tracker import update_drift_history
+from engine.framework import discover_frameworks, get_framework
 from engine.graph import build_graph
 from engine.medal_engine import compute_leaf_product, compute_root_product
 from engine.models import ProductType
@@ -120,6 +121,8 @@ def assemble_portfolio(
     dimensions_config,
     drift_history,
     update_drift,
+    frameworks,
+    selected_framework,
 ) -> dict:
     products_dir = Path(products_dir)
     computed_dir = Path(computed_dir)
@@ -130,7 +133,7 @@ def assemble_portfolio(
         for p in sorted(products_dir.glob("*.yaml"))
         if not p.name.startswith(".")
     ]
-    graph = build_graph(product_dicts)
+    graph = build_graph(product_dicts, frameworks, selected_framework)
 
     # Load leaf metrics from computed files:
     # computed/{root-id}.json → {"leaf_metrics": {"leaf-id": {"dim": {metrics}}}}
@@ -151,19 +154,13 @@ def assemble_portfolio(
     leaf_results = {}
     for node in graph.nodes.values():
         if node.product_type in (ProductType.CHARM, ProductType.SNAP):
-            # Inline leaves inherit target from their single parent root
-            if node.target_medal is None:
-                parent = graph.nodes.get(node.parent_ids[0]) if node.parent_ids else None
-                target = parent.target_medal if parent else "bronze"
-            else:
-                target = node.target_medal
             leaf_results[node.id] = compute_leaf_product(
                 node.id,
                 node.product_type.value,
                 leaf_computed.get(node.id, {}),
                 dimensions_config,
                 drift_history,
-                target,
+                node.target_medal,
             )
 
     # Compute root product results
@@ -211,11 +208,15 @@ def main() -> int:
     parser.add_argument("--drift-history", required=True, dest="drift_history")
     parser.add_argument("--output", required=True)
     parser.add_argument("--update-drift", action="store_true", dest="update_drift")
+    parser.add_argument("--framework-root", required=True)
+    parser.add_argument("--framework-version", required=True)
     args = parser.parse_args()
 
     dimensions_config = yaml.safe_load(Path(args.dimensions).read_text())
     drift_history_path = Path(args.drift_history)
     drift_history = json.loads(drift_history_path.read_text())
+    frameworks = discover_frameworks(Path(args.framework_root))
+    selected_framework = get_framework(frameworks, args.framework_version)
 
     # Migrate legacy dimension keys in drift history
     _migrate_legacy_dimension_keys(drift_history)
@@ -226,6 +227,8 @@ def main() -> int:
         dimensions_config=dimensions_config,
         drift_history=drift_history,
         update_drift=args.update_drift,
+        frameworks=frameworks,
+        selected_framework=selected_framework,
     )
 
     Path(args.output).parent.mkdir(parents=True, exist_ok=True)

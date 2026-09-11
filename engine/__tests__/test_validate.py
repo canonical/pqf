@@ -156,7 +156,8 @@ class TestProductSchema:
             "id": "my-product",
             "name": "X",
             "lifecycle": "ancient",  # not a valid enum value
-            "target_medal": "bronze",
+            "introduced_in": "v0",
+            "targets": {"v0": "bronze", "v1": "bronze"},
             "ownership": {"squad": "team-a"},
         }
         p = tmp_path / "bad.yaml"
@@ -164,12 +165,27 @@ class TestProductSchema:
         errors = validate_file(p, _PROD_SCHEMA)
         assert errors
 
-    def test_invalid_target_medal_fails(self, tmp_path):
+    def test_invalid_targets_fails(self, tmp_path):
         bad = {
             "id": "my-product",
             "name": "X",
             "lifecycle": "stable",
-            "target_medal": "platinum",  # not valid
+            "introduced_in": "v0",
+            "targets": {"v0": "platinum"},  # not valid
+            "ownership": {"squad": "team-a"},
+        }
+        p = tmp_path / "bad.yaml"
+        p.write_text(yaml.dump(bad))
+        errors = validate_file(p, _PROD_SCHEMA)
+        assert errors
+
+    def test_invalid_introduced_in_fails(self, tmp_path):
+        bad = {
+            "id": "my-product",
+            "name": "X",
+            "lifecycle": "stable",
+            "introduced_in": "version-0",
+            "targets": {"v0": "bronze"},
             "ownership": {"squad": "team-a"},
         }
         p = tmp_path / "bad.yaml"
@@ -182,7 +198,8 @@ class TestProductSchema:
             "id": "my-product",
             "name": "X",
             "lifecycle": "stable",
-            "target_medal": "bronze",
+            "introduced_in": "v0",
+            "targets": {"v0": "bronze", "v1": "bronze"},
             "ownership": {"squad": "team-a"},
             "components": {
                 "foundational": [{"id": "c1", "type": "container", "github_repo": "org/repo"}]
@@ -198,7 +215,8 @@ class TestProductSchema:
             "id": "my-product",
             "name": "X",
             "lifecycle": "stable",
-            "target_medal": "bronze",
+            "introduced_in": "v0",
+            "targets": {"v0": "bronze", "v1": "bronze"},
             "ownership": {"squad": "team-a"},
             "components": {
                 "foundational": [{"id": "c1", "type": "charm", "github_repo": "just-repo-no-owner"}]
@@ -214,7 +232,8 @@ class TestProductSchema:
             "id": "my-product",
             "name": "X",
             "lifecycle": "stable",
-            "target_medal": "bronze",
+            "introduced_in": "v0",
+            "targets": {"v0": "bronze", "v1": "bronze"},
             "ownership": {"squad": "team-a"},
             "unknown_future_field": "oops",
         }
@@ -230,12 +249,14 @@ ROOT_PRODUCT_VALID = {
     "product_type": "root",
     "name": "Test Root",
     "lifecycle": "stable",
-    "target_medal": "silver",
+    "introduced_in": "v0",
+    "targets": {"v0": "silver", "v1": "silver"},
     "ownership": {"squad": "emea"},
     "composed_of": [
         {
             "id": "test-charm",
             "product_type": "charm",
+            "introduced_in": "v0",
             "source": {"repo": "canonical/test-charm"},
         }
     ],
@@ -246,7 +267,8 @@ LEAF_PRODUCT_VALID = {
     "product_type": "charm",
     "name": "Test Charm",
     "lifecycle": "stable",
-    "target_medal": "silver",
+    "introduced_in": "v0",
+    "targets": {"v0": "silver", "v1": "silver"},
     "ownership": {"squad": "emea"},
     "source": {"repo": "canonical/test-charm"},
 }
@@ -256,7 +278,8 @@ LEAF_WITH_SUBPATH = {
     "product_type": "charm",
     "name": "Backup Charm",
     "lifecycle": "stable",
-    "target_medal": "bronze",
+    "introduced_in": "v0",
+    "targets": {"v0": "bronze", "v1": "bronze"},
     "ownership": {"squad": "emea"},
     "source": {"repo": "canonical/backup-operators", "subpath": "charms/backup"},
 }
@@ -265,7 +288,8 @@ ROOT_MISSING_PRODUCT_TYPE = {
     "id": "bad",
     "name": "Bad",
     "lifecycle": "stable",
-    "target_medal": "silver",
+    "introduced_in": "v0",
+    "targets": {"v0": "silver", "v1": "silver"},
     "ownership": {"squad": "emea"},
 }
 
@@ -274,7 +298,8 @@ LEAF_MISSING_SOURCE = {
     "product_type": "charm",
     "name": "Bad Charm",
     "lifecycle": "stable",
-    "target_medal": "silver",
+    "introduced_in": "v0",
+    "targets": {"v0": "silver", "v1": "silver"},
     "ownership": {"squad": "emea"},
 }
 
@@ -315,3 +340,12 @@ def test_leaf_must_have_source(prod_schema):
 def test_root_must_not_have_source(prod_schema):
     errors = _validate_dict(ROOT_WITH_SOURCE, prod_schema)
     assert any("source" in e for e in errors)
+
+
+def test_ref_entry_requires_introduced_in(prod_schema):
+    bad = {
+        **ROOT_PRODUCT_VALID,
+        "composed_of": [{"ref": "test-charm"}],
+    }
+    errors = _validate_dict(bad, prod_schema)
+    assert errors

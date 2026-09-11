@@ -1,13 +1,18 @@
 id: saml-integrator
 product_type: charm
 name: SAML Integrator
-description: |-
-  SAML Integrator is an integrator charm for providing SAML configuration
+description: 'SAML Integrator is an integrator charm for providing SAML configuration
+
   details to consumer charms which seek to authenticate using a SAML server.
+
   Configure the SAML endpoint in the integrator charm and relate consumer charms
-  as needed.
+
+  as needed.'
 lifecycle: stable
-target_medal: gold
+introduced_in: v0
+targets:
+  v0: gold
+  v1: gold
 ownership:
   squad: emea
 source:

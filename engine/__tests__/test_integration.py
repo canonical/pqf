@@ -74,9 +74,16 @@ _FIXTURE_COMPUTED = {
 
 
 def test_cli_computes_expected_medals_for_matrix():
+    matrix_product = yaml.safe_load((REPO_ROOT / "products/matrix.yaml").read_text())
+    matrix_product["target_medal"] = matrix_product["targets"]["v0"]
+
     with tempfile.NamedTemporaryFile(mode="w", suffix=".json", delete=False) as tmp:
         json.dump(_FIXTURE_COMPUTED, tmp)
         tmp_path = tmp.name
+
+    with tempfile.NamedTemporaryFile(mode="w", suffix=".yaml", delete=False) as product_tmp:
+        yaml.safe_dump(matrix_product, product_tmp, sort_keys=False)
+        product_path = product_tmp.name
 
     with tempfile.NamedTemporaryFile(mode="w", suffix=".json", delete=False) as drift_tmp:
         json.dump({}, drift_tmp)
@@ -88,7 +95,7 @@ def test_cli_computes_expected_medals_for_matrix():
             "-m",
             "engine",
             "--product",
-            str(REPO_ROOT / "products/matrix.yaml"),
+            product_path,
             "--computed",
             tmp_path,
             "--dimensions",
