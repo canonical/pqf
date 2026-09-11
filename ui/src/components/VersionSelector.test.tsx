@@ -28,6 +28,16 @@ const indexPayload = {
       generated_at: '2026-06-01T00:00:00Z',
       contract_digest: 'digest-v0',
     },
+    {
+      id: 'v2',
+      sequence: 2,
+      label: 'PQF V2',
+      status: 'archived',
+      description: 'Previous framework revision',
+      portfolio_url: 'versions/v2/portfolio.json',
+      generated_at: '2025-12-15T09:30:00Z',
+      contract_digest: 'digest-v2',
+    },
   ],
 }
 
@@ -95,11 +105,19 @@ describe('VersionSelector', () => {
     expect(screen.getByTestId('location')).toHaveTextContent('/v1/products/matrix')
   })
 
-  it('shows the refreshed timestamp when the selected version is active', async () => {
-    renderSelector('/v0/products/matrix')
-    await screen.findByRole('combobox', { name: /framework version/i })
-    expect(screen.getByText(/Refreshed/)).toBeInTheDocument()
-  })
+  it.each([
+    { path: '/v1/products/matrix', versionId: 'v1', generatedAt: '2026-09-05T12:00:00Z' },
+    { path: '/v0/products/matrix', versionId: 'v0', generatedAt: '2026-06-01T00:00:00Z' },
+    { path: '/v2/products/matrix', versionId: 'v2', generatedAt: '2025-12-15T09:30:00Z' },
+  ])(
+    'shows the refreshed timestamp when the selected version is $versionId',
+    async ({ path, versionId, generatedAt }) => {
+      renderSelector(path)
+      const select = await screen.findByRole('combobox', { name: /framework version/i })
+      expect(select).toHaveValue(versionId)
+      expect(screen.getByText(`Refreshed ${new Date(generatedAt).toLocaleString()}`)).toBeInTheDocument()
+    },
+  )
 
   it('wraps the select in Canonical/Vanilla form-validation markup with a labelled control', async () => {
     renderSelector('/v0/products/matrix')
