@@ -4,30 +4,36 @@
 
 ## Data Flow
 
+Every run is scoped to exactly one **framework version**. The framework contract, not a single
+mutable config file, decides which dimensions, metrics, criteria, products, and targets apply.
+
 ```
-products/*.yaml          config/dimensions.yaml
+products/*.yaml          framework/versions/<version>/{framework,dimensions}.yaml
       │                          │
       │           ┌──────────────┘
       ▼           ▼
-  engine/graph.py              (builds product graph; extracts inline leaves)
+  engine/graph.py              (builds the version-filtered product graph; extracts inline leaves)
       │
       ▼
   evaluation units             (one per leaf product: repo + optional subpath)
       │
       ▼
-  scorers/{dim}/scorer.py      (per evaluation unit; outputs per-leaf metric dict)
-      │
+  scorers/run.py               (resolves the implementation revisions the version selects,
+      │                         via scorers/registry.py; outputs per-leaf metric dict)
       ▼
-  computed/{product}.json      (leaf_metrics envelope; GHA-written, never hand-edited)
-      │
+  computed/versions/<version>/{product}.json
+      │                        (leaf_metrics envelope; GHA-written, never hand-edited)
       ▼
   engine/assemble.py           (worst-in-scope aggregation → results; product-set assembly)
       │
-      ├─► public/portfolio.json    (single data source for UI)
+      ├─► public/versions/<version>/portfolio.json   (one self-describing artifact per version)
       └─► public/badges/
       │
       ▼
-  ui/ (React 19 + Vite)
+  engine/version_index.py  ──► public/framework-versions.json   (lifecycle/display index)
+      │
+      ▼
+  ui/ (React 19 + Vite)        (loads the index first, then the selected version's portfolio)
       │
       ▼
   GitHub Pages
@@ -39,14 +45,138 @@ products/*.yaml          config/dimensions.yaml
 
 | Directory | Owner | Responsibility |
 |-----------|-------|---------------|
-| `products/` | PE team (PR-reviewed) | One YAML per product — manually maintained source of truth |
-| `config/dimensions.yaml` | Contributors | Result rubrics, scorer contracts, output metadata |
-| `scorers/{dim}/` | Contributors | `logic.py` (pure, testable) + `scorer.py` (IO wrapper) |
-| `computed/` | GHA only | `leaf_metrics` envelope keyed by leaf product ID — **never hand-edited** |
-| `engine/` | Contributors | Result computation, drift tracking, product-set assembly |
-| `public/` | GHA only | `portfolio.json` + badge SVGs — **never hand-edited** |
-| `ui/` | Contributors | React SPA reading `portfolio.json` |
-| `.github/workflows/` | Contributors | Two GHA workflows (see below) |
+| `products/` | PE team (PR-reviewed) | One YAML per product — manually maintained source of truth, with version membership boundaries and version-scoped targets |
+| `framework/versions/<id>/` | Framework owners (PR-reviewed) | `framework.yaml` (lifecycle/display metadata) + `dimensions.yaml` (complete scoring contract snapshot) |
+| `config/schemas/` | Contributors | JSON Schemas used by `make validate` |
+| `scorers/{dim}/` | Contributors | `logic.py` (pure, testable) + `scorer.py` (thin wrapper over `scorers/run.py`) |
+| `scorers/registry.py` | Contributors | Maps metric implementation revision IDs to the pure functions that produce them |
+| `computed/versions/<id>/` | GHA only | `leaf_metrics` envelope keyed by leaf product ID — **never hand-edited** |
+| `engine/` | Contributors | Framework discovery/validation, result computation, product-set assembly, version index |
+| `public/versions/<id>/` | GHA only | `portfolio.json` per framework version — **never hand-edited** |
+| `public/framework-versions.json` | GHA only | Authoritative lifecycle/display index consumed by the UI |
+| `ui/` | Contributors | React SPA reading `framework-versions.json` + the selected version's `portfolio.json` |
+| `.github/workflows/` | Contributors | Compute, deploy, preview, and legacy-snapshot workflows (see below) |
+
+---
+
+## Framework Versions
+
+### Directory layout and lifecycle
+
+```text
+framework/
+  versions/
+    v0/
+      framework.yaml      # id, sequence, label, status, description
+      dimensions.yaml     # complete scoring contract snapshot
+    v1/
+      framework.yaml
+      dimensions.yaml
+```
+
+Each `dimensions.yaml` is a **full snapshot**. It never inherits from another version at runtime,
+so a contract can be read and reviewed without traversing an inheritance chain. A new version is
+created by copying the active contract into a new directory and editing the copy.
+
+`status` is one of:
+
+| Status | Meaning |
+|--------|---------|
+| `active` | The single official framework used for current compliance. Recomputed nightly. |
+| `upcoming` | The single next framework under preparation. A planning/readiness view, recomputed weekly and on manual dispatch. |
+| `archived` | A former active framework. Its published measurements are frozen and its scorers never run again. |
+
+Today **V0 is active** and **V1 is upcoming**. `make validate` enforces the lifecycle invariants:
+exactly one active version, at most one upcoming version, unique IDs and sequence numbers, and
+lifecycle order consistent with sequence order.
+
+Activation is a single reviewed source change that marks the old active version `archived` and the
+upcoming version `active`.
+
+### Contract digest and archives
+
+`contract_digest` hashes only what determines **how a version scores**: the complete dimensions
+contract plus the identity fields that scope it (`id` and `sequence`, which resolves catalog
+membership boundaries). Lifecycle and display metadata — `status`, `label`, `description` — is
+deliberately excluded, so activating a version or editing its label does not invalidate artifacts
+that were already published.
+
+Archived versions follow four rules:
+
+1. **Frozen measurements.** No cadence, manual dispatch, or bootstrap path may schedule an archived
+   version for scoring, so archived measured values can never change.
+2. **Migratable payload format.** A reviewed format migration may transform an archived portfolio so
+   a newer UI schema can read it, provided it preserves the recorded metric values, results, product
+   membership, generation time, and scoring-contract identity (framework ID and contract digest).
+   PR review is the governance gate; the engine does not hard-lock archived files.
+3. **No archived rescoring.** Digest validation applies to archived artifacts exactly as to live
+   ones. A mismatch means archived scoring rules were changed after the fact — that is an error,
+   never a trigger to recompute.
+4. **Index authority.** `public/framework-versions.json` is authoritative for lifecycle and display
+   metadata. A portfolio's embedded `framework` block is historical provenance only and must never
+   drive selector labels or version badges.
+
+### Metric identity vs implementation revision
+
+Metric IDs name stable, user-facing concepts. Implementation IDs name concrete measurement logic
+revisions:
+
+```yaml
+outputs:
+  integration_test_evidence_present:
+    implementation: "integration-test-evidence-present/v1"
+    type: boolean
+    label: "Integration test evidence"
+```
+
+`scorers/registry.py` maps each implementation ID to a pure metric function. Metric functions never
+receive a framework version and never branch on version IDs. A changed detector becomes a **new**
+implementation revision (`.../v2`), and a contract opts into it explicitly — which keeps the
+semantic change visible in review instead of silently changing every version that references the
+existing ID. Implementation revision IDs are immutable, and unknown IDs are validation errors.
+
+Archived versions do not require their implementations to stay executable, because archived
+artifacts are never recomputed. Implementations must remain available while the active or upcoming
+contract references them.
+
+### Version-scoped catalog boundaries
+
+Product definitions stay in `products/*.yaml` — they are not duplicated per version. Membership is
+expressed with `introduced_in` and optional `retired_in` on top-level products, inline components,
+standalone components, and composition edges. Inclusion is start-inclusive and
+retirement-exclusive:
+
+```text
+introduced_in <= selected version < retired_in
+```
+
+Targets are sparse, version-scoped declarations; the target for a selected version is the
+declaration with the greatest sequence not exceeding it:
+
+```yaml
+targets:
+  v0: bronze
+  v1: silver
+```
+
+See [Adding a product](adding-a-product.md) for the authoring rules and validation errors.
+
+### Local scoring
+
+Local runtime commands take an explicit `FRAMEWORK_VERSION` and never fall back to a default:
+
+```bash
+make score-no-llm PRODUCT=matrix FRAMEWORK_VERSION=v0
+```
+
+Archived versions are rejected for recomputation. See [Run PQF locally](local-scoring.md).
+
+### `/legacy/`
+
+The final pre-versioning site is deployed once at `/legacy/` by `deploy-legacy.yml`. It keeps its
+own unversioned `portfolio.json`, is never recomputed, is not part of
+`public/framework-versions.json`, and is **not linked from the new UI**. It exists purely as a
+historical and visual regression reference for the previous major iteration.
 
 ---
 
@@ -85,33 +215,58 @@ Inline leaves are the common case. Use standalone leaves only when the same char
 
 `engine/graph.py` returns one `EvaluationUnit` per unique `(repo, subpath)` pair. If the same charm appears under multiple root products, scorers only run once and the result is reused.
 
-> **Planned improvement:** The `compute-metrics.yml` GHA workflow currently runs per root product. True `(repo, subpath)` deduplication at the workflow level (avoiding redundant scorer invocations across root products) is a planned follow-up PR.
+> **Planned improvement:** `compute-metrics.yml` runs one job per framework version × root product. True `(repo, subpath)` deduplication at the workflow level (avoiding redundant scorer invocations across root products) is a planned follow-up PR.
 
 ---
 
 ## GitHub Actions Pipelines
 
-### `compute-metrics.yml` — nightly scorer
+### `compute-metrics.yml` — versioned scorer
 
-**Triggers:** Scheduled nightly, push to `products/**`, `config/**`, `scorers/**`, or `engine/**`, manual dispatch
+**Triggers:**
+- `0 2 * * *` — nightly, every **active** framework version
+- `0 3 * * 1` — weekly Monday, every **upcoming** framework version
+- `workflow_dispatch` with a `framework_version` input (must be active or upcoming)
+- push to `main` and pull requests touching `products/**`, `framework/**`, `config/**`,
+  `scorers/**`, `engine/**`, or the workflow itself
 
 **Steps:**
-1. Check out repo with write access
-2. Install Python dependencies
-3. Run each scorer against each product → write `computed/{product}.json`
-4. Run `engine/assemble.py` → write `public/portfolio.json` and `public/badges/`
-5. Update `drift-history.json`
+1. On pull requests, publish a semantic change report classifying framework/catalog changes as
+   metadata-only, additive informational, scoring-semantic, or catalog membership/target
+2. Build the version × product matrix with `engine/workflow_matrix.py`
+3. Run the selected framework's dimensions for each product → `computed/versions/<id>/{product}.json`
+4. Run `engine/assemble.py` per version → `public/versions/<id>/portfolio.json` and `public/badges/`
+5. Run `engine/version_index.py` → `public/framework-versions.json`
 6. Commit artifacts to `main` (`[skip ci]` to prevent re-triggering)
+
+Archived versions are never selected: their measurements are frozen. Whatever the cadence selects
+is unioned with a bootstrap set — every live version whose published portfolio is missing or was
+built from a different scoring contract — so the version index can always be rebuilt completely.
 
 ### `deploy-pages.yml` — UI build and deploy
 
 **Triggers:** Push to `main`
 
 **Steps:**
-1. Check out repo
+1. Check out the repo and the current Pages data
 2. Install Node dependencies (`npm install`)
 3. Build Vite app (`npm run build`) → `ui/dist/`
-4. Deploy `ui/dist/` to GitHub Pages
+4. Sync every published version directory plus `framework-versions.json` into the build
+5. Deploy to GitHub Pages, preserving `/legacy/` and archived version directories
+
+### `deploy-legacy.yml` — one-off legacy snapshot
+
+**Triggers:** Manual dispatch with the pre-versioning git ref. Builds that commit's site and
+publishes it at `/legacy/`.
+
+### `preview.yml` / `cleanup-preview.yml` — PR previews
+
+Build and tear down per-PR preview deployments.
+
+### `ci.yml` — lint, validation, tests
+
+Runs `make lint`, `make format-check`, `make validate`, `make test`, `make test-ui`, `make e2e`,
+and the security audit.
 
 ---
 
@@ -119,10 +274,10 @@ Inline leaves are the common case. Use standalone leaves only when the same char
 
 ### Pure/IO split in scorers
 
-Every scorer is split into two files:
+Every scorer is split into two layers:
 
 - `logic.py` — a pure function `compute_metrics(unit: EvaluationUnit, ...) -> dict[str, Any]`. No `os.environ`, no file I/O. Receives all external data as parameters. This makes it fully unit-testable with mocks.
-- `scorer.py` — a thin IO wrapper that reads env vars (`GITHUB_TOKEN`, `OPENROUTER_API_KEY`), builds the product graph, resolves leaf `EvaluationUnit` objects, calls `logic.py` for each unit, and prints JSON to stdout.
+- `scorers/run.py` — the version-aware IO wrapper. It resolves the framework version, rejects archived versions, builds the version-filtered product graph, resolves leaf `EvaluationUnit` objects, reads env vars (`GITHUB_TOKEN`, `OPENROUTER_API_KEY`), dispatches the implementation revisions the contract selects via `scorers/registry.py`, and prints JSON to stdout. Each `scorers/{dim}/scorer.py` is a thin compatibility wrapper that calls it with a fixed dimension.
 
 This split means the core scoring logic can be tested exhaustively without network access.
 
@@ -134,7 +289,7 @@ require LLM responses to compute results.
 
 **How it works:**
 
-1. `scorer.py` reads `OPENROUTER_API_KEY` from the environment and passes it to `logic.py`.
+1. `scorers/run.py` reads `OPENROUTER_API_KEY` from the environment and passes it to `logic.py`.
 2. `logic.py` creates an OpenAI-compatible client pointed at `https://openrouter.ai/api/v1`.
 3. A prompt file in `scorers/{dim}/prompts/` defines the system prompt. The product's relevant content (e.g. README text) is passed as the user message.
 4. If/when an AI metric is enabled, the LLM returns a structured JSON response parsed into metric values.
@@ -158,20 +313,32 @@ Return ONLY valid JSON: {"<metric_name>": <value>}
 **In the UI:** If AI-assisted metrics are enabled, they display a ✦ AI badge in the
 dimension detail Metrics table so users know the value is LLM-derived.
 
-### `dimensions.yaml` as the single config knob
+### Framework snapshots as the scoring contract
 
-Adding a new quality dimension requires exactly two changes:
-1. A new entry in `config/dimensions.yaml` — declares label, description, outputs (with metadata), and result criteria.
-2. A new `scorers/<name>/scorer.py` that produces exactly the outputs declared.
+There is no repository-wide mutable dimension config. Each framework version owns a complete
+`framework/versions/<id>/dimensions.yaml` snapshot, and adding a quality dimension to a version
+requires exactly three changes:
 
-No scorer hard-codes thresholds. Thresholds live only in `dimensions.yaml`. This means adjusting what "silver" means for a given metric is a one-line YAML change with no Python changes.
+1. A new entry in that version's `dimensions.yaml` — label, description, outputs (each selecting a
+   metric implementation revision), and result criteria.
+2. Metric implementation bindings in `scorers/registry.py`.
+3. A `scorers/<name>/logic.py` that produces exactly the outputs those implementations declare.
 
-### Static `portfolio.json` (no backend)
+No scorer hard-codes thresholds. Thresholds live only in the versioned contract, so raising a bar
+is a YAML change in one framework version — and by convention that change lands in the upcoming
+version rather than the active one.
 
-The React dashboard has no server-side API. It fetches `portfolio.json` at startup and renders from that. This means:
+### Version-addressed `portfolio.json` (no backend)
+
+The React dashboard has no server-side API. It fetches `framework-versions.json`, then the selected
+version's `portfolio.json`, and renders from that. Each portfolio embeds its framework identity,
+contract digest, implementation fingerprints, generation timestamp, source revision, resolved
+dimension/metric metadata, the version-filtered product graph, resolved targets, results, and the
+compliance summary counts. That makes every artifact self-describing, so current source
+configuration can never change the interpretation of an older view. This means:
 - Zero infrastructure to maintain
 - Instant GitHub Pages deployment
-- Data is at most 24 hours stale (nightly scorer)
+- Active data is at most 24 hours stale; upcoming data is at most a week stale
 
 ### Allure `_latest` symlink
 
@@ -185,4 +352,11 @@ The `engine/` package computes results in three steps:
 
 1. **Rubric evaluation** (`engine/rubric.py`): Parses criterion strings like `"coverage_pct >= 80"` and evaluates them against the product's computed metrics.
 2. **Result assignment** (`engine/medal_engine.py`): Finds the highest tier where all criteria pass.
-3. **Drift tracking** (`engine/drift_tracker.py`): Compares current result to previous run; starts/ends remediation windows.
+3. **Compliance summary** (`engine/assemble.py`): Compares each product's result to its
+   version-resolved target and counts products meeting target, below target, or lacking sufficient
+   data.
+
+There are no remediation deadlines and no drift clocks. A framework version is the unit of change:
+raising a bar happens in a new version, and the selected version plus its lifecycle status makes
+every result's meaning explicit. The upcoming view is the planning/readiness view; the active view
+is the official live compliance view.

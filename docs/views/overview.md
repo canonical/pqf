@@ -25,8 +25,20 @@ The **Products** table lists every tracked product with its current quality stat
 | 🥇 Gold | `#C7962F` | Meets all gold-tier criteria |
 | 🥈 Silver | `#8F8F8F` | Meets all silver-tier criteria |
 | 🥉 Bronze | `#9E622A` | Meets all bronze-tier criteria |
-| ⬇ Below minimum | `#C7162B` | Measured, but did not meet minimum criteria |
+| ⬇ Below minimum | `#666` | Measured, but did not meet minimum criteria |
 | — No data | `#666` | Scoring data not yet available |
+
+### Framework version selector
+
+Every page is scoped to a framework version. The selector in the top-right switches versions and
+preserves the current sub-route — routes are `#/<version>/...`. Options are grouped by lifecycle
+state (Upcoming, Active, Archived) from `public/framework-versions.json`, which is the sole
+authority for which versions exist and how they are labelled. Upcoming versions also show when the
+data was last refreshed, because they are regenerated weekly rather than nightly.
+
+Archived versions stay selectable and keep serving their frozen measurements; they are never
+rescored. The pre-versioning snapshot is served separately at `/legacy/` and is not linked from
+this UI.
 
 ### Framework compliance summary
 
@@ -40,6 +52,9 @@ UI.
 | Meeting target | Products at or above their target result |
 | Below target | Products measured below target |
 | Insufficient data | Products that could not be scored confidently |
+
+There are no remediation deadlines and no drift clocks: the summary is a point-in-time compliance
+count for the selected framework version, not a countdown.
 
 ---
 

@@ -25,8 +25,8 @@ The Makefile reads `GITHUB_TOKEN` from `gh auth token`, so you do not need to ex
 ## Choose a framework version
 
 Local scoring now runs against an explicit framework contract under `framework/versions/<id>/`.
-Every runtime command must receive `FRAMEWORK_VERSION=<id>`; local commands do **not** read
-`config/dimensions.yaml`.
+Every runtime command must receive `FRAMEWORK_VERSION=<id>`; there is no unversioned contract and
+nothing defaults to a version.
 
 - **Active** and **upcoming** framework versions can be scored, merged, and assembled locally.
 - **Archived** framework versions are frozen snapshots. Local scoring rejects them instead of
@@ -65,7 +65,7 @@ because active/upcoming entries must stay in sync with their published contracts
 |--------|-------|
 | `scorers/<dimension>/logic.py` | Targeted scorer tests, then the local loop above |
 | `products/<id>.yaml` | The local loop above for that product |
-| Medal criteria in `framework/versions/<id>/dimensions.yaml` | `make validate && make _assemble FRAMEWORK_VERSION=<id>` |
+| Result criteria in `framework/versions/<id>/dimensions.yaml` | `make validate && make _assemble FRAMEWORK_VERSION=<id>` |
 | Output keys or `required_metrics_for_scoring` | The local loop above because computed data must be regenerated |
 | AI metric or prompt | Use the AI variation below |
 

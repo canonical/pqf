@@ -3,7 +3,9 @@
 [![CI](https://github.com/canonical/pqf/actions/workflows/ci.yml/badge.svg)](https://github.com/canonical/pqf/actions/workflows/ci.yml)
 [![Deploy](https://github.com/canonical/pqf/actions/workflows/deploy-pages.yml/badge.svg)](https://github.com/canonical/pqf/actions/workflows/deploy-pages.yml)
 
-PQF tracks the quality and compliance state of Canonical Platform Engineering's tracked products. Products are scored automatically across five quality dimensions (test coverage, documentation, security, substrate compatibility, support engagement) and awarded a **bronze / silver / gold** medal based on configurable criteria.
+PQF tracks the quality and compliance state of Canonical Platform Engineering's tracked products. Products are scored automatically across a set of quality dimensions (test verification, documentation, security & SSDLC, engagement, and — from v1 — substrate compatibility) and awarded a **bronze / silver / gold** result based on the criteria declared by a framework version.
+
+Every scoring contract is **versioned**. `framework/versions/<version>/` holds a full, self-contained snapshot of the rubric; `public/framework-versions.json` is the authority for which version is **active** (today's official view), **upcoming** (the next rubric, previewed early), or **archived** (frozen and never rescored). The dashboard lets you switch between published versions. See [Architecture](docs/architecture.md#framework-versions) for the full model.
 
 **[Live dashboard →](https://canonical.github.io/pqf/)**
 
@@ -18,6 +20,7 @@ PQF tracks the quality and compliance state of Canonical Platform Engineering's 
 | 📊 [Live dashboard](https://canonical.github.io/pqf/) | The deployed UI |
 | 🏗 [Architecture](docs/architecture.md) | How the system works |
 | ➕ [Add a product](docs/adding-a-product.md) | Onboard a new product |
+| 📈 [Add a metric](docs/adding-a-metric.md) | Add a metric to an existing dimension |
 | 🔧 [Add a dimension](docs/adding-a-dimension.md) | Create a new scorer |
 | 🤝 [Contributing](CONTRIBUTING.md) | Local setup and PR workflow |
 | 🤖 [AGENTS.md](AGENTS.md) | AI agent onboarding |
@@ -56,6 +59,7 @@ make dev          # → http://localhost:5173
 | `make install` | Install Python dev dependencies |
 | `make install-ui` | Install Node/UI dependencies |
 | `make install-all` | Install everything |
+| `make validate` | Validate product YAML and every framework version against the schemas |
 | `make lint` | Lint Python with ruff |
 | `make format` | Auto-format Python with ruff |
 | `make format-check` | Check formatting without modifying |
@@ -66,8 +70,12 @@ make dev          # → http://localhost:5173
 | `make dev` | Start Vite dev server |
 | `make e2e` | Run Playwright E2E tests (set `PW_PORT` to pick a dev-server port other than the default `5173`, e.g. if it's already in use: `PW_PORT=5190 make e2e`) |
 | `make audit` | Run pip-audit + npm audit |
-| `make score-no-llm PRODUCT=<id>` | Score one product locally without AI |
-| `make score PRODUCT=<id>` | Score one product locally with AI-assisted metrics |
+| `make score-no-llm PRODUCT=<id> FRAMEWORK_VERSION=<version>` | Score one product locally without AI |
+| `make score PRODUCT=<id> FRAMEWORK_VERSION=<version>` | Score one product locally with AI-assisted metrics |
+
+`FRAMEWORK_VERSION` is always explicit — scoring never guesses a version, and archived versions are
+rejected. Locally generated `computed/`, `public/`, and `.pqf-score/` files are GHA-owned previews:
+inspect them, but never commit them.
 
 See [Run PQF locally](docs/local-scoring.md) for the complete preview loop.
 

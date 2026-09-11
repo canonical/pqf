@@ -298,7 +298,7 @@ def test_changed_cadence_treats_shared_inputs_as_broad(fixtures):
     for path in [
         "scorers/documentation/logic.py",
         "engine/assemble.py",
-        "config/dimensions.yaml",
+        "config/schemas/dimensions.schema.json",
         "products/matrix.yaml",
         ".github/workflows/compute-metrics.yml",
         "framework/README.md",

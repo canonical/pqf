@@ -5,12 +5,17 @@
 PQF (Product Quality Framework) tracks quality compliance across Canonical Platform Engineering's
 tracked products via medal grades (bronze / silver / gold). It has two main parts:
 
-1. **Python engine + scorers** (`engine/`, `scorers/`) — pure-Python medal computation pipeline
-2. **React dashboard** (`ui/`) — Canonical-branded SPA that reads `public/portfolio.json`
+1. **Python engine + scorers** (`engine/`, `scorers/`) — pure-Python result computation pipeline
+2. **React dashboard** (`ui/`) — Canonical-branded SPA that reads `public/framework-versions.json`
+   and the selected version's `public/versions/<version>/portfolio.json`
 
-A nightly GitHub Actions workflow runs the scorers, computes medals, and commits artifacts
-(`computed/`, `public/portfolio.json`, `public/badges/`) to `main`. A second workflow builds
-the UI and deploys it to GitHub Pages.
+Everything is **framework-versioned**: `framework/versions/<version>/{framework,dimensions}.yaml`
+is a full, self-contained snapshot of the scoring contract. V0 is **active** (today's official
+view, scored nightly); V1 is **upcoming** (previewed weekly and on demand); archived versions are
+frozen and never rescored. GitHub Actions runs the scorers per version and commits artifacts
+(`computed/versions/<version>/`, `public/versions/<version>/portfolio.json`,
+`public/framework-versions.json`, `public/badges/`) to `main`. A second workflow builds the UI and
+deploys it to GitHub Pages.
 
 **Full architecture:** [docs/architecture.md](docs/architecture.md)
 
@@ -21,33 +26,52 @@ the UI and deploys it to GitHub Pages.
 ### Python engine
 
 - **Pure/IO split is non-negotiable.** Every `logic.py` receives all external data as parameters
-  (no `os.environ`, no file reads). The `scorer.py` wrapper reads env vars and passes them in.
-- `config/dimensions.yaml` is the single config knob. Adding a dimension = add entry here +
-  create `scorers/<name>/scorer.py`. Scorer outputs must match exactly what dimensions.yaml declares.
+  (no `os.environ`, no file reads) and never branches on the framework version. `scorers/run.py`
+  reads env vars, resolves the contract, and dispatches; `scorers/<name>/scorer.py` is a thin
+  wrapper calling `scorers.run.main(fixed_dimension=...)`.
+- **Framework snapshots are the scoring contract.** Adding a dimension = add an entry to a version's
+  `framework/versions/<version>/dimensions.yaml` + bind implementation revisions in
+  `scorers/registry.py` + create `scorers/<name>/`. Scorer outputs must match exactly what the
+  contract declares. There is no unversioned `config/dimensions.yaml`.
+- **Never edit an archived version to change scoring.** Archived measurements are frozen and never
+  recomputed; only reviewed payload-format migrations that preserve measurements and scoring
+  identity are allowed. Prefer landing changes in the **upcoming** version — changing the **active**
+  version alters today's official compliance view.
+- **Metric ID vs implementation revision.** The metric key is the stable user-facing concept; the
+  `implementation:` ID selects an immutable measurement revision. Changing how a metric is measured
+  = publish a new revision and point a contract at it, never edit a revision in place.
+- `FRAMEWORK_VERSION` is always explicit in local commands — nothing defaults to a version.
+- `framework-versions.json` is authoritative for lifecycle/display metadata. The contract digest
+  covers scoring semantics only (it excludes `status`, `label`, `description`).
 - Tests mock all HTTP with `responses` (`@responses.activate`); mock LLM clients with `pytest-mock`.
-- `computed/` files are GHA-written. Never hand-edit them.
-- `public/portfolio.json` is GHA-written. Never hand-edit it — regenerate with `engine/assemble.py`.
+- `computed/versions/` files are GHA-written. Never hand-edit or commit them.
+- `public/versions/<version>/portfolio.json` and `public/framework-versions.json` are GHA-written.
+  Never hand-edit them — regenerate with `engine/assemble.py` / `engine/version_index.py`.
 
 ### React UI
 
 - All UI components use `@canonical/react-components` (Vanilla Framework wrappers). No Tailwind,
   no shadcn, no custom CSS frameworks.
-- `public/portfolio.json` is the single data source. Never import Python engine code from JS/TS.
+- `public/framework-versions.json` is loaded first and is the sole authority for lifecycle and
+  display metadata; the portfolio's embedded `framework` block is provenance only. Routes are
+  version-scoped (`#/<version>/...`). Never import Python engine code from JS/TS.
 - TypeScript strict mode; no `any` except in test mocks.
 - Vitest + React Testing Library for unit tests (co-located `.test.tsx`); Playwright for E2E.
 - Vite base path is `./` (relative) for GH Pages compatibility.
 
-#### Medal grades & colours
+#### Result grades & colours
 
-Medal grades and their exact hex colours for the React UI:
+Result values and their exact hex colours for the React UI (`ui/src/components/MedalBadge.tsx`):
 - **gold**: `#C7962F`
 - **silver**: `#8F8F8F`
 - **bronze**: `#9E622A`
-- **unrated**: `#666`
-- **remediating**: `#E98B06`
-- **overdue**: `#C7162B`
+- **unrated** / **below_minimum** / **insufficient_data** / **not_applicable**: `#666`
 
-Medal scoring logic: "at or above target" means `MEDAL_ORDER[current] >= MEDAL_ORDER[target]` (comparison, not equality).
+Result scoring logic: "at or above target" means `MEDAL_ORDER[current] >= MEDAL_ORDER[target]` (comparison, not equality).
+
+There are **no remediation deadlines and no drift clocks**. The UI shows a compliance summary
+(at/above target, below target, insufficient data), not a remediation countdown. The Metric
+Distribution view keeps numeric gap analysis; per-row binary compliance badges were removed.
 
 ---
 
@@ -87,7 +111,12 @@ Always use `make` targets. CI uses the same targets.
 | `make build` | `cd ui && npm run build` |
 | `make dev` | `cd ui && npm run dev` |
 | `make e2e` | `cd ui && npm run e2e` (Playwright; set `PW_PORT` to override the default dev-server port `5173` if it's already bound, e.g. `PW_PORT=5190 make e2e`) |
-| `make score PRODUCT=<id>` | Run all scorers for one product |
+| `make validate` | Validate products and every framework version against the schemas |
+| `make score PRODUCT=<id> FRAMEWORK_VERSION=<version>` | Run all scorers for one product against one framework version |
+| `make score-no-llm PRODUCT=<id> FRAMEWORK_VERSION=<version>` | Same, deterministic (LLM checks skipped) |
+| `make _merge PRODUCT=<id> FRAMEWORK_VERSION=<version>` | `.pqf-score/<version>/<id>/` → `computed/versions/<version>/<id>.json` |
+| `make _assemble FRAMEWORK_VERSION=<version>` | → `public/versions/<version>/portfolio.json` |
+| `make _version-index` | → `public/framework-versions.json` |
 
 ---
 
@@ -103,13 +132,27 @@ Always use `make` targets. CI uses the same targets.
 
 ## Current dimensions and key metrics
 
-| Dimension | Key outputs | Medal criteria |
-|-----------|-------------|---------------|
-| `test_verification` | `coverage_pct`, `stability_pct`, `latest_build_passing`, `uses_ops_testing`, `uses_jubilant` | Bronze: coverage ≥ 70, build passing. Silver: coverage ≥ 80, stability ≥ 85. Gold: coverage ≥ 90, stability ≥ 98. |
-| `documentation` | `has_readme`, `has_contributing`, `has_security`, `diataxis_coverage` (AI), `style_linter_passing` (AI), `links_passing` | Bronze: readme+contributing+security+links. Silver: diataxis ≥ 4. Gold: style linter + diataxis == 4. |
-| `substrate_compat` | `supports_juju_3`, `supports_juju_4`, `supports_ck8s` | Silver: juju3. Gold: juju4 + ck8s. |
-| `security_ssdlc` | `dependabot_enabled`, `codeql_enabled`, `branch_protection_required_checks` | Silver: dependabot. Gold: dependabot + codeql. |
-| `engagement` | `avg_triage_days`, `avg_pr_review_days`, `response_coverage_rate`, `ownership_signal`, `has_jira_sync`, `repo_views_14d` (informational) | Silver: triage ≤ 3d, PR ≤ 5d, coverage ≥ 80%, ownership. Gold: triage ≤ 2d, PR ≤ 3d, coverage ≥ 90%, ownership. |
+Dimensions are declared **per framework version** — always read the contract you are changing
+(`framework/versions/<version>/dimensions.yaml`) rather than trusting a summary. Current state:
+
+**V0 (active)** — four dimensions:
+
+| Dimension | Result criteria |
+|-----------|-----------------|
+| `test_verification` | Bronze: `latest_build_passing`. Gold: + `uses_jubilant`. (No silver tier — intentional.) |
+| `documentation` | Bronze: `readme_present`. Silver: + `contributing_present`. Gold: + `has_security`. |
+| `security_ssdlc` | Bronze: `renovate_enabled`. Silver: + `branch_protection_required_checks`. Gold: + `signed_commits_required`. |
+| `engagement` | Bronze: `ownership_signal`. Silver: + `response_coverage_rate >= 80`. Gold: + `response_coverage_rate >= 90`. |
+
+**V1 (upcoming)** — adds `substrate_compat` and promotes further signals:
+
+| Dimension | Result criteria |
+|-----------|-----------------|
+| `test_verification` | Bronze: `latest_build_passing`. Silver: + `integration_test_evidence_present`. Gold: + `uses_jubilant`. |
+| `documentation` | Bronze: `readme_present`. Silver: + `contributing_present`. Gold: + `has_security` + `release_notes_process_implemented`. |
+| `substrate_compat` | Bronze: `supports_juju_3`. Silver: + `substrate_test_evidence_present`. Gold: `supports_juju_4` + `substrate_test_evidence_present`. |
+| `security_ssdlc` | Bronze: `renovate_enabled`. Silver: + `branch_protection_required_checks`. Gold: + `signed_commits_required` + `sast_workflow_present`. |
+| `engagement` | Bronze: `ownership_signal`. Silver: + coverage ≥ 80, triage ≤ 3d, PR review ≤ 5d. Gold: + coverage ≥ 90, triage ≤ 2d, PR review ≤ 3d. |
 
 ---
 
@@ -165,8 +208,11 @@ make test
 make install-ui
 make dev          # → http://localhost:5173
 
-# Score one product (requires GITHUB_TOKEN + OPENROUTER_API_KEY)
-make score PRODUCT=matrix
+# Score one product for one framework version (requires GITHUB_TOKEN + OPENROUTER_API_KEY)
+make score PRODUCT=matrix FRAMEWORK_VERSION=v0
+
+# Deterministic variant (no LLM key needed)
+make score-no-llm PRODUCT=matrix FRAMEWORK_VERSION=v1
 ```
 
 ---
@@ -174,18 +220,21 @@ make score PRODUCT=matrix
 ## Repo layout
 
 ```
-products/           # One YAML per product (manually maintained, PR-reviewed)
-config/             # dimensions.yaml — medal rubrics and scorer contracts
-computed/           # GHA-written raw metrics per product (never hand-edited)
-engine/             # Pure Python medal computation
-scorers/            # One scorer per dimension (logic.py + scorer.py + tests)
-public/             # GHA-generated: portfolio.json + badges/
-ui/                 # React 19 + Vite dashboard
-drift-history.json  # GHA-maintained drift start dates
-.github/workflows/  # compute-metrics.yml + deploy-pages.yml
-docs/               # Architecture, how-to guides, view documentation
-docs/superpowers/   # Design specs and implementation plans (AI agent artifacts)
-Makefile            # Single source of truth for all dev commands
+products/                   # One YAML per product (manually maintained, PR-reviewed)
+framework/versions/<version>/ # framework.yaml + dimensions.yaml — a full contract snapshot
+config/schemas/             # JSON schemas for products and framework contracts
+computed/versions/<version>/  # GHA-written raw metrics per product (never hand-edited)
+engine/                     # Pure Python result computation + validation + version index
+scorers/                    # registry.py + run.py + one logic.py per dimension (+ tests)
+public/versions/<version>/  # GHA-generated portfolio.json per framework version
+public/framework-versions.json # GHA-generated version index (lifecycle authority)
+public/badges/              # GHA-generated badges
+public/legacy/              # Frozen pre-versioning snapshot, served at /legacy/, not linked in the new UI
+ui/                         # React 19 + Vite dashboard
+.github/workflows/          # compute-metrics.yml, deploy-pages.yml, deploy-legacy.yml, preview, ci
+docs/                       # Architecture, how-to guides, view documentation
+docs/superpowers/           # Design specs and implementation plans (AI agent artifacts)
+Makefile                    # Single source of truth for all dev commands
 ```
 
 ---
@@ -194,9 +243,10 @@ Makefile            # Single source of truth for all dev commands
 
 | Workflow | Trigger | What it does |
 |----------|---------|--------------|
-| `compute-metrics.yml` | Nightly, push to `products/**` or `config/**`, manual | Runs scorers → engine → badges → commits artifacts |
+| `compute-metrics.yml` | Nightly (active version), weekly (upcoming version), push to `products/**`, `framework/**` or `config/**`, manual (`framework_version` input) | Runs scorers per version → engine → badges → version index → commits artifacts. Archived versions are never selected. |
 | `deploy-pages.yml` | Push to `main` | Builds `ui/` → deploys to GitHub Pages |
-| `ci.yml` | Push / PR | Lint, tests, security audit |
+| `deploy-legacy.yml` | Manual | Publishes the frozen pre-versioning snapshot under `/legacy/` |
+| `ci.yml` | Push / PR | Validate, lint, tests, semantic change report, security audit |
 
 ---
 

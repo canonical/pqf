@@ -40,9 +40,12 @@ The CI runs these same commands — if it passes locally, it will pass in CI.
 make dev           # Starts Vite dev server at http://localhost:5173
 ```
 
-The UI reads `public/portfolio.json` at startup. To see real data, the file is already present in the repo (regenerated nightly by GHA). You don't need to run the scorers to develop the UI.
+The UI loads `public/framework-versions.json` first — it is the authority for which framework
+versions exist and their lifecycle state — then the selected version's
+`public/versions/<version>/portfolio.json`. Both files are already present in the repo (regenerated
+by GHA), so you don't need to run the scorers to develop the UI.
 
-To change metric logic, medal criteria, or product definitions and preview the result, follow
+To change metric logic, result criteria, or product definitions and preview the result, follow
 [Run PQF locally](docs/local-scoring.md). The default workflow does not require an AI API key.
 
 ---
@@ -52,10 +55,19 @@ To change metric logic, medal criteria, or product definitions and preview the r
 | File / Directory | Maintained by | Edit? |
 |-----------------|---------------|-------|
 | `products/*.yaml` | PE team, PR-reviewed | ✅ Yes |
-| `config/dimensions.yaml` | Contributors, PR-reviewed | ✅ Yes |
-| `computed/*.json` | GHA nightly scorer | ❌ Never |
-| `public/portfolio.json` | GHA nightly scorer | ❌ Never |
-| `public/badges/` | GHA nightly scorer | ❌ Never |
+| `framework/versions/<version>/framework.yaml` | Framework owners, PR-reviewed | ✅ Yes |
+| `framework/versions/<version>/dimensions.yaml` | Contributors, PR-reviewed | ✅ Yes |
+| `config/schemas/*.json` | Contributors, PR-reviewed | ✅ Yes |
+| `scorers/registry.py` | Contributors, PR-reviewed | ✅ Yes |
+| `computed/versions/<version>/*.json` | GHA scorer runs | ❌ Never |
+| `public/versions/<version>/portfolio.json` | GHA scorer runs | ❌ Never |
+| `public/framework-versions.json` | GHA scorer runs | ❌ Never |
+| `public/badges/` | GHA scorer runs | ❌ Never |
+| `public/legacy/` | Frozen pre-versioning snapshot | ❌ Never |
+
+Editing an **archived** framework version to change scoring is never allowed: archived measurements
+are frozen and are never recomputed. Prefer adding changes to the **upcoming** version; changing the
+**active** version alters today's official compliance view and needs framework-owner review.
 
 ---
 
@@ -71,6 +83,12 @@ To change metric logic, medal criteria, or product definitions and preview the r
 ## Adding a product
 
 See [docs/adding-a-product.md](docs/adding-a-product.md).
+
+---
+
+## Adding a metric
+
+See [docs/adding-a-metric.md](docs/adding-a-metric.md).
 
 ---
 
