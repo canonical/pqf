@@ -64,7 +64,7 @@ make dev          # → http://localhost:5173
 | `make test-all` | Run Python + UI tests |
 | `make build` | Build the React app (`ui/dist/`) |
 | `make dev` | Start Vite dev server |
-| `make e2e` | Run Playwright E2E tests |
+| `make e2e` | Run Playwright E2E tests (set `PW_PORT` to pick a dev-server port other than the default `5173`, e.g. if it's already in use: `PW_PORT=5190 make e2e`) |
 | `make audit` | Run pip-audit + npm audit |
 | `make score-no-llm PRODUCT=<id>` | Score one product locally without AI |
 | `make score PRODUCT=<id>` | Score one product locally with AI-assisted metrics |

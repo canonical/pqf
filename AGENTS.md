@@ -86,6 +86,7 @@ Always use `make` targets. CI uses the same targets.
 | `make test-all` | `make test` + `make test-ui` |
 | `make build` | `cd ui && npm run build` |
 | `make dev` | `cd ui && npm run dev` |
+| `make e2e` | `cd ui && npm run e2e` (Playwright; set `PW_PORT` to override the default dev-server port `5173` if it's already bound, e.g. `PW_PORT=5190 make e2e`) |
 | `make score PRODUCT=<id>` | Run all scorers for one product |
 
 ---

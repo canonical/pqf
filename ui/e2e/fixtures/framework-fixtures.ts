@@ -172,6 +172,15 @@ export const PORTFOLIO_ARCHIVED: Portfolio = buildPortfolio(V_ARCHIVED, [matrixP
  * `public/` artifacts. Call before `page.goto`.
  */
 export async function installFrameworkFixtures(page: Page): Promise<void> {
+  // The app still references assets.ubuntu.com directly (GlobalNav's Canonical logo/favicon,
+  // and Vanilla Framework's SCSS @font-face declarations). Left un-mocked, every test depends on
+  // a live external CDN finishing before the page is considered settled — a source of CI
+  // flakiness (timeouts, rate limiting, transient CDN errors like
+  // ERR_RESPONSE_HEADERS_MULTIPLE_CONTENT_DISPOSITION observed during manual verification) that
+  // has nothing to do with the versioned-routing behavior under test. Abort these requests at
+  // the routing layer before any navigation happens, so the suite never touches the network.
+  await page.route('https://assets.ubuntu.com/**', route => route.abort())
+
   await page.route('**/framework-versions.json', route =>
     route.fulfill({ contentType: 'application/json', body: JSON.stringify(FRAMEWORK_VERSION_INDEX) }),
   )
