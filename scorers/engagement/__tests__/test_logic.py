@@ -446,6 +446,8 @@ def test_paginate_json_array_fetches_all_pages():
     class _Resp:
         def __init__(self, ok, payload):
             self.ok = ok
+            self.status_code = 200 if ok else 500
+            self.headers = {}
             self._payload = payload
 
         def json(self):
@@ -454,6 +456,7 @@ def test_paginate_json_array_fetches_all_pages():
     class _Session:
         def __init__(self):
             self.calls = 0
+            self.headers = {}
 
         def get(self, url, params, timeout):
             self.calls += 1
@@ -471,6 +474,38 @@ def test_paginate_json_array_fetches_all_pages():
     assert session.calls == 2
 
 
+def test_paginate_json_array_stops_at_ordered_cutoff():
+    class _Resp:
+        ok = True
+        status_code = 200
+        headers = {}
+
+        def json(self):
+            return [
+                {"id": 1, "created_at": "2026-06-02T00:00:00Z"},
+                {"id": 2, "created_at": "2026-05-31T00:00:00Z"},
+            ]
+
+    class _Session:
+        def __init__(self):
+            self.calls = 0
+
+        def get(self, url, params, timeout):
+            self.calls += 1
+            return _Resp()
+
+    session = _Session()
+    items = _paginate_json_array(
+        session,
+        "https://api.github.com/repos/canonical/example/pulls",
+        {"state": "all", "per_page": 100},
+        stop_when=lambda item: item["created_at"] < "2026-06-01T00:00:00Z",
+    )
+
+    assert items == [{"id": 1, "created_at": "2026-06-02T00:00:00Z"}]
+    assert session.calls == 1
+
+
 def test_paginate_json_array_reports_github_api_failure(capsys):
     class _Resp:
         ok = False
@@ -482,6 +517,8 @@ def test_paginate_json_array_reports_github_api_failure(capsys):
         }
 
     class _Session:
+        headers = {}
+
         def get(self, url, params, timeout):
             return _Resp()
 

@@ -77,12 +77,18 @@ RUNNER_SOURCE_FILES = MappingProxyType(
             Path(github_signals.__file__).resolve(),
             Path(documentation_logic.__file__).resolve().parent / "prompts" / "diataxis_check.md",
         ),
-        "substrate_compat": (Path(substrate_compat_logic.__file__).resolve(),),
+        "substrate_compat": (
+            Path(substrate_compat_logic.__file__).resolve(),
+            Path(github_signals.__file__).resolve(),
+        ),
         "security_ssdlc": (
             Path(security_ssdlc_logic.__file__).resolve(),
             Path(github_signals.__file__).resolve(),
         ),
-        "engagement": (Path(engagement_logic.__file__).resolve(),),
+        "engagement": (
+            Path(engagement_logic.__file__).resolve(),
+            Path(github_signals.__file__).resolve(),
+        ),
     }
 )
 

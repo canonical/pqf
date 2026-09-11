@@ -6,6 +6,7 @@ from typing import Any
 import requests
 
 from engine.models import EvaluationUnit
+from scorers.shared.github_signals import github_session_get
 
 _GITHUB_API = "https://api.github.com"
 _BLOCK_SCALAR_PATTERN = re.compile(
@@ -314,7 +315,8 @@ def _has_integration_signal(content: str) -> bool:
 def _fetch_workflow_contents(owner_repo: str, github_token: str) -> list[str]:
     """Fetch text contents of all workflow YAML files in .github/workflows/."""
     session = _make_github_session(github_token)
-    list_resp = session.get(
+    list_resp = github_session_get(
+        session,
         f"{_GITHUB_API}/repos/{owner_repo}/contents/.github/workflows",
         timeout=15,
     )
@@ -327,7 +329,7 @@ def _fetch_workflow_contents(owner_repo: str, github_token: str) -> list[str]:
         name = entry.get("name", "")
         if not (name.endswith(".yml") or name.endswith(".yaml")):
             continue
-        file_resp = session.get(entry["url"], timeout=15)
+        file_resp = github_session_get(session, entry["url"], timeout=15)
         if file_resp.ok:
             data = file_resp.json()
             raw = base64.b64decode(data.get("content", "")).decode("utf-8", errors="replace")
