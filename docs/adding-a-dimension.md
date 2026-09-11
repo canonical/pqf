@@ -27,9 +27,8 @@ Add a **new dimension** when:
 A quality dimension is one axis of the result rubric (e.g., Test Verification, Documentation, Security). Dimensions are declared **per framework version**, so adding a dimension requires:
 
 1. An entry in one framework version's `framework/versions/<version>/dimensions.yaml` — declares the dimension's outputs (each selecting a metric implementation revision) and result criteria
-2. Metric implementation bindings in `scorers/registry.py`
-3. A new `scorers/<name>/` directory with `logic.py`, `scorer.py`, and tests
-4. A runner entry in `scorers/registry.py` so the dimension can be dispatched
+2. A new `scorers/<name>/` directory with `logic.py`, `scorer.py`, and tests
+3. Metric implementation bindings and the runner registration in `scorers/registry.py` so the dimension can be dispatched
 
 > **Which framework version?** Add new dimensions to the **upcoming** version
 > (`framework/versions/v1/`). Adding a scored dimension to the **active** version changes today's

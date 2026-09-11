@@ -104,8 +104,9 @@ the default no-AI loop.
 - `public/versions/<framework>/portfolio.json`: assembled results and medal assignments for that framework
 - `public/framework-versions.json`: active/upcoming/archive index consumed by the UI version selector
 
-Use `make score-all-no-llm` only when you need to compare the whole portfolio. Use
-`make score-all` for the same comparison with AI-assisted metrics enabled.
+Use `make score-all-no-llm FRAMEWORK_VERSION=v1` only when you need to compare the whole
+portfolio. Use `make score-all FRAMEWORK_VERSION=v1` for the same comparison with AI-assisted
+metrics enabled.
 
 ## Keep generated previews out of commits
 

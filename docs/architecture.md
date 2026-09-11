@@ -52,8 +52,11 @@ products/*.yaml          framework/versions/<version>/{framework,dimensions}.yam
 | `scorers/registry.py` | Contributors | Maps metric implementation revision IDs to the pure functions that produce them |
 | `computed/versions/<id>/` | GHA only | `leaf_metrics` envelope keyed by leaf product ID — **never hand-edited** |
 | `engine/` | Contributors | Framework discovery/validation, result computation, product-set assembly, version index |
-| `public/versions/<id>/` | GHA only | `portfolio.json` per framework version — **never hand-edited** |
+| `public/versions/<id>/` | GHA only | Versioned source-of-truth `portfolio.json` per framework version — **never hand-edited** |
+| `public/portfolio.json` | GHA only | Active-version compatibility mirror for legacy consumers; regenerated from the active portfolio |
+| `public/badges/` | GHA only | Stable active-only badge contract consumed by external links |
 | `public/framework-versions.json` | GHA only | Authoritative lifecycle/display index consumed by the UI |
+| `public/legacy/` | gh-pages only | Frozen pre-versioning snapshot published at `/legacy/` and kept outside the versioned artifact model |
 | `ui/` | Contributors | React SPA reading `framework-versions.json` + the selected version's `portfolio.json` |
 | `.github/workflows/` | Contributors | Compute, deploy, preview, and legacy-snapshot workflows (see below) |
 
@@ -113,8 +116,10 @@ Archived versions follow four rules:
    ones. A mismatch means archived scoring rules were changed after the fact — that is an error,
    never a trigger to recompute.
 4. **Index authority.** `public/framework-versions.json` is authoritative for lifecycle and display
-   metadata. A portfolio's embedded `framework` block is historical provenance only and must never
-   drive selector labels or version badges.
+   metadata. The versioned `public/versions/<id>/portfolio.json` files are the source of truth for
+   each framework version, while the root `public/portfolio.json` and `public/badges/` are the
+   active-version compatibility surfaces. A portfolio's embedded `framework` block is historical
+   provenance only and must never drive selector labels or version badges.
 
 ### Metric identity vs implementation revision
 
@@ -235,9 +240,11 @@ Inline leaves are the common case. Use standalone leaves only when the same char
    metadata-only, additive informational, scoring-semantic, or catalog membership/target
 2. Build the version × product matrix with `engine/workflow_matrix.py`
 3. Run the selected framework's dimensions for each product → `computed/versions/<id>/{product}.json`
-4. Run `engine/assemble.py` per version → `public/versions/<id>/portfolio.json` and `public/badges/`
-5. Run `engine/version_index.py` → `public/framework-versions.json`
-6. Commit artifacts to `main` (`[skip ci]` to prevent re-triggering)
+4. Merge scorer outputs and run `engine/assemble.py` per version → `public/versions/<id>/portfolio.json`
+5. Carry forward archived version directories from the published site, regenerate the active root
+   compatibility mirror at `public/portfolio.json`, rebuild `public/badges/`, and run
+   `engine/version_index.py` → `public/framework-versions.json`
+6. Upload the `public/` artifact for the Pages deploy workflow; nothing is committed to `main`
 
 Archived versions are never selected: their measurements are frozen. Whatever the cadence selects
 is unioned with a bootstrap set — every live version whose published portfolio is missing or was
@@ -251,7 +258,8 @@ built from a different scoring contract — so the version index can always be r
 1. Check out the repo and the current Pages data
 2. Install Node dependencies (`npm install`)
 3. Build Vite app (`npm run build`) → `ui/dist/`
-4. Sync every published version directory plus `framework-versions.json` into the build
+4. Sync every published version directory plus `framework-versions.json`, the active root mirror,
+   and badges into the build
 5. Deploy to GitHub Pages, preserving `/legacy/` and archived version directories
 
 ### `deploy-legacy.yml` — one-off legacy snapshot
@@ -331,11 +339,13 @@ version rather than the active one.
 ### Version-addressed `portfolio.json` (no backend)
 
 The React dashboard has no server-side API. It fetches `framework-versions.json`, then the selected
-version's `portfolio.json`, and renders from that. Each portfolio embeds its framework identity,
-contract digest, implementation fingerprints, generation timestamp, source revision, resolved
-dimension/metric metadata, the version-filtered product graph, resolved targets, results, and the
-compliance summary counts. That makes every artifact self-describing, so current source
-configuration can never change the interpretation of an older view. This means:
+version's `portfolio.json`, and renders from that. Each versioned portfolio embeds its framework
+identity, contract digest, implementation fingerprints, generation timestamp, source revision,
+resolved dimension/metric metadata, the version-filtered product graph, resolved targets, results,
+and the compliance summary counts. That makes every versioned artifact self-describing, so current
+source configuration can never change the interpretation of an older view. The root
+`public/portfolio.json` is a compatibility mirror of the active version for older consumers, and
+`public/badges/` is the active-only external badge contract. This means:
 - Zero infrastructure to maintain
 - Instant GitHub Pages deployment
 - Active data is at most 24 hours stale; upcoming data is at most a week stale

@@ -4,8 +4,10 @@ This guide walks you through adding a new metric to an existing PQF quality dime
 common contributor task. By the end you will have a working metric that fetches real data from
 the GitHub API, gets tested, appears in the dashboard, and can optionally gate medal awards.
 
-We use a concrete example throughout: adding a **`has_changelog`** metric to the
-`documentation` dimension that checks whether a repository has a `CHANGELOG.md` file.
+We use a concrete example throughout: adding a **`has_runbook`** metric to the
+`documentation` dimension that checks whether a repository has a `RUNBOOK.md` file. This is a
+documentation-only illustration — it does not imply a required source change in the current
+branch.
 
 > **Which framework version?** Metrics are declared per framework version. Add new metrics to the
 > **upcoming** version (`framework/versions/v1/`) by default — that is the planning bar. Adding or
@@ -53,11 +55,11 @@ A metric has two identities:
 
 | Identity | Example | Stability |
 |----------|---------|-----------|
-| **Metric ID** — the output key | `has_changelog` | Stable, user-facing concept. Shared across versions. |
-| **Implementation ID** — the measurement revision | `changelog-present/v1` | Immutable. A changed detector means a **new** revision. |
+| **Metric ID** — the output key | `has_runbook` | Stable, user-facing concept. Shared across versions. |
+| **Implementation ID** — the measurement revision | `runbook-present/v1` | Immutable. A changed detector means a **new** revision. |
 
 If you need to change *how* an existing metric is measured, do not edit the existing
-implementation's behaviour in place. Add a new revision (`changelog-present/v2`) with its own
+implementation's behaviour in place. Add a new revision (`runbook-present/v2`) with its own
 binding, and point the contract that should adopt it at the new ID. That keeps the semantic change
 visible in review and stops one correction from silently rescoring every version that references
 the old ID.
@@ -127,7 +129,7 @@ contract in mind.
 
 ## Step 2 — Declare the new metric in the framework contract
 
-Add `has_changelog` to the `outputs` map of the `documentation` dimension in the framework version
+Add `has_runbook` to the `outputs` map of the `documentation` dimension in the framework version
 you are targeting (here, the upcoming `v1`). Place it after the existing deterministic metrics
 (before the `informational` ones at the bottom is a good convention):
 
@@ -138,11 +140,11 @@ you are targeting (here, the upcoming `v1`). Place it after the existing determi
          type: boolean
          label: "Release notes process implemented"
          description: "Repository has canonical release-notes workflow + structure evidence."
-+      has_changelog:
-+        implementation: "changelog-present/v1"
++      has_runbook:
++        implementation: "runbook-present/v1"
 +        type: boolean
-+        label: "CHANGELOG present"
-+        description: "CHANGELOG.md exists in the repository root."
++        label: "RUNBOOK present"
++        description: "RUNBOOK.md exists in the repository root."
 +        informational: true
        diataxis_coverage_ai:
          implementation: "diataxis-coverage-ai/v1"
@@ -160,7 +162,7 @@ you are targeting (here, the upcoming `v1`). Place it after the existing determi
 | `informational` | No | `true` = shown in dashboard but never gates results |
 | `ai_assisted` | No | `true` = renders an ✦ AI badge in the UI |
 
-> **Not adding `has_changelog` to a medal tier yet?** That's fine — leave it out of `medals` for
+> **Not adding `has_runbook` to a medal tier yet?** That's fine — leave it out of `medals` for
 > now and mark it `informational: true`. It will appear in the dimension detail as a data point.
 > See [Step 9](#step-9--optionally-promote-to-a-result-gate) when you're ready to make it gate a
 > tier.
@@ -179,9 +181,9 @@ runner that produces it:
              output_key="release_notes_process_implemented",
              runner_key="documentation",
          ),
-+        "changelog-present/v1": MetricBinding(
++        "runbook-present/v1": MetricBinding(
 +            dimension="documentation",
-+            output_key="has_changelog",
++            output_key="has_runbook",
 +            runner_key="documentation",
 +        ),
 ```
@@ -201,9 +203,9 @@ Add a new private helper after the existing file-existence helpers:
 ```python
 # scorers/documentation/logic.py — add this helper
 
-def _has_changelog(unit: EvaluationUnit, github_token: str | None) -> bool:
-    """Return True if CHANGELOG.md exists and is non-empty in the repository root."""
-    return _file_exists(unit, "CHANGELOG.md", github_token)
+def _has_runbook(unit: EvaluationUnit, github_token: str | None) -> bool:
+    """Return True if RUNBOOK.md exists and is non-empty in the repository root."""
+    return _file_exists(unit, "RUNBOOK.md", github_token)
 ```
 
 The `_file_exists` helper is already defined in the same file — it wraps
@@ -241,7 +243,7 @@ key to it:
          ),
          "uses_rtd_hosting": _uses_rtd_hosting(unit, github_token),
          "release_notes_process_implemented": _release_notes_process_implemented(unit, github_token),
-+        "has_changelog": _has_changelog(unit, github_token),
++        "has_runbook": _has_runbook(unit, github_token),
      }
 ```
 
@@ -270,7 +272,7 @@ Look for the existing test that covers default (all-false) outputs and add your 
          "diataxis_coverage_ai": 0,
          "uses_rtd_hosting": False,
          "release_notes_process_implemented": False,
-+        "has_changelog": False,
++        "has_runbook": False,
      }
 ```
 
@@ -278,10 +280,10 @@ Then add a dedicated test for your metric's positive path. The pattern is always
 the helper at the point `logic.py` imports it, not at `github_signals`:
 
 ```python
-def test_has_changelog_true_when_file_exists(mocker):
+def test_has_runbook_true_when_file_exists(mocker):
     mocker.patch(
         "scorers.documentation.logic.repo_file_exists",
-        side_effect=lambda repo, path, token: path == "CHANGELOG.md",
+        side_effect=lambda repo, path, token: path == "RUNBOOK.md",
     )
     mocker.patch("scorers.documentation.logic.repo_releases", return_value=[])
     mocker.patch("scorers.documentation.logic.repo_file_text", return_value="")
@@ -289,10 +291,10 @@ def test_has_changelog_true_when_file_exists(mocker):
     mocker.patch("scorers.documentation.logic.workflow_files", return_value=[])
 
     result = compute_metrics(UNIT, "gh-token", "")
-    assert result["has_changelog"] is True
+    assert result["has_runbook"] is True
 
 
-def test_has_changelog_false_when_file_missing(mocker):
+def test_has_runbook_false_when_file_missing(mocker):
     mocker.patch(
         "scorers.documentation.logic.repo_file_exists",
         return_value=False,
@@ -303,7 +305,7 @@ def test_has_changelog_false_when_file_missing(mocker):
     mocker.patch("scorers.documentation.logic.workflow_files", return_value=[])
 
     result = compute_metrics(UNIT, "gh-token", "")
-    assert result["has_changelog"] is False
+    assert result["has_runbook"] is False
 ```
 
 > **Why patch `logic.repo_file_exists` and not `shared.github_signals.repo_file_exists`?**
@@ -346,10 +348,10 @@ make dev                           # start Vite dev server → http://localhost:
 ```
 
 Select that framework version in the dashboard's version selector, then navigate to the
-**Documentation** dimension. Your new `has_changelog` metric will appear in the metric list for
+**Documentation** dimension. Your new `has_runbook` metric will appear in the metric list for
 every scored product in that version:
 
-![Documentation dimension detail showing the has_changelog metric](screenshots/dimension-detail-documentation-after.png)
+![Documentation dimension detail showing the new metric](screenshots/dimension-detail-documentation-after.png)
 
 These generated files are GHA-maintained previews — inspect them locally, but never commit them.
 See [Run PQF locally](local-scoring.md) for AI-assisted scoring, criteria-only changes,
@@ -359,7 +361,7 @@ full-portfolio runs, and generated-artifact guidance.
 
 ## Step 9 — Optionally promote to a result gate
 
-If you want `has_changelog` to gate a tier, drop `informational: true` and add a criterion to that
+If you want `has_runbook` to gate a tier, drop `informational: true` and add a criterion to that
 version's `medals` section. Tiers are **cumulative** — a product earning silver must also satisfy
 all bronze criteria.
 
@@ -368,7 +370,7 @@ all bronze criteria.
      medals:
        bronze: ["readme_present == true"]
 -      silver: ["readme_present == true", "contributing_present == true"]
-+      silver: ["readme_present == true", "contributing_present == true", "has_changelog == true"]
++      silver: ["readme_present == true", "contributing_present == true", "has_runbook == true"]
        gold:   ["readme_present == true", "contributing_present == true", "has_security == true", "release_notes_process_implemented == true"]
 ```
 
@@ -380,7 +382,7 @@ all bronze criteria.
 >
 > | Syntax | Example | When to use |
 > |--------|---------|------------|
-> | `metric == true` | `has_changelog == true` | Boolean — must be true to pass |
+> | `metric == true` | `has_runbook == true` | Boolean — must be true to pass |
 > | `metric == false` | `has_violations == false` | Boolean — must be false to pass |
 > | `metric >= value` | `coverage_pct >= 80` | Number — at or above threshold |
 > | `metric <= value` | `avg_triage_days <= 5` | Number — at or below threshold |
@@ -438,7 +440,7 @@ These helpers live in `scorers/shared/github_signals.py` and are imported direct
 The `implementation` ID you declared in the framework contract has no binding in
 `scorers/registry.py`. Add the `MetricBinding`, or fix the typo in the ID.
 
-**`KeyError: 'has_changelog'` when running `make _assemble`**
+**`KeyError: 'has_runbook'` when running `make _assemble`**
 The key in your `compute_metrics` return dict does not match the output key declared in
 `framework/versions/<version>/dimensions.yaml`. Check for typos in both places.
 

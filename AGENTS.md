@@ -12,10 +12,11 @@ tracked products via medal grades (bronze / silver / gold). It has two main part
 Everything is **framework-versioned**: `framework/versions/<version>/{framework,dimensions}.yaml`
 is a full, self-contained snapshot of the scoring contract. V0 is **active** (today's official
 view, scored nightly); V1 is **upcoming** (previewed weekly and on demand); archived versions are
-frozen and never rescored. GitHub Actions runs the scorers per version and commits artifacts
-(`computed/versions/<version>/`, `public/versions/<version>/portfolio.json`,
-`public/framework-versions.json`, `public/badges/`) to `main`. A second workflow builds the UI and
-deploys it to GitHub Pages.
+frozen and never rescored. GitHub Actions runs the scorers per version, uploads the generated
+artifacts, and publishes them through the GitHub Pages deployment workflow. The deploy step keeps
+archived version directories intact, mirrors the active version at the root compatibility paths
+(`public/portfolio.json` and `public/badges/`), and preserves the pre-versioning snapshot at
+`/legacy/`.
 
 **Full architecture:** [docs/architecture.md](docs/architecture.md)
 
@@ -229,7 +230,7 @@ scorers/                    # registry.py + run.py + one logic.py per dimension 
 public/versions/<version>/  # GHA-generated portfolio.json per framework version
 public/framework-versions.json # GHA-generated version index (lifecycle authority)
 public/badges/              # GHA-generated badges
-public/legacy/              # Frozen pre-versioning snapshot, served at /legacy/, not linked in the new UI
+public/legacy/              # gh-pages-only frozen pre-versioning snapshot, served at /legacy/, not linked in the new UI
 ui/                         # React 19 + Vite dashboard
 .github/workflows/          # compute-metrics.yml, deploy-pages.yml, deploy-legacy.yml, preview, ci
 docs/                       # Architecture, how-to guides, view documentation
@@ -243,7 +244,7 @@ Makefile                    # Single source of truth for all dev commands
 
 | Workflow | Trigger | What it does |
 |----------|---------|--------------|
-| `compute-metrics.yml` | Nightly (active version), weekly (upcoming version), push to `products/**`, `framework/**` or `config/**`, manual (`framework_version` input) | Runs scorers per version → engine → badges → version index → commits artifacts. Archived versions are never selected. |
+| `compute-metrics.yml` | Nightly (active version), weekly (upcoming version), push to `products/**`, `framework/**` or `config/**`, manual (`framework_version` input) | Runs scorers per version → engine → uploads artifacts for Pages publication. Archived versions are never selected. |
 | `deploy-pages.yml` | Push to `main` | Builds `ui/` → deploys to GitHub Pages |
 | `deploy-legacy.yml` | Manual | Publishes the frozen pre-versioning snapshot under `/legacy/` |
 | `ci.yml` | Push / PR | Validate, lint, tests, semantic change report, security audit |
