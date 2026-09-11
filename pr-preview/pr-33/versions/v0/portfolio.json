@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-11T20:20:04.466456+00:00",
+  "generated_at": "2026-09-11T20:42:47.950472+00:00",
   "framework": {
     "id": "v0",
     "sequence": 0,
@@ -8,16 +8,16 @@
     "description": "The dependable minimum PQF quality baseline."
   },
   "contract_digest": "06db4a3d26d7ef10560341964f9a39f86cf9f13a5ed3f1627ec996c69c38cb0c",
-  "source_revision": "5371b65ef64290a5d1d14fa35ff742e2c5cb1313",
+  "source_revision": "fc5a037e859a14e3fc2ca7cc7b2f66efc1077ba1",
   "implementation_fingerprints": {
     "branch-protection-required-checks/v1": "4bdd70fc77a438d4ef155b3f0624c276967f9e06afcae10f6635eb9319b79f77",
     "contributing-present/v1": "e6c8580f21eb25ccb253b90357227ad5adb17e7cea586e95a5ce870d420e8214",
     "diataxis-coverage-ai/v1": "e6c8580f21eb25ccb253b90357227ad5adb17e7cea586e95a5ce870d420e8214",
     "latest-build-passing/v1": "a740623d8b3fd8eb0150e271b5c22a0da111f4fd834ca64fbfb5a3842f6b4bd4",
-    "ownership-signal/v1": "188e98cccb266373b0ecff5de0de4edcba69987ceba9f33f7196b34264cd4ef8",
+    "ownership-signal/v1": "8ad5a0ba97c3e699d700fcf3002482bf13d684537fa80f3d48afc32e66a5089c",
     "readme-present/v1": "e6c8580f21eb25ccb253b90357227ad5adb17e7cea586e95a5ce870d420e8214",
     "renovate-enabled/v1": "4bdd70fc77a438d4ef155b3f0624c276967f9e06afcae10f6635eb9319b79f77",
-    "response-coverage-rate/v1": "188e98cccb266373b0ecff5de0de4edcba69987ceba9f33f7196b34264cd4ef8",
+    "response-coverage-rate/v1": "8ad5a0ba97c3e699d700fcf3002482bf13d684537fa80f3d48afc32e66a5089c",
     "security-file-present/v1": "e6c8580f21eb25ccb253b90357227ad5adb17e7cea586e95a5ce870d420e8214",
     "signed-commits-required/v1": "4bdd70fc77a438d4ef155b3f0624c276967f9e06afcae10f6635eb9319b79f77",
     "uses-jubilant/v1": "a740623d8b3fd8eb0150e271b5c22a0da111f4fd834ca64fbfb5a3842f6b4bd4",
@@ -90,7 +90,7 @@
               "applicability": "insufficient_data",
               "metrics": {
                 "latest_build_passing": null,
-                "uses_jubilant": false
+                "uses_jubilant": true
               },
               "excluded_from_parent_medal": false
             },
@@ -102,7 +102,7 @@
               "applicability": "insufficient_data",
               "metrics": {
                 "latest_build_passing": null,
-                "uses_jubilant": false
+                "uses_jubilant": true
               },
               "excluded_from_parent_medal": false
             }
@@ -289,33 +289,33 @@
       "parent_product_ids": [],
       "dimensions": {
         "test_verification": {
-          "medal": "bronze",
+          "medal": "unrated",
           "target": "silver",
-          "applicability": "scored",
+          "applicability": "insufficient_data",
           "meets_target": false,
-          "result": "bronze",
+          "result": "insufficient_data",
           "metrics": {},
           "composition": [
             {
               "product_id": "aproxy-charm",
               "repo": "canonical/aproxy-operator",
-              "medal": "bronze",
-              "result": "bronze",
-              "applicability": "scored",
+              "medal": "unrated",
+              "result": "insufficient_data",
+              "applicability": "insufficient_data",
               "metrics": {
-                "latest_build_passing": true,
-                "uses_jubilant": false
+                "latest_build_passing": null,
+                "uses_jubilant": true
               },
               "excluded_from_parent_medal": false
             },
             {
               "product_id": "aproxy-snap",
               "repo": "canonical/aproxy",
-              "medal": "bronze",
-              "result": "bronze",
-              "applicability": "scored",
+              "medal": "unrated",
+              "result": "insufficient_data",
+              "applicability": "insufficient_data",
               "metrics": {
-                "latest_build_passing": true,
+                "latest_build_passing": null,
                 "uses_jubilant": false
               },
               "excluded_from_parent_medal": false
@@ -486,7 +486,7 @@
               "applicability": "scored",
               "metrics": {
                 "latest_build_passing": false,
-                "uses_jubilant": false
+                "uses_jubilant": true
               },
               "excluded_from_parent_medal": false
             },
@@ -498,7 +498,7 @@
               "applicability": "scored",
               "metrics": {
                 "latest_build_passing": false,
-                "uses_jubilant": false
+                "uses_jubilant": true
               },
               "excluded_from_parent_medal": false
             },
@@ -510,7 +510,7 @@
               "applicability": "scored",
               "metrics": {
                 "latest_build_passing": false,
-                "uses_jubilant": false
+                "uses_jubilant": true
               },
               "excluded_from_parent_medal": false
             },
@@ -522,7 +522,7 @@
               "applicability": "insufficient_data",
               "metrics": {
                 "latest_build_passing": null,
-                "uses_jubilant": false
+                "uses_jubilant": true
               },
               "excluded_from_parent_medal": false
             }
@@ -599,11 +599,11 @@
           ]
         },
         "security_ssdlc": {
-          "medal": "unrated",
+          "medal": "bronze",
           "target": "silver",
           "applicability": "scored",
           "meets_target": false,
-          "result": "below_minimum",
+          "result": "bronze",
           "metrics": {},
           "composition": [
             {
@@ -622,11 +622,11 @@
             {
               "product_id": "bacula-fd",
               "repo": "canonical/backup-operators",
-              "medal": "unrated",
-              "result": "below_minimum",
+              "medal": "bronze",
+              "result": "bronze",
               "applicability": "scored",
               "metrics": {
-                "renovate_enabled": false,
+                "renovate_enabled": true,
                 "branch_protection_required_checks": false,
                 "signed_commits_required": false
               },
@@ -635,11 +635,11 @@
             {
               "product_id": "backup-integrator",
               "repo": "canonical/backup-operators",
-              "medal": "unrated",
-              "result": "below_minimum",
+              "medal": "bronze",
+              "result": "bronze",
               "applicability": "scored",
               "metrics": {
-                "renovate_enabled": false,
+                "renovate_enabled": true,
                 "branch_protection_required_checks": false,
                 "signed_commits_required": false
               },
@@ -648,11 +648,11 @@
             {
               "product_id": "charmed-bacula-server",
               "repo": "canonical/backup-operators",
-              "medal": "unrated",
-              "result": "below_minimum",
+              "medal": "bronze",
+              "result": "bronze",
               "applicability": "scored",
               "metrics": {
-                "renovate_enabled": false,
+                "renovate_enabled": true,
                 "branch_protection_required_checks": false,
                 "signed_commits_required": false
               },
@@ -900,9 +900,9 @@
       "name": "Cloudflared",
       "description": "Cloudflared is a lightweight daemon that routes traffic through Cloudflare's global network,\nenabling secure, reliable access to applications without exposing infrastructure directly to the internet.",
       "lifecycle": "stable",
-      "current_medal": "bronze",
+      "current_medal": "unrated",
       "target_medal": "gold",
-      "current_result": "bronze",
+      "current_result": "below_minimum",
       "target_result": "gold",
       "meets_target": false,
       "squad": "apac",
@@ -1028,11 +1028,11 @@
           ]
         },
         "security_ssdlc": {
-          "medal": "bronze",
+          "medal": "unrated",
           "target": "gold",
           "applicability": "scored",
           "meets_target": false,
-          "result": "bronze",
+          "result": "below_minimum",
           "metrics": {},
           "composition": [
             {
@@ -1051,11 +1051,11 @@
             {
               "product_id": "cloudflare-configurator",
               "repo": "canonical/cloudflare-configurator-operator",
-              "medal": "bronze",
-              "result": "bronze",
+              "medal": "unrated",
+              "result": "below_minimum",
               "applicability": "scored",
               "metrics": {
-                "renovate_enabled": true,
+                "renovate_enabled": false,
                 "branch_protection_required_checks": false,
                 "signed_commits_required": false
               },
@@ -1064,11 +1064,11 @@
             {
               "product_id": "charmed-cloudflared",
               "repo": "canonical/charmed-cloudflared-snap",
-              "medal": "bronze",
-              "result": "bronze",
+              "medal": "unrated",
+              "result": "below_minimum",
               "applicability": "scored",
               "metrics": {
-                "renovate_enabled": true,
+                "renovate_enabled": false,
                 "branch_protection_required_checks": false,
                 "signed_commits_required": false
               },
@@ -1587,7 +1587,7 @@
               "applicability": "scored",
               "metrics": {
                 "latest_build_passing": false,
-                "uses_jubilant": false
+                "uses_jubilant": true
               },
               "excluded_from_parent_medal": false
             }
@@ -1741,7 +1741,7 @@
               "applicability": "insufficient_data",
               "metrics": {
                 "latest_build_passing": null,
-                "uses_jubilant": false
+                "uses_jubilant": true
               },
               "excluded_from_parent_medal": false
             },
@@ -1753,7 +1753,7 @@
               "applicability": "insufficient_data",
               "metrics": {
                 "latest_build_passing": null,
-                "uses_jubilant": false
+                "uses_jubilant": true
               },
               "excluded_from_parent_medal": false
             },
@@ -1878,11 +1878,11 @@
             {
               "product_id": "dns-secondary",
               "repo": "canonical/dns-operators",
-              "medal": "bronze",
-              "result": "bronze",
+              "medal": "unrated",
+              "result": "below_minimum",
               "applicability": "scored",
               "metrics": {
-                "readme_present": true,
+                "readme_present": false,
                 "contributing_present": false,
                 "has_security": false,
                 "diataxis_coverage_ai": 0,
@@ -1923,21 +1923,21 @@
           ]
         },
         "security_ssdlc": {
-          "medal": "unrated",
+          "medal": "bronze",
           "target": "bronze",
           "applicability": "scored",
-          "meets_target": false,
-          "result": "below_minimum",
+          "meets_target": true,
+          "result": "bronze",
           "metrics": {},
           "composition": [
             {
               "product_id": "bind",
               "repo": "canonical/dns-operators",
-              "medal": "unrated",
-              "result": "below_minimum",
+              "medal": "bronze",
+              "result": "bronze",
               "applicability": "scored",
               "metrics": {
-                "renovate_enabled": false,
+                "renovate_enabled": true,
                 "branch_protection_required_checks": false,
                 "signed_commits_required": false
               },
@@ -1946,11 +1946,11 @@
             {
               "product_id": "dns-policy",
               "repo": "canonical/dns-operators",
-              "medal": "unrated",
-              "result": "below_minimum",
+              "medal": "bronze",
+              "result": "bronze",
               "applicability": "scored",
               "metrics": {
-                "renovate_enabled": false,
+                "renovate_enabled": true,
                 "branch_protection_required_checks": false,
                 "signed_commits_required": false
               },
@@ -1959,11 +1959,11 @@
             {
               "product_id": "dns-integrator",
               "repo": "canonical/dns-operators",
-              "medal": "unrated",
-              "result": "below_minimum",
+              "medal": "bronze",
+              "result": "bronze",
               "applicability": "scored",
               "metrics": {
-                "renovate_enabled": false,
+                "renovate_enabled": true,
                 "branch_protection_required_checks": false,
                 "signed_commits_required": false
               },
@@ -1972,11 +1972,11 @@
             {
               "product_id": "dns-resolver",
               "repo": "canonical/dns-operators",
-              "medal": "unrated",
-              "result": "below_minimum",
+              "medal": "bronze",
+              "result": "bronze",
               "applicability": "scored",
               "metrics": {
-                "renovate_enabled": false,
+                "renovate_enabled": true,
                 "branch_protection_required_checks": false,
                 "signed_commits_required": false
               },
@@ -1985,11 +1985,11 @@
             {
               "product_id": "dns-secondary",
               "repo": "canonical/dns-operators",
-              "medal": "unrated",
-              "result": "below_minimum",
+              "medal": "bronze",
+              "result": "bronze",
               "applicability": "scored",
               "metrics": {
-                "renovate_enabled": false,
+                "renovate_enabled": true,
                 "branch_protection_required_checks": false,
                 "signed_commits_required": false
               },
@@ -1998,11 +1998,11 @@
             {
               "product_id": "charmed-bind",
               "repo": "canonical/dns-operators",
-              "medal": "unrated",
-              "result": "below_minimum",
+              "medal": "bronze",
+              "result": "bronze",
               "applicability": "scored",
               "metrics": {
-                "renovate_enabled": false,
+                "renovate_enabled": true,
                 "branch_protection_required_checks": false,
                 "signed_commits_required": false
               },
@@ -2011,11 +2011,11 @@
             {
               "product_id": "charmed-dns-policy",
               "repo": "canonical/dns-operators",
-              "medal": "unrated",
-              "result": "below_minimum",
+              "medal": "bronze",
+              "result": "bronze",
               "applicability": "scored",
               "metrics": {
-                "renovate_enabled": false,
+                "renovate_enabled": true,
                 "branch_protection_required_checks": false,
                 "signed_commits_required": false
               },
@@ -2333,7 +2333,7 @@
               "applicability": "scored",
               "metrics": {
                 "latest_build_passing": false,
-                "uses_jubilant": false
+                "uses_jubilant": true
               },
               "excluded_from_parent_medal": false
             }
@@ -2417,9 +2417,9 @@
       "name": "HAProxy",
       "description": "HAProxy is a TCP/HTTP reverse proxy which is particularly suited for high availability environments.\nIt features connection persistence through HTTP cookies, load balancing, header addition, modification, deletion both ways.\nIt has request blocking capabilities and provides interface to display server status.",
       "lifecycle": "stable",
-      "current_medal": "unrated",
+      "current_medal": "bronze",
       "target_medal": "gold",
-      "current_result": "below_minimum",
+      "current_result": "bronze",
       "target_result": "gold",
       "meets_target": false,
       "squad": "emea",
@@ -2576,11 +2576,11 @@
           ]
         },
         "security_ssdlc": {
-          "medal": "unrated",
+          "medal": "bronze",
           "target": "gold",
           "applicability": "scored",
           "meets_target": false,
-          "result": "below_minimum",
+          "result": "bronze",
           "metrics": {},
           "composition": [
             {
@@ -2599,11 +2599,11 @@
             {
               "product_id": "ingress-configurator",
               "repo": "canonical/ingress-configurator-operator",
-              "medal": "unrated",
-              "result": "below_minimum",
+              "medal": "bronze",
+              "result": "bronze",
               "applicability": "scored",
               "metrics": {
-                "renovate_enabled": false,
+                "renovate_enabled": true,
                 "branch_protection_required_checks": false,
                 "signed_commits_required": false
               },
@@ -2612,11 +2612,11 @@
             {
               "product_id": "haproxy-spoe-auth",
               "repo": "canonical/haproxy-operator",
-              "medal": "unrated",
-              "result": "below_minimum",
+              "medal": "bronze",
+              "result": "bronze",
               "applicability": "scored",
               "metrics": {
-                "renovate_enabled": false,
+                "renovate_enabled": true,
                 "branch_protection_required_checks": false,
                 "signed_commits_required": false
               },
@@ -2625,11 +2625,11 @@
             {
               "product_id": "haproxy-spoe-auth-snap",
               "repo": "canonical/haproxy-operator",
-              "medal": "unrated",
-              "result": "below_minimum",
+              "medal": "bronze",
+              "result": "bronze",
               "applicability": "scored",
               "metrics": {
-                "renovate_enabled": false,
+                "renovate_enabled": true,
                 "branch_protection_required_checks": false,
                 "signed_commits_required": false
               },
@@ -2821,9 +2821,9 @@
       "name": "HTTP Proxy",
       "description": "HTTP Proxy is a collection of operators providing HTTP forward proxy capabilities.\nThe Squid forward proxy charm deploys and manages a Squid proxy instance as a forward proxy server.\nThe HTTP proxy policy charm adds a policy layer to filter and manage proxy access requests,\nexposing a web interface for administrators to approve or reject HTTP proxy requests.",
       "lifecycle": "stable",
-      "current_medal": "unrated",
+      "current_medal": "bronze",
       "target_medal": "silver",
-      "current_result": "below_minimum",
+      "current_result": "bronze",
       "target_result": "silver",
       "meets_target": false,
       "squad": "apac",
@@ -2852,21 +2852,21 @@
       "parent_product_ids": [],
       "dimensions": {
         "test_verification": {
-          "medal": "unrated",
+          "medal": "bronze",
           "target": "silver",
-          "applicability": "insufficient_data",
+          "applicability": "scored",
           "meets_target": false,
-          "result": "insufficient_data",
+          "result": "bronze",
           "metrics": {},
           "composition": [
             {
               "product_id": "squid-forward-proxy",
               "repo": "canonical/http-proxy-operators",
-              "medal": "unrated",
-              "result": "insufficient_data",
-              "applicability": "insufficient_data",
+              "medal": "bronze",
+              "result": "bronze",
+              "applicability": "scored",
               "metrics": {
-                "latest_build_passing": null,
+                "latest_build_passing": true,
                 "uses_jubilant": false
               },
               "excluded_from_parent_medal": false
@@ -2980,11 +2980,11 @@
           ]
         },
         "security_ssdlc": {
-          "medal": "unrated",
+          "medal": "bronze",
           "target": "silver",
           "applicability": "scored",
           "meets_target": false,
-          "result": "below_minimum",
+          "result": "bronze",
           "metrics": {},
           "composition": [
             {
@@ -3003,11 +3003,11 @@
             {
               "product_id": "http-proxy-policy",
               "repo": "canonical/http-proxy-operators",
-              "medal": "unrated",
-              "result": "below_minimum",
+              "medal": "bronze",
+              "result": "bronze",
               "applicability": "scored",
               "metrics": {
-                "renovate_enabled": false,
+                "renovate_enabled": true,
                 "branch_protection_required_checks": false,
                 "signed_commits_required": false
               },
@@ -3016,11 +3016,11 @@
             {
               "product_id": "http-proxy-configurator",
               "repo": "canonical/http-proxy-operators",
-              "medal": "unrated",
-              "result": "below_minimum",
+              "medal": "bronze",
+              "result": "bronze",
               "applicability": "scored",
               "metrics": {
-                "renovate_enabled": false,
+                "renovate_enabled": true,
                 "branch_protection_required_checks": false,
                 "signed_commits_required": false
               },
@@ -3029,11 +3029,11 @@
             {
               "product_id": "charmed-http-proxy-policy",
               "repo": "canonical/http-proxy-operators",
-              "medal": "unrated",
-              "result": "below_minimum",
+              "medal": "bronze",
+              "result": "bronze",
               "applicability": "scored",
               "metrics": {
-                "renovate_enabled": false,
+                "renovate_enabled": true,
                 "branch_protection_required_checks": false,
                 "signed_commits_required": false
               },
@@ -3321,21 +3321,21 @@
           ]
         },
         "security_ssdlc": {
-          "medal": "unrated",
+          "medal": "bronze",
           "target": "silver",
           "applicability": "scored",
           "meets_target": false,
-          "result": "below_minimum",
+          "result": "bronze",
           "metrics": {},
           "composition": [
             {
               "product_id": "indico-charm",
               "repo": "canonical/indico-operator",
-              "medal": "unrated",
-              "result": "below_minimum",
+              "medal": "bronze",
+              "result": "bronze",
               "applicability": "scored",
               "metrics": {
-                "renovate_enabled": false,
+                "renovate_enabled": true,
                 "branch_protection_required_checks": false,
                 "signed_commits_required": false
               },
@@ -3373,9 +3373,9 @@
       "name": "Jenkins",
       "description": "Jenkins is an extendable continuous integration server that monitors executions of repeated jobs.\nThe focus of Jenkins is the building/testing of software projects continuously, and monitoring\nexecutions of externally-run jobs. This product provides the Jenkins server service with both\nKubernetes and machine agent support for flexible automation environments.",
       "lifecycle": "stable",
-      "current_medal": "unrated",
+      "current_medal": "bronze",
       "target_medal": "bronze",
-      "current_result": "below_minimum",
+      "current_result": "bronze",
       "target_result": "bronze",
       "meets_target": false,
       "squad": "apac",
@@ -3400,22 +3400,22 @@
       "parent_product_ids": [],
       "dimensions": {
         "test_verification": {
-          "medal": "bronze",
+          "medal": "gold",
           "target": "bronze",
           "applicability": "scored",
           "meets_target": true,
-          "result": "bronze",
+          "result": "gold",
           "metrics": {},
           "composition": [
             {
               "product_id": "jenkins-k8s",
               "repo": "canonical/jenkins-k8s-operator",
-              "medal": "bronze",
-              "result": "bronze",
+              "medal": "gold",
+              "result": "gold",
               "applicability": "scored",
               "metrics": {
                 "latest_build_passing": true,
-                "uses_jubilant": false
+                "uses_jubilant": true
               },
               "excluded_from_parent_medal": false
             },
@@ -3439,7 +3439,7 @@
               "applicability": "insufficient_data",
               "metrics": {
                 "latest_build_passing": null,
-                "uses_jubilant": false
+                "uses_jubilant": true
               },
               "excluded_from_parent_medal": false
             }
@@ -3501,11 +3501,11 @@
           ]
         },
         "security_ssdlc": {
-          "medal": "unrated",
+          "medal": "bronze",
           "target": "bronze",
           "applicability": "scored",
-          "meets_target": false,
-          "result": "below_minimum",
+          "meets_target": true,
+          "result": "bronze",
           "metrics": {},
           "composition": [
             {
@@ -3537,11 +3537,11 @@
             {
               "product_id": "jenkins-agent",
               "repo": "canonical/jenkins-agent-operator",
-              "medal": "unrated",
-              "result": "below_minimum",
+              "medal": "bronze",
+              "result": "bronze",
               "applicability": "scored",
               "metrics": {
-                "renovate_enabled": false,
+                "renovate_enabled": true,
                 "branch_protection_required_checks": false,
                 "signed_commits_required": false
               },
@@ -3816,6 +3816,19 @@
             {
               "product_id": "postfix-relay",
               "repo": "canonical/mailserver-operators",
+              "medal": "unrated",
+              "result": "below_minimum",
+              "applicability": "scored",
+              "metrics": {
+                "renovate_enabled": false,
+                "branch_protection_required_checks": false,
+                "signed_commits_required": false
+              },
+              "excluded_from_parent_medal": false
+            },
+            {
+              "product_id": "postfix-relay-configurator",
+              "repo": "canonical/mailserver-operators",
               "medal": "bronze",
               "result": "bronze",
               "applicability": "scored",
@@ -3827,26 +3840,13 @@
               "excluded_from_parent_medal": false
             },
             {
-              "product_id": "postfix-relay-configurator",
-              "repo": "canonical/mailserver-operators",
-              "medal": "unrated",
-              "result": "below_minimum",
-              "applicability": "scored",
-              "metrics": {
-                "renovate_enabled": false,
-                "branch_protection_required_checks": false,
-                "signed_commits_required": false
-              },
-              "excluded_from_parent_medal": false
-            },
-            {
               "product_id": "opendkim",
               "repo": "canonical/mailserver-operators",
-              "medal": "unrated",
-              "result": "below_minimum",
+              "medal": "bronze",
+              "result": "bronze",
               "applicability": "scored",
               "metrics": {
-                "renovate_enabled": false,
+                "renovate_enabled": true,
                 "branch_protection_required_checks": false,
                 "signed_commits_required": false
               },
@@ -4013,11 +4013,11 @@
       "parent_product_ids": [],
       "dimensions": {
         "test_verification": {
-          "medal": "bronze",
+          "medal": "unrated",
           "target": "gold",
           "applicability": "scored",
           "meets_target": false,
-          "result": "bronze",
+          "result": "below_minimum",
           "metrics": {},
           "composition": [
             {
@@ -4036,10 +4036,10 @@
               "product_id": "draupnir",
               "repo": "canonical/draupnir-snap",
               "medal": "unrated",
-              "result": "insufficient_data",
-              "applicability": "insufficient_data",
+              "result": "below_minimum",
+              "applicability": "scored",
               "metrics": {
-                "latest_build_passing": null,
+                "latest_build_passing": false,
                 "uses_jubilant": false
               },
               "excluded_from_parent_medal": false
@@ -4047,11 +4047,11 @@
             {
               "product_id": "mjolnir",
               "repo": "canonical/mjolnir-snap",
-              "medal": "unrated",
-              "result": "insufficient_data",
-              "applicability": "insufficient_data",
+              "medal": "bronze",
+              "result": "bronze",
+              "applicability": "scored",
               "metrics": {
-                "latest_build_passing": null,
+                "latest_build_passing": true,
                 "uses_jubilant": false
               },
               "excluded_from_parent_medal": false
@@ -4059,11 +4059,11 @@
             {
               "product_id": "mas-cli",
               "repo": "canonical/mas-cli-snap",
-              "medal": "unrated",
-              "result": "insufficient_data",
-              "applicability": "insufficient_data",
+              "medal": "bronze",
+              "result": "bronze",
+              "applicability": "scored",
               "metrics": {
-                "latest_build_passing": null,
+                "latest_build_passing": true,
                 "uses_jubilant": false
               },
               "excluded_from_parent_medal": false
@@ -4071,11 +4071,11 @@
             {
               "product_id": "matrix-appservice-irc",
               "repo": "canonical/matrix-appservice-irc",
-              "medal": "unrated",
-              "result": "insufficient_data",
-              "applicability": "insufficient_data",
+              "medal": "bronze",
+              "result": "bronze",
+              "applicability": "scored",
               "metrics": {
-                "latest_build_passing": null,
+                "latest_build_passing": true,
                 "uses_jubilant": false
               },
               "excluded_from_parent_medal": false
@@ -4107,11 +4107,11 @@
             {
               "product_id": "maubot",
               "repo": "canonical/maubot-operator",
-              "medal": "unrated",
-              "result": "insufficient_data",
-              "applicability": "insufficient_data",
+              "medal": "bronze",
+              "result": "bronze",
+              "applicability": "scored",
               "metrics": {
-                "latest_build_passing": null,
+                "latest_build_passing": true,
                 "uses_jubilant": false
               },
               "excluded_from_parent_medal": false
@@ -4286,11 +4286,11 @@
             {
               "product_id": "synapse",
               "repo": "canonical/synapse-operator",
-              "medal": "unrated",
-              "result": "below_minimum",
+              "medal": "bronze",
+              "result": "bronze",
               "applicability": "scored",
               "metrics": {
-                "renovate_enabled": false,
+                "renovate_enabled": true,
                 "branch_protection_required_checks": false,
                 "signed_commits_required": false
               },
@@ -4338,11 +4338,11 @@
             {
               "product_id": "matrix-appservice-irc",
               "repo": "canonical/matrix-appservice-irc",
-              "medal": "bronze",
-              "result": "bronze",
+              "medal": "unrated",
+              "result": "below_minimum",
               "applicability": "scored",
               "metrics": {
-                "renovate_enabled": true,
+                "renovate_enabled": false,
                 "branch_protection_required_checks": false,
                 "signed_commits_required": false
               },
@@ -4567,7 +4567,7 @@
               "applicability": "insufficient_data",
               "metrics": {
                 "latest_build_passing": null,
-                "uses_jubilant": false
+                "uses_jubilant": true
               },
               "excluded_from_parent_medal": false
             }
@@ -4670,22 +4670,22 @@
       "parent_product_ids": [],
       "dimensions": {
         "test_verification": {
-          "medal": "bronze",
+          "medal": "gold",
           "target": "bronze",
           "applicability": "scored",
           "meets_target": true,
-          "result": "bronze",
+          "result": "gold",
           "metrics": {},
           "composition": [
             {
               "product_id": "netbox-k8s",
               "repo": "canonical/netbox-k8s-operator",
-              "medal": "bronze",
-              "result": "bronze",
+              "medal": "gold",
+              "result": "gold",
               "applicability": "scored",
               "metrics": {
                 "latest_build_passing": true,
-                "uses_jubilant": false
+                "uses_jubilant": true
               },
               "excluded_from_parent_medal": false
             }
@@ -5406,7 +5406,7 @@
               "applicability": "insufficient_data",
               "metrics": {
                 "latest_build_passing": null,
-                "uses_jubilant": false
+                "uses_jubilant": true
               },
               "excluded_from_parent_medal": false
             },
@@ -5528,12 +5528,12 @@
             {
               "product_id": "tmate-ssh-server",
               "repo": "canonical/tmate-ssh-server-operator",
-              "medal": "unrated",
-              "result": "below_minimum",
+              "medal": "silver",
+              "result": "silver",
               "applicability": "scored",
               "metrics": {
-                "readme_present": false,
-                "contributing_present": false,
+                "readme_present": true,
+                "contributing_present": true,
                 "has_security": false,
                 "diataxis_coverage_ai": 0,
                 "uses_rtd_hosting": false
@@ -5543,13 +5543,13 @@
             {
               "product_id": "repo-policy-compliance",
               "repo": "canonical/repo-policy-compliance",
-              "medal": "unrated",
-              "result": "below_minimum",
+              "medal": "gold",
+              "result": "gold",
               "applicability": "scored",
               "metrics": {
-                "readme_present": false,
-                "contributing_present": false,
-                "has_security": false,
+                "readme_present": true,
+                "contributing_present": true,
+                "has_security": true,
                 "diataxis_coverage_ai": 0,
                 "uses_rtd_hosting": false
               },
@@ -5598,11 +5598,11 @@
             {
               "product_id": "github-runner",
               "repo": "canonical/github-runner-operator",
-              "medal": "unrated",
-              "result": "below_minimum",
+              "medal": "bronze",
+              "result": "bronze",
               "applicability": "scored",
               "metrics": {
-                "renovate_enabled": false,
+                "renovate_enabled": true,
                 "branch_protection_required_checks": false,
                 "signed_commits_required": false
               },
@@ -5611,11 +5611,11 @@
             {
               "product_id": "github-runner-image-builder",
               "repo": "canonical/github-runner-image-builder-operator",
-              "medal": "unrated",
-              "result": "below_minimum",
+              "medal": "bronze",
+              "result": "bronze",
               "applicability": "scored",
               "metrics": {
-                "renovate_enabled": false,
+                "renovate_enabled": true,
                 "branch_protection_required_checks": false,
                 "signed_commits_required": false
               },
@@ -5637,11 +5637,11 @@
             {
               "product_id": "tmate-ssh-server",
               "repo": "canonical/tmate-ssh-server-operator",
-              "medal": "unrated",
-              "result": "below_minimum",
+              "medal": "bronze",
+              "result": "bronze",
               "applicability": "scored",
               "metrics": {
-                "renovate_enabled": false,
+                "renovate_enabled": true,
                 "branch_protection_required_checks": false,
                 "signed_commits_required": false
               },
@@ -5663,11 +5663,11 @@
             {
               "product_id": "github-runner-planner",
               "repo": "canonical/github-runner-operators",
-              "medal": "unrated",
-              "result": "below_minimum",
+              "medal": "bronze",
+              "result": "bronze",
               "applicability": "scored",
               "metrics": {
-                "renovate_enabled": false,
+                "renovate_enabled": true,
                 "branch_protection_required_checks": false,
                 "signed_commits_required": false
               },
@@ -6182,11 +6182,11 @@
       "parent_product_ids": [],
       "dimensions": {
         "test_verification": {
-          "medal": "unrated",
+          "medal": "bronze",
           "target": "silver",
           "applicability": "scored",
           "meets_target": false,
-          "result": "below_minimum",
+          "result": "bronze",
           "metrics": {},
           "composition": [
             {
@@ -6205,10 +6205,10 @@
               "product_id": "wazuh-indexer",
               "repo": "canonical/wazuh-indexer-operator",
               "medal": "unrated",
-              "result": "below_minimum",
-              "applicability": "scored",
+              "result": "insufficient_data",
+              "applicability": "insufficient_data",
               "metrics": {
-                "latest_build_passing": false,
+                "latest_build_passing": null,
                 "uses_jubilant": false
               },
               "excluded_from_parent_medal": false
@@ -6738,7 +6738,7 @@
           "result": "insufficient_data",
           "metrics": {
             "latest_build_passing": null,
-            "uses_jubilant": false
+            "uses_jubilant": true
           },
           "composition": null
         },
@@ -6816,7 +6816,7 @@
           "result": "insufficient_data",
           "metrics": {
             "latest_build_passing": null,
-            "uses_jubilant": false
+            "uses_jubilant": true
           },
           "composition": null
         },
@@ -6887,14 +6887,14 @@
       ],
       "dimensions": {
         "test_verification": {
-          "medal": "bronze",
+          "medal": "unrated",
           "target": "silver",
-          "applicability": "scored",
+          "applicability": "insufficient_data",
           "meets_target": false,
-          "result": "bronze",
+          "result": "insufficient_data",
           "metrics": {
-            "latest_build_passing": true,
-            "uses_jubilant": false
+            "latest_build_passing": null,
+            "uses_jubilant": true
           },
           "composition": null
         },
@@ -6965,13 +6965,13 @@
       ],
       "dimensions": {
         "test_verification": {
-          "medal": "bronze",
+          "medal": "unrated",
           "target": "silver",
-          "applicability": "scored",
+          "applicability": "insufficient_data",
           "meets_target": false,
-          "result": "bronze",
+          "result": "insufficient_data",
           "metrics": {
-            "latest_build_passing": true,
+            "latest_build_passing": null,
             "uses_jubilant": false
           },
           "composition": null
@@ -7050,7 +7050,7 @@
           "result": "below_minimum",
           "metrics": {
             "latest_build_passing": false,
-            "uses_jubilant": false
+            "uses_jubilant": true
           },
           "composition": null
         },
@@ -7128,7 +7128,7 @@
           "result": "below_minimum",
           "metrics": {
             "latest_build_passing": false,
-            "uses_jubilant": false
+            "uses_jubilant": true
           },
           "composition": null
         },
@@ -7148,13 +7148,13 @@
           "composition": null
         },
         "security_ssdlc": {
-          "medal": "unrated",
+          "medal": "bronze",
           "target": "silver",
           "applicability": "scored",
           "meets_target": false,
-          "result": "below_minimum",
+          "result": "bronze",
           "metrics": {
-            "renovate_enabled": false,
+            "renovate_enabled": true,
             "branch_protection_required_checks": false,
             "signed_commits_required": false
           },
@@ -7206,7 +7206,7 @@
           "result": "below_minimum",
           "metrics": {
             "latest_build_passing": false,
-            "uses_jubilant": false
+            "uses_jubilant": true
           },
           "composition": null
         },
@@ -7226,13 +7226,13 @@
           "composition": null
         },
         "security_ssdlc": {
-          "medal": "unrated",
+          "medal": "bronze",
           "target": "silver",
           "applicability": "scored",
           "meets_target": false,
-          "result": "below_minimum",
+          "result": "bronze",
           "metrics": {
-            "renovate_enabled": false,
+            "renovate_enabled": true,
             "branch_protection_required_checks": false,
             "signed_commits_required": false
           },
@@ -7284,7 +7284,7 @@
           "result": "insufficient_data",
           "metrics": {
             "latest_build_passing": null,
-            "uses_jubilant": false
+            "uses_jubilant": true
           },
           "composition": null
         },
@@ -7304,13 +7304,13 @@
           "composition": null
         },
         "security_ssdlc": {
-          "medal": "unrated",
+          "medal": "bronze",
           "target": "silver",
           "applicability": "scored",
           "meets_target": false,
-          "result": "below_minimum",
+          "result": "bronze",
           "metrics": {
-            "renovate_enabled": false,
+            "renovate_enabled": true,
             "branch_protection_required_checks": false,
             "signed_commits_required": false
           },
@@ -7570,9 +7570,9 @@
       "name": "cloudflare-configurator",
       "description": "",
       "lifecycle": "stable",
-      "current_medal": "bronze",
+      "current_medal": "unrated",
       "target_medal": "gold",
-      "current_result": "bronze",
+      "current_result": "below_minimum",
       "target_result": "gold",
       "meets_target": false,
       "squad": "",
@@ -7616,13 +7616,13 @@
           "composition": null
         },
         "security_ssdlc": {
-          "medal": "bronze",
+          "medal": "unrated",
           "target": "gold",
           "applicability": "scored",
           "meets_target": false,
-          "result": "bronze",
+          "result": "below_minimum",
           "metrics": {
-            "renovate_enabled": true,
+            "renovate_enabled": false,
             "branch_protection_required_checks": false,
             "signed_commits_required": false
           },
@@ -7648,9 +7648,9 @@
       "name": "charmed-cloudflared",
       "description": "",
       "lifecycle": "stable",
-      "current_medal": "bronze",
+      "current_medal": "unrated",
       "target_medal": "gold",
-      "current_result": "bronze",
+      "current_result": "below_minimum",
       "target_result": "gold",
       "meets_target": false,
       "squad": "",
@@ -7694,13 +7694,13 @@
           "composition": null
         },
         "security_ssdlc": {
-          "medal": "bronze",
+          "medal": "unrated",
           "target": "gold",
           "applicability": "scored",
           "meets_target": false,
-          "result": "bronze",
+          "result": "below_minimum",
           "metrics": {
-            "renovate_enabled": true,
+            "renovate_enabled": false,
             "branch_protection_required_checks": false,
             "signed_commits_required": false
           },
@@ -8064,7 +8064,7 @@
           "result": "below_minimum",
           "metrics": {
             "latest_build_passing": false,
-            "uses_jubilant": false
+            "uses_jubilant": true
           },
           "composition": null
         },
@@ -8116,9 +8116,9 @@
       "name": "bind",
       "description": "",
       "lifecycle": "stable",
-      "current_medal": "unrated",
+      "current_medal": "bronze",
       "target_medal": "bronze",
-      "current_result": "below_minimum",
+      "current_result": "bronze",
       "target_result": "bronze",
       "meets_target": false,
       "squad": "",
@@ -8162,13 +8162,13 @@
           "composition": null
         },
         "security_ssdlc": {
-          "medal": "unrated",
+          "medal": "bronze",
           "target": "bronze",
           "applicability": "scored",
-          "meets_target": false,
-          "result": "below_minimum",
+          "meets_target": true,
+          "result": "bronze",
           "metrics": {
-            "renovate_enabled": false,
+            "renovate_enabled": true,
             "branch_protection_required_checks": false,
             "signed_commits_required": false
           },
@@ -8194,9 +8194,9 @@
       "name": "dns-policy",
       "description": "",
       "lifecycle": "stable",
-      "current_medal": "unrated",
+      "current_medal": "bronze",
       "target_medal": "bronze",
-      "current_result": "below_minimum",
+      "current_result": "bronze",
       "target_result": "bronze",
       "meets_target": false,
       "squad": "",
@@ -8220,7 +8220,7 @@
           "result": "insufficient_data",
           "metrics": {
             "latest_build_passing": null,
-            "uses_jubilant": false
+            "uses_jubilant": true
           },
           "composition": null
         },
@@ -8240,13 +8240,13 @@
           "composition": null
         },
         "security_ssdlc": {
-          "medal": "unrated",
+          "medal": "bronze",
           "target": "bronze",
           "applicability": "scored",
-          "meets_target": false,
-          "result": "below_minimum",
+          "meets_target": true,
+          "result": "bronze",
           "metrics": {
-            "renovate_enabled": false,
+            "renovate_enabled": true,
             "branch_protection_required_checks": false,
             "signed_commits_required": false
           },
@@ -8272,9 +8272,9 @@
       "name": "dns-integrator",
       "description": "",
       "lifecycle": "stable",
-      "current_medal": "unrated",
+      "current_medal": "bronze",
       "target_medal": "bronze",
-      "current_result": "below_minimum",
+      "current_result": "bronze",
       "target_result": "bronze",
       "meets_target": false,
       "squad": "",
@@ -8298,7 +8298,7 @@
           "result": "insufficient_data",
           "metrics": {
             "latest_build_passing": null,
-            "uses_jubilant": false
+            "uses_jubilant": true
           },
           "composition": null
         },
@@ -8318,13 +8318,13 @@
           "composition": null
         },
         "security_ssdlc": {
-          "medal": "unrated",
+          "medal": "bronze",
           "target": "bronze",
           "applicability": "scored",
-          "meets_target": false,
-          "result": "below_minimum",
+          "meets_target": true,
+          "result": "bronze",
           "metrics": {
-            "renovate_enabled": false,
+            "renovate_enabled": true,
             "branch_protection_required_checks": false,
             "signed_commits_required": false
           },
@@ -8350,9 +8350,9 @@
       "name": "dns-resolver",
       "description": "",
       "lifecycle": "stable",
-      "current_medal": "unrated",
+      "current_medal": "bronze",
       "target_medal": "bronze",
-      "current_result": "below_minimum",
+      "current_result": "bronze",
       "target_result": "bronze",
       "meets_target": false,
       "squad": "",
@@ -8396,13 +8396,13 @@
           "composition": null
         },
         "security_ssdlc": {
-          "medal": "unrated",
+          "medal": "bronze",
           "target": "bronze",
           "applicability": "scored",
-          "meets_target": false,
-          "result": "below_minimum",
+          "meets_target": true,
+          "result": "bronze",
           "metrics": {
-            "renovate_enabled": false,
+            "renovate_enabled": true,
             "branch_protection_required_checks": false,
             "signed_commits_required": false
           },
@@ -8459,13 +8459,13 @@
           "composition": null
         },
         "documentation": {
-          "medal": "bronze",
+          "medal": "unrated",
           "target": "bronze",
           "applicability": "scored",
-          "meets_target": true,
-          "result": "bronze",
+          "meets_target": false,
+          "result": "below_minimum",
           "metrics": {
-            "readme_present": true,
+            "readme_present": false,
             "contributing_present": false,
             "has_security": false,
             "diataxis_coverage_ai": 0,
@@ -8474,13 +8474,13 @@
           "composition": null
         },
         "security_ssdlc": {
-          "medal": "unrated",
+          "medal": "bronze",
           "target": "bronze",
           "applicability": "scored",
-          "meets_target": false,
-          "result": "below_minimum",
+          "meets_target": true,
+          "result": "bronze",
           "metrics": {
-            "renovate_enabled": false,
+            "renovate_enabled": true,
             "branch_protection_required_checks": false,
             "signed_commits_required": false
           },
@@ -8552,13 +8552,13 @@
           "composition": null
         },
         "security_ssdlc": {
-          "medal": "unrated",
+          "medal": "bronze",
           "target": "bronze",
           "applicability": "scored",
-          "meets_target": false,
-          "result": "below_minimum",
+          "meets_target": true,
+          "result": "bronze",
           "metrics": {
-            "renovate_enabled": false,
+            "renovate_enabled": true,
             "branch_protection_required_checks": false,
             "signed_commits_required": false
           },
@@ -8630,13 +8630,13 @@
           "composition": null
         },
         "security_ssdlc": {
-          "medal": "unrated",
+          "medal": "bronze",
           "target": "bronze",
           "applicability": "scored",
-          "meets_target": false,
-          "result": "below_minimum",
+          "meets_target": true,
+          "result": "bronze",
           "metrics": {
-            "renovate_enabled": false,
+            "renovate_enabled": true,
             "branch_protection_required_checks": false,
             "signed_commits_required": false
           },
@@ -8844,7 +8844,7 @@
           "result": "below_minimum",
           "metrics": {
             "latest_build_passing": false,
-            "uses_jubilant": false
+            "uses_jubilant": true
           },
           "composition": null
         },
@@ -8974,9 +8974,9 @@
       "name": "ingress-configurator",
       "description": "",
       "lifecycle": "stable",
-      "current_medal": "unrated",
+      "current_medal": "bronze",
       "target_medal": "gold",
-      "current_result": "below_minimum",
+      "current_result": "bronze",
       "target_result": "gold",
       "meets_target": false,
       "squad": "",
@@ -9020,13 +9020,13 @@
           "composition": null
         },
         "security_ssdlc": {
-          "medal": "unrated",
+          "medal": "bronze",
           "target": "gold",
           "applicability": "scored",
           "meets_target": false,
-          "result": "below_minimum",
+          "result": "bronze",
           "metrics": {
-            "renovate_enabled": false,
+            "renovate_enabled": true,
             "branch_protection_required_checks": false,
             "signed_commits_required": false
           },
@@ -9052,9 +9052,9 @@
       "name": "haproxy-spoe-auth",
       "description": "",
       "lifecycle": "stable",
-      "current_medal": "unrated",
+      "current_medal": "bronze",
       "target_medal": "gold",
-      "current_result": "below_minimum",
+      "current_result": "bronze",
       "target_result": "gold",
       "meets_target": false,
       "squad": "",
@@ -9098,13 +9098,13 @@
           "composition": null
         },
         "security_ssdlc": {
-          "medal": "unrated",
+          "medal": "bronze",
           "target": "gold",
           "applicability": "scored",
           "meets_target": false,
-          "result": "below_minimum",
+          "result": "bronze",
           "metrics": {
-            "renovate_enabled": false,
+            "renovate_enabled": true,
             "branch_protection_required_checks": false,
             "signed_commits_required": false
           },
@@ -9130,9 +9130,9 @@
       "name": "haproxy-spoe-auth-snap",
       "description": "",
       "lifecycle": "stable",
-      "current_medal": "unrated",
+      "current_medal": "bronze",
       "target_medal": "gold",
-      "current_result": "below_minimum",
+      "current_result": "bronze",
       "target_result": "gold",
       "meets_target": false,
       "squad": "",
@@ -9176,13 +9176,13 @@
           "composition": null
         },
         "security_ssdlc": {
-          "medal": "unrated",
+          "medal": "bronze",
           "target": "gold",
           "applicability": "scored",
           "meets_target": false,
-          "result": "below_minimum",
+          "result": "bronze",
           "metrics": {
-            "renovate_enabled": false,
+            "renovate_enabled": true,
             "branch_protection_required_checks": false,
             "signed_commits_required": false
           },
@@ -9305,6 +9305,84 @@
       ],
       "dimensions": {
         "test_verification": {
+          "medal": "bronze",
+          "target": "silver",
+          "applicability": "scored",
+          "meets_target": false,
+          "result": "bronze",
+          "metrics": {
+            "latest_build_passing": true,
+            "uses_jubilant": false
+          },
+          "composition": null
+        },
+        "documentation": {
+          "medal": "silver",
+          "target": "silver",
+          "applicability": "scored",
+          "meets_target": true,
+          "result": "silver",
+          "metrics": {
+            "readme_present": true,
+            "contributing_present": true,
+            "has_security": false,
+            "diataxis_coverage_ai": 0,
+            "uses_rtd_hosting": false
+          },
+          "composition": null
+        },
+        "security_ssdlc": {
+          "medal": "bronze",
+          "target": "silver",
+          "applicability": "scored",
+          "meets_target": false,
+          "result": "bronze",
+          "metrics": {
+            "renovate_enabled": true,
+            "branch_protection_required_checks": false,
+            "signed_commits_required": false
+          },
+          "composition": null
+        },
+        "engagement": {
+          "medal": "unrated",
+          "target": "silver",
+          "applicability": "insufficient_data",
+          "meets_target": false,
+          "result": "insufficient_data",
+          "metrics": {
+            "ownership_signal": false,
+            "response_coverage_rate": null
+          },
+          "composition": null
+        }
+      }
+    },
+    {
+      "id": "http-proxy-policy",
+      "product_type": "charm",
+      "name": "http-proxy-policy",
+      "description": "",
+      "lifecycle": "stable",
+      "current_medal": "bronze",
+      "target_medal": "silver",
+      "current_result": "bronze",
+      "target_result": "silver",
+      "meets_target": false,
+      "squad": "",
+      "is_portfolio_entry": false,
+      "documentation_url": "",
+      "source": {
+        "repo": "canonical/http-proxy-operators",
+        "subpath": "http-proxy-policy-operator"
+      },
+      "composed_of": null,
+      "context_refs": [],
+      "parent_product_ids": [
+        "http-proxy"
+      ],
+      "dimensions": {
+        "test_verification": {
           "medal": "unrated",
           "target": "silver",
           "applicability": "insufficient_data",
@@ -9359,92 +9437,14 @@
       }
     },
     {
-      "id": "http-proxy-policy",
-      "product_type": "charm",
-      "name": "http-proxy-policy",
-      "description": "",
-      "lifecycle": "stable",
-      "current_medal": "unrated",
-      "target_medal": "silver",
-      "current_result": "below_minimum",
-      "target_result": "silver",
-      "meets_target": false,
-      "squad": "",
-      "is_portfolio_entry": false,
-      "documentation_url": "",
-      "source": {
-        "repo": "canonical/http-proxy-operators",
-        "subpath": "http-proxy-policy-operator"
-      },
-      "composed_of": null,
-      "context_refs": [],
-      "parent_product_ids": [
-        "http-proxy"
-      ],
-      "dimensions": {
-        "test_verification": {
-          "medal": "unrated",
-          "target": "silver",
-          "applicability": "insufficient_data",
-          "meets_target": false,
-          "result": "insufficient_data",
-          "metrics": {
-            "latest_build_passing": null,
-            "uses_jubilant": false
-          },
-          "composition": null
-        },
-        "documentation": {
-          "medal": "silver",
-          "target": "silver",
-          "applicability": "scored",
-          "meets_target": true,
-          "result": "silver",
-          "metrics": {
-            "readme_present": true,
-            "contributing_present": true,
-            "has_security": false,
-            "diataxis_coverage_ai": 0,
-            "uses_rtd_hosting": false
-          },
-          "composition": null
-        },
-        "security_ssdlc": {
-          "medal": "unrated",
-          "target": "silver",
-          "applicability": "scored",
-          "meets_target": false,
-          "result": "below_minimum",
-          "metrics": {
-            "renovate_enabled": false,
-            "branch_protection_required_checks": false,
-            "signed_commits_required": false
-          },
-          "composition": null
-        },
-        "engagement": {
-          "medal": "unrated",
-          "target": "silver",
-          "applicability": "insufficient_data",
-          "meets_target": false,
-          "result": "insufficient_data",
-          "metrics": {
-            "ownership_signal": false,
-            "response_coverage_rate": null
-          },
-          "composition": null
-        }
-      }
-    },
-    {
       "id": "http-proxy-configurator",
       "product_type": "charm",
       "name": "http-proxy-configurator",
       "description": "",
       "lifecycle": "stable",
-      "current_medal": "unrated",
+      "current_medal": "bronze",
       "target_medal": "silver",
-      "current_result": "below_minimum",
+      "current_result": "bronze",
       "target_result": "silver",
       "meets_target": false,
       "squad": "",
@@ -9488,13 +9488,13 @@
           "composition": null
         },
         "security_ssdlc": {
-          "medal": "unrated",
+          "medal": "bronze",
           "target": "silver",
           "applicability": "scored",
           "meets_target": false,
-          "result": "below_minimum",
+          "result": "bronze",
           "metrics": {
-            "renovate_enabled": false,
+            "renovate_enabled": true,
             "branch_protection_required_checks": false,
             "signed_commits_required": false
           },
@@ -9520,9 +9520,9 @@
       "name": "charmed-http-proxy-policy",
       "description": "",
       "lifecycle": "stable",
-      "current_medal": "unrated",
+      "current_medal": "bronze",
       "target_medal": "silver",
-      "current_result": "below_minimum",
+      "current_result": "bronze",
       "target_result": "silver",
       "meets_target": false,
       "squad": "",
@@ -9566,13 +9566,13 @@
           "composition": null
         },
         "security_ssdlc": {
-          "medal": "unrated",
+          "medal": "bronze",
           "target": "silver",
           "applicability": "scored",
           "meets_target": false,
-          "result": "below_minimum",
+          "result": "bronze",
           "metrics": {
-            "renovate_enabled": false,
+            "renovate_enabled": true,
             "branch_protection_required_checks": false,
             "signed_commits_required": false
           },
@@ -9722,13 +9722,13 @@
           "composition": null
         },
         "security_ssdlc": {
-          "medal": "unrated",
+          "medal": "bronze",
           "target": "silver",
           "applicability": "scored",
           "meets_target": false,
-          "result": "below_minimum",
+          "result": "bronze",
           "metrics": {
-            "renovate_enabled": false,
+            "renovate_enabled": true,
             "branch_protection_required_checks": false,
             "signed_commits_required": false
           },
@@ -9773,14 +9773,14 @@
       ],
       "dimensions": {
         "test_verification": {
-          "medal": "bronze",
+          "medal": "gold",
           "target": "bronze",
           "applicability": "scored",
           "meets_target": true,
-          "result": "bronze",
+          "result": "gold",
           "metrics": {
             "latest_build_passing": true,
-            "uses_jubilant": false
+            "uses_jubilant": true
           },
           "composition": null
         },
@@ -9910,9 +9910,9 @@
       "name": "jenkins-agent",
       "description": "",
       "lifecycle": "stable",
-      "current_medal": "unrated",
+      "current_medal": "bronze",
       "target_medal": "bronze",
-      "current_result": "below_minimum",
+      "current_result": "bronze",
       "target_result": "bronze",
       "meets_target": false,
       "squad": "",
@@ -9936,7 +9936,7 @@
           "result": "insufficient_data",
           "metrics": {
             "latest_build_passing": null,
-            "uses_jubilant": false
+            "uses_jubilant": true
           },
           "composition": null
         },
@@ -9956,13 +9956,13 @@
           "composition": null
         },
         "security_ssdlc": {
-          "medal": "unrated",
+          "medal": "bronze",
           "target": "bronze",
           "applicability": "scored",
-          "meets_target": false,
-          "result": "below_minimum",
+          "meets_target": true,
+          "result": "bronze",
           "metrics": {
-            "renovate_enabled": false,
+            "renovate_enabled": true,
             "branch_protection_required_checks": false,
             "signed_commits_required": false
           },
@@ -10066,9 +10066,9 @@
       "name": "postfix-relay",
       "description": "",
       "lifecycle": "stable",
-      "current_medal": "bronze",
+      "current_medal": "unrated",
       "target_medal": "silver",
-      "current_result": "bronze",
+      "current_result": "below_minimum",
       "target_result": "silver",
       "meets_target": false,
       "squad": "",
@@ -10112,13 +10112,13 @@
           "composition": null
         },
         "security_ssdlc": {
-          "medal": "bronze",
+          "medal": "unrated",
           "target": "silver",
           "applicability": "scored",
           "meets_target": false,
-          "result": "bronze",
+          "result": "below_minimum",
           "metrics": {
-            "renovate_enabled": true,
+            "renovate_enabled": false,
             "branch_protection_required_checks": false,
             "signed_commits_required": false
           },
@@ -10144,9 +10144,9 @@
       "name": "postfix-relay-configurator",
       "description": "",
       "lifecycle": "stable",
-      "current_medal": "unrated",
+      "current_medal": "bronze",
       "target_medal": "silver",
-      "current_result": "below_minimum",
+      "current_result": "bronze",
       "target_result": "silver",
       "meets_target": false,
       "squad": "",
@@ -10190,13 +10190,13 @@
           "composition": null
         },
         "security_ssdlc": {
-          "medal": "unrated",
+          "medal": "bronze",
           "target": "silver",
           "applicability": "scored",
           "meets_target": false,
-          "result": "below_minimum",
+          "result": "bronze",
           "metrics": {
-            "renovate_enabled": false,
+            "renovate_enabled": true,
             "branch_protection_required_checks": false,
             "signed_commits_required": false
           },
@@ -10268,13 +10268,13 @@
           "composition": null
         },
         "security_ssdlc": {
-          "medal": "unrated",
+          "medal": "bronze",
           "target": "silver",
           "applicability": "scored",
           "meets_target": false,
-          "result": "below_minimum",
+          "result": "bronze",
           "metrics": {
-            "renovate_enabled": false,
+            "renovate_enabled": true,
             "branch_protection_required_checks": false,
             "signed_commits_required": false
           },
@@ -10378,9 +10378,9 @@
       "name": "synapse",
       "description": "",
       "lifecycle": "stable",
-      "current_medal": "unrated",
+      "current_medal": "bronze",
       "target_medal": "gold",
-      "current_result": "below_minimum",
+      "current_result": "bronze",
       "target_result": "gold",
       "meets_target": false,
       "squad": "",
@@ -10424,13 +10424,13 @@
           "composition": null
         },
         "security_ssdlc": {
-          "medal": "unrated",
+          "medal": "bronze",
           "target": "gold",
           "applicability": "scored",
           "meets_target": false,
-          "result": "below_minimum",
+          "result": "bronze",
           "metrics": {
-            "renovate_enabled": false,
+            "renovate_enabled": true,
             "branch_protection_required_checks": false,
             "signed_commits_required": false
           },
@@ -10477,11 +10477,11 @@
         "test_verification": {
           "medal": "unrated",
           "target": "gold",
-          "applicability": "insufficient_data",
+          "applicability": "scored",
           "meets_target": false,
-          "result": "insufficient_data",
+          "result": "below_minimum",
           "metrics": {
-            "latest_build_passing": null,
+            "latest_build_passing": false,
             "uses_jubilant": false
           },
           "composition": null
@@ -10553,13 +10553,13 @@
       ],
       "dimensions": {
         "test_verification": {
-          "medal": "unrated",
+          "medal": "bronze",
           "target": "gold",
-          "applicability": "insufficient_data",
+          "applicability": "scored",
           "meets_target": false,
-          "result": "insufficient_data",
+          "result": "bronze",
           "metrics": {
-            "latest_build_passing": null,
+            "latest_build_passing": true,
             "uses_jubilant": false
           },
           "composition": null
@@ -10631,13 +10631,13 @@
       ],
       "dimensions": {
         "test_verification": {
-          "medal": "unrated",
+          "medal": "bronze",
           "target": "gold",
-          "applicability": "insufficient_data",
+          "applicability": "scored",
           "meets_target": false,
-          "result": "insufficient_data",
+          "result": "bronze",
           "metrics": {
-            "latest_build_passing": null,
+            "latest_build_passing": true,
             "uses_jubilant": false
           },
           "composition": null
@@ -10709,13 +10709,13 @@
       ],
       "dimensions": {
         "test_verification": {
-          "medal": "unrated",
+          "medal": "bronze",
           "target": "gold",
-          "applicability": "insufficient_data",
+          "applicability": "scored",
           "meets_target": false,
-          "result": "insufficient_data",
+          "result": "bronze",
           "metrics": {
-            "latest_build_passing": null,
+            "latest_build_passing": true,
             "uses_jubilant": false
           },
           "composition": null
@@ -10736,13 +10736,13 @@
           "composition": null
         },
         "security_ssdlc": {
-          "medal": "bronze",
+          "medal": "unrated",
           "target": "gold",
           "applicability": "scored",
           "meets_target": false,
-          "result": "bronze",
+          "result": "below_minimum",
           "metrics": {
-            "renovate_enabled": true,
+            "renovate_enabled": false,
             "branch_protection_required_checks": false,
             "signed_commits_required": false
           },
@@ -10865,13 +10865,13 @@
       ],
       "dimensions": {
         "test_verification": {
-          "medal": "unrated",
+          "medal": "bronze",
           "target": "gold",
-          "applicability": "insufficient_data",
+          "applicability": "scored",
           "meets_target": false,
-          "result": "insufficient_data",
+          "result": "bronze",
           "metrics": {
-            "latest_build_passing": null,
+            "latest_build_passing": true,
             "uses_jubilant": false
           },
           "composition": null
@@ -11028,7 +11028,7 @@
           "result": "insufficient_data",
           "metrics": {
             "latest_build_passing": null,
-            "uses_jubilant": false
+            "uses_jubilant": true
           },
           "composition": null
         },
@@ -11099,14 +11099,14 @@
       ],
       "dimensions": {
         "test_verification": {
-          "medal": "bronze",
+          "medal": "gold",
           "target": "bronze",
           "applicability": "scored",
           "meets_target": true,
-          "result": "bronze",
+          "result": "gold",
           "metrics": {
             "latest_build_passing": true,
-            "uses_jubilant": false
+            "uses_jubilant": true
           },
           "composition": null
         },
@@ -11470,9 +11470,9 @@
       "name": "github-runner",
       "description": "",
       "lifecycle": "stable",
-      "current_medal": "unrated",
+      "current_medal": "bronze",
       "target_medal": "gold",
-      "current_result": "below_minimum",
+      "current_result": "bronze",
       "target_result": "gold",
       "meets_target": false,
       "squad": "",
@@ -11516,13 +11516,13 @@
           "composition": null
         },
         "security_ssdlc": {
-          "medal": "unrated",
+          "medal": "bronze",
           "target": "gold",
           "applicability": "scored",
           "meets_target": false,
-          "result": "below_minimum",
+          "result": "bronze",
           "metrics": {
-            "renovate_enabled": false,
+            "renovate_enabled": true,
             "branch_protection_required_checks": false,
             "signed_commits_required": false
           },
@@ -11548,9 +11548,9 @@
       "name": "github-runner-image-builder",
       "description": "",
       "lifecycle": "stable",
-      "current_medal": "unrated",
+      "current_medal": "bronze",
       "target_medal": "gold",
-      "current_result": "below_minimum",
+      "current_result": "bronze",
       "target_result": "gold",
       "meets_target": false,
       "squad": "",
@@ -11574,7 +11574,7 @@
           "result": "insufficient_data",
           "metrics": {
             "latest_build_passing": null,
-            "uses_jubilant": false
+            "uses_jubilant": true
           },
           "composition": null
         },
@@ -11594,13 +11594,13 @@
           "composition": null
         },
         "security_ssdlc": {
-          "medal": "unrated",
+          "medal": "bronze",
           "target": "gold",
           "applicability": "scored",
           "meets_target": false,
-          "result": "below_minimum",
+          "result": "bronze",
           "metrics": {
-            "renovate_enabled": false,
+            "renovate_enabled": true,
             "branch_protection_required_checks": false,
             "signed_commits_required": false
           },
@@ -11704,9 +11704,9 @@
       "name": "tmate-ssh-server",
       "description": "",
       "lifecycle": "stable",
-      "current_medal": "unrated",
+      "current_medal": "bronze",
       "target_medal": "gold",
-      "current_result": "below_minimum",
+      "current_result": "bronze",
       "target_result": "gold",
       "meets_target": false,
       "squad": "",
@@ -11735,14 +11735,14 @@
           "composition": null
         },
         "documentation": {
-          "medal": "unrated",
+          "medal": "silver",
           "target": "gold",
           "applicability": "scored",
           "meets_target": false,
-          "result": "below_minimum",
+          "result": "silver",
           "metrics": {
-            "readme_present": false,
-            "contributing_present": false,
+            "readme_present": true,
+            "contributing_present": true,
             "has_security": false,
             "diataxis_coverage_ai": 0,
             "uses_rtd_hosting": false
@@ -11750,13 +11750,13 @@
           "composition": null
         },
         "security_ssdlc": {
-          "medal": "unrated",
+          "medal": "bronze",
           "target": "gold",
           "applicability": "scored",
           "meets_target": false,
-          "result": "below_minimum",
+          "result": "bronze",
           "metrics": {
-            "renovate_enabled": false,
+            "renovate_enabled": true,
             "branch_protection_required_checks": false,
             "signed_commits_required": false
           },
@@ -11813,15 +11813,15 @@
           "composition": null
         },
         "documentation": {
-          "medal": "unrated",
+          "medal": "gold",
           "target": "gold",
           "applicability": "scored",
-          "meets_target": false,
-          "result": "below_minimum",
+          "meets_target": true,
+          "result": "gold",
           "metrics": {
-            "readme_present": false,
-            "contributing_present": false,
-            "has_security": false,
+            "readme_present": true,
+            "contributing_present": true,
+            "has_security": true,
             "diataxis_coverage_ai": 0,
             "uses_rtd_hosting": false
           },
@@ -11906,13 +11906,13 @@
           "composition": null
         },
         "security_ssdlc": {
-          "medal": "unrated",
+          "medal": "bronze",
           "target": "gold",
           "applicability": "scored",
           "meets_target": false,
-          "result": "below_minimum",
+          "result": "bronze",
           "metrics": {
-            "renovate_enabled": false,
+            "renovate_enabled": true,
             "branch_protection_required_checks": false,
             "signed_commits_required": false
           },
@@ -12349,11 +12349,11 @@
         "test_verification": {
           "medal": "unrated",
           "target": "silver",
-          "applicability": "scored",
+          "applicability": "insufficient_data",
           "meets_target": false,
-          "result": "below_minimum",
+          "result": "insufficient_data",
           "metrics": {
-            "latest_build_passing": false,
+            "latest_build_passing": null,
             "uses_jubilant": false
           },
           "composition": null
