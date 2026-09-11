@@ -539,10 +539,10 @@ version, emit:
 
 Fail when an active/upcoming portfolio is absent or has a mismatched digest. Permit archived
 entries only when their frozen portfolio exists. Archived entries are read as-is — never
-recomputed — and the index publishes the scoring-contract digest and generation time recorded in
-the payload, so a reviewed format migration of an archived artifact is accepted as long as it
-preserves them. A mismatched archived digest still fails, because it means the archived scoring
-rules changed.
+recomputed — and the index publishes the archived scoring-contract identity recorded in the
+payload (its contract digest and generation time), so a reviewed format migration of an archived
+artifact is accepted as long as it preserves that identity. A mismatched archived digest still
+fails, because it means the archived scoring rules changed.
 
 - [ ] **Step 7: Keep badge URLs active-only**
 
@@ -962,7 +962,9 @@ Reject an index entry whose fetched portfolio ID or digest does not match.
 
 `FrameworkVersionProvider` validates the `:frameworkVersion` route parameter against the index.
 Bare `/` redirects to `/${active.id}` after loading. Unknown version IDs render an explicit
-not-found state rather than silently switching versions.
+not-found state rather than silently switching versions. `framework-versions.json` is the source
+of truth for lifecycle/display metadata (`status`, `label`, `description`); the embedded
+`framework` block in each portfolio is provenance only and must not drive UI labels.
 
 Nest every existing route under `/:frameworkVersion`, preserving the selected version in all
 internal links.

@@ -32,12 +32,18 @@ jobs:
         with:
           ref: ${{ github.ref_name }}
 
-      - name: Download compute-metrics artifacts (fresh medals)
+      - name: Reset public data
+        # Preview builds must not silently pick up committed public artifacts.
+        # The engine artifact is the sole source of published runtime data.
+        run: rm -rf public/badges public/versions public/portfolio.json public/framework-versions.json
+
+      - name: Download engine artifacts (fresh medals)
         uses: actions/download-artifact@v4
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           run-id: ${{ env.RUN_ID }}
           name: engine-artifacts
+          path: public
 
       - uses: actions/setup-node@v4
         with:

@@ -351,9 +351,9 @@ public/
       portfolio.json
 ```
 
-`framework-versions.json` is generated from the discovered framework metadata and available
-artifacts. It contains the version ID, sequence, label, status, description, artifact URL,
-generation timestamp, and contract digest.
+`framework-versions.json` is the authoritative source for lifecycle and display metadata. It is
+generated from the discovered framework metadata and available artifacts. It contains the version
+ID, sequence, label, status, description, artifact URL, generation timestamp, and contract digest.
 
 Each `portfolio.json` embeds:
 
@@ -366,7 +366,9 @@ Each `portfolio.json` embeds:
 - portfolio compliance summary counts.
 
 Embedding the resolved metadata makes every artifact self-describing and prevents current source
-configuration from changing the interpretation of a historical view.
+configuration from changing the interpretation of a historical view. Archived portfolio metadata
+may still reflect the generation-time lifecycle state of that snapshot, but the UI must never use
+those embedded archived fields to decide how to label versions.
 
 ### Activation and freezing
 
@@ -402,7 +404,10 @@ a higher bar; the selected framework and its status make that change explicit.
 ## UI and User Experience
 
 The UI first loads `public/framework-versions.json`, selects the single active version by default,
-and then loads that version's complete portfolio.
+and then loads that version's complete portfolio. `framework-versions.json` is authoritative for
+lifecycle/display metadata (`status`, `label`, `description`); a portfolio's embedded
+`framework` block is historical provenance only and must not drive selector labels or version
+badges.
 
 A persistent selector at the top right groups versions as:
 

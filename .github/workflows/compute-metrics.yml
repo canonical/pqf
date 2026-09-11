@@ -93,8 +93,23 @@ jobs:
         with:
           fetch-depth: 0   # Needed to compare against base branch / previous push
 
+      - name: Check whether gh-pages branch exists
+        id: pages_exists
+        run: |
+          set -euo pipefail
+          if git ls-remote --exit-code --heads origin gh-pages >/dev/null 2>&1; then
+            echo "exists=true" >> "$GITHUB_OUTPUT"
+          else
+            status=$?
+            if [ "$status" -eq 2 ]; then
+              echo "exists=false" >> "$GITHUB_OUTPUT"
+            else
+              exit "$status"
+            fi
+          fi
+
       - name: Check out current Pages data
-        continue-on-error: true   # first run: gh-pages may not exist yet
+        if: steps.pages_exists.outputs.exists == 'true'
         uses: actions/checkout@v4
         with:
           ref: gh-pages
@@ -151,13 +166,13 @@ jobs:
             fi
 
             if [ -n "$range" ]; then
-              git diff --name-only "$range" > /tmp/changed-paths.txt
+              git diff --name-only "$range" > changed-paths.txt
             else
-              git ls-files > /tmp/changed-paths.txt
+              git ls-files > changed-paths.txt
             fi
 
             matrix=$(python3 -m engine.workflow_matrix --cadence changed \
-              --changed-paths-file /tmp/changed-paths.txt "${published_args[@]}")
+              --changed-paths-file changed-paths.txt "${published_args[@]}")
           fi
 
           versions=$(echo "$matrix" | jq -c '[.include[].framework_version] | unique')
@@ -382,8 +397,23 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Check whether gh-pages branch exists
+        id: pages_exists
+        run: |
+          set -euo pipefail
+          if git ls-remote --exit-code --heads origin gh-pages >/dev/null 2>&1; then
+            echo "exists=true" >> "$GITHUB_OUTPUT"
+          else
+            status=$?
+            if [ "$status" -eq 2 ]; then
+              echo "exists=false" >> "$GITHUB_OUTPUT"
+            else
+              exit "$status"
+            fi
+          fi
+
       - name: Check out current Pages data
-        continue-on-error: true   # first run: gh-pages may not exist yet
+        if: steps.pages_exists.outputs.exists == 'true'
         uses: actions/checkout@v4
         with:
           ref: gh-pages
@@ -407,6 +437,28 @@ jobs:
           if [ -d .gh-pages-data/versions ]; then
             cp -R .gh-pages-data/versions/. public/versions/
           fi
+
+      - name: Verify carried-forward archived versions
+        if: steps.pages_exists.outputs.exists == 'true'
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+
+          from engine.framework import FrameworkStatus, discover_frameworks
+
+          frameworks = discover_frameworks(Path("framework/versions"))
+          missing = [
+              framework.id
+              for framework in frameworks
+              if framework.status == FrameworkStatus.ARCHIVED
+              and not (Path("public/versions") / framework.id / "portfolio.json").is_file()
+          ]
+          if missing:
+              raise SystemExit(
+                  "Missing carried-forward archived portfolios: " + ", ".join(missing)
+              )
+          PY
 
       - name: Download freshly computed framework versions
         if: needs.determine-matrix.outputs.versions != '[]'

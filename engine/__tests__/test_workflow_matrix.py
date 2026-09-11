@@ -496,6 +496,13 @@ def _real_products() -> list[dict]:
     ]
 
 
+def test_real_catalog_product_filenames_match_product_ids():
+    products_dir = REPO_ROOT / "products"
+    for path in sorted(products_dir.glob("*.yaml")):
+        product = yaml.safe_load(path.read_text())
+        assert path.stem == product["id"], f"{path.name} must match product id {product['id']}"
+
+
 def _real_expected_row_count(version_ids: set[str]) -> int:
     frameworks = discover_frameworks(REPO_ROOT / "framework" / "versions")
     products = _real_products()

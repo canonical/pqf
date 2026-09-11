@@ -157,8 +157,15 @@ def test_compute_metrics_deploys_production_from_engine_artifacts() -> None:
     assert build_step["env"]["DISPATCH_VERSION"] == "${{ github.event.inputs.framework_version }}"
 
     # First-run bootstrap: the matrix script is told where the published site is so
-    # live versions missing a portfolio there are scored automatically.
+    # live versions missing a portfolio there are scored automatically, but only
+    # when gh-pages truly does not exist. A real checkout failure must fail.
     assert "--published-dir .gh-pages-data" in build_run
+    pages_probe = next(
+        step
+        for step in determine_matrix["steps"]
+        if step.get("name") == "Check whether gh-pages branch exists"
+    )
+    assert "git ls-remote --exit-code --heads origin gh-pages" in pages_probe["run"]
     pages_checkout = next(
         step
         for step in determine_matrix["steps"]
@@ -166,10 +173,12 @@ def test_compute_metrics_deploys_production_from_engine_artifacts() -> None:
     )
     assert pages_checkout["with"]["ref"] == "gh-pages"
     assert pages_checkout["with"]["path"] == ".gh-pages-data"
-    assert pages_checkout["continue-on-error"] is True, (
-        "a missing gh-pages branch must bootstrap every live version, not fail the run"
-    )
+    assert "continue-on-error" not in pages_checkout
+    assert "steps.pages_exists.outputs.exists == 'true'" in pages_checkout["if"]
     matrix_names = step_names(determine_matrix)
+    assert matrix_names.index("Check whether gh-pages branch exists") < matrix_names.index(
+        "Check out current Pages data"
+    )
     assert matrix_names.index("Check out current Pages data") < matrix_names.index(
         "Build framework/product matrix"
     )
@@ -330,13 +339,31 @@ def test_compute_metrics_deploys_production_from_engine_artifacts() -> None:
     )
     assert pages_checkout["with"]["ref"] == "gh-pages"
     assert pages_checkout["with"]["path"] == ".gh-pages-data"
-    assert pages_checkout["continue-on-error"] is True
+    assert "continue-on-error" not in pages_checkout
+    assert "steps.pages_exists.outputs.exists == 'true'" in pages_checkout["if"]
+
+    pages_probe = next(
+        step
+        for step in run_engine["steps"]
+        if step.get("name") == "Check whether gh-pages branch exists"
+    )
+    assert "git ls-remote --exit-code --heads origin gh-pages" in pages_probe["run"]
 
     names = step_names(run_engine)
+    assert names.index("Check whether gh-pages branch exists") < names.index(
+        "Check out current Pages data"
+    )
     assert names.index("Check out current Pages data") < names.index(
         "Carry forward previously published artifacts"
     )
     assert names.index("Carry forward previously published artifacts") < names.index(
+        "Download freshly computed framework versions"
+    )
+    assert "Verify carried-forward archived versions" in names
+    assert names.index("Carry forward previously published artifacts") < names.index(
+        "Verify carried-forward archived versions"
+    )
+    assert names.index("Verify carried-forward archived versions") < names.index(
         "Download freshly computed framework versions"
     )
     assert names.index("Download freshly computed framework versions") < names.index(
@@ -536,5 +563,41 @@ def test_cleanup_preview_workflow_runs_only_on_pr_close() -> None:
     assert step["with"]["action"] == "remove"
     assert step["with"]["preview-branch"] == "gh-pages"
     assert step["with"]["umbrella-dir"] == "pr-preview"
-    assert step["with"]["pr-number"] == "${{ github.event.pull_request.number }}"
-    assert step["with"]["comment"] is False
+
+
+def test_preview_workflow_extracts_public_artifacts_after_reset() -> None:
+    workflow = load_workflow(".github/workflows/preview.yml")
+    jobs = workflow["jobs"]
+
+    assert "deploy-preview" in jobs
+    job = jobs["deploy-preview"]
+
+    names = step_names(job)
+    assert "Reset public data" in names
+    assert "Download engine artifacts (fresh medals)" in names
+    assert names.index("Reset public data") < names.index(
+        "Download engine artifacts (fresh medals)"
+    )
+
+    reset_step = next(step for step in job["steps"] if step.get("name") == "Reset public data")
+    for stale in [
+        "public/badges",
+        "public/versions",
+        "public/portfolio.json",
+        "public/framework-versions.json",
+    ]:
+        assert stale in reset_step["run"], f"preview reset must clear {stale}"
+
+    artifact_step = next(
+        step
+        for step in job["steps"]
+        if step.get("name") == "Download engine artifacts (fresh medals)"
+    )
+    assert artifact_step["with"]["path"] == "public", (
+        "preview must extract engine-artifacts into public/ so Vite sees the fresh data"
+    )
+    deploy_step = next(step for step in job["steps"] if step.get("name") == "Deploy PR preview")
+    assert deploy_step["with"]["pr-number"] == "${{ env.PR_NUMBER }}"
+    assert "comment" not in deploy_step["with"], (
+        "preview deployment should not disable the action's default PR comment"
+    )
