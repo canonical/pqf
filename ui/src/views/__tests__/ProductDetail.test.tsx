@@ -28,6 +28,7 @@ const mockPortfolio: Portfolio = {
       current_result: 'bronze',
       squad: 'americas',
       is_portfolio_entry: true,
+      meets_target: false,
       documentation_url: 'https://charmhub.io/synapse',
       context_refs: [
         { label: 'Synapse Operator', repo: 'canonical/synapse-operator' },
@@ -38,7 +39,7 @@ const mockPortfolio: Portfolio = {
       dimensions: {
         test_verification: {
           result: 'silver',
-          drift: null,
+          meets_target: true,
           metrics: { coverage_pct: 87, stability_pct: 94, latest_build_passing: true },
           composition: null,
         },
@@ -53,6 +54,7 @@ const mockPortfolio: Portfolio = {
       current_result: 'bronze',
       squad: '',
       is_portfolio_entry: false,
+      meets_target: false,
       context_refs: [],
       parent_product_ids: ['matrix'],
       composed_of: null,
@@ -60,13 +62,13 @@ const mockPortfolio: Portfolio = {
       dimensions: {
         test_verification: {
           result: 'bronze',
-          drift: null,
+          meets_target: false,
           metrics: { coverage_pct: 65, latest_build_passing: true },
           composition: null,
         },
         substrate_compat: {
           result: 'not_applicable',
-          drift: null,
+          meets_target: false,
           metrics: { supports_juju_3: false, supports_juju_4: false, supports_ck8s: false },
           composition: null,
         },
@@ -86,6 +88,11 @@ const mockPortfolio: Portfolio = {
       },
     },
   },
+  framework: { id: 'v0', sequence: 0, label: 'PQF V0', status: 'active', description: 'Current framework revision' },
+  contract_digest: 'digest-v0',
+  source_revision: 'abc123',
+  implementation_fingerprints: {},
+  compliance_summary: { total: 1, meeting_target: 0, below_target: 1, insufficient_data: 0 },
 }
 
 function mockWith(portfolio: Portfolio) {
@@ -106,7 +113,7 @@ function portfolioWithComposition(overrides?: { composition: LeafDimensionResult
         dimensions: {
           test_verification: {
             result: 'silver',
-            drift: null,
+            meets_target: true,
             metrics: { coverage_pct: 87, stability_pct: 94, latest_build_passing: true },
             composition: overrides?.composition ?? [
               {
@@ -176,7 +183,7 @@ describe('ProductDetail', () => {
             ...mockPortfolio.products[0].dimensions,
             documentation: {
               result: 'below_minimum',
-              drift: null,
+              meets_target: false,
               metrics: {
                 readme_present: true,
                 contributing_present: false,
@@ -219,11 +226,12 @@ describe('ProductDetail', () => {
           id: 'aproxy',
           name: 'Aproxy',
           current_result: 'below_minimum',
+          meets_target: false,
           dimensions: {
             ...mockPortfolio.products[0].dimensions,
             documentation: {
               result: 'below_minimum',
-              drift: null,
+              meets_target: false,
               metrics: {
                 readme_present: true,
                 contributing_present: false,
@@ -289,7 +297,8 @@ describe('ProductDetail', () => {
     const table = dimensionsCard.querySelector('table') as HTMLTableElement
     expect(within(table).queryByRole('columnheader', { name: 'Target' })).not.toBeInTheDocument()
     expect(within(table).getByRole('columnheader', { name: 'Current' })).toBeInTheDocument()
-    expect(within(table).getByRole('columnheader', { name: 'Drift' })).toBeInTheDocument()
+    expect(within(table).getByRole('columnheader', { name: 'Status' })).toBeInTheDocument()
+    expect(within(table).queryByRole('columnheader', { name: 'Drift' })).not.toBeInTheDocument()
     expect(within(table).getByRole('columnheader', { name: 'Evidence' })).toBeInTheDocument()
 
     const row = screen.getByRole('link', { name: 'test verification' }).closest('tr')
@@ -297,6 +306,17 @@ describe('ProductDetail', () => {
     expect(row).toHaveTextContent('Coverage')
     expect(row).toHaveTextContent('87 / 90')
     expect(row).toHaveTextContent('Build passing')
+  })
+
+  it('renders compliance status from the payload meets_target field instead of drift/deadline text', () => {
+    wrap('matrix')
+
+    const row = screen.getByRole('link', { name: 'test verification' }).closest('tr')
+    expect(row).not.toBeNull()
+    expect(row).toHaveTextContent('Meets target')
+    expect(screen.queryByText(/remediating/i)).not.toBeInTheDocument()
+    expect(screen.queryByText(/overdue/i)).not.toBeInTheDocument()
+    expect(screen.queryByText(/deadline/i)).not.toBeInTheDocument()
   })
 
   it('renders linked product from context refs', () => {

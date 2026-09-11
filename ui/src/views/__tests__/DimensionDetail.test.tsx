@@ -28,11 +28,12 @@ const mockPortfolio: Portfolio = {
       current_result: 'bronze',
       squad: 'americas',
       is_portfolio_entry: true,
+      meets_target: true,
       composed_of: [{ product_id: 'synapse', excluded_from_parent_medal: false }],
       context_refs: [],
       parent_product_ids: [],
       dimensions: {
-        documentation: { result: 'bronze', drift: null, metrics: {}, composition: [] },
+        documentation: { result: 'bronze', meets_target: true, metrics: {}, composition: [] },
       },
     },
     {
@@ -44,6 +45,7 @@ const mockPortfolio: Portfolio = {
       current_result: 'silver',
       squad: '',
       is_portfolio_entry: false,
+      meets_target: true,
       composed_of: null,
       context_refs: [],
       parent_product_ids: ['matrix'],
@@ -51,7 +53,7 @@ const mockPortfolio: Portfolio = {
       dimensions: {
         documentation: {
           result: 'silver',
-          drift: null,
+          meets_target: true,
           metrics: {},
           composition: null,
         },
@@ -67,13 +69,14 @@ const mockPortfolio: Portfolio = {
       current_result: 'silver',
       squad: 'emea',
       is_portfolio_entry: true,
+      meets_target: false,
       composed_of: [],
       context_refs: [],
       parent_product_ids: [],
       dimensions: {
         documentation: {
           result: 'silver',
-          drift: { status: 'remediating', first_seen_at: '2026-06-01T00:00:00Z', deadline: '2027-06-30T00:00:00Z' },
+          meets_target: false,
           metrics: {},
           composition: [],
         },
@@ -89,13 +92,14 @@ const mockPortfolio: Portfolio = {
       current_result: 'below_minimum',
       squad: 'apac',
       is_portfolio_entry: true,
+      meets_target: false,
       composed_of: [],
       context_refs: [],
       parent_product_ids: [],
       dimensions: {
         documentation: {
           result: 'below_minimum',
-          drift: { status: 'overdue', first_seen_at: '2025-06-01T00:00:00Z', deadline: '2026-06-30T00:00:00Z' },
+          meets_target: false,
           metrics: {},
           composition: [],
         },
@@ -136,6 +140,11 @@ const mockPortfolio: Portfolio = {
       },
     },
   },
+  framework: { id: 'v0', sequence: 0, label: 'PQF V0', status: 'active', description: 'Current framework revision' },
+  contract_digest: 'digest-v0',
+  source_revision: 'abc123',
+  implementation_fingerprints: {},
+  compliance_summary: { total: 3, meeting_target: 1, below_target: 2, insufficient_data: 0 },
 }
 
 function wrap(id: string) {
@@ -186,14 +195,17 @@ describe('DimensionDetail', () => {
     expect(screen.getAllByText('A README.md exists in the primary component repository.')).toHaveLength(1)
   })
 
-  it('renders product table without target column and with drift deadlines', () => {
+  it('renders product table without target column and with compliance status from the payload', () => {
     wrap('documentation')
     expect(screen.queryByRole('columnheader', { name: 'Target' })).not.toBeInTheDocument()
-    expect(screen.getByRole('columnheader', { name: 'Drift / Deadline' })).toBeInTheDocument()
+    expect(screen.getByRole('columnheader', { name: 'Status' })).toBeInTheDocument()
+    expect(screen.queryByRole('columnheader', { name: 'Drift / Deadline' })).not.toBeInTheDocument()
     expect(screen.getByRole('link', { name: 'Matrix (Synapse)' })).toBeInTheDocument()
-    expect(screen.getAllByText('✓').length).toBeGreaterThan(0)
-    expect(screen.getByText(/🟡 Remediating · 2027-06-30/)).toBeInTheDocument()
-    expect(screen.getByText(/🔴 Overdue · 2026-06-30/)).toBeInTheDocument()
+    expect(screen.getAllByText('Meets target').length).toBeGreaterThan(0)
+    expect(screen.getAllByText('Below target').length).toBeGreaterThan(0)
+    expect(screen.queryByText(/remediating/i)).not.toBeInTheDocument()
+    expect(screen.queryByText(/overdue/i)).not.toBeInTheDocument()
+    expect(screen.queryByText(/deadline/i)).not.toBeInTheDocument()
   })
 
   it('renders product scores grouped by root with nested leaf rows', () => {

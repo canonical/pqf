@@ -1,9 +1,10 @@
-import { HashRouter, Routes, Route, Navigate, useParams } from 'react-router'
+import { HashRouter, Routes, Route, Navigate, Link, useParams } from 'react-router'
 import { lazy, Suspense } from 'react'
 import GlobalNav from './components/GlobalNav'
 import LoadingSpinner from './components/LoadingSpinner'
 import FrameworkVersionProvider from './providers/FrameworkVersionProvider'
 import { useFrameworkVersions } from './hooks/useFrameworkVersions'
+import { resolveRecoveryVersion } from './lib/frameworkVersions'
 
 const Overview = lazy(() => import('./views/Overview'))
 const ProductsExplorer = lazy(() => import('./views/ProductsExplorer'))
@@ -35,9 +36,15 @@ function RootRedirect() {
 
   const active = data.versions.find(version => version.status === 'active')
   if (!active) {
+    const recovery = resolveRecoveryVersion(data.versions)
     return (
       <div className="row" style={{ padding: '3rem 1rem', textAlign: 'center' }}>
         <p>No active framework version is currently published.</p>
+        {recovery && (
+          <p>
+            <Link to={`/${recovery.id}`}>Go to the most recent framework version ({recovery.label})</Link>
+          </p>
+        )}
       </div>
     )
   }

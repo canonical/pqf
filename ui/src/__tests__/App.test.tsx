@@ -42,6 +42,9 @@ const mockPortfolio: Portfolio = {
   dimensions_meta: {},
   framework: { id: 'v0', sequence: 0, label: 'PQF V0', status: 'active', description: 'Current framework revision' },
   contract_digest: 'digest-v0',
+  source_revision: 'abc123',
+  implementation_fingerprints: {},
+  compliance_summary: { total: 0, meeting_target: 0, below_target: 0, insufficient_data: 0 },
 }
 
 function renderApp(hash: string) {
@@ -94,6 +97,42 @@ describe('App routing', () => {
     expect(await screen.findByText(/framework version not found/i)).toBeInTheDocument()
     const recoveryLink = screen.getByRole('link', { name: /go to the active framework version/i })
     expect(recoveryLink).toHaveAttribute('href', '#/v0')
+  })
+
+  it('offers a recovery link to the most recent version when no version is active at the bare root', async () => {
+    vi.mocked(useFrameworkVersions).mockReturnValue({
+      data: {
+        versions: mockFrameworkVersions.versions.map(version => ({ ...version, status: 'archived' })),
+      },
+      isLoading: false,
+      isError: false,
+      error: null,
+      refetch: vi.fn(),
+    } as unknown as ReturnType<typeof useFrameworkVersions>)
+
+    renderApp('#/')
+
+    expect(await screen.findByText(/no active framework version is currently published/i)).toBeInTheDocument()
+    const recoveryLink = screen.getByRole('link', { name: /go to the most recent framework version/i })
+    expect(recoveryLink).toHaveAttribute('href', '#/v1')
+  })
+
+  it('offers a recovery link to the most recent version when no version is active for an unknown framework version', async () => {
+    vi.mocked(useFrameworkVersions).mockReturnValue({
+      data: {
+        versions: mockFrameworkVersions.versions.map(version => ({ ...version, status: 'archived' })),
+      },
+      isLoading: false,
+      isError: false,
+      error: null,
+      refetch: vi.fn(),
+    } as unknown as ReturnType<typeof useFrameworkVersions>)
+
+    renderApp('#/does-not-exist/products')
+
+    expect(await screen.findByText(/framework version not found/i)).toBeInTheDocument()
+    const recoveryLink = screen.getByRole('link', { name: /go to the most recent framework version/i })
+    expect(recoveryLink).toHaveAttribute('href', '#/v1')
   })
 
   it('offers a retry affordance when the framework version index fails to load at the bare root', async () => {

@@ -1,6 +1,7 @@
 import { createContext, useContext, type ReactNode } from 'react'
 import { useParams, Link } from 'react-router'
 import { useFrameworkVersions } from '../hooks/useFrameworkVersions'
+import { resolveRecoveryVersion } from '../lib/frameworkVersions'
 import LoadingSpinner from '../components/LoadingSpinner'
 import type { FrameworkVersionSummary } from '../types'
 
@@ -59,14 +60,21 @@ export function FrameworkVersionProvider({ children }: FrameworkVersionProviderP
 
   if (!current) {
     const active = data.versions.find(version => version.status === 'active')
+    const recovery = resolveRecoveryVersion(data.versions)
     return (
       <div className="row" style={{ padding: '3rem 1rem', textAlign: 'center' }}>
         <h1 className="p-heading--2">Framework version not found</h1>
         <p>&ldquo;{frameworkVersion}&rdquo; is not a published PQF framework version.</p>
-        {active && (
+        {active ? (
           <p>
             <Link to={`/${active.id}`}>Go to the active framework version ({active.label})</Link>
           </p>
+        ) : (
+          recovery && (
+            <p>
+              <Link to={`/${recovery.id}`}>Go to the most recent framework version ({recovery.label})</Link>
+            </p>
+          )
         )}
       </div>
     )

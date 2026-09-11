@@ -1,21 +1,8 @@
 export type Medal = 'gold' | 'silver' | 'bronze' | 'unrated'
 export type Result = 'gold' | 'silver' | 'bronze' | 'below_minimum' | 'insufficient_data' | 'not_applicable'
-export type DriftStatus = 'remediating' | 'overdue'
 export type Lifecycle = 'experimental' | 'beta' | 'stable' | 'legacy'
 export type ProductType = 'root' | 'charm' | 'snap'
 export type ApplicabilityOutcome = 'scored' | 'not_applicable' | 'insufficient_data'
-
-// NOTE: Framework versioning (see docs/superpowers/specs/2026-09-10-framework-versioning-design.md)
-// has already removed drift/remediation windows from the scoring engine. `DriftInfo` and
-// `DimensionEntry.drift` are kept here — even though the engine no longer emits them — only so
-// `DriftChip`, `Overview`, `ProductDetail`, and `DimensionDetail` keep compiling until Task 10
-// removes the drift UI and aligns `DimensionEntry` with the versioned medal/target/applicability
-// shape. Do not add new drift usages.
-export interface DriftInfo {
-  status: DriftStatus
-  first_seen_at: string
-  deadline: string
-}
 
 /** Lifecycle status of a framework version. `framework-versions.json` is the sole authority for this. */
 export type FrameworkStatus = 'upcoming' | 'active' | 'archived'
@@ -66,7 +53,8 @@ export interface LeafDimensionResult {
 
 export interface DimensionEntry {
   result: Result
-  drift: DriftInfo | null
+  /** Whether this dimension's result is at or above its target tier. Always present on version-scoped portfolios. */
+  meets_target: boolean
   metrics: Record<string, string | number | boolean>
   composition: LeafDimensionResult[] | null
 }
@@ -102,8 +90,8 @@ export interface Product {
   context_refs: ContextRef[]
   parent_product_ids: string[]
   dimensions: Record<string, DimensionEntry>
-  /** Whether the product's current result is at or above its target. Present on version-scoped portfolios. */
-  meets_target?: boolean
+  /** Whether the product's current result is at or above its target. Always present on version-scoped portfolios. */
+  meets_target: boolean
 }
 
 export interface MedalCriteria {
@@ -155,13 +143,12 @@ export interface Portfolio {
   products: Product[]
   dimensions_meta: Record<string, DimensionMeta>
   /**
-   * Historical provenance only — see `FrameworkMetadata`. Optional here (rather than required)
-   * so that existing view fixtures without version metadata keep compiling until Task 10 migrates
-   * them; version-scoped portfolios always populate this.
+   * Historical provenance only — see `FrameworkMetadata`. Never use this for lifecycle/display
+   * decisions; use the selected `FrameworkVersionSummary` from `FrameworkVersionProvider` instead.
    */
-  framework?: FrameworkMetadata
-  contract_digest?: string
-  source_revision?: string
-  implementation_fingerprints?: Record<string, string>
-  compliance_summary?: ComplianceSummary
+  framework: FrameworkMetadata
+  contract_digest: string
+  source_revision: string
+  implementation_fingerprints: Record<string, string>
+  compliance_summary: ComplianceSummary
 }

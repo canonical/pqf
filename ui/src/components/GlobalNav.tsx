@@ -1,11 +1,14 @@
 import { useLocation, Link } from 'react-router'
 import { useFrameworkVersion } from '../providers/FrameworkVersionProvider'
+import { useVersionedPath } from '../hooks/useVersionedPath'
+import { describeFrameworkContext } from '../lib/frameworkContext'
 import VersionSelector from './VersionSelector'
 
 export default function GlobalNav() {
   const location = useLocation()
   const { current } = useFrameworkVersion()
-  const base = `/${current.id}`
+  const toVersionedPath = useVersionedPath()
+  const base = toVersionedPath('/')
 
   const isActive = (path: string) => {
     const target = path === '' ? base : `${base}${path}`
@@ -45,7 +48,7 @@ export default function GlobalNav() {
             <li className="p-navigation__item">
               <Link 
                 className={`p-navigation__link ${isActive('/products') ? 'is-selected' : ''}`}
-                to={`${base}/products`}
+                to={toVersionedPath('/products')}
               >
                 Products
               </Link>
@@ -53,7 +56,7 @@ export default function GlobalNav() {
             <li className="p-navigation__item">
               <Link 
                 className={`p-navigation__link ${isActive('/dimensions') ? 'is-selected' : ''}`}
-                to={`${base}/dimensions`}
+                to={toVersionedPath('/dimensions')}
               >
                 Dimensions
               </Link>
@@ -61,7 +64,7 @@ export default function GlobalNav() {
             <li className="p-navigation__item">
               <Link 
                 className={`p-navigation__link ${isActive('/about') ? 'is-selected' : ''}`}
-                to={`${base}/about`}
+                to={toVersionedPath('/about')}
               >
                 About
               </Link>
@@ -78,7 +81,10 @@ export default function GlobalNav() {
             </li>
           </ul>
         </nav>
-        <div className="p-navigation__nav-selector-wrapper" style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', padding: '0.5rem 1rem' }}>
+        <div className="p-navigation__nav-selector-wrapper" style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: '1rem', padding: '0.5rem 1rem' }}>
+          <span className="p-text--small" style={{ opacity: 0.8, whiteSpace: 'nowrap' }}>
+            {describeFrameworkContext(current)}
+          </span>
           <VersionSelector />
         </div>
       </div>

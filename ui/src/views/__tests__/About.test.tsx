@@ -25,6 +25,11 @@ const mockPortfolio: Portfolio = {
       medals: { bronze: { criteria: [] } },
     },
   },
+  framework: { id: 'v0', sequence: 0, label: 'PQF V0', status: 'active', description: 'Current framework revision' },
+  contract_digest: 'digest-v0',
+  source_revision: 'abc123',
+  implementation_fingerprints: {},
+  compliance_summary: { total: 0, meeting_target: 0, below_target: 0, insufficient_data: 0 },
 }
 
 function wrap() {

@@ -3,7 +3,7 @@ import { useParams } from 'react-router'
 import VersionLink from '../components/VersionLink'
 import { usePortfolio } from '../hooks/usePortfolio'
 import MedalBadge from '../components/MedalBadge'
-import DriftChip from '../components/DriftChip'
+import ComplianceStatus from '../components/ComplianceStatus'
 import MetricsList from '../components/MetricsList'
 import RootMetricsList from '../components/RootMetricsList'
 import LoadingSpinner from '../components/LoadingSpinner'
@@ -201,7 +201,7 @@ export default function ProductDetail() {
                 <tr style={{ borderBottom: '1px solid #d9d9d9' }}>
                   <th style={{ padding: '0.5rem 0.75rem', textAlign: 'left', fontSize: '0.75rem', fontWeight: 600, textTransform: 'uppercase', color: '#666' }}>Dimension</th>
                   <th style={{ padding: '0.5rem 0.75rem', textAlign: 'left', fontSize: '0.75rem', fontWeight: 600, textTransform: 'uppercase', color: '#666' }}>Current</th>
-                  <th style={{ padding: '0.5rem 0.75rem', textAlign: 'left', fontSize: '0.75rem', fontWeight: 600, textTransform: 'uppercase', color: '#666' }}>Drift</th>
+                  <th style={{ padding: '0.5rem 0.75rem', textAlign: 'left', fontSize: '0.75rem', fontWeight: 600, textTransform: 'uppercase', color: '#666' }}>Status</th>
                   <th style={{ padding: '0.5rem 0.75rem', textAlign: 'left', fontSize: '0.75rem', fontWeight: 600, textTransform: 'uppercase', color: '#666' }}>Evidence</th>
                 </tr>
               </thead>
@@ -223,7 +223,7 @@ export default function ProductDetail() {
                         <MedalBadge medal={entry.result as any} size="small" />
                       </td>
                       <td style={{ padding: '0.75rem', verticalAlign: 'top' }}>
-                        {isRoot && <DriftChip drift={entry.drift} />}
+                        {entry.result !== 'not_applicable' && <ComplianceStatus meetsTarget={entry.meets_target} size="small" />}
                       </td>
                       <td style={{ padding: '0.75rem', verticalAlign: 'top' }}>
                         {entry.result === 'not_applicable' ? (

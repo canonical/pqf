@@ -37,13 +37,14 @@ const mockPortfolio: Portfolio = {
       current_result: 'bronze',
       squad: 'americas',
       is_portfolio_entry: true,
+      meets_target: true,
       composed_of: [{ product_id: 'discourse-k8s', excluded_from_parent_medal: false }],
       context_refs: [],
       parent_product_ids: [],
       dimensions: {
         test_verification: {
           result: 'bronze',
-          drift: null,
+          meets_target: true,
           metrics: {},
           composition: [
             {
@@ -66,13 +67,14 @@ const mockPortfolio: Portfolio = {
       current_result: 'bronze',
       squad: 'americas',
       is_portfolio_entry: true,
+      meets_target: true,
       composed_of: [{ product_id: 'aardvark-agent', excluded_from_parent_medal: false }],
       context_refs: [],
       parent_product_ids: [],
       dimensions: {
         test_verification: {
           result: 'bronze',
-          drift: null,
+          meets_target: true,
           metrics: {},
           composition: [
             {
@@ -95,6 +97,7 @@ const mockPortfolio: Portfolio = {
       current_result: 'bronze',
       squad: '',
       is_portfolio_entry: false,
+      meets_target: true,
       composed_of: null,
       context_refs: [],
       parent_product_ids: ['aardvark'],
@@ -102,7 +105,7 @@ const mockPortfolio: Portfolio = {
       dimensions: {
         test_verification: {
           result: 'bronze',
-          drift: null,
+          meets_target: true,
           metrics: { coverage_pct: 75, latest_build_passing: false },
           composition: null,
         },
@@ -117,6 +120,7 @@ const mockPortfolio: Portfolio = {
       current_result: 'silver',
       squad: '',
       is_portfolio_entry: false,
+      meets_target: true,
       composed_of: null,
       context_refs: [],
       parent_product_ids: ['discourse'],
@@ -124,7 +128,7 @@ const mockPortfolio: Portfolio = {
       dimensions: {
         test_verification: {
           result: 'silver',
-          drift: null,
+          meets_target: true,
           metrics: { coverage_pct: 83, latest_build_passing: true },
           composition: null,
         },
@@ -139,13 +143,14 @@ const mockPortfolio: Portfolio = {
       current_result: 'bronze',
       squad: 'emea',
       is_portfolio_entry: true,
+      meets_target: true,
       composed_of: [{ product_id: 'landscape-server', excluded_from_parent_medal: false }],
       context_refs: [],
       parent_product_ids: [],
       dimensions: {
         test_verification: {
           result: 'bronze',
-          drift: null,
+          meets_target: true,
           metrics: {},
           composition: [
             {
@@ -168,6 +173,7 @@ const mockPortfolio: Portfolio = {
       current_result: 'bronze',
       squad: '',
       is_portfolio_entry: false,
+      meets_target: true,
       composed_of: null,
       context_refs: [],
       parent_product_ids: ['landscape'],
@@ -175,7 +181,7 @@ const mockPortfolio: Portfolio = {
       dimensions: {
         test_verification: {
           result: 'bronze',
-          drift: null,
+          meets_target: true,
           metrics: { coverage_pct: 75, latest_build_passing: false },
           composition: null,
         },
@@ -190,6 +196,7 @@ const mockPortfolio: Portfolio = {
       current_result: 'bronze',
       squad: '',
       is_portfolio_entry: false,
+      meets_target: true,
       composed_of: null,
       context_refs: [],
       parent_product_ids: [],
@@ -197,7 +204,7 @@ const mockPortfolio: Portfolio = {
       dimensions: {
         test_verification: {
           result: 'silver',
-          drift: null,
+          meets_target: true,
           metrics: { coverage_pct: 85, latest_build_passing: true, has_release_notes: true },
           composition: null,
         },
@@ -236,6 +243,11 @@ const mockPortfolio: Portfolio = {
       },
     },
   },
+  framework: { id: 'v0', sequence: 0, label: 'PQF V0', status: 'active', description: 'Current framework revision' },
+  contract_digest: 'digest-v0',
+  source_revision: 'abc123',
+  implementation_fingerprints: {},
+  compliance_summary: { total: 3, meeting_target: 3, below_target: 0, insufficient_data: 0 },
 }
 
 function wrap(path: string) {

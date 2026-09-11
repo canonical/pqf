@@ -37,13 +37,14 @@ const mockPortfolio: Portfolio = {
       current_result: 'bronze',
       squad: 'americas',
       is_portfolio_entry: true,
+      meets_target: false,
       composed_of: null,
       context_refs: [],
       parent_product_ids: [],
       dimensions: {
         test_verification: {
           result: 'bronze',
-          drift: null,
+          meets_target: false,
           metrics: {},
           composition: null,
         },
@@ -58,6 +59,7 @@ const mockPortfolio: Portfolio = {
       current_result: 'silver',
       squad: '',
       is_portfolio_entry: false,
+      meets_target: true,
       composed_of: null,
       context_refs: [],
       parent_product_ids: ['discourse'],
@@ -65,7 +67,7 @@ const mockPortfolio: Portfolio = {
       dimensions: {
         test_verification: {
           result: 'silver',
-          drift: null,
+          meets_target: true,
           metrics: {},
           composition: null,
         },
@@ -97,6 +99,11 @@ const mockPortfolio: Portfolio = {
       },
     },
   },
+  framework: { id: 'v0', sequence: 0, label: 'PQF V0', status: 'active', description: 'Current framework revision' },
+  contract_digest: 'digest-v0',
+  source_revision: 'abc123',
+  implementation_fingerprints: {},
+  compliance_summary: { total: 1, meeting_target: 0, below_target: 1, insufficient_data: 0 },
 }
 
 function wrap(path: string) {
