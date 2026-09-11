@@ -471,6 +471,35 @@ def test_paginate_json_array_fetches_all_pages():
     assert session.calls == 2
 
 
+def test_paginate_json_array_reports_github_api_failure(capsys):
+    class _Resp:
+        ok = False
+        status_code = 403
+        headers = {
+            "X-RateLimit-Remaining": "0",
+            "X-RateLimit-Reset": "1789161109",
+            "Retry-After": "60",
+        }
+
+    class _Session:
+        def get(self, url, params, timeout):
+            return _Resp()
+
+    assert (
+        _paginate_json_array(
+            _Session(),
+            "https://api.github.com/repos/canonical/example/issues",
+            {"state": "all", "per_page": 100},
+        )
+        == []
+    )
+    assert capsys.readouterr().err == (
+        "GitHub API request failed: status=403 "
+        "url=https://api.github.com/repos/canonical/example/issues "
+        "rate_remaining=0 rate_reset=1789161109 retry_after=60\n"
+    )
+
+
 @responses.activate
 def test_fetch_repo_views_14d_success():
     """Traffic API returns view count successfully."""

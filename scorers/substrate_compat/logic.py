@@ -23,6 +23,7 @@ def _make_github_session(github_token: str) -> requests.Session:
             "X-GitHub-Api-Version": "2022-11-28",
         }
     )
+    session.headers["Authorization"] = f"token {github_token}"
     return session
 
 

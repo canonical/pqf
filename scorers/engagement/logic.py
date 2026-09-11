@@ -1,4 +1,5 @@
 # scorers/engagement/logic.py
+import sys
 from datetime import UTC, datetime, timedelta
 from typing import Any
 
@@ -45,6 +46,14 @@ def _paginate_json_array(
     while True:
         resp = session.get(url, params={**params, "page": page}, timeout=timeout)
         if not resp.ok:
+            print(
+                "GitHub API request failed: "
+                f"status={resp.status_code} url={url} "
+                f"rate_remaining={resp.headers.get('X-RateLimit-Remaining', 'unknown')} "
+                f"rate_reset={resp.headers.get('X-RateLimit-Reset', 'unknown')} "
+                f"retry_after={resp.headers.get('Retry-After', 'none')}",
+                file=sys.stderr,
+            )
             break
         page_items = resp.json()
         if not isinstance(page_items, list):
