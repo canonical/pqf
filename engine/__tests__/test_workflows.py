@@ -454,8 +454,9 @@ def test_compute_metrics_deploys_production_from_engine_artifacts() -> None:
     assert merge_step["env"]["SELECTED_VERSIONS"] == (
         "${{ needs.determine-matrix.outputs.versions }}"
     )
-    assert ".gh-pages-latest/versions" in merge_step["run"]
-    assert "public/versions/$version" in merge_step["run"]
+    assert "python3 -m engine.publish_merge" in merge_step["run"]
+    assert "--latest-dir .gh-pages-latest" in merge_step["run"]
+    assert '--selected-versions-json "$SELECTED_VERSIONS"' in merge_step["run"]
 
     regenerate_step = next(
         step

@@ -268,10 +268,11 @@ versions affected since the last successful publication. Manual runs select the 
 plus those unpublished changes. Under the shared Pages deployment lock, each run refreshes only
 the versions it selected and replaces every unselected version with the latest deployed copy before
 regenerating the active root mirror, badges, and version index. Concurrent cadence and push runs
-therefore cannot overwrite one another's newer version snapshots. The matrix also treats an active
-portfolio not generated on the current UTC date, or an upcoming portfolio not generated in the
-current ISO week, as due. A later run therefore inherits a cadence refresh if GitHub replaces a
-pending scheduled deployment.
+therefore cannot overwrite one another's newer version snapshots. If both runs selected the same
+version at the same source revision and contract digest, the copy with the later `generated_at`
+wins. The matrix also treats an active portfolio not generated on the current UTC date, or an
+upcoming portfolio not generated in the current ISO week, as due. A later run therefore inherits a
+cadence refresh if GitHub replaces a pending scheduled deployment.
 
 ### `deploy-legacy.yml` — one-off legacy snapshot
 

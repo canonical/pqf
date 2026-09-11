@@ -670,19 +670,10 @@ jobs:
         env:
           SELECTED_VERSIONS: ${{ needs.determine-matrix.outputs.versions }}
         run: |
-          set -euo pipefail
-          if [ -d .gh-pages-latest/versions ]; then
-            for version_dir in .gh-pages-latest/versions/*; do
-              [ -d "$version_dir" ] || continue
-              version=$(basename "$version_dir")
-              if jq -e --arg version "$version" \
-                'index($version) != null' <<< "$SELECTED_VERSIONS" >/dev/null; then
-                continue
-              fi
-              rm -rf "public/versions/$version"
-              cp -R "$version_dir" "public/versions/$version"
-            done
-          fi
+          python3 -m engine.publish_merge \
+            --public-dir public \
+            --latest-dir .gh-pages-latest \
+            --selected-versions-json "$SELECTED_VERSIONS"
 
       - uses: actions/setup-python@v5
         with:
