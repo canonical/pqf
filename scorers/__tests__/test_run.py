@@ -178,6 +178,48 @@ def test_main_rejects_archived_framework_version(tmp_path, capsys):
     assert "archived" in capsys.readouterr().err
 
 
+def test_main_requires_github_token(monkeypatch, tmp_path, capsys):
+    product_path = _write_product(
+        tmp_path / "matrix.yaml",
+        {
+            "id": "matrix",
+            "product_type": "root",
+            "name": "Matrix",
+            "lifecycle": "stable",
+            "introduced_in": "v0",
+            "targets": {"v0": "gold", "v1": "gold"},
+            "ownership": {"squad": "americas"},
+            "composed_of": [
+                {
+                    "id": "synapse",
+                    "product_type": "charm",
+                    "introduced_in": "v0",
+                    "source": {"repo": "canonical/synapse-operator"},
+                }
+            ],
+        },
+    )
+    monkeypatch.delenv("GITHUB_TOKEN", raising=False)
+
+    exit_code = run.main(
+        [
+            "--framework-root",
+            str(FRAMEWORK_ROOT),
+            "--framework-version",
+            "v0",
+            "--dimension",
+            "test_verification",
+            "--product-yaml",
+            str(product_path),
+            "--products-dir",
+            str(tmp_path),
+        ]
+    )
+
+    assert exit_code == 1
+    assert "GITHUB_TOKEN" in capsys.readouterr().err
+
+
 def test_main_uses_fixed_dimension_override(monkeypatch, tmp_path, capsys):
     product_path = _write_product(
         tmp_path / "matrix.yaml",

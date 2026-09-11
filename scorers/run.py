@@ -86,8 +86,12 @@ def main(argv: list[str] | None = None, *, fixed_dimension: str | None = None) -
     all_products = _load_all_products(products_dir)
     graph = build_graph(all_products, frameworks, selected_framework)
     units = resolve_leaf_units_for(graph, product_id)
+    github_token = os.environ.get("GITHUB_TOKEN")
+    if not github_token:
+        print("GITHUB_TOKEN is required for scorer execution.", file=sys.stderr)
+        return 1
     context = ScorerContext(
-        github_token=os.environ.get("GITHUB_TOKEN", ""),
+        github_token=github_token,
         openrouter_api_key=os.environ.get("OPENROUTER_API_KEY", ""),
         openrouter_model=args.model or os.environ.get("OPENROUTER_MODEL", DEFAULT_OPENROUTER_MODEL),
     )
