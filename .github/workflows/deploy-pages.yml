@@ -55,6 +55,7 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ui/dist
           destination_dir: .
+          # Preserve /legacy/ and any other already-published Pages content.
           keep_files: true
 
       - name: Wait before deploy retry
@@ -68,4 +69,5 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ui/dist
           destination_dir: .
+          # Preserve /legacy/ and any other already-published Pages content.
           keep_files: true

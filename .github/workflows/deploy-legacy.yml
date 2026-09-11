@@ -1,0 +1,48 @@
+name: Deploy Legacy Site
+
+on:
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: Git ref for the pre-versioning site snapshot
+        required: true
+        type: string
+
+permissions:
+  contents: write
+
+concurrency:
+  group: gh-pages
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.ref }}
+          fetch-depth: 1
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: ui/package-lock.json
+
+      - name: Install UI dependencies
+        run: npm install
+        working-directory: ui
+
+      - name: Build UI
+        run: npm run build
+        working-directory: ui
+        # Vite copies ../public/ into dist/ automatically via publicDir config
+
+      - name: Deploy legacy site
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ui/dist
+          destination_dir: legacy
+          keep_files: true

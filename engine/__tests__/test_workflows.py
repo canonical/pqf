@@ -11,6 +11,47 @@ def step_names(job: dict) -> list[str]:
     return [step.get("name", step.get("uses", "")) for step in job["steps"]]
 
 
+def test_deploy_legacy_workflow_deploys_selected_historical_ref_to_legacy() -> None:
+    workflow = load_workflow(".github/workflows/deploy-legacy.yml")
+
+    on = workflow.get("on") or workflow.get(True) or {}
+    assert set(on) == {"workflow_dispatch"}
+
+    dispatch = on["workflow_dispatch"]
+    inputs = dispatch["inputs"]
+    assert "ref" in inputs
+    assert inputs["ref"]["required"] is True
+
+    jobs = workflow["jobs"]
+    assert list(jobs) == ["deploy"]
+    deploy_job = jobs["deploy"]
+
+    checkout_step = next(
+        step for step in deploy_job["steps"] if step.get("uses") == "actions/checkout@v4"
+    )
+    assert checkout_step["with"]["ref"] == "${{ inputs.ref }}"
+
+    setup_node_step = next(
+        step for step in deploy_job["steps"] if step.get("uses") == "actions/setup-node@v4"
+    )
+    assert setup_node_step["with"]["node-version"] == "22"
+
+    assert "Build UI" in step_names(deploy_job)
+
+    deploy_step = next(
+        step for step in deploy_job["steps"] if step.get("uses") == "peaceiris/actions-gh-pages@v4"
+    )
+    assert deploy_step["with"]["publish_dir"] == "ui/dist"
+    assert deploy_step["with"]["destination_dir"] == "legacy"
+    assert deploy_step["with"]["keep_files"] is True
+
+    assert not any(
+        "scorer" in step.get("name", "").lower() or "scorer" in step.get("run", "").lower()
+        for step in deploy_job["steps"]
+        if isinstance(step.get("run"), str)
+    )
+
+
 def test_compute_metrics_deploys_production_from_engine_artifacts() -> None:
     workflow = load_workflow(".github/workflows/compute-metrics.yml")
     jobs = workflow["jobs"]
@@ -89,6 +130,7 @@ def test_compute_metrics_deploys_production_from_engine_artifacts() -> None:
     )
     assert deploy_step["uses"] == "peaceiris/actions-gh-pages@v4"
     assert deploy_step["continue-on-error"] is True
+    assert deploy_step["with"]["keep_files"] is True
 
     # ---- PR preview path must remain artifact-driven ----
     assert "build-preview" in jobs, "expected 'build-preview' job for PR previews"
