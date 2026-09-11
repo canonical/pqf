@@ -10,19 +10,22 @@ test.describe('Framework version navigation', () => {
     await page.goto('/')
     await expect(page).toHaveURL(/#\/v0$/)
     await expect(page.getByRole('heading', { name: /products overview/i })).toBeVisible()
-    await expect(page.getByText(`Current framework · ${V0.label}`)).toBeVisible()
+    await expect(page.locator('.version-selector').getByRole('combobox', { name: /framework version/i })).toHaveValue(V0.id)
+    await expect(page.locator('.version-selector__meta')).toHaveText(/^Refreshed /)
   })
 
   test('version selector switches V0 → V1 while preserving the current sub-route', async ({ page }) => {
     await page.goto('/#/v0/products')
     await expect(page.getByRole('heading', { name: /^products$/i })).toBeVisible()
 
-    await page.getByLabel(/framework version/i).selectOption({ label: V1.label })
+    const selector = page.locator('.version-selector')
+    await selector.getByRole('combobox', { name: /framework version/i }).selectOption({ label: V1.label })
 
     await expect(page).toHaveURL(/#\/v1\/products$/)
     // Same view (Products), now scoped to v1 — not bounced back to the overview.
     await expect(page.getByRole('heading', { name: /^products$/i })).toBeVisible()
-    await expect(page.getByText(new RegExp(`Planning against ${V1.label}`))).toBeVisible()
+    await expect(selector.getByRole('combobox', { name: /framework version/i })).toHaveValue(V1.id)
+    await expect(selector.locator('.version-selector__meta')).toHaveText(/^Refreshed /)
   })
 
   test('a V1-only product appears in V1 and is absent from V0', async ({ page }) => {
@@ -38,7 +41,7 @@ test.describe('Framework version navigation', () => {
     await page.goto('/#/v1/products/orbit')
     await expect(page.getByRole('heading', { name: 'Orbit' })).toBeVisible()
 
-    await page.getByLabel(/framework version/i).selectOption({ label: V0.label })
+    await page.locator('.version-selector').getByRole('combobox', { name: /framework version/i }).selectOption({ label: V0.label })
 
     // The selector preserves the sub-route by design (see "preserving the current sub-route"
     // above) — it must land on /v0/products/orbit, not silently redirect to V0's overview.
@@ -50,30 +53,36 @@ test.describe('Framework version navigation', () => {
   test('a direct versioned deep-link loads that version', async ({ page }) => {
     await page.goto('/#/v1/dimensions/documentation')
     await expect(page.getByRole('heading', { name: /^documentation$/i })).toBeVisible()
-    await expect(page.getByText(new RegExp(`Planning against ${V1.label}`))).toBeVisible()
-    // The version selector itself reflects v1, confirming the deep link landed in the right version.
-    await expect(page.getByLabel(/framework version/i)).toHaveValue(V1.id)
+    const selector = page.locator('.version-selector')
+    await expect(selector.getByRole('combobox', { name: /framework version/i })).toHaveValue(V1.id)
+    await expect(selector.locator('.version-selector__meta')).toHaveText(/^Refreshed /)
   })
 
-  test('upcoming and archived versions render their lifecycle labels', async ({ page }) => {
+  test('upcoming and archived versions are grouped in the selector and show refreshed metadata', async ({ page }) => {
     await page.goto('/#/v0')
-    const select = page.getByLabel(/framework version/i)
+    const selector = page.locator('.version-selector')
+    const select = selector.getByRole('combobox', { name: /framework version/i })
+    const refreshLine = selector.locator('.version-selector__meta')
     await expect(select.locator('optgroup[label="Upcoming"] option', { hasText: V1.label })).toHaveCount(1)
     await expect(select.locator('optgroup[label="Archived"] option', { hasText: V_ARCHIVED.label })).toHaveCount(1)
 
     await select.selectOption({ label: V1.label })
-    await expect(page.getByText(new RegExp(`Planning against ${V1.label}`))).toBeVisible()
+    await expect(select).toHaveValue(V1.id)
+    await expect(refreshLine).toHaveText(/^Refreshed /)
 
     await select.selectOption({ label: V_ARCHIVED.label })
-    await expect(page.getByText(/Archived snapshot · generated/)).toBeVisible()
+    await expect(select).toHaveValue(V_ARCHIVED.id)
+    await expect(refreshLine).toHaveText(/^Refreshed /)
   })
 
-  test('the version selector and context label fit within the viewport at mobile width', async ({ page }) => {
+  test('the version selector and refresh timestamp fit within the viewport at mobile width', async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 })
-    // The upcoming-status label is the longest ("Planning against ... · refreshed YYYY-MM-DD"),
+    // The selector's refresh timestamp line is the longest metadata text ("Refreshed ..."),
     // so it is the worst case for overflow.
     await page.goto('/#/v1')
-    await expect(page.getByLabel(/framework version/i)).toBeVisible()
+    const selector = page.locator('.version-selector')
+    await expect(selector.getByRole('combobox', { name: /framework version/i })).toBeVisible()
+    await expect(selector.locator('.version-selector__meta')).toHaveText(/^Refreshed /)
     // Wait for the actual overview content (products table, heatmap) to finish loading, not just
     // the nav/selector — the table renders after the portfolio fetch resolves and can itself
     // widen the page (e.g. via long product/squad text), so measuring overflow before it's on
@@ -108,7 +117,9 @@ test.describe('Framework version navigation', () => {
     await page.goto('/#/v1/this-does-not-exist')
     await expect(page).toHaveURL(/#\/v1$/)
     await expect(page.getByRole('heading', { name: /products overview/i })).toBeVisible()
+    const selector = page.locator('.version-selector')
     // Confirms it stayed in v1 (not bounced to v0's overview).
-    await expect(page.getByText(new RegExp(`Planning against ${V1.label}`))).toBeVisible()
+    await expect(selector.getByRole('combobox', { name: /framework version/i })).toHaveValue(V1.id)
+    await expect(selector.locator('.version-selector__meta')).toHaveText(/^Refreshed /)
   })
 })
