@@ -26,6 +26,20 @@ async function fetchPortfolio(version: FrameworkVersionSummary): Promise<Portfol
     )
   }
 
+  // Overview and other views read `compliance_summary` directly from the payload (never
+  // recomputing it in TypeScript), so a missing or malformed field must fail fast here with a
+  // friendly, actionable message rather than surfacing as a confusing runtime crash in a view.
+  const summary = portfolio.compliance_summary
+  const summaryFields = ['total', 'meeting_target', 'below_target', 'insufficient_data'] as const
+  const isValidSummary =
+    summary != null && summaryFields.every(field => typeof summary[field] === 'number')
+  if (!isValidSummary) {
+    throw new Error(
+      `Portfolio at ${version.portfolio_url} is missing a valid compliance_summary ` +
+        '(expected numeric total, meeting_target, below_target, and insufficient_data fields)',
+    )
+  }
+
   return portfolio
 }
 

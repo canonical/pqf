@@ -3,7 +3,6 @@ import { useParams } from 'react-router'
 import VersionLink from '../components/VersionLink'
 import { usePortfolio } from '../hooks/usePortfolio'
 import MedalBadge from '../components/MedalBadge'
-import ComplianceStatus from '../components/ComplianceStatus'
 import MetricsList from '../components/MetricsList'
 import RootMetricsList from '../components/RootMetricsList'
 import LoadingSpinner from '../components/LoadingSpinner'
@@ -192,16 +191,14 @@ export default function ProductDetail() {
           <div style={{ overflowX: 'auto' }}>
             <table style={{ tableLayout: 'fixed', width: '100%', borderCollapse: 'collapse' }}>
               <colgroup>
-                <col style={{ width: '22%' }} />
-                <col style={{ width: '12%' }} />
-                <col style={{ width: '18%' }} />
-                <col style={{ width: '48%' }} />
+                <col style={{ width: '25%' }} />
+                <col style={{ width: '15%' }} />
+                <col style={{ width: '60%' }} />
               </colgroup>
               <thead>
                 <tr style={{ borderBottom: '1px solid #d9d9d9' }}>
                   <th style={{ padding: '0.5rem 0.75rem', textAlign: 'left', fontSize: '0.75rem', fontWeight: 600, textTransform: 'uppercase', color: '#666' }}>Dimension</th>
                   <th style={{ padding: '0.5rem 0.75rem', textAlign: 'left', fontSize: '0.75rem', fontWeight: 600, textTransform: 'uppercase', color: '#666' }}>Current</th>
-                  <th style={{ padding: '0.5rem 0.75rem', textAlign: 'left', fontSize: '0.75rem', fontWeight: 600, textTransform: 'uppercase', color: '#666' }}>Status</th>
                   <th style={{ padding: '0.5rem 0.75rem', textAlign: 'left', fontSize: '0.75rem', fontWeight: 600, textTransform: 'uppercase', color: '#666' }}>Evidence</th>
                 </tr>
               </thead>
@@ -215,15 +212,16 @@ export default function ProductDetail() {
                   const thresholds = parseCriteria([...bronzeCriteria, ...targetCriteria])
 
                   return (
-                    <tr key={dim} style={{ borderBottom: '1px solid #e5e5e5', background: idx % 2 === 0 ? '#fafafa' : '#fff' }}>
+                    <tr
+                      key={dim}
+                      data-meets-target={entry.meets_target}
+                      style={{ borderBottom: '1px solid #e5e5e5', background: idx % 2 === 0 ? '#fafafa' : '#fff' }}
+                    >
                       <td style={{ padding: '0.75rem', verticalAlign: 'top' }}>
                         <VersionLink to={`/dimensions/${dim}`} style={{ fontWeight: 500 }}>{dim.replace(/_/g, ' ')}</VersionLink>
                       </td>
                       <td style={{ padding: '0.75rem', verticalAlign: 'top' }}>
                         <MedalBadge medal={entry.result as any} size="small" />
-                      </td>
-                      <td style={{ padding: '0.75rem', verticalAlign: 'top' }}>
-                        {entry.result !== 'not_applicable' && <ComplianceStatus meetsTarget={entry.meets_target} size="small" />}
                       </td>
                       <td style={{ padding: '0.75rem', verticalAlign: 'top' }}>
                         {entry.result === 'not_applicable' ? (

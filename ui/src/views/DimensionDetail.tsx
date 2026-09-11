@@ -3,7 +3,6 @@ import { useParams } from 'react-router'
 import VersionLink from '../components/VersionLink'
 import { usePortfolio } from '../hooks/usePortfolio'
 import MedalBadge from '../components/MedalBadge'
-import ComplianceStatus from '../components/ComplianceStatus'
 import LoadingSpinner from '../components/LoadingSpinner'
 import { RESULT_ORDER } from '../lib/groupedPortfolioView'
 import { buildDimensionGroupedRows } from '../lib/groupedPortfolioView'
@@ -175,21 +174,20 @@ export default function DimensionDetail() {
           <div style={{ overflowX: 'auto' }}>
             <table style={{ tableLayout: 'fixed', width: '100%', borderCollapse: 'collapse' }}>
               <colgroup>
-                <col style={{ width: '40%' }} />
-                <col style={{ width: '25%' }} />
-                <col style={{ width: '35%' }} />
+                <col style={{ width: '55%' }} />
+                <col style={{ width: '45%' }} />
               </colgroup>
               <thead>
                 <tr style={{ borderBottom: '1px solid #d9d9d9' }}>
                   <th style={{ padding: '0.5rem 0.75rem', textAlign: 'left', fontSize: '0.75rem', fontWeight: 600, textTransform: 'uppercase', color: '#666' }}>Product</th>
                   <th style={{ padding: '0.5rem 0.75rem', textAlign: 'left', fontSize: '0.75rem', fontWeight: 600, textTransform: 'uppercase', color: '#666' }}>Dimension score</th>
-                  <th style={{ padding: '0.5rem 0.75rem', textAlign: 'left', fontSize: '0.75rem', fontWeight: 600, textTransform: 'uppercase', color: '#666' }}>Status</th>
                 </tr>
               </thead>
               <tbody>
                 {groupedProductScores.map((group, groupIdx) => (
                   <Fragment key={group.root.product.id}>
                     <tr
+                      data-meets-target={group.root.entry.meets_target}
                       style={{
                         borderBottom: '1px solid #e5e5e5',
                         background: groupIdx % 2 === 0 ? '#fafafa' : '#fff',
@@ -203,12 +201,13 @@ export default function DimensionDetail() {
                       <td style={{ padding: '0.75rem', verticalAlign: 'top' }}>
                         <MedalBadge medal={group.root.entry.result} size="small" />
                       </td>
-                      <td style={{ padding: '0.75rem', verticalAlign: 'top' }}>
-                        <ComplianceStatus meetsTarget={group.root.entry.meets_target} size="small" />
-                      </td>
                     </tr>
                     {group.leaves.map((leaf) => (
-                      <tr key={leaf.product.id} style={{ borderBottom: '1px solid #e5e5e5', background: '#fff' }}>
+                      <tr
+                        key={leaf.product.id}
+                        data-meets-target={leaf.entry.meets_target}
+                        style={{ borderBottom: '1px solid #e5e5e5', background: '#fff' }}
+                      >
                         <td style={{ padding: '0.75rem', verticalAlign: 'top' }}>
                           <VersionLink to={`/products/${leaf.product.id}`} style={{ fontWeight: 500 }}>
                             ↳ {leaf.product.name}
@@ -216,9 +215,6 @@ export default function DimensionDetail() {
                         </td>
                         <td style={{ padding: '0.75rem', verticalAlign: 'top' }}>
                           <MedalBadge medal={leaf.entry.result} size="small" />
-                        </td>
-                        <td style={{ padding: '0.75rem', verticalAlign: 'top' }}>
-                          <ComplianceStatus meetsTarget={leaf.entry.meets_target} size="small" />
                         </td>
                       </tr>
                     ))}

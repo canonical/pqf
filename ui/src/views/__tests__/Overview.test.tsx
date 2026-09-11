@@ -157,6 +157,25 @@ describe('Overview', () => {
     expect(screen.getByText('0 / 1')).toBeInTheDocument()
   })
 
+  it('guards the meeting-target summary colour for an empty portfolio instead of showing a false alarm colour', () => {
+    // total: 0, meeting_target: 0 must not render the "0 met" alarm colour used when products
+    // exist but none meet target — there is nothing to be below target on.
+    vi.mocked(usePortfolio).mockReturnValue({
+      data: {
+        ...mockPortfolio,
+        products: [] as Product[],
+        compliance_summary: { total: 0, meeting_target: 0, below_target: 0, insufficient_data: 0 },
+      },
+      isLoading: false,
+      isError: false,
+      error: null,
+    } as ReturnType<typeof usePortfolio>)
+
+    wrap(<Overview />)
+    const summary = screen.getByText('0 / 0')
+    expect(summary).toHaveStyle({ color: '#333' })
+  })
+
   it('does not recompute the summary from the products list when it disagrees with compliance_summary', () => {
     // compliance_summary intentionally disagrees with the products array below, to prove Overview
     // renders the payload field verbatim rather than recomputing it in TypeScript.
@@ -174,15 +193,31 @@ describe('Overview', () => {
     expect(screen.getByText('4 / 5')).toBeInTheDocument()
   })
 
-  it('shows compact squad and compliance status indicators in the products table', () => {
-    wrap(<Overview />)
+  it('shows a compact squad indicator in the products table without a separate status column', () => {
+    const { container } = wrap(<Overview />)
 
     expect(screen.getByRole('columnheader', { name: 'Squad' })).toBeInTheDocument()
     expect(screen.queryByRole('columnheader', { name: 'Lifecycle' })).not.toBeInTheDocument()
+    expect(screen.queryByRole('columnheader', { name: 'Status' })).not.toBeInTheDocument()
     expect(screen.getByText('AMER')).toBeInTheDocument()
-    expect(screen.getAllByText('Below target').length).toBeGreaterThan(0)
+    // Result + target medal badges are the row semantics; no second "Meets/Below target" vocabulary
+    // within the products table itself (the portfolio summary card above is allowed to say
+    // "Below target" as an aggregate label).
+    const productsTable = container.querySelectorAll('table')[0]
+    expect(within(productsTable).queryByText('Meets target')).not.toBeInTheDocument()
+    expect(within(productsTable).queryByText('Below target')).not.toBeInTheDocument()
     expect(screen.queryByText(/remediating/i)).not.toBeInTheDocument()
     expect(screen.queryByText(/overdue/i)).not.toBeInTheDocument()
+  })
+
+  it('marks rows that do not meet target with a non-visible accessibility attribute, not a second badge', () => {
+    const { container } = wrap(<Overview />)
+
+    const productsTable = container.querySelectorAll('table')[0]
+    const row = within(productsTable).getByRole('link', { name: 'Matrix (Synapse)' }).closest('tr')
+    expect(row).not.toBeNull()
+    // mockPortfolio's matrix product has meets_target: false
+    expect(row).toHaveAttribute('data-meets-target', 'false')
   })
 
   it('sorts products by target medal when the target header is clicked', async () => {

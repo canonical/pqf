@@ -269,11 +269,11 @@ describe('ProductDetail', () => {
     wrap('synapse')
     const row = screen.getByRole('link', { name: 'substrate compat' }).closest('tr')!
     const cells = within(row).getAllByRole('cell')
-    // Evidence column is the 4th cell (index 3)
-    expect(cells[3]).toHaveTextContent('—')
+    // Evidence column is the 3rd cell (index 2): Dimension, Current, Evidence
+    expect(cells[2]).toHaveTextContent('—')
     // Should NOT render the metric keys from the (non-empty) metrics dict
-    expect(cells[3]).not.toHaveTextContent('Juju 3')
-    expect(cells[3]).not.toHaveTextContent('Juju 4')
+    expect(cells[2]).not.toHaveTextContent('Juju 3')
+    expect(cells[2]).not.toHaveTextContent('Juju 4')
   })
 
   it('leaf product evidence column shows threshold-colored metrics', () => {
@@ -297,7 +297,7 @@ describe('ProductDetail', () => {
     const table = dimensionsCard.querySelector('table') as HTMLTableElement
     expect(within(table).queryByRole('columnheader', { name: 'Target' })).not.toBeInTheDocument()
     expect(within(table).getByRole('columnheader', { name: 'Current' })).toBeInTheDocument()
-    expect(within(table).getByRole('columnheader', { name: 'Status' })).toBeInTheDocument()
+    expect(within(table).queryByRole('columnheader', { name: 'Status' })).not.toBeInTheDocument()
     expect(within(table).queryByRole('columnheader', { name: 'Drift' })).not.toBeInTheDocument()
     expect(within(table).getByRole('columnheader', { name: 'Evidence' })).toBeInTheDocument()
 
@@ -308,15 +308,25 @@ describe('ProductDetail', () => {
     expect(row).toHaveTextContent('Build passing')
   })
 
-  it('renders compliance status from the payload meets_target field instead of drift/deadline text', () => {
+  it('does not render a second Meets/Below target badge vocabulary; result and target medal badges are the row semantics', () => {
     wrap('matrix')
 
     const row = screen.getByRole('link', { name: 'test verification' }).closest('tr')
     expect(row).not.toBeNull()
-    expect(row).toHaveTextContent('Meets target')
+    expect(row).not.toHaveTextContent('Meets target')
+    expect(row).not.toHaveTextContent('Below target')
     expect(screen.queryByText(/remediating/i)).not.toBeInTheDocument()
     expect(screen.queryByText(/overdue/i)).not.toBeInTheDocument()
     expect(screen.queryByText(/deadline/i)).not.toBeInTheDocument()
+  })
+
+  it('marks a dimension row that does not meet target with a non-visible accessibility attribute', () => {
+    wrap('synapse')
+
+    // synapse's test_verification entry has meets_target: false
+    const row = screen.getByRole('link', { name: 'test verification' }).closest('tr')
+    expect(row).not.toBeNull()
+    expect(row).toHaveAttribute('data-meets-target', 'false')
   })
 
   it('renders linked product from context refs', () => {

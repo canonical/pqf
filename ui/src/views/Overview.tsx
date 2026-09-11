@@ -2,7 +2,6 @@ import { useState, useMemo } from 'react'
 import VersionLink from '../components/VersionLink'
 import { usePortfolio } from '../hooks/usePortfolio'
 import MedalBadge from '../components/MedalBadge'
-import ComplianceStatus from '../components/ComplianceStatus'
 import LoadingSpinner from '../components/LoadingSpinner'
 import { RESULT_ORDER } from '../lib/groupedPortfolioView'
 
@@ -16,6 +15,15 @@ type SortField = 'name' | 'current_result' | 'target_result'
 
 function squadLabel(squad: string): string {
   return SQUAD_LABELS[squad?.toLowerCase()] ?? squad?.toUpperCase() ?? '—'
+}
+
+// Guard the empty-portfolio case: `total: 0, meeting_target: 0` must render as neutral, not as
+// the "0 met target" alarm colour used when products exist but none of them meet target.
+function meetingTargetColor(compliance: { meeting_target: number; total: number }): string {
+  if (compliance.total === 0) return '#333'
+  if (compliance.meeting_target === compliance.total) return '#2d9e46'
+  if (compliance.meeting_target === 0) return '#c7162b'
+  return '#1d7a1d'
 }
 
 export default function Overview() {
@@ -71,7 +79,7 @@ export default function Overview() {
           <div className="col-4">
             <div className="p-card">
               <p style={{ fontSize: '2.5rem', fontWeight: 700, margin: '0 0 0.25rem', lineHeight: 1,
-                color: compliance.meeting_target === compliance.total && compliance.total > 0 ? '#2d9e46' : compliance.meeting_target === 0 ? '#c7162b' : '#1d7a1d' }}>
+                color: meetingTargetColor(compliance) }}>
                 {compliance.meeting_target} / {compliance.total}
               </p>
               <p className="u-text--muted" style={{ margin: 0 }}>Meeting target</p>
@@ -137,12 +145,11 @@ export default function Overview() {
                 >
                   Current
                 </th>
-                <th style={{ width: '20%' }}>Status</th>
               </tr>
             </thead>
             <tbody>
               {products.map(product => (
-                <tr key={product.id}>
+                <tr key={product.id} data-meets-target={product.meets_target}>
                   <td>
                     <VersionLink to={`/products/${product.id}`}>{product.name}</VersionLink>
                   </td>
@@ -161,7 +168,6 @@ export default function Overview() {
                   </td>
                   <td><MedalBadge medal={product.target_result} size="small" /></td>
                   <td><MedalBadge medal={product.current_result} size="small" /></td>
-                  <td><ComplianceStatus meetsTarget={product.meets_target} size="small" /></td>
                 </tr>
               ))}
             </tbody>

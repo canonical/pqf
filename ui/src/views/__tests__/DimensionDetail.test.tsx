@@ -195,17 +195,25 @@ describe('DimensionDetail', () => {
     expect(screen.getAllByText('A README.md exists in the primary component repository.')).toHaveLength(1)
   })
 
-  it('renders product table without target column and with compliance status from the payload', () => {
+  it('renders product table without target column, with result badges as the only per-row status', () => {
     wrap('documentation')
     expect(screen.queryByRole('columnheader', { name: 'Target' })).not.toBeInTheDocument()
-    expect(screen.getByRole('columnheader', { name: 'Status' })).toBeInTheDocument()
+    expect(screen.queryByRole('columnheader', { name: 'Status' })).not.toBeInTheDocument()
     expect(screen.queryByRole('columnheader', { name: 'Drift / Deadline' })).not.toBeInTheDocument()
     expect(screen.getByRole('link', { name: 'Matrix (Synapse)' })).toBeInTheDocument()
-    expect(screen.getAllByText('Meets target').length).toBeGreaterThan(0)
-    expect(screen.getAllByText('Below target').length).toBeGreaterThan(0)
+    expect(screen.queryByText('Meets target')).not.toBeInTheDocument()
+    expect(screen.queryByText('Below target')).not.toBeInTheDocument()
     expect(screen.queryByText(/remediating/i)).not.toBeInTheDocument()
     expect(screen.queryByText(/overdue/i)).not.toBeInTheDocument()
     expect(screen.queryByText(/deadline/i)).not.toBeInTheDocument()
+  })
+
+  it('marks rows that do not meet target with a non-visible accessibility attribute', () => {
+    wrap('documentation')
+    // landscape's documentation entry has meets_target: false
+    const row = screen.getByRole('link', { name: 'Landscape' }).closest('tr')
+    expect(row).not.toBeNull()
+    expect(row).toHaveAttribute('data-meets-target', 'false')
   })
 
   it('renders product scores grouped by root with nested leaf rows', () => {
