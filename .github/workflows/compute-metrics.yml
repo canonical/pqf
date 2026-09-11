@@ -43,7 +43,7 @@ on:
 # normally; schedules have a unique group per run.
 concurrency:
   group: compute-metrics-${{ github.ref }}-${{ github.event_name == 'schedule' && github.run_id || 'push' }}
-  cancel-in-progress: ${{ github.event_name != 'schedule' && (github.event_name != 'push' || github.ref != 'refs/heads/main') }}
+  cancel-in-progress: ${{ github.event_name != 'schedule' && github.ref != 'refs/heads/main' }}
 
 permissions:
   contents: write            # needed for the deploy jobs
@@ -142,46 +142,46 @@ jobs:
           mkdir -p .gh-pages-data
           published_args=(--published-dir .gh-pages-data)
 
+          write_changes_since_published() {
+            # Compare main against the last successfully published active
+            # portfolio, not merely this event's immediate predecessor. GitHub
+            # retains only one pending run per concurrency group, so this recovers
+            # scoring changes from failed or superseded runs.
+            published_revision=""
+            if [ -f .gh-pages-data/portfolio.json ]; then
+              published_revision=$(jq -r '.source_revision // empty' \
+                .gh-pages-data/portfolio.json)
+            fi
+
+            if [[ "$published_revision" =~ ^[0-9a-fA-F]{40}$ ]] \
+              && git cat-file -e "$published_revision^{commit}" 2>/dev/null \
+              && git merge-base --is-ancestor "$published_revision" "$HEAD_SHA"; then
+              git diff --name-only "$published_revision...$HEAD_SHA" > changed-paths.txt
+            else
+              # First publish / force-push / pruned history: no usable published
+              # base commit, so treat the whole tree as changed.
+              git ls-files > changed-paths.txt
+            fi
+          }
+
           if [ "$EVENT_NAME" = "schedule" ]; then
             # Cadence is derived from the cron literal by an exact, tested mapping.
             matrix=$(python3 -m engine.workflow_matrix \
               --schedule "$EVENT_SCHEDULE" "${published_args[@]}")
 
           elif [ "$EVENT_NAME" = "workflow_dispatch" ]; then
+            write_changes_since_published
             matrix=$(python3 -m engine.workflow_matrix --cadence manual \
-              --framework-version "$DISPATCH_VERSION" "${published_args[@]}")
+              --framework-version "$DISPATCH_VERSION" \
+              --changed-paths-file changed-paths.txt "${published_args[@]}")
 
           else
             # push / pull_request: include every live framework version whose
             # framework, scorer, engine, or catalog inputs changed.
             if [ "$EVENT_NAME" = "pull_request" ]; then
-              range="origin/$BASE_REF...HEAD"
+              git diff --name-only "origin/$BASE_REF...HEAD" > changed-paths.txt
             else
-              # Compare main against the last successfully published active
-              # portfolio, not merely this push's `before` SHA. GitHub retains only
-              # one pending run per concurrency group, so this recovers scoring
-              # changes from failed or superseded runs.
-              published_revision=""
-              if [ -f .gh-pages-data/portfolio.json ]; then
-                published_revision=$(jq -r '.source_revision // empty' \
-                  .gh-pages-data/portfolio.json)
-              fi
-
-              if [[ "$published_revision" =~ ^[0-9a-fA-F]{40}$ ]] \
-                && git cat-file -e "$published_revision^{commit}" 2>/dev/null \
-                && git merge-base --is-ancestor "$published_revision" "$HEAD_SHA"; then
-                range="$published_revision...$HEAD_SHA"
-              else
-                # First publish / force-push / pruned history: no usable published
-                # base commit, so treat the whole tree as changed.
-                range=""
-              fi
-            fi
-
-            if [ -n "$range" ]; then
-              git diff --name-only "$range" > changed-paths.txt
-            else
-              git ls-files > changed-paths.txt
+              write_changes_since_published
             fi
 
             matrix=$(python3 -m engine.workflow_matrix --cadence changed \

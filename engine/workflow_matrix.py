@@ -141,12 +141,18 @@ def select_frameworks(
     if cadence == "manual":
         if not framework_version:
             raise ValueError("--framework-version is required for manual cadence")
-        selected = get_framework(frameworks, framework_version)
-        if selected.status == FrameworkStatus.ARCHIVED:
+        requested = get_framework(frameworks, framework_version)
+        if requested.status == FrameworkStatus.ARCHIVED:
             raise ValueError(
-                f"Framework version {selected.id} is archived and cannot be scheduled for scoring."
+                f"Framework version {requested.id} is archived and cannot be scheduled for scoring."
             )
-        return [selected]
+        selected = [requested]
+        if changed_paths is not None:
+            selected_ids = {requested.id}
+            for changed in select_changed_frameworks(frameworks, changed_paths):
+                if changed.id not in selected_ids:
+                    selected.append(changed)
+        return sorted(selected, key=lambda framework: framework.sequence)
 
     if framework_version:
         raise ValueError(f"--framework-version is not supported for {cadence} cadence")

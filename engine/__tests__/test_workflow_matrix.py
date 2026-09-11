@@ -193,6 +193,20 @@ def test_manual_selection_accepts_active_version(fixtures):
     assert [f.id for f in selected] == ["v1"]
 
 
+def test_manual_selection_also_includes_unpublished_changed_versions(fixtures):
+    framework_root, _ = fixtures
+    frameworks = discover_frameworks(framework_root)
+
+    selected = select_frameworks(
+        frameworks,
+        cadence="manual",
+        framework_version="v2",
+        changed_paths=["framework/versions/v1/dimensions.yaml"],
+    )
+
+    assert [f.id for f in selected] == ["v1", "v2"]
+
+
 def test_manual_selection_accepts_upcoming_version(fixtures):
     framework_root, _ = fixtures
     frameworks = discover_frameworks(framework_root)

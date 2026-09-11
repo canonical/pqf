@@ -153,6 +153,9 @@ def test_compute_metrics_deploys_production_from_engine_artifacts() -> None:
         "duplicated in shell"
     )
     assert "--cadence manual" in build_run
+    assert (
+        'elif [ "$EVENT_NAME" = "workflow_dispatch" ]; then\n  write_changes_since_published'
+    ) in build_run
     assert "--cadence changed" in build_run
     assert "--changed-paths-file" in build_run
     assert build_step["env"]["DISPATCH_VERSION"] == "${{ github.event.inputs.framework_version }}"
@@ -162,7 +165,7 @@ def test_compute_metrics_deploys_production_from_engine_artifacts() -> None:
     # when gh-pages truly does not exist. A real checkout failure must fail.
     assert ".gh-pages-data/portfolio.json" in build_run
     assert ".source_revision // empty" in build_run
-    assert 'range="$published_revision...$HEAD_SHA"' in build_run
+    assert 'git diff --name-only "$published_revision...$HEAD_SHA"' in build_run
     assert 'git merge-base --is-ancestor "$published_revision" "$HEAD_SHA"' in build_run
     assert "--published-dir .gh-pages-data" in build_run
     pages_probe = next(
@@ -504,8 +507,7 @@ def test_compute_metrics_is_the_only_production_pages_publisher() -> None:
     on = compute_workflow.get("on") or compute_workflow.get(True) or {}
     assert "ui/**" in on["push"]["paths"]
     assert compute_workflow["concurrency"]["cancel-in-progress"] == (
-        "${{ github.event_name != 'schedule' && "
-        "(github.event_name != 'push' || github.ref != 'refs/heads/main') }}"
+        "${{ github.event_name != 'schedule' && github.ref != 'refs/heads/main' }}"
     )
 
     compute_deploy = compute_workflow["jobs"]["deploy-production"]
