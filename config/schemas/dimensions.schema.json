@@ -145,7 +145,7 @@
       "minItems": 1,
       "items": {
         "type": "string",
-        "pattern": "^[a-z][a-z0-9_]* (>=|<=|==|!=|>|<) .+$",
+        "pattern": "^[a-z][a-z0-9_]*\\s*(>=|<=|==|!=|>|<)\\s*.+$",
         "description": "A criterion expression: '<metric_key> <operator> <value>'"
       }
     }

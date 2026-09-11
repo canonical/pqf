@@ -6,7 +6,9 @@ from pathlib import Path
 import pytest
 import yaml
 
+from engine import change_report
 from engine.change_report import (
+    _read_git_snapshot,
     _read_worktree_snapshot,
     classify_repository_changes,
     render_change_report,
@@ -231,6 +233,145 @@ def test_read_worktree_snapshot_wraps_yaml_parse_errors(tmp_path, monkeypatch):
         _read_worktree_snapshot()
 
 
+def test_read_git_snapshot_loads_framework_and_product_yaml(monkeypatch):
+    tracked_paths = "\n".join(
+        [
+            "framework/versions/v0/framework.yaml",
+            "framework/versions/v0/dimensions.yaml",
+            "products/test-charm.yaml",
+        ]
+    )
+    git_objects = {
+        "base:framework/versions/v0/framework.yaml": yaml.safe_dump(
+            {
+                "id": "v0",
+                "sequence": 0,
+                "label": "PQF V0",
+                "status": "active",
+                "description": "Base contract",
+            },
+            sort_keys=False,
+        ),
+        "base:framework/versions/v0/dimensions.yaml": yaml.safe_dump(
+            {
+                "dimensions": {
+                    "test_verification": {
+                        "label": "Test verification",
+                        "description": "Automated test health.",
+                        "scorer": "scorers/test_verification/scorer.py",
+                        "applies_to": {"product_types": ["charm"]},
+                        "aggregation": "worst_in_scope",
+                        "required_metrics_for_scoring": ["latest_build_passing"],
+                        "outputs": {
+                            "latest_build_passing": {
+                                "implementation": "latest-build-passing/v1",
+                                "type": "boolean",
+                                "label": "Latest build passing",
+                                "description": "Latest CI summary has no failures.",
+                            }
+                        },
+                        "medals": {"bronze": ["latest_build_passing == true"]},
+                    }
+                }
+            },
+            sort_keys=False,
+        ),
+        "base:products/test-charm.yaml": yaml.safe_dump(
+            {
+                "id": "test-charm",
+                "product_type": "charm",
+                "name": "Test Charm",
+                "lifecycle": "stable",
+                "introduced_in": "v0",
+                "targets": {"v0": "bronze"},
+                "ownership": {"squad": "team-a"},
+                "source": {"repo": "canonical/test-charm"},
+            },
+            sort_keys=False,
+        ),
+    }
+
+    def fake_git_command(*args: str) -> str:
+        if args[0] == "ls-tree":
+            return tracked_paths
+        if args[0] == "show":
+            return git_objects[args[1]]
+        raise AssertionError(f"Unexpected git command: {args}")
+
+    monkeypatch.setattr(change_report, "_git_command", fake_git_command)
+
+    snapshot = _read_git_snapshot("base")
+
+    assert snapshot["frameworks"]["v0"]["framework"]["id"] == "v0"
+    assert (
+        snapshot["frameworks"]["v0"]["dimensions"]["dimensions"]["test_verification"]["outputs"][
+            "latest_build_passing"
+        ]["implementation"]
+        == "latest-build-passing/v1"
+    )
+    assert snapshot["products"]["test-charm"]["targets"] == {"v0": "bronze"}
+
+
+def test_read_git_snapshot_rejects_missing_snapshot_roots(monkeypatch):
+    def fake_git_command(*args: str) -> str:
+        if args[0] == "ls-tree":
+            return ""
+        raise AssertionError(f"Unexpected git command: {args}")
+
+    monkeypatch.setattr(change_report, "_git_command", fake_git_command)
+
+    with pytest.raises(ValueError, match="base:framework/versions"):
+        _read_git_snapshot("base")
+
+
+def test_read_git_snapshot_wraps_yaml_parse_errors(monkeypatch):
+    tracked_paths = "\n".join(
+        [
+            "framework/versions/v0/framework.yaml",
+            "framework/versions/v0/dimensions.yaml",
+            "products/test-charm.yaml",
+        ]
+    )
+    git_objects = {
+        "base:framework/versions/v0/framework.yaml": yaml.safe_dump(
+            {
+                "id": "v0",
+                "sequence": 0,
+                "label": "PQF V0",
+                "status": "active",
+                "description": "Base contract",
+            },
+            sort_keys=False,
+        ),
+        "base:framework/versions/v0/dimensions.yaml": "dimensions: [broken\n",
+        "base:products/test-charm.yaml": yaml.safe_dump(
+            {
+                "id": "test-charm",
+                "product_type": "charm",
+                "name": "Test Charm",
+                "lifecycle": "stable",
+                "introduced_in": "v0",
+                "targets": {"v0": "bronze"},
+                "ownership": {"squad": "team-a"},
+                "source": {"repo": "canonical/test-charm"},
+            },
+            sort_keys=False,
+        ),
+    }
+
+    def fake_git_command(*args: str) -> str:
+        if args[0] == "ls-tree":
+            return tracked_paths
+        if args[0] == "show":
+            return git_objects[args[1]]
+        raise AssertionError(f"Unexpected git command: {args}")
+
+    monkeypatch.setattr(change_report, "_git_command", fake_git_command)
+
+    with pytest.raises(ValueError, match="base:framework/versions/v0/dimensions.yaml"):
+        _read_git_snapshot("base")
+
+
 def test_render_change_report_outputs_all_markdown_sections():
     report = render_change_report(
         {
@@ -248,3 +389,38 @@ def test_render_change_report_outputs_all_markdown_sections():
     assert "## Scoring-semantic changes" in report
     assert "## Catalog membership or target changes" in report
     assert "- product test-charm changed targets" in report
+
+
+def test_main_returns_zero_for_successful_report(monkeypatch, capsys):
+    snapshot = _base_snapshot()
+    monkeypatch.setattr(change_report, "_read_git_snapshot", lambda _base_ref: snapshot)
+    monkeypatch.setattr(change_report, "_read_worktree_snapshot", lambda: snapshot)
+
+    exit_code = change_report.main(["--base-ref", "base"])
+    captured = capsys.readouterr()
+
+    assert exit_code == 0
+    assert "## Metadata-only changes" in captured.out
+    assert "- None." in captured.out
+    assert captured.err == ""
+
+
+@pytest.mark.parametrize(
+    "message",
+    [
+        "Missing required framework snapshot root: base:framework/versions",
+        "Invalid YAML in base:framework/versions/v0/dimensions.yaml: bad yaml",
+    ],
+)
+def test_main_returns_non_zero_for_invalid_git_snapshot(monkeypatch, capsys, message):
+    def raise_snapshot_error(_base_ref: str) -> dict:
+        raise ValueError(message)
+
+    monkeypatch.setattr(change_report, "_read_git_snapshot", raise_snapshot_error)
+
+    exit_code = change_report.main(["--base-ref", "base"])
+    captured = capsys.readouterr()
+
+    assert exit_code == 1
+    assert captured.out == ""
+    assert message in captured.err

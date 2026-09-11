@@ -7,6 +7,7 @@ import jsonschema
 import pytest
 import yaml
 
+from engine import validate as validate_module
 from engine.validate import validate_file, validate_repository
 
 _SCHEMAS_DIR = Path(__file__).parent.parent.parent / "config" / "schemas"
@@ -91,6 +92,35 @@ class TestDimensionsSchema:
         p.write_text(yaml.dump(bad))
         errors = validate_file(p, _DIM_SCHEMA)
         assert errors
+
+    def test_criterion_without_spaces_is_valid(self, tmp_path):
+        good = {
+            "dimensions": {
+                "my_dim": {
+                    "label": "X",
+                    "description": "Y",
+                    "scorer": "scorers/test_verification/scorer.py",
+                    "applies_to": {"product_types": ["charm"]},
+                    "aggregation": "worst_in_scope",
+                    "required_metrics_for_scoring": ["coverage_pct"],
+                    "outputs": {
+                        "coverage_pct": {
+                            "implementation": "coverage-pct/v1",
+                            "type": "number",
+                            "label": "Coverage",
+                            "description": "Coverage percentage.",
+                        }
+                    },
+                    "medals": {"bronze": ["coverage_pct>=90"]},
+                }
+            }
+        }
+        p = tmp_path / "good.yaml"
+        p.write_text(yaml.dump(good))
+
+        errors = validate_file(p, _DIM_SCHEMA)
+
+        assert errors == []
 
     def test_empty_criteria_list_fails(self, tmp_path):
         bad = {
@@ -540,6 +570,29 @@ class TestRepositoryValidation:
             for error in errors
         )
 
+    def test_accepts_criteria_without_spaces_for_declared_outputs(self, tmp_path):
+        dimensions = _minimal_dimension(
+            required_metrics_for_scoring=["coverage_pct"],
+            outputs={
+                "coverage_pct": {
+                    "implementation": "coverage-pct/v1",
+                    "type": "number",
+                    "label": "Coverage",
+                    "description": "Coverage percentage.",
+                }
+            },
+            medals={"bronze": ["coverage_pct>=90"]},
+        )
+        framework_root, products_dir = _write_repository_fixture(
+            tmp_path,
+            v0_dimensions=dimensions,
+            v1_dimensions=dimensions,
+        )
+
+        errors = validate_repository(framework_root, products_dir)
+
+        assert errors == []
+
     def test_reports_criteria_that_reference_undeclared_outputs(self, tmp_path):
         framework_root, products_dir = _write_repository_fixture(
             tmp_path,
@@ -629,3 +682,32 @@ class TestRepositoryValidation:
         assert any(
             "active composition edge to inactive product 'future-leaf'" in error for error in errors
         )
+
+
+class TestValidateCli:
+    def test_main_returns_zero_for_valid_repository(self, monkeypatch, capsys):
+        monkeypatch.setattr(validate_module, "validate_repository", lambda *_args: [])
+        monkeypatch.setattr(validate_module.sys, "argv", ["engine.validate"])
+
+        exit_code = validate_module.main()
+        captured = capsys.readouterr()
+
+        assert exit_code == 0
+        assert "All files valid." in captured.out
+        assert captured.err == ""
+
+    def test_main_returns_non_zero_for_invalid_repository(self, monkeypatch, capsys):
+        monkeypatch.setattr(
+            validate_module,
+            "validate_repository",
+            lambda *_args: ["framework/versions/v0/dimensions.yaml: broken"],
+        )
+        monkeypatch.setattr(validate_module.sys, "argv", ["engine.validate"])
+
+        exit_code = validate_module.main()
+        captured = capsys.readouterr()
+
+        assert exit_code == 1
+        assert "framework/versions/v0/dimensions.yaml: broken" in captured.out
+        assert "Validation failed." in captured.out
+        assert captured.err == ""

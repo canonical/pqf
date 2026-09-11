@@ -20,6 +20,18 @@ def _empty_change_buckets() -> dict[str, list[str]]:
     return {category: [] for category in CATEGORY_TITLES}
 
 
+def _validate_snapshot_roots(
+    snapshot: dict[str, Any],
+    *,
+    framework_source: str,
+    products_source: str,
+) -> None:
+    if not snapshot["frameworks"]:
+        raise ValueError(f"Missing required framework snapshot root: {framework_source}")
+    if not snapshot["products"]:
+        raise ValueError(f"Missing required product catalog snapshot root: {products_source}")
+
+
 def _load_yaml_text(text: str, source: str) -> dict[str, Any]:
     try:
         data = yaml.safe_load(text)
@@ -62,6 +74,11 @@ def _read_worktree_snapshot(
             str(product_path),
         )
 
+    _validate_snapshot_roots(
+        snapshot,
+        framework_source=str(framework_root),
+        products_source=str(products_dir),
+    )
     return snapshot
 
 
@@ -122,6 +139,11 @@ def _read_git_snapshot(base_ref: str) -> dict[str, Any]:
                 f"{base_ref}:framework/versions/{version_id}/dimensions.yaml"
             )
 
+    _validate_snapshot_roots(
+        snapshot,
+        framework_source=f"{base_ref}:framework/versions",
+        products_source=f"{base_ref}:products",
+    )
     return snapshot
 
 

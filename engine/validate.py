@@ -17,6 +17,7 @@ import yaml
 
 from engine.framework import FrameworkVersion, discover_frameworks
 from engine.graph import build_graph
+from engine.rubric import parse_condition
 from scorers import registry
 
 _SCHEMAS_DIR = Path(__file__).parent.parent / "config" / "schemas"
@@ -58,7 +59,8 @@ def _framework_version_dirs(framework_root: Path) -> list[Path]:
 
 
 def _criterion_metric_key(criterion: str) -> str:
-    return criterion.split(" ", 1)[0]
+    metric_key, _operator, _value = parse_condition(criterion)
+    return metric_key
 
 
 def _validate_dimension_contract(
@@ -89,7 +91,14 @@ def _validate_dimension_contract(
             for criterion in criteria:
                 if not isinstance(criterion, str):
                     continue
-                metric_key = _criterion_metric_key(criterion)
+                try:
+                    metric_key = _criterion_metric_key(criterion)
+                except ValueError as exc:
+                    errors.append(
+                        f"framework {framework.id} dimension {dimension_name} "
+                        f"has invalid criterion {criterion!r}: {exc}"
+                    )
+                    continue
                 if metric_key not in output_keys:
                     errors.append(
                         f"framework {framework.id} dimension {dimension_name} "
