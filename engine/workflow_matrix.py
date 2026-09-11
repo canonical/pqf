@@ -9,10 +9,10 @@ Selection rules:
       catalog inputs changed (used for push/pull_request events).
 
 Whatever the cadence selects is then unioned with the *bootstrap* set: every live
-(active or upcoming) framework version whose published portfolio is missing or was
-built from a different scoring contract. That guarantees the publish job can always
-rebuild a complete version index, because each live version is either computed in
-this run or carried forward unchanged from the previously published site. Archived
+(active or upcoming) framework version whose published portfolio is missing, was
+built from a different scoring contract, or has not met its daily/weekly refresh
+cadence. That guarantees the publish job can always rebuild a complete version
+index and recover work when GitHub replaces a pending scheduled run. Archived
 versions are never selected: their measurements are frozen and their scorers must
 never run again.
 
@@ -29,6 +29,7 @@ from __future__ import annotations
 import argparse
 import json
 import sys
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
@@ -234,27 +235,82 @@ def stale_live_versions(
     ]
 
 
+def _published_generated_at(published_dir: Path, version_id: str) -> datetime | None:
+    path = Path(published_dir) / "versions" / version_id / "portfolio.json"
+    try:
+        payload = json.loads(path.read_text())
+        value = payload.get("generated_at")
+        if not isinstance(value, str):
+            return None
+        generated_at = datetime.fromisoformat(value.replace("Z", "+00:00"))
+    except (OSError, json.JSONDecodeError, ValueError, AttributeError):
+        return None
+    if generated_at.tzinfo is None:
+        return None
+    return generated_at.astimezone(UTC)
+
+
+def refresh_due_versions(
+    frameworks: list[FrameworkVersion],
+    published_dir: Path,
+    *,
+    as_of: datetime | None = None,
+) -> list[FrameworkVersion]:
+    """Return live versions that have not met their current UTC cadence.
+
+    Active versions refresh once per UTC date. Upcoming versions refresh once per
+    ISO week. This lets any later production-capable run inherit cadence work when
+    GitHub replaces a pending scheduled run.
+    """
+    current = (as_of or datetime.now(UTC)).astimezone(UTC)
+    current_week = current.isocalendar()[:2]
+    due: list[FrameworkVersion] = []
+
+    for framework in frameworks:
+        if not _is_live(framework):
+            continue
+        generated_at = _published_generated_at(published_dir, framework.id)
+        if generated_at is None:
+            due.append(framework)
+        elif framework.status == FrameworkStatus.ACTIVE and generated_at.date() < current.date():
+            due.append(framework)
+        elif (
+            framework.status == FrameworkStatus.UPCOMING
+            and generated_at.isocalendar()[:2] < current_week
+        ):
+            due.append(framework)
+
+    return due
+
+
 def bootstrap_selection(
     frameworks: list[FrameworkVersion],
     selected: list[FrameworkVersion],
     published_dir: Path | None,
+    *,
+    as_of: datetime | None = None,
 ) -> list[FrameworkVersion]:
     """Union the cadence selection with live versions the published site cannot serve.
 
     Without this, a run that only recomputes some versions would leave the version
     index generator with no portfolio for a live version it must describe, failing
     late in the publish job instead of simply scoring the missing version. The same
-    applies to a published portfolio whose contract digest is stale: the index
-    generator rejects it, so the version is recomputed instead.
+    applies to a published portfolio whose contract digest is stale, or whose
+    scheduled daily/weekly refresh was displaced by another production run.
     """
     if published_dir is None:
         return sorted(selected, key=lambda framework: framework.sequence)
 
     selected_ids = {framework.id for framework in selected}
     combined = list(selected)
-    for framework in stale_live_versions(frameworks, published_dir):
+    required = [
+        *stale_live_versions(frameworks, published_dir),
+        *refresh_due_versions(frameworks, published_dir, as_of=as_of),
+    ]
+    for framework in required:
         if framework.id not in selected_ids:
             combined.append(framework)
+            selected_ids.add(framework.id)
     return sorted(combined, key=lambda framework: framework.sequence)
 
 

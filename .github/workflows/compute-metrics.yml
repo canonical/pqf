@@ -42,7 +42,7 @@ on:
 # scorer/catalog changes from an earlier commit. Other branch runs are superseded
 # normally; schedules have a unique group per run.
 concurrency:
-  group: compute-metrics-${{ github.ref }}-${{ github.ref == 'refs/heads/main' && 'publish' || (github.event_name == 'schedule' && github.run_id || 'push') }}
+  group: compute-metrics-${{ github.ref }}-${{ github.event_name == 'schedule' && github.run_id || 'push' }}
   cancel-in-progress: ${{ github.event_name != 'schedule' && github.ref != 'refs/heads/main' }}
 
 permissions:
@@ -621,7 +621,7 @@ jobs:
 
   # ── 8. Build and deploy production site from fresh engine artifacts ───────────
   deploy-production:
-    needs: [run-engine, check-production-tip]
+    needs: [determine-matrix, run-engine, check-production-tip]
     if: needs.check-production-tip.outputs.current == 'true'
     runs-on: ubuntu-latest
     concurrency:
@@ -640,6 +640,79 @@ jobs:
         with:
           name: engine-artifacts
           path: public
+
+      - name: Check whether gh-pages branch exists
+        id: pages_exists
+        run: |
+          set -euo pipefail
+          if git ls-remote --exit-code --heads origin gh-pages >/dev/null 2>&1; then
+            echo "exists=true" >> "$GITHUB_OUTPUT"
+          else
+            status=$?
+            if [ "$status" -eq 2 ]; then
+              echo "exists=false" >> "$GITHUB_OUTPUT"
+            else
+              exit "$status"
+            fi
+          fi
+
+      - name: Check out latest Pages data
+        if: steps.pages_exists.outputs.exists == 'true'
+        uses: actions/checkout@v4
+        with:
+          ref: gh-pages
+          path: .gh-pages-latest
+          fetch-depth: 1
+          persist-credentials: false
+
+      - name: Merge concurrently published versions
+        if: steps.pages_exists.outputs.exists == 'true'
+        env:
+          SELECTED_VERSIONS: ${{ needs.determine-matrix.outputs.versions }}
+        run: |
+          set -euo pipefail
+          if [ -d .gh-pages-latest/versions ]; then
+            for version_dir in .gh-pages-latest/versions/*; do
+              [ -d "$version_dir" ] || continue
+              version=$(basename "$version_dir")
+              if jq -e --arg version "$version" \
+                'index($version) != null' <<< "$SELECTED_VERSIONS" >/dev/null; then
+                continue
+              fi
+              rm -rf "public/versions/$version"
+              cp -R "$version_dir" "public/versions/$version"
+            done
+          fi
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: pip
+
+      - name: Install Python dependencies
+        run: pip install -e ".[dev]"
+
+      - name: Regenerate stable publication metadata
+        run: |
+          set -euo pipefail
+          active=$(python3 -c "
+          from pathlib import Path
+          from engine.framework import FrameworkStatus, discover_frameworks
+          frameworks = discover_frameworks(Path('framework/versions'))
+          print(next(f.id for f in frameworks if f.status == FrameworkStatus.ACTIVE))
+          ")
+          portfolio="public/versions/$active/portfolio.json"
+          if [ ! -f "$portfolio" ]; then
+            echo "Missing portfolio for active framework version $active" >&2
+            exit 1
+          fi
+          cp "$portfolio" public/portfolio.json
+          rm -rf public/badges
+          python engine/badges.py --portfolio "$portfolio" --output-dir public/badges/
+          python engine/version_index.py \
+            --framework-root framework/versions \
+            --public-dir public/ \
+            --output public/framework-versions.json
 
       - uses: actions/setup-node@v4
         with:

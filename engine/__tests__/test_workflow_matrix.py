@@ -1,6 +1,7 @@
 import json
 import subprocess
 import sys
+from datetime import UTC, datetime
 from pathlib import Path
 
 import pytest
@@ -14,6 +15,7 @@ from engine.workflow_matrix import (
     build_matrix_rows,
     cadence_for_schedule,
     missing_live_versions,
+    refresh_due_versions,
     select_frameworks,
     stale_live_versions,
 )
@@ -98,6 +100,7 @@ def _write_published_portfolio(
     version_id: str,
     *,
     digest: str | None = None,
+    generated_at: str | None = None,
 ) -> None:
     """Publish a portfolio for `version_id`, recording its current contract digest."""
     version_dir = published_dir / "versions" / version_id
@@ -107,6 +110,7 @@ def _write_published_portfolio(
             {
                 "framework": {"id": version_id},
                 "contract_digest": digest or contract_digest(get_framework(frameworks, version_id)),
+                "generated_at": generated_at or datetime.now(UTC).isoformat(),
             }
         )
     )
@@ -398,6 +402,32 @@ def test_bootstrap_is_a_noop_when_every_live_version_is_published(fixtures, tmp_
     bootstrapped = bootstrap_selection(frameworks, selected, published)
 
     assert [f.id for f in bootstrapped] == ["v1"]
+
+
+def test_refresh_due_versions_recovers_daily_and_weekly_cadence_debt(fixtures, tmp_path):
+    framework_root, _ = fixtures
+    frameworks = discover_frameworks(framework_root)
+    published = tmp_path / "gh-pages"
+    _write_published_portfolio(
+        published,
+        frameworks,
+        "v1",
+        generated_at="2026-09-13T23:30:00+00:00",
+    )
+    _write_published_portfolio(
+        published,
+        frameworks,
+        "v2",
+        generated_at="2026-09-06T03:30:00+00:00",
+    )
+
+    due = refresh_due_versions(
+        frameworks,
+        published,
+        as_of=datetime(2026, 9, 14, 4, 0, tzinfo=UTC),
+    )
+
+    assert [framework.id for framework in due] == ["v1", "v2"]
 
 
 def test_bootstrap_never_adds_archived_versions(fixtures, tmp_path):

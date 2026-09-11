@@ -261,10 +261,17 @@ newest pending checkout compares itself with the last successfully published `so
 That range includes scoring changes from failed or superseded runs before it carries artifacts
 forward and deploys the latest UI. Immediately before production publication, the workflow also
 checks that its source SHA is still the current `main` tip. Older scheduled runs are skipped, and
-manual runs from non-main refs can compute but cannot publish to the production root. Every
-production-capable run shares the main publication queue. Scheduled runs select their lifecycle
-cadence plus any live versions affected since the last successful publication; manual runs select
-the requested version plus those unpublished changes.
+manual runs from non-main refs can compute but cannot publish to the production root. Main pushes
+and main manual runs share the main publication queue. Scheduled runs remain independent
+so a pending cadence refresh cannot be evicted; they select their lifecycle cadence plus any live
+versions affected since the last successful publication. Manual runs select the requested version
+plus those unpublished changes. Under the shared Pages deployment lock, each run refreshes only
+the versions it selected and replaces every unselected version with the latest deployed copy before
+regenerating the active root mirror, badges, and version index. Concurrent cadence and push runs
+therefore cannot overwrite one another's newer version snapshots. The matrix also treats an active
+portfolio not generated on the current UTC date, or an upcoming portfolio not generated in the
+current ISO week, as due. A later run therefore inherits a cadence refresh if GitHub replaces a
+pending scheduled deployment.
 
 ### `deploy-legacy.yml` — one-off legacy snapshot
 

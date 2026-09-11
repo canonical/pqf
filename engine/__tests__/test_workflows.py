@@ -401,12 +401,19 @@ def test_compute_metrics_deploys_production_from_engine_artifacts() -> None:
     )
 
     deploy_job = jobs["deploy-production"]
-    assert deploy_job["needs"] == ["run-engine", "check-production-tip"]
+    assert deploy_job["needs"] == [
+        "determine-matrix",
+        "run-engine",
+        "check-production-tip",
+    ]
     assert deploy_job["if"] == "needs.check-production-tip.outputs.current == 'true'"
 
     names = step_names(deploy_job)
     assert "Reset public data" in names
     assert "Download engine artifacts" in names
+    assert "Check out latest Pages data" in names
+    assert "Merge concurrently published versions" in names
+    assert "Regenerate stable publication metadata" in names
     assert "Build UI" in names
     assert "Deploy to GitHub Pages (attempt 1)" in names
     assert "Wait before deploy retry" in names
@@ -432,6 +439,31 @@ def test_compute_metrics_deploys_production_from_engine_artifacts() -> None:
         "engine-artifacts must be extracted into public/ so framework-versions.json, "
         "versions/ and badges/ reach Vite's publicDir"
     )
+
+    pages_checkout = next(
+        step for step in deploy_job["steps"] if step.get("name") == "Check out latest Pages data"
+    )
+    assert pages_checkout["with"]["ref"] == "gh-pages"
+    assert pages_checkout["with"]["path"] == ".gh-pages-latest"
+
+    merge_step = next(
+        step
+        for step in deploy_job["steps"]
+        if step.get("name") == "Merge concurrently published versions"
+    )
+    assert merge_step["env"]["SELECTED_VERSIONS"] == (
+        "${{ needs.determine-matrix.outputs.versions }}"
+    )
+    assert ".gh-pages-latest/versions" in merge_step["run"]
+    assert "public/versions/$version" in merge_step["run"]
+
+    regenerate_step = next(
+        step
+        for step in deploy_job["steps"]
+        if step.get("name") == "Regenerate stable publication metadata"
+    )
+    assert "engine/badges.py" in regenerate_step["run"]
+    assert "engine/version_index.py" in regenerate_step["run"]
 
     deploy_step = next(
         step
@@ -514,8 +546,8 @@ def test_compute_metrics_is_the_only_production_pages_publisher() -> None:
     on = compute_workflow.get("on") or compute_workflow.get(True) or {}
     assert "ui/**" in on["push"]["paths"]
     assert compute_workflow["concurrency"]["group"] == (
-        "compute-metrics-${{ github.ref }}-${{ github.ref == 'refs/heads/main' "
-        "&& 'publish' || (github.event_name == 'schedule' && github.run_id || 'push') }}"
+        "compute-metrics-${{ github.ref }}-"
+        "${{ github.event_name == 'schedule' && github.run_id || 'push' }}"
     )
     assert compute_workflow["concurrency"]["cancel-in-progress"] == (
         "${{ github.event_name != 'schedule' && github.ref != 'refs/heads/main' }}"
@@ -531,7 +563,11 @@ def test_compute_metrics_is_the_only_production_pages_publisher() -> None:
     assert "git ls-remote origin refs/heads/main" in tip_step["run"]
     assert '"$main_tip" = "$GITHUB_SHA"' in tip_step["run"]
 
-    assert compute_deploy["needs"] == ["run-engine", "check-production-tip"]
+    assert compute_deploy["needs"] == [
+        "determine-matrix",
+        "run-engine",
+        "check-production-tip",
+    ]
     assert compute_deploy["if"] == ("needs.check-production-tip.outputs.current == 'true'")
     assert compute_deploy["concurrency"] == {
         "group": "gh-pages",
