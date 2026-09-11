@@ -34,6 +34,19 @@ test.describe('Framework version navigation', () => {
     await expect(page.getByRole('link', { name: 'Orbit' })).toBeVisible()
   })
 
+  test('switching V1 → V0 while on the V1-only product page shows explicit not-found, not a silent fallback', async ({ page }) => {
+    await page.goto('/#/v1/products/orbit')
+    await expect(page.getByRole('heading', { name: 'Orbit' })).toBeVisible()
+
+    await page.getByLabel(/framework version/i).selectOption({ label: V0.label })
+
+    // The selector preserves the sub-route by design (see "preserving the current sub-route"
+    // above) — it must land on /v0/products/orbit, not silently redirect to V0's overview.
+    await expect(page).toHaveURL(/#\/v0\/products\/orbit$/)
+    await expect(page.getByText(/product.*orbit.*not found/i)).toBeVisible()
+    await expect(page.getByRole('heading', { name: 'Orbit' })).toHaveCount(0)
+  })
+
   test('a direct versioned deep-link loads that version', async ({ page }) => {
     await page.goto('/#/v1/dimensions/documentation')
     await expect(page.getByRole('heading', { name: /^documentation$/i })).toBeVisible()
@@ -61,6 +74,12 @@ test.describe('Framework version navigation', () => {
     // so it is the worst case for overflow.
     await page.goto('/#/v1')
     await expect(page.getByLabel(/framework version/i)).toBeVisible()
+    // Wait for the actual overview content (products table, heatmap) to finish loading, not just
+    // the nav/selector — the table renders after the portfolio fetch resolves and can itself
+    // widen the page (e.g. via long product/squad text), so measuring overflow before it's on
+    // screen would miss layout it introduces.
+    await expect(page.getByRole('heading', { name: /products overview/i })).toBeVisible()
+    await expect(page.getByRole('link', { name: 'Orbit' }).first()).toBeVisible()
     const overflow = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth)
     expect(overflow).toBeLessThanOrEqual(0)
   })
