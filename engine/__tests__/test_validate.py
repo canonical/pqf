@@ -1,4 +1,4 @@
-"""Tests for engine/validate.py — schema validation of YAML config files."""
+"""Tests for engine/validate.py — schema and repository validation."""
 
 import json
 from pathlib import Path
@@ -7,11 +7,12 @@ import jsonschema
 import pytest
 import yaml
 
-from engine.validate import validate_file
+from engine.validate import validate_file, validate_repository
 
 _SCHEMAS_DIR = Path(__file__).parent.parent.parent / "config" / "schemas"
 _DIM_SCHEMA = json.loads((_SCHEMAS_DIR / "dimensions.schema.json").read_text())
 _PROD_SCHEMA = json.loads((_SCHEMAS_DIR / "product.schema.json").read_text())
+REPO_ROOT = Path(__file__).parent.parent.parent
 
 
 def _validate_dict(data: dict, schema: dict) -> list[str]:
@@ -33,11 +34,6 @@ def prod_schema():
 
 
 class TestDimensionsSchema:
-    def test_real_dimensions_yaml_is_valid(self, tmp_path):
-        real_path = Path(__file__).parent.parent.parent / "config" / "dimensions.yaml"
-        errors = validate_file(real_path, _DIM_SCHEMA)
-        assert errors == [], "dimensions.yaml is invalid:\n" + "\n".join(errors)
-
     def test_missing_required_fields_fail(self, tmp_path):
         bad = {"dimensions": {"my_dim": {"label": "X"}}}
         p = tmp_path / "bad.yaml"
@@ -349,3 +345,287 @@ def test_ref_entry_requires_introduced_in(prod_schema):
     }
     errors = _validate_dict(bad, prod_schema)
     assert errors
+
+
+def _minimal_dimension(
+    *,
+    medals: dict | None = None,
+    required_metrics_for_scoring: list[str] | None = None,
+    outputs: dict | None = None,
+) -> dict:
+    return {
+        "test_verification": {
+            "label": "Test verification",
+            "description": "Automated test health.",
+            "scorer": "scorers/test_verification/scorer.py",
+            "applies_to": {"product_types": ["charm", "snap"]},
+            "aggregation": "worst_in_scope",
+            "required_metrics_for_scoring": required_metrics_for_scoring
+            or ["latest_build_passing"],
+            "outputs": outputs
+            or {
+                "latest_build_passing": {
+                    "implementation": "latest-build-passing/v1",
+                    "type": "boolean",
+                    "label": "Latest build passing",
+                    "description": "Latest CI summary has no failures.",
+                }
+            },
+            "medals": medals or {"bronze": ["latest_build_passing == true"]},
+        }
+    }
+
+
+def _minimal_leaf_product(
+    *,
+    product_id: str = "test-charm",
+    introduced_in: str = "v0",
+    targets: dict | None = None,
+) -> dict:
+    return {
+        "id": product_id,
+        "product_type": "charm",
+        "name": "Test Charm",
+        "lifecycle": "stable",
+        "introduced_in": introduced_in,
+        "targets": targets or {"v0": "bronze", "v1": "bronze"},
+        "ownership": {"squad": "team-a"},
+        "source": {"repo": f"canonical/{product_id}"},
+    }
+
+
+def _write_framework_version(
+    root: Path,
+    *,
+    version_id: str,
+    sequence: int,
+    status: str,
+    dimensions: dict | None = None,
+) -> None:
+    version_dir = root / version_id
+    version_dir.mkdir(parents=True)
+    (version_dir / "framework.yaml").write_text(
+        yaml.safe_dump(
+            {
+                "id": version_id,
+                "sequence": sequence,
+                "label": f"PQF {version_id.upper()}",
+                "status": status,
+                "description": f"{version_id} contract",
+            },
+            sort_keys=False,
+        )
+    )
+    (version_dir / "dimensions.yaml").write_text(
+        yaml.safe_dump({"dimensions": dimensions or _minimal_dimension()}, sort_keys=False)
+    )
+
+
+def _write_repository_fixture(
+    tmp_path: Path,
+    *,
+    v0_dimensions: dict | None = None,
+    v1_dimensions: dict | None = None,
+    products: list[dict] | None = None,
+) -> tuple[Path, Path]:
+    framework_root = tmp_path / "framework" / "versions"
+    _write_framework_version(
+        framework_root,
+        version_id="v0",
+        sequence=0,
+        status="active",
+        dimensions=v0_dimensions,
+    )
+    _write_framework_version(
+        framework_root,
+        version_id="v1",
+        sequence=1,
+        status="upcoming",
+        dimensions=v1_dimensions or v0_dimensions,
+    )
+
+    products_dir = tmp_path / "products"
+    products_dir.mkdir(parents=True)
+    for product in products or [_minimal_leaf_product()]:
+        (products_dir / f"{product['id']}.yaml").write_text(
+            yaml.safe_dump(product, sort_keys=False)
+        )
+    return framework_root, products_dir
+
+
+class TestRepositoryValidation:
+    def test_live_repository_is_valid_against_framework_snapshots(self):
+        errors = validate_repository(REPO_ROOT / "framework" / "versions", REPO_ROOT / "products")
+        assert errors == []
+
+    def test_reports_missing_framework_dimensions_snapshot_file(self, tmp_path):
+        framework_root = tmp_path / "framework" / "versions"
+        version_dir = framework_root / "v0"
+        version_dir.mkdir(parents=True)
+        (version_dir / "framework.yaml").write_text(
+            yaml.safe_dump(
+                {
+                    "id": "v0",
+                    "sequence": 0,
+                    "label": "PQF V0",
+                    "status": "active",
+                    "description": "v0 contract",
+                },
+                sort_keys=False,
+            )
+        )
+        products_dir = tmp_path / "products"
+        products_dir.mkdir(parents=True)
+        (products_dir / "test-charm.yaml").write_text(
+            yaml.safe_dump(_minimal_leaf_product(), sort_keys=False)
+        )
+
+        errors = validate_repository(framework_root, products_dir)
+
+        assert any("framework/versions/v0/dimensions.yaml" in error for error in errors)
+
+    def test_reports_orphan_framework_dimensions_snapshot_file(self, tmp_path):
+        framework_root = tmp_path / "framework" / "versions"
+        version_dir = framework_root / "v0"
+        version_dir.mkdir(parents=True)
+        (version_dir / "dimensions.yaml").write_text(
+            yaml.safe_dump({"dimensions": _minimal_dimension()}, sort_keys=False)
+        )
+        products_dir = tmp_path / "products"
+        products_dir.mkdir(parents=True)
+        (products_dir / "test-charm.yaml").write_text(
+            yaml.safe_dump(_minimal_leaf_product(), sort_keys=False)
+        )
+
+        errors = validate_repository(framework_root, products_dir)
+
+        assert any("framework/versions/v0/framework.yaml" in error for error in errors)
+
+    def test_reports_missing_products_directory(self, tmp_path):
+        framework_root, _ = _write_repository_fixture(tmp_path)
+
+        errors = validate_repository(framework_root, tmp_path / "missing-products")
+
+        assert any(
+            "missing-products" in error and "missing required products directory" in error
+            for error in errors
+        )
+
+    def test_reports_dimension_schema_errors_from_framework_snapshots(self, tmp_path):
+        framework_root, products_dir = _write_repository_fixture(
+            tmp_path,
+            v0_dimensions={
+                "test_verification": {
+                    "label": "Test verification",
+                    "description": "Automated test health.",
+                    "scorer": "scorers/test_verification/scorer.py",
+                    "applies_to": {"product_types": ["charm", "snap"]},
+                    "aggregation": "worst_in_scope",
+                    "outputs": {
+                        "latest_build_passing": {
+                            "implementation": "latest-build-passing/v1",
+                            "type": "boolean",
+                            "label": "Latest build passing",
+                            "description": "Latest CI summary has no failures.",
+                        }
+                    },
+                }
+            },
+        )
+
+        errors = validate_repository(framework_root, products_dir)
+
+        assert any(
+            "framework/versions/v0/dimensions.yaml" in error and "medals" in error
+            for error in errors
+        )
+
+    def test_reports_criteria_that_reference_undeclared_outputs(self, tmp_path):
+        framework_root, products_dir = _write_repository_fixture(
+            tmp_path,
+            v0_dimensions=_minimal_dimension(
+                medals={"bronze": ["coverage_pct >= 80"]},
+            ),
+        )
+
+        errors = validate_repository(framework_root, products_dir)
+
+        assert any(
+            "criteria reference undeclared output 'coverage_pct'" in error for error in errors
+        )
+
+    def test_reports_required_metrics_that_are_not_declared_outputs(self, tmp_path):
+        framework_root, products_dir = _write_repository_fixture(
+            tmp_path,
+            v0_dimensions=_minimal_dimension(
+                required_metrics_for_scoring=["coverage_pct"],
+            ),
+        )
+
+        errors = validate_repository(framework_root, products_dir)
+
+        assert any(
+            "required_metrics_for_scoring references undeclared output 'coverage_pct'" in error
+            for error in errors
+        )
+
+    def test_reports_unknown_metric_implementation_ids(self, tmp_path):
+        framework_root, products_dir = _write_repository_fixture(
+            tmp_path,
+            v0_dimensions=_minimal_dimension(
+                outputs={
+                    "latest_build_passing": {
+                        "implementation": "latest-build-passing/v99",
+                        "type": "boolean",
+                        "label": "Latest build passing",
+                        "description": "Latest CI summary has no failures.",
+                    }
+                },
+            ),
+        )
+
+        errors = validate_repository(framework_root, products_dir)
+
+        assert any(
+            "unknown metric implementation 'latest-build-passing/v99'" in error for error in errors
+        )
+
+    def test_reports_missing_target_at_product_introduction(self, tmp_path):
+        framework_root, products_dir = _write_repository_fixture(
+            tmp_path,
+            products=[_minimal_leaf_product(targets={"v1": "bronze"})],
+        )
+
+        errors = validate_repository(framework_root, products_dir)
+
+        assert any(
+            "Missing target declaration at introduced_in boundary v0" in error for error in errors
+        )
+
+    def test_reports_invalid_active_composition_edges(self, tmp_path):
+        framework_root, products_dir = _write_repository_fixture(
+            tmp_path,
+            products=[
+                {
+                    "id": "test-root",
+                    "product_type": "root",
+                    "name": "Test Root",
+                    "lifecycle": "stable",
+                    "introduced_in": "v0",
+                    "targets": {"v0": "bronze", "v1": "bronze"},
+                    "ownership": {"squad": "team-a"},
+                    "composed_of": [{"ref": "future-leaf", "introduced_in": "v0"}],
+                },
+                _minimal_leaf_product(
+                    product_id="future-leaf",
+                    introduced_in="v1",
+                    targets={"v1": "bronze"},
+                ),
+            ],
+        )
+
+        errors = validate_repository(framework_root, products_dir)
+
+        assert any(
+            "active composition edge to inactive product 'future-leaf'" in error for error in errors
+        )
