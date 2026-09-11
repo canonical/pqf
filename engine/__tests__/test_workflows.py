@@ -563,6 +563,8 @@ def test_cleanup_preview_workflow_runs_only_on_pr_close() -> None:
     assert step["with"]["action"] == "remove"
     assert step["with"]["preview-branch"] == "gh-pages"
     assert step["with"]["umbrella-dir"] == "pr-preview"
+    assert step["with"]["pr-number"] == "${{ github.event.pull_request.number }}"
+    assert step["with"]["comment"] is False
 
 
 def test_preview_workflow_extracts_public_artifacts_after_reset() -> None:
