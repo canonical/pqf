@@ -259,7 +259,9 @@ an older pending run while the active run completes. Main-branch runs are serial
 UI-only commit cannot discard unpublished scoring changes; after the active run publishes, the
 newest pending checkout compares itself with the last successfully published `source_revision`.
 That range includes scoring changes from failed or superseded runs before it carries artifacts
-forward and deploys the latest UI.
+forward and deploys the latest UI. Immediately before production publication, the workflow also
+checks that its source SHA is still the current `main` tip. Older scheduled runs are skipped, and
+manual runs from non-main refs can compute but cannot publish to the production root.
 
 ### `deploy-legacy.yml` — one-off legacy snapshot
 

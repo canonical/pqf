@@ -587,12 +587,40 @@ jobs:
           body="Preview deployed: $url"
           gh pr comment ${{ github.event.pull_request.number }} --edit-last --create-if-none --body "$body"
 
-  # ── 7. Build and deploy production site from fresh engine artifacts ───────────
-  deploy-production:
+  # ── 7. Confirm this run still represents the production branch tip ─────────
+  check-production-tip:
     needs: run-engine
     if: >
-      github.event_name == 'schedule' || github.event_name == 'workflow_dispatch' ||
-      (github.event_name == 'push' && github.ref == 'refs/heads/main' && github.repository == 'canonical/pqf')
+      github.repository == 'canonical/pqf' &&
+      github.ref == 'refs/heads/main' &&
+      (github.event_name == 'push' || github.event_name == 'schedule' ||
+       github.event_name == 'workflow_dispatch')
+    runs-on: ubuntu-latest
+    outputs:
+      current: ${{ steps.tip.outputs.current }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Check current main revision
+        id: tip
+        env:
+          GITHUB_SHA: ${{ github.sha }}
+        run: |
+          set -euo pipefail
+          main_tip=$(git ls-remote origin refs/heads/main | cut -f1)
+          if [ "$main_tip" = "$GITHUB_SHA" ]; then
+            echo "current=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "current=false" >> "$GITHUB_OUTPUT"
+            echo "Skipping production deploy: $GITHUB_SHA is no longer the main tip."
+          fi
+
+  # ── 8. Build and deploy production site from fresh engine artifacts ───────────
+  deploy-production:
+    needs: [run-engine, check-production-tip]
+    if: needs.check-production-tip.outputs.current == 'true'
     runs-on: ubuntu-latest
     concurrency:
       group: gh-pages

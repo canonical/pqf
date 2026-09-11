@@ -121,6 +121,7 @@ def test_compute_metrics_deploys_production_from_engine_artifacts() -> None:
         "assemble-versions",
         "run-engine",
         "build-preview",
+        "check-production-tip",
         "deploy-production",
     ]:
         assert job_name in jobs, f"expected '{job_name}' job"
@@ -390,18 +391,8 @@ def test_compute_metrics_deploys_production_from_engine_artifacts() -> None:
     )
 
     deploy_job = jobs["deploy-production"]
-    assert deploy_job["needs"] == "run-engine"
-    # Production deploy must be allowed for schedule, workflow_dispatch,
-    # or pushes to main in canonical/pqf.
-    expr = deploy_job["if"]
-    assert "github.event_name == 'schedule'" in expr
-    assert "github.event_name == 'workflow_dispatch'" in expr
-    assert "github.event_name == 'push'" in expr
-    assert "github.ref == 'refs/heads/main'" in expr
-    assert "github.repository == 'canonical/pqf'" in expr
-    # 'needs: run-engine' without a status function keeps the implicit success()
-    # gate, so a blocked run-engine also blocks the deploy.
-    assert "always()" not in expr
+    assert deploy_job["needs"] == ["run-engine", "check-production-tip"]
+    assert deploy_job["if"] == "needs.check-production-tip.outputs.current == 'true'"
 
     names = step_names(deploy_job)
     assert "Reset public data" in names
@@ -518,6 +509,17 @@ def test_compute_metrics_is_the_only_production_pages_publisher() -> None:
     )
 
     compute_deploy = compute_workflow["jobs"]["deploy-production"]
+    tip_check = compute_workflow["jobs"]["check-production-tip"]
+    assert tip_check["needs"] == "run-engine"
+    assert "github.repository == 'canonical/pqf'" in tip_check["if"]
+    assert "github.event_name == 'workflow_dispatch'" in tip_check["if"]
+    assert "github.ref == 'refs/heads/main'" in tip_check["if"]
+    tip_step = next(step for step in tip_check["steps"] if step.get("id") == "tip")
+    assert "git ls-remote origin refs/heads/main" in tip_step["run"]
+    assert '"$main_tip" = "$GITHUB_SHA"' in tip_step["run"]
+
+    assert compute_deploy["needs"] == ["run-engine", "check-production-tip"]
+    assert compute_deploy["if"] == ("needs.check-production-tip.outputs.current == 'true'")
     assert compute_deploy["concurrency"] == {
         "group": "gh-pages",
         "cancel-in-progress": False,
