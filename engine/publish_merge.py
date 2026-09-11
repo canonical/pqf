@@ -78,10 +78,16 @@ def merge_latest_versions(
         candidate_path = destination / "portfolio.json"
         latest_path = latest_version / "portfolio.json"
         candidate = _load_portfolio(candidate_path)
-        latest = _load_portfolio(latest_path)
-        if _same_scoring_identity(candidate, latest) and _generated_at(
-            latest, latest_path
-        ) > _generated_at(candidate, candidate_path):
+        candidate_generated_at = _generated_at(candidate, candidate_path)
+        try:
+            latest = _load_portfolio(latest_path)
+            latest_generated_at = _generated_at(latest, latest_path)
+        except ValueError:
+            continue
+        if (
+            _same_scoring_identity(candidate, latest)
+            and latest_generated_at > candidate_generated_at
+        ):
             _replace_directory(latest_version, destination)
 
 

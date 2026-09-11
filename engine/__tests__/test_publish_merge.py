@@ -90,3 +90,22 @@ def test_merge_keeps_selected_copy_when_scoring_identity_differs(tmp_path):
 
     merged = json.loads((candidate / "versions/v1/portfolio.json").read_text())
     assert merged["source_revision"] == "new-main"
+
+
+def test_merge_keeps_selected_copy_when_latest_published_portfolio_is_malformed(tmp_path):
+    candidate = tmp_path / "candidate"
+    latest = tmp_path / "latest"
+    _write_portfolio(
+        candidate,
+        "v1",
+        source_revision="new-main",
+        generated_at="2026-09-14T01:00:00+00:00",
+    )
+    latest_version = latest / "versions/v1"
+    latest_version.mkdir(parents=True)
+    (latest_version / "portfolio.json").write_text("{broken json")
+
+    merge_latest_versions(candidate, latest, selected_versions={"v1"})
+
+    merged = json.loads((candidate / "versions/v1/portfolio.json").read_text())
+    assert merged["source_revision"] == "new-main"
