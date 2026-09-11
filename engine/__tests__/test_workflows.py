@@ -159,6 +159,10 @@ def test_compute_metrics_deploys_production_from_engine_artifacts() -> None:
     # First-run bootstrap: the matrix script is told where the published site is so
     # live versions missing a portfolio there are scored automatically, but only
     # when gh-pages truly does not exist. A real checkout failure must fail.
+    assert ".gh-pages-data/portfolio.json" in build_run
+    assert ".source_revision // empty" in build_run
+    assert 'range="$published_revision...$HEAD_SHA"' in build_run
+    assert 'git merge-base --is-ancestor "$published_revision" "$HEAD_SHA"' in build_run
     assert "--published-dir .gh-pages-data" in build_run
     pages_probe = next(
         step
@@ -183,8 +187,9 @@ def test_compute_metrics_deploys_production_from_engine_artifacts() -> None:
         "Build framework/product matrix"
     )
 
-    # A force-push / new branch has no usable base commit; the diff must not explode.
-    assert "0000000000000000000000000000000000000000" in build_run
+    # A first publish, force-push, or pruned published revision has no usable base
+    # commit; the diff must not explode.
+    assert "^[0-9a-fA-F]{40}$" in build_run
     assert "git ls-files" in build_run
 
     # ---- compute-metrics: one job per (version, product), looping dimensions ----

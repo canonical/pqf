@@ -257,7 +257,9 @@ artifacts are carried forward, and the latest UI is deployed without invoking re
 Keeping production publication in this single workflow also ensures a newer main-branch run cancels
 an older pending run while the active run completes. Main-branch runs are serialized so a newer
 UI-only commit cannot discard unpublished scoring changes; after the active run publishes, the
-newest pending checkout carries those artifacts forward and deploys the latest UI.
+newest pending checkout compares itself with the last successfully published `source_revision`.
+That range includes scoring changes from failed or superseded runs before it carries artifacts
+forward and deploys the latest UI.
 
 ### `deploy-legacy.yml` — one-off legacy snapshot
 
