@@ -6,7 +6,7 @@ from pathlib import Path
 from types import MappingProxyType
 from typing import Any
 
-from engine.models import EvaluationUnit
+from engine.models import EvaluationUnit, ProductType
 from scorers.documentation import logic as documentation_logic
 from scorers.engagement import logic as engagement_logic
 from scorers.security_ssdlc import logic as security_ssdlc_logic
@@ -29,6 +29,23 @@ class MetricBinding:
     dimension: str
     output_key: str
     runner_key: str
+
+
+@dataclass(frozen=True)
+class RunnerCacheKey:
+    runner_key: str
+    source_digest: str
+    product_id: str
+    product_type: ProductType
+    repo: str
+    subpath: str | None
+    allure_report_url: str
+    documentation_url: str
+    target_medal: str
+    context: ScorerContext
+
+
+RunnerCache = dict[RunnerCacheKey, dict[str, Any]]
 
 
 def _run_test_verification(unit: EvaluationUnit, context: ScorerContext) -> dict[str, Any]:
@@ -280,6 +297,8 @@ def run_dimension(
     dimension_name: str,
     dimension_config: dict[str, Any],
     context: ScorerContext,
+    *,
+    runner_cache: RunnerCache | None = None,
 ) -> dict[str, Any]:
     selected = _selected_bindings(dimension_config, dimension_name=dimension_name)
     runner_results: dict[str, dict[str, Any]] = {}
@@ -287,7 +306,25 @@ def run_dimension(
     for _, binding in selected:
         if binding.runner_key in runner_results:
             continue
-        runner_results[binding.runner_key] = RUNNERS[binding.runner_key](unit, context)
+        cache_key = RunnerCacheKey(
+            runner_key=binding.runner_key,
+            source_digest=_runner_source_digest(binding.runner_key),
+            product_id=unit.product_id,
+            product_type=unit.product_type,
+            repo=unit.repo,
+            subpath=unit.subpath,
+            allure_report_url=unit.allure_report_url,
+            documentation_url=unit.documentation_url,
+            target_medal=unit.target_medal,
+            context=context,
+        )
+        if runner_cache is not None and cache_key in runner_cache:
+            outputs = runner_cache[cache_key]
+        else:
+            outputs = RUNNERS[binding.runner_key](unit, context)
+            if runner_cache is not None:
+                runner_cache[cache_key] = outputs
+        runner_results[binding.runner_key] = outputs
 
     metrics: dict[str, Any] = {}
     for implementation_id, binding in selected:
@@ -302,13 +339,17 @@ def run_dimension(
     return metrics
 
 
+def _runner_source_digest(runner_key: str) -> str:
+    digest = hashlib.sha256()
+    for source_path in RUNNER_SOURCE_FILES[runner_key]:
+        content = source_path.read_bytes()
+        digest.update(len(content).to_bytes(8, byteorder="big"))
+        digest.update(content)
+    return digest.hexdigest()
+
+
 def implementation_fingerprints(dimension_config: dict[str, Any]) -> dict[str, str]:
     fingerprints: dict[str, str] = {}
     for implementation_id, binding in _selected_bindings(dimension_config):
-        digest = hashlib.sha256()
-        for source_path in RUNNER_SOURCE_FILES[binding.runner_key]:
-            content = source_path.read_bytes()
-            digest.update(len(content).to_bytes(8, byteorder="big"))
-            digest.update(content)
-        fingerprints[implementation_id] = digest.hexdigest()
+        fingerprints[implementation_id] = _runner_source_digest(binding.runner_key)
     return fingerprints
