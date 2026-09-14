@@ -1,30 +1,16 @@
 import { Fragment } from 'react'
-import { useParams, Link } from 'react-router'
+import { useParams } from 'react-router'
+import VersionLink from '../components/VersionLink'
 import { usePortfolio } from '../hooks/usePortfolio'
 import MedalBadge from '../components/MedalBadge'
 import LoadingSpinner from '../components/LoadingSpinner'
 import { RESULT_ORDER } from '../lib/groupedPortfolioView'
-import type { DriftInfo } from '../types'
 import { buildDimensionGroupedRows } from '../lib/groupedPortfolioView'
 
 const TIER_LABELS = ['gold', 'silver', 'bronze'] as const
 
 function parseCriterionMetric(criterion: string): string {
   return criterion.split(/\s+/)[0]
-}
-
-function renderDriftDeadline(drift: DriftInfo | null) {
-  if (drift === null) {
-    return <span style={{ color: '#0e8420', fontWeight: 600 }}>✓</span>
-  }
-
-  const deadline = drift.deadline.slice(0, 10)
-
-  if (drift.status === 'overdue') {
-    return <span>🔴 Overdue · {deadline}</span>
-  }
-
-  return <span>🟡 Remediating · {deadline}</span>
 }
 
 export default function DimensionDetail() {
@@ -40,7 +26,7 @@ export default function DimensionDetail() {
     return (
       <div className="row" style={{ paddingTop: '1.5rem' }}>
         <div className="col-12">
-          <p>Dimension <strong>{id}</strong> not found. <Link to="/">Back to overview</Link></p>
+          <p>Dimension <strong>{id}</strong> not found. <VersionLink to="/">Back to overview</VersionLink></p>
         </div>
       </div>
     )
@@ -56,7 +42,7 @@ export default function DimensionDetail() {
       <div className="col-12">
 
         {/* Back nav */}
-        <p style={{ marginBottom: '1rem' }}><Link to="/">← Overview</Link></p>
+        <p style={{ marginBottom: '1rem' }}><VersionLink to="/">← Overview</VersionLink></p>
 
         {/* Header card */}
         <div className="p-card u-sv3">
@@ -87,9 +73,9 @@ export default function DimensionDetail() {
                 {Object.entries(meta.outputs).map(([key, out], idx) => (
                   <tr key={key} style={{ borderBottom: '1px solid #e5e5e5', background: idx % 2 === 0 ? '#fafafa' : '#fff' }}>
                     <td style={{ padding: '0.75rem', verticalAlign: 'top' }}>
-                      <Link to={`/dimensions/${id}/metrics/${key}`} style={{ fontWeight: 600, display: 'block' }}>
+                      <VersionLink to={`/dimensions/${id}/metrics/${key}`} style={{ fontWeight: 600, display: 'block' }}>
                         {out.label}
-                      </Link>
+                      </VersionLink>
                       <code style={{ fontSize: '0.75rem', color: '#666' }}>{key}</code>
                     </td>
                     <td style={{ padding: '0.75rem', verticalAlign: 'top', fontSize: '0.875rem' }}>
@@ -188,15 +174,15 @@ export default function DimensionDetail() {
           <div style={{ overflowX: 'auto' }}>
             <table style={{ tableLayout: 'fixed', width: '100%', borderCollapse: 'collapse' }}>
               <colgroup>
-                <col style={{ width: '40%' }} />
-                <col style={{ width: '25%' }} />
-                <col style={{ width: '35%' }} />
+                <col style={{ width: '48%' }} />
+                <col style={{ width: '16%' }} />
+                <col style={{ width: '36%' }} />
               </colgroup>
               <thead>
                 <tr style={{ borderBottom: '1px solid #d9d9d9' }}>
                   <th style={{ padding: '0.5rem 0.75rem', textAlign: 'left', fontSize: '0.75rem', fontWeight: 600, textTransform: 'uppercase', color: '#666' }}>Product</th>
+                  <th style={{ padding: '0.5rem 0.75rem', textAlign: 'left', fontSize: '0.75rem', fontWeight: 600, textTransform: 'uppercase', color: '#666' }}>Target</th>
                   <th style={{ padding: '0.5rem 0.75rem', textAlign: 'left', fontSize: '0.75rem', fontWeight: 600, textTransform: 'uppercase', color: '#666' }}>Dimension score</th>
-                  <th style={{ padding: '0.5rem 0.75rem', textAlign: 'left', fontSize: '0.75rem', fontWeight: 600, textTransform: 'uppercase', color: '#666' }}>Drift / Deadline</th>
                 </tr>
               </thead>
               <tbody>
@@ -209,29 +195,32 @@ export default function DimensionDetail() {
                       }}
                     >
                       <td style={{ padding: '0.75rem', verticalAlign: 'top' }}>
-                        <Link to={`/products/${group.root.product.id}`} style={{ fontWeight: 600 }}>
+                        <VersionLink to={`/products/${group.root.product.id}`} style={{ fontWeight: 600 }}>
                           {group.root.product.name}
-                        </Link>
+                        </VersionLink>
+                      </td>
+                      <td style={{ padding: '0.75rem', verticalAlign: 'top' }}>
+                        <MedalBadge medal={group.root.product.target_result} size="small" />
                       </td>
                       <td style={{ padding: '0.75rem', verticalAlign: 'top' }}>
                         <MedalBadge medal={group.root.entry.result} size="small" />
                       </td>
-                      <td style={{ padding: '0.75rem', verticalAlign: 'top' }}>
-                        {renderDriftDeadline(group.root.entry.drift)}
-                      </td>
                     </tr>
-                    {group.leaves.map((leaf) => (
-                      <tr key={leaf.product.id} style={{ borderBottom: '1px solid #e5e5e5', background: '#fff' }}>
+                    {group.leaves.map(leaf => (
+                      <tr
+                        key={leaf.product.id}
+                        style={{ borderBottom: '1px solid #e5e5e5', background: '#fff' }}
+                      >
                         <td style={{ padding: '0.75rem', verticalAlign: 'top' }}>
-                          <Link to={`/products/${leaf.product.id}`} style={{ fontWeight: 500 }}>
+                          <VersionLink to={`/products/${leaf.product.id}`} style={{ fontWeight: 500 }}>
                             ↳ {leaf.product.name}
-                          </Link>
+                          </VersionLink>
+                        </td>
+                        <td style={{ padding: '0.75rem', verticalAlign: 'top' }}>
+                          <MedalBadge medal={leaf.product.target_result} size="small" />
                         </td>
                         <td style={{ padding: '0.75rem', verticalAlign: 'top' }}>
                           <MedalBadge medal={leaf.entry.result} size="small" />
-                        </td>
-                        <td style={{ padding: '0.75rem', verticalAlign: 'top' }}>
-                          {leaf.entry.drift ? renderDriftDeadline(leaf.entry.drift) : <span style={{ color: '#999' }}>—</span>}
                         </td>
                       </tr>
                     ))}
@@ -243,7 +232,7 @@ export default function DimensionDetail() {
         </div>
 
         <p className="u-sv2">
-          <Link to="/about">Learn more about the framework →</Link>
+          <VersionLink to="/about">Learn more about the framework →</VersionLink>
         </p>
 
       </div>

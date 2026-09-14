@@ -1,59 +1,72 @@
 id: matrix
 product_type: root
 name: Matrix
-description: |-
-  Matrix is a drop in replacement for other chat servers like Mattermost and Slack.
-  The synapse charm is useful if you want to spin up your own chat instance.
+description: 'Matrix is a drop in replacement for other chat servers like Mattermost
+  and Slack.
+
+  The synapse charm is useful if you want to spin up your own chat instance.'
 lifecycle: stable
-target_medal: gold
+introduced_in: v0
+targets:
+  v0: gold
+  v1: gold
 ownership:
   squad: americas
   stakeholders:
-    - Mauro Gaspari
-    - Aaron Prisk
-    - IS
-composed_of:
-  - id: synapse
-    product_type: charm
-    source:
-      repo: canonical/synapse-operator
-    allure_report_url: "https://canonical.github.io/synapse-operator/_latest"
-  - id: draupnir
-    product_type: snap
-    source:
-      repo: canonical/draupnir-snap
-  - id: mjolnir
-    product_type: snap
-    source:
-      repo: canonical/mjolnir-snap
-  - id: mas-cli
-    product_type: snap
-    source:
-      repo: canonical/mas-cli-snap
-  - id: matrix-appservice-irc
-    product_type: snap
-    source:
-      repo: canonical/matrix-appservice-irc
-  - id: synapse-stats-exporter
-    product_type: snap
-    source:
-      repo: canonical/synapse_stats_exporter
-  - ref: saml-integrator
-  - id: maubot
-    product_type: charm
-    source:
-      repo: canonical/maubot-operator
-  - id: irc-bridge
-    product_type: charm
-    source:
-      repo: canonical/irc-bridge-operator
+  - Mauro Gaspari
+  - Aaron Prisk
+  - IS
 documentation_url: https://ubuntu.com/community/communications/matrix
+composed_of:
+- id: synapse
+  product_type: charm
+  introduced_in: v0
+  source:
+    repo: canonical/synapse-operator
+  allure_report_url: https://canonical.github.io/synapse-operator/_latest
+- id: draupnir
+  product_type: snap
+  introduced_in: v0
+  source:
+    repo: canonical/draupnir-snap
+- id: mjolnir
+  product_type: snap
+  introduced_in: v0
+  source:
+    repo: canonical/mjolnir-snap
+- id: mas-cli
+  product_type: snap
+  introduced_in: v0
+  source:
+    repo: canonical/mas-cli-snap
+- id: matrix-appservice-irc
+  product_type: snap
+  introduced_in: v0
+  source:
+    repo: canonical/matrix-appservice-irc
+- id: synapse-stats-exporter
+  product_type: snap
+  introduced_in: v0
+  source:
+    repo: canonical/synapse_stats_exporter
+- ref: saml-integrator
+  introduced_in: v0
+- id: maubot
+  product_type: charm
+  introduced_in: v0
+  source:
+    repo: canonical/maubot-operator
+- id: irc-bridge
+  product_type: charm
+  introduced_in: v0
+  source:
+    repo: canonical/irc-bridge-operator
 context_refs:
-  - label: Smtp Integrator
-    repo: canonical/smtp-integrator-operator
-  - label: S3 Integrator
-    repo: canonical/s3-integrator
-  - label: Postgresql K8S
-    repo: canonical/postgresql-k8s-operator
-  - label: Redis K8S
-    repo: canonical/redis-k8s-operator
+- label: Smtp Integrator
+  repo: canonical/smtp-integrator-operator
+- label: S3 Integrator
+  repo: canonical/s3-integrator
+- label: Postgresql K8S
+  repo: canonical/postgresql-k8s-operator
+- label: Redis K8S
+  repo: canonical/redis-k8s-operator

@@ -1,16 +1,21 @@
 from datetime import UTC, datetime
 
+import pytest
 import requests
 import responses
 
 from engine.models import EvaluationUnit, ProductType
 from scorers.engagement.logic import (
+    _compute_issue_triage_stats,
+    _compute_pr_review_stats,
     _fetch_repo_views_14d,
     _has_jira_sync,
     _has_squad_topic,
+    _make_github_session,
     _paginate_json_array,
     compute_metrics,
 )
+from scorers.shared.github_signals import GitHubAcquisitionError
 
 _GITHUB_API = "https://api.github.com"
 
@@ -166,6 +171,40 @@ def test_avg_triage_days_computed_correctly(mocker):
     assert result["repo_views_14d"] == 1250
 
 
+@pytest.mark.parametrize("status", [400, 401, 403, 404, 405, 422, 429, 500])
+@responses.activate
+def test_issue_comment_acquisition_raises_on_final_required_evidence_failure(status):
+    url = f"{_GITHUB_API}/repos/canonical/example/issues/1/comments"
+    responses.add(responses.GET, url, json={"message": "failure"}, status=status)
+
+    with pytest.raises(GitHubAcquisitionError) as exc_info:
+        _compute_issue_triage_stats(
+            [_ISSUES[0]],
+            _make_github_session(""),
+            "canonical/example",
+        )
+
+    assert exc_info.value.status_code == status
+    assert exc_info.value.url == url
+
+
+@pytest.mark.parametrize("status", [400, 401, 403, 404, 405, 422, 429, 500])
+@responses.activate
+def test_pr_review_acquisition_raises_on_final_required_evidence_failure(status):
+    url = f"{_GITHUB_API}/repos/canonical/example/pulls/10/reviews"
+    responses.add(responses.GET, url, json={"message": "failure"}, status=status)
+
+    with pytest.raises(GitHubAcquisitionError) as exc_info:
+        _compute_pr_review_stats(
+            [_PULLS[0]],
+            _make_github_session(""),
+            "canonical/example",
+        )
+
+    assert exc_info.value.status_code == status
+    assert exc_info.value.url == url
+
+
 @responses.activate
 def test_returns_none_when_insufficient_activity():
     responses.add(
@@ -277,6 +316,111 @@ def test_has_squad_topic_true():
     session.headers.update({"Authorization": "******"})
     result = _has_squad_topic("canonical/test-repo", session)
     assert result is True
+
+
+@pytest.mark.parametrize("status", [400, 404, 403, 405, 422, 429, 500])
+@responses.activate
+def test_has_squad_topic_raises_when_required_evidence_cannot_be_acquired(status):
+    url = f"{_GITHUB_API}/repos/canonical/test-repo/topics"
+    responses.add(
+        responses.GET,
+        url,
+        json={"message": "first failure must not leak"},
+        status=status,
+        headers={"X-RateLimit-Remaining": "0"} if status == 403 else {},
+    )
+    if status in {403, 429}:
+        responses.add(
+            responses.GET,
+            url,
+            json={"message": "final failure must not leak"},
+            status=status,
+        )
+    session = requests.Session()
+    session.headers.update({"Authorization": "token secret-token"})
+
+    with pytest.raises(GitHubAcquisitionError) as exc_info:
+        _has_squad_topic("canonical/test-repo", session)
+
+    assert exc_info.value.status_code == status
+    assert exc_info.value.url == url
+    assert "secret-token" not in str(exc_info.value)
+    assert "must not leak" not in str(exc_info.value)
+    assert len(responses.calls) == (2 if status in {403, 429} else 1)
+
+
+@responses.activate
+def test_has_jira_sync_treats_not_found_as_absent():
+    url = f"{_GITHUB_API}/repos/canonical/test-repo/contents/.github/.jira_sync_config.yaml"
+    responses.add(
+        responses.GET,
+        url,
+        json={"message": "Not Found"},
+        status=404,
+    )
+
+    result = _has_jira_sync("canonical/test-repo", _make_github_session("secret-token"))
+
+    assert result is False
+
+
+@pytest.mark.parametrize("status", [400, 401, 403, 405, 422, 429, 500])
+@responses.activate
+def test_has_jira_sync_raises_when_acquisition_fails(status):
+    url = f"{_GITHUB_API}/repos/canonical/test-repo/contents/.github/.jira_sync_config.yaml"
+    responses.add(
+        responses.GET,
+        url,
+        json={"message": "first failure must not leak"},
+        status=status,
+    )
+    if status in {401, 429}:
+        responses.add(
+            responses.GET,
+            url,
+            json={"message": "final failure must not leak"},
+            status=status,
+        )
+
+    with pytest.raises(GitHubAcquisitionError) as exc_info:
+        _has_jira_sync("canonical/test-repo", _make_github_session("secret-token"))
+
+    assert exc_info.value.status_code == status
+    assert exc_info.value.url == url
+    assert "secret-token" not in str(exc_info.value)
+    assert "must not leak" not in str(exc_info.value)
+    assert len(responses.calls) == (2 if status in {401, 429} else 1)
+    if status in {401, 429}:
+        assert "Authorization" not in responses.calls[1].request.headers
+
+
+@responses.activate
+def test_has_squad_topic_raises_when_anonymous_retry_remains_unauthorized():
+    url = f"{_GITHUB_API}/repos/canonical/test-repo/topics"
+    responses.add(
+        responses.GET,
+        url,
+        json={"message": "authenticated body must not leak"},
+        status=401,
+    )
+    responses.add(
+        responses.GET,
+        url,
+        json={"message": "anonymous body must not leak"},
+        status=401,
+    )
+    session = requests.Session()
+    session.headers.update({"Authorization": "token secret-token"})
+
+    with pytest.raises(GitHubAcquisitionError) as exc_info:
+        _has_squad_topic("canonical/test-repo", session)
+
+    assert exc_info.value.status_code == 401
+    assert exc_info.value.url == url
+    assert "secret-token" not in str(exc_info.value)
+    assert "must not leak" not in str(exc_info.value)
+    assert len(responses.calls) == 2
+    assert "Authorization" not in responses.calls[1].request.headers
 
 
 @responses.activate
@@ -446,6 +590,8 @@ def test_paginate_json_array_fetches_all_pages():
     class _Resp:
         def __init__(self, ok, payload):
             self.ok = ok
+            self.status_code = 200 if ok else 500
+            self.headers = {}
             self._payload = payload
 
         def json(self):
@@ -454,6 +600,7 @@ def test_paginate_json_array_fetches_all_pages():
     class _Session:
         def __init__(self):
             self.calls = 0
+            self.headers = {}
 
         def get(self, url, params, timeout):
             self.calls += 1
@@ -471,6 +618,72 @@ def test_paginate_json_array_fetches_all_pages():
     assert session.calls == 2
 
 
+def test_paginate_json_array_stops_at_ordered_cutoff():
+    class _Resp:
+        ok = True
+        status_code = 200
+        headers = {}
+
+        def json(self):
+            return [
+                {"id": 1, "created_at": "2026-06-02T00:00:00Z"},
+                {"id": 2, "created_at": "2026-05-31T00:00:00Z"},
+            ]
+
+    class _Session:
+        def __init__(self):
+            self.calls = 0
+
+        def get(self, url, params, timeout):
+            self.calls += 1
+            return _Resp()
+
+    session = _Session()
+    items = _paginate_json_array(
+        session,
+        "https://api.github.com/repos/canonical/example/pulls",
+        {"state": "all", "per_page": 100},
+        stop_when=lambda item: item["created_at"] < "2026-06-01T00:00:00Z",
+    )
+
+    assert items == [{"id": 1, "created_at": "2026-06-02T00:00:00Z"}]
+    assert session.calls == 1
+
+
+@pytest.mark.parametrize("status", [400, 404, 403, 405, 422, 429, 500])
+@pytest.mark.parametrize("endpoint", ["issues", "pulls"])
+@responses.activate
+def test_paginate_json_array_raises_when_required_evidence_cannot_be_acquired(endpoint, status):
+    url = f"https://api.github.com/repos/canonical/example/{endpoint}"
+    responses.add(
+        responses.GET,
+        url,
+        json={"message": "first failure must not leak"},
+        status=status,
+        headers={"X-RateLimit-Remaining": "0"} if status == 403 else {},
+    )
+    if status in {403, 429}:
+        responses.add(
+            responses.GET,
+            url,
+            json={"message": "final failure must not leak"},
+            status=status,
+        )
+
+    with pytest.raises(GitHubAcquisitionError) as exc_info:
+        _paginate_json_array(
+            _make_github_session("secret-token"),
+            url,
+            {"state": "all", "per_page": 100},
+        )
+
+    assert exc_info.value.status_code == status
+    assert exc_info.value.url == url
+    assert str(exc_info.value) == f"GitHub evidence acquisition failed: status={status} url={url}"
+    assert "secret-token" not in str(exc_info.value)
+    assert len(responses.calls) == (2 if status in {403, 429} else 1)
+
+
 @responses.activate
 def test_fetch_repo_views_14d_success():
     """Traffic API returns view count successfully."""
@@ -486,14 +699,14 @@ def test_fetch_repo_views_14d_success():
     assert result == 1250
 
 
+@pytest.mark.parametrize("status", [400, 403, 405, 422])
 @responses.activate
-def test_fetch_repo_views_14d_forbidden():
-    """Traffic API returns 403 Forbidden (no read access)."""
+def test_fetch_repo_views_14d_returns_none_for_unsuccessful_optional_response(status):
     responses.add(
         responses.GET,
         f"{_GITHUB_API}/repos/canonical/test-repo/traffic/views",
-        json={"message": "Forbidden"},
-        status=403,
+        json={"message": "Unavailable"},
+        status=status,
     )
     session = requests.Session()
     session.headers.update({"Authorization": "token"})

@@ -15,7 +15,6 @@ The **Products** table lists every tracked product with its current quality stat
 | **Product** | Product name, linking to its detail page |
 | **Current** | Current overall result (gold / silver / bronze / below minimum / no data) |
 | **Target** | The result the team has committed to achieving |
-| **Drift** | Whether the product is falling behind its target (see below) |
 | **Squad** | Owning team (AMER / EMEA / APAC), linked to the GitHub team |
 | **Actions** | Link to the Product Detail page |
 
@@ -26,19 +25,36 @@ The **Products** table lists every tracked product with its current quality stat
 | 🥇 Gold | `#C7962F` | Meets all gold-tier criteria |
 | 🥈 Silver | `#8F8F8F` | Meets all silver-tier criteria |
 | 🥉 Bronze | `#9E622A` | Meets all bronze-tier criteria |
-| ⬇ Below minimum | `#C7162B` | Measured, but did not meet minimum criteria |
+| ⬇ Below minimum | `#666` | Measured, but did not meet minimum criteria |
 | — No data | `#666` | Scoring data not yet available |
 
-### Drift indicators
+### Framework version selector
 
-Drift tracks whether a product is moving toward or away from its target result over time.
+Every page is scoped to a framework version. The selector in the top-right switches versions and
+preserves the current sub-route — routes are `#/<version>/...`. Options are grouped by lifecycle
+state (Upcoming, Active, Archived) from `public/framework-versions.json`, which is the sole
+authority for which versions exist and how they are labelled. Upcoming versions also show when the
+data was last refreshed, because they are regenerated weekly rather than nightly.
 
-| Indicator | Meaning |
-|-----------|---------|
-| ⬆ | Result improved since last week |
-| ⬇ Remediating | Result dropped below target — team has time to fix |
-| ⬇ Overdue | Remediation window has expired without recovery |
-| — | No change |
+Archived versions stay selectable and keep serving their frozen measurements; they are never
+rescored. The pre-versioning snapshot is served separately at `/legacy/` and is not linked from
+this UI.
+
+### Framework compliance summary
+
+The overview includes the framework compliance summary from the selected portfolio artifact. It
+shows aggregate counts for products meeting target, falling below target, or lacking sufficient
+data. This summary is rendered directly from the portfolio payload and is not recomputed in the
+UI.
+
+| Field | Meaning |
+|-------|---------|
+| Meeting target | Products at or above their target result |
+| Below target | Products measured below target |
+| Insufficient data | Products that could not be scored confidently |
+
+There are no remediation deadlines and no drift clocks: the summary is a point-in-time compliance
+count for the selected framework version, not a countdown.
 
 ---
 

@@ -1,9 +1,6 @@
 """
 Badge generator: produces shields.io-compatible SVG badges for each product.
 
-Badge state priority:
-  overdue > remediating > current_medal
-
 Usage:
     python engine/badges.py \
         --portfolio public/portfolio.json \
@@ -20,28 +17,15 @@ _COLORS: dict[str, str] = {
     "silver": "#9E9E9E",
     "bronze": "#CD7F32",
     "unrated": "#9F9F9F",
-    "remediating": "#E98B06",
-    "overdue": "#E05252",
+    "below_minimum": "#9F9F9F",
+    "insufficient_data": "#9F9F9F",
+    "not_applicable": "#9F9F9F",
 }
 
 
 def badge_state(product_entry: dict) -> str:
-    """
-    Return the display state for a product's badge.
-    Checks all dimensions for drift status; overdue > remediating > current_medal.
-    """
-    has_remediating = False
-    for dim in product_entry.get("dimensions", {}).values():
-        drift = dim.get("drift")
-        if drift is None:
-            continue
-        if drift.get("status") == "overdue":
-            return "overdue"
-        if drift.get("status") == "remediating":
-            has_remediating = True
-    if has_remediating:
-        return "remediating"
-    return product_entry.get("current_medal", "unrated")
+    """Return the display state for a product's badge."""
+    return product_entry.get("current_result", product_entry.get("current_medal", "unrated"))
 
 
 def generate_badge(product_entry: dict) -> str:
@@ -51,7 +35,6 @@ def generate_badge(product_entry: dict) -> str:
     label = "quality"
     value = state
 
-    # Width computation: label ~55px, value ~61px
     label_width = 55
     value_width = max(len(value) * 7 + 10, 40)
     total_width = label_width + value_width
@@ -88,7 +71,7 @@ def generate_badge(product_entry: dict) -> str:
 
 def main() -> int:
     parser = argparse.ArgumentParser(description="PQF badge generator")
-    parser.add_argument("--portfolio", required=True, help="Path to public/portfolio.json")
+    parser.add_argument("--portfolio", required=True, help="Path to active public/portfolio.json")
     parser.add_argument("--output-dir", required=True, help="Directory for badge SVG files")
     args = parser.parse_args()
 

@@ -1,158 +1,258 @@
-# engine/__tests__/test_integration.py
-"""
-End-to-end test: run the CLI against sample product YAML and a fixture computed
-JSON. Uses a temp file for computed data so the test is independent of whatever
-CI may have committed to computed/matrix.json.
-
-Fixture metric values and expected medals:
-  test_verification: silver  (coverage 87 >= 80, stability 94 >= 85, integration evidence present)
-  documentation:     bronze  (baseline docs presence passes; diataxis 3 < 4 → not silver)
-  substrate_compat:  silver  (
-      supports_juju_3=true and substrate test evidence present; juju_4 false
-  )
-  security_ssdlc:    silver  (automation + protection + renovate + sast true; cve tracking false)
-  engagement:        silver (triage 3 <= 3; pr_review 4 <= 5; coverage >= 80; ownership true)
-
-Overall current_medal: bronze (documentation pulls it down)
-Target: gold (restored from the existing PQF product definition)
-"""
+from __future__ import annotations
 
 import json
+import os
 import subprocess
 import sys
-import tempfile
 from pathlib import Path
 
 import yaml
 
-REPO_ROOT = Path(__file__).parent.parent.parent
-
-_FIXTURE_COMPUTED = {
-    "product_id": "matrix",
-    "computed_at": "2026-06-29T20:00:00+00:00",
-    "metrics": {
-        "test_verification": {
-            "coverage_pct": 87,
-            "stability_pct": 94,
-            "latest_build_passing": True,
-            "integration_test_evidence_present": True,
-            "uses_ops_testing": True,
-            "uses_jubilant": False,
-        },
-        "documentation": {
-            "readme_present": True,
-            "contributing_present": True,
-            "has_security": True,
-            "documentation_workflows_passing": True,
-            "diataxis_coverage_ai": 3,
-            "uses_rtd_hosting": False,
-            "release_notes_process_implemented": True,
-        },
-        "substrate_compat": {
-            "supports_juju_3": True,
-            "supports_juju_4": False,
-            "substrate_test_evidence_present": True,
-            "uses_canonical_k8s": False,
-        },
-        "security_ssdlc": {
-            "renovate_enabled": True,
-            "canonical_repo_automation_registered": True,
-            "branch_protection_required_checks": True,
-            "signed_commits_required": True,
-            "sast_workflow_present": True,
-            "cve_tracking_process_present": False,
-        },
-        "engagement": {
-            "avg_triage_days": 3.0,
-            "avg_pr_review_days": 4.0,
-            "response_coverage_rate": 85,
-            "ownership_signal": True,
-            "has_jira_sync": False,
-        },
-    },
-}
+REPO_ROOT = Path(__file__).resolve().parents[2]
 
 
-def test_cli_computes_expected_medals_for_matrix():
-    with tempfile.NamedTemporaryFile(mode="w", suffix=".json", delete=False) as tmp:
-        json.dump(_FIXTURE_COMPUTED, tmp)
-        tmp_path = tmp.name
+def _write_framework_version(
+    root: Path,
+    *,
+    version_id: str,
+    sequence: int,
+    status: str,
+) -> None:
+    version_dir = root / version_id
+    version_dir.mkdir(parents=True)
+    (version_dir / "framework.yaml").write_text(
+        yaml.safe_dump(
+            {
+                "id": version_id,
+                "sequence": sequence,
+                "label": f"PQF {version_id.upper()}",
+                "status": status,
+                "description": f"{version_id} contract",
+            },
+            sort_keys=False,
+        )
+    )
+    (version_dir / "dimensions.yaml").write_text(
+        yaml.safe_dump(
+            {
+                "dimensions": {
+                    "test_verification": {
+                        "label": "Test verification",
+                        "description": "Automated test health.",
+                        "scorer": "scorers/test_verification/scorer.py",
+                        "applies_to": {"product_types": ["charm"]},
+                        "aggregation": "worst_in_scope",
+                        "outputs": {
+                            "latest_build_passing": {
+                                "implementation": "latest-build-passing/v1",
+                                "type": "boolean",
+                                "label": "Latest build passing",
+                                "description": "Latest CI summary has no failures.",
+                            }
+                        },
+                        "medals": {"bronze": ["latest_build_passing == true"]},
+                    }
+                }
+            },
+            sort_keys=False,
+        )
+    )
 
-    with tempfile.NamedTemporaryFile(mode="w", suffix=".json", delete=False) as drift_tmp:
-        json.dump({}, drift_tmp)
-        drift_path = drift_tmp.name
 
-    result = subprocess.run(
+def _write_product(products_dir: Path) -> None:
+    products_dir.mkdir(parents=True, exist_ok=True)
+    (products_dir / "matrix.yaml").write_text(
+        yaml.safe_dump(
+            {
+                "id": "matrix",
+                "product_type": "root",
+                "name": "Matrix",
+                "lifecycle": "stable",
+                "introduced_in": "v0",
+                "targets": {"v0": "gold", "v1": "gold"},
+                "ownership": {"squad": "americas"},
+                "composed_of": [],
+            },
+            sort_keys=False,
+        )
+    )
+
+
+def _create_temp_project(tmp_path: Path, *, archived_v0: bool = False) -> Path:
+    project_root = tmp_path / "workspace"
+    project_root.mkdir()
+
+    (project_root / "Makefile").write_text((REPO_ROOT / "Makefile").read_text())
+    (project_root / "engine").symlink_to(REPO_ROOT / "engine", target_is_directory=True)
+    (project_root / "scorers").symlink_to(REPO_ROOT / "scorers", target_is_directory=True)
+
+    config_dir = project_root / "config"
+    config_dir.mkdir()
+    (config_dir / "dimensions.yaml").write_text("dimensions: [broken\n")
+
+    framework_root = project_root / "framework" / "versions"
+    _write_framework_version(
+        framework_root,
+        version_id="v0",
+        sequence=0,
+        status="archived" if archived_v0 else "active",
+    )
+    _write_framework_version(
+        framework_root,
+        version_id="v1",
+        sequence=1,
+        status="active" if archived_v0 else "upcoming",
+    )
+
+    _write_product(project_root / "products")
+    return project_root
+
+
+def _run_make(project_root: Path, *args: str) -> subprocess.CompletedProcess[str]:
+    env = os.environ.copy()
+    env["GITHUB_TOKEN"] = "test-token"
+    env["PYTHONPATH"] = str(REPO_ROOT)
+    return subprocess.run(
+        ["make", "--no-print-directory", *args],
+        cwd=project_root,
+        capture_output=True,
+        text=True,
+        env=env,
+    )
+
+
+def test_versioned_local_commands_require_framework_version(tmp_path):
+    project_root = _create_temp_project(tmp_path)
+
+    completed = _run_make(project_root, "_assemble", "SOURCE_REVISION=test-sha")
+
+    assert completed.returncode != 0
+    assert "FRAMEWORK_VERSION is required" in completed.stderr
+
+
+def test_versioned_local_commands_build_selected_portfolios_and_version_index(tmp_path):
+    project_root = _create_temp_project(tmp_path)
+    env = os.environ.copy()
+    env["PYTHONPATH"] = str(REPO_ROOT)
+
+    listed = subprocess.run(
         [
             sys.executable,
             "-m",
-            "engine",
-            "--product",
-            str(REPO_ROOT / "products/matrix.yaml"),
-            "--computed",
-            tmp_path,
-            "--dimensions",
-            str(REPO_ROOT / "config/dimensions.yaml"),
-            "--drift-history",
-            drift_path,
+            "engine.framework",
+            "--root",
+            str(project_root / "framework" / "versions"),
+            "--version",
+            "v1",
+            "--list-dimensions",
         ],
+        cwd=project_root,
         capture_output=True,
         text=True,
-        cwd=str(REPO_ROOT),
-    )
-    assert result.returncode == 0, f"CLI failed:\n{result.stderr}"
-
-    output = json.loads(result.stdout)
-
-    assert output["id"] == "matrix"
-    assert output["current_medal"] == "silver"
-    assert output["target_medal"] == "gold"
-
-    dims = output["dimensions"]
-    assert dims["engagement"]["medal"] == "silver"
-
-    # No drift history entries yet → drift is null for all
-    for dim in dims.values():
-        assert dim["drift"] is None
-
-
-def test_dimensions_config_declares_required_metrics_for_scoring_for_each_dimension():
-    dimensions = yaml.safe_load((REPO_ROOT / "config/dimensions.yaml").read_text())
-
-    assert dimensions["dimensions"]["test_verification"]["required_metrics_for_scoring"] == [
-        "latest_build_passing"
-    ]
-    assert dimensions["dimensions"]["documentation"]["required_metrics_for_scoring"] == [
-        "readme_present",
-        "contributing_present",
-        "has_security",
-    ]
-    assert dimensions["dimensions"]["substrate_compat"]["required_metrics_for_scoring"] == [
-        "supports_juju_3",
-        "substrate_test_evidence_present",
-    ]
-    assert dimensions["dimensions"]["security_ssdlc"]["required_metrics_for_scoring"] == [
-        "branch_protection_required_checks",
-        "renovate_enabled",
-    ]
-    assert dimensions["dimensions"]["engagement"]["required_metrics_for_scoring"] == [
-        "avg_triage_days",
-        "avg_pr_review_days",
-        "response_coverage_rate",
-    ]
-    assert (
-        dimensions["dimensions"]["documentation"]["outputs"]["diataxis_coverage_ai"]["ai_assisted"]
-        is True
+        env=env,
     )
 
+    assert listed.returncode == 0, listed.stderr
+    assert listed.stdout.strip() == "test_verification"
 
-def test_required_metrics_for_scoring_are_declared_outputs():
-    dimensions = yaml.safe_load((REPO_ROOT / "config/dimensions.yaml").read_text())["dimensions"]
-
-    for dim_name, dim_cfg in dimensions.items():
-        outputs = set(dim_cfg.get("outputs", {}).keys())
-        required = dim_cfg.get("required_metrics_for_scoring", [])
-        assert set(required).issubset(outputs), (
-            f"{dim_name} has required_metrics_for_scoring not present in outputs: "
-            f"{sorted(set(required) - outputs)}"
+    for framework_version in ("v0", "v1"):
+        completed = _run_make(
+            project_root,
+            "score-no-llm",
+            "PRODUCT=matrix",
+            f"FRAMEWORK_VERSION={framework_version}",
         )
+        assert completed.returncode == 0, completed.stderr
+        score_path = (
+            project_root / ".pqf-score" / framework_version / "matrix" / "test_verification.json"
+        )
+        assert json.loads(score_path.read_text()) == {}
+
+        completed = _run_make(
+            project_root,
+            "_merge",
+            "PRODUCT=matrix",
+            f"FRAMEWORK_VERSION={framework_version}",
+        )
+        assert completed.returncode == 0, completed.stderr
+        assert f"computed/versions/{framework_version}/matrix.json updated" in completed.stdout
+
+        computed_path = project_root / "computed" / "versions" / framework_version / "matrix.json"
+        merged = json.loads(computed_path.read_text())
+        assert merged["framework_version"] == framework_version
+        assert merged["leaf_metrics"] == {}
+
+        completed = _run_make(
+            project_root,
+            "_assemble",
+            f"FRAMEWORK_VERSION={framework_version}",
+            "SOURCE_REVISION=test-sha",
+        )
+        assert completed.returncode == 0, completed.stderr
+        assert f"public/versions/{framework_version}/portfolio.json updated" in completed.stdout
+
+        portfolio_path = project_root / "public" / "versions" / framework_version / "portfolio.json"
+        portfolio = json.loads(portfolio_path.read_text())
+        assert portfolio["framework"]["id"] == framework_version
+        assert portfolio["products"][0]["id"] == "matrix"
+
+    completed = _run_make(project_root, "_version-index")
+
+    assert completed.returncode == 0, completed.stderr
+    index_path = project_root / "public" / "framework-versions.json"
+    index = json.loads(index_path.read_text())
+    assert index == {
+        "versions": [
+            {
+                "id": "v0",
+                "sequence": 0,
+                "label": "PQF V0",
+                "status": "active",
+                "description": "v0 contract",
+                "portfolio_url": "versions/v0/portfolio.json",
+                "generated_at": index["versions"][0]["generated_at"],
+                "contract_digest": index["versions"][0]["contract_digest"],
+            },
+            {
+                "id": "v1",
+                "sequence": 1,
+                "label": "PQF V1",
+                "status": "upcoming",
+                "description": "v1 contract",
+                "portfolio_url": "versions/v1/portfolio.json",
+                "generated_at": index["versions"][1]["generated_at"],
+                "contract_digest": index["versions"][1]["contract_digest"],
+            },
+        ]
+    }
+
+
+def test_versioned_local_commands_reject_archived_framework_scoring(tmp_path):
+    project_root = _create_temp_project(tmp_path, archived_v0=True)
+
+    completed = _run_make(
+        project_root,
+        "score-no-llm",
+        "PRODUCT=matrix",
+        "FRAMEWORK_VERSION=v0",
+    )
+
+    assert completed.returncode != 0
+    assert "Framework version v0 is archived" in completed.stderr
+
+
+def test_versioned_local_commands_fail_fast_for_unknown_framework_version(tmp_path):
+    project_root = _create_temp_project(tmp_path)
+
+    completed = _run_make(
+        project_root,
+        "score-no-llm",
+        "PRODUCT=matrix",
+        "FRAMEWORK_VERSION=v9",
+    )
+
+    assert completed.returncode != 0
+    assert "Results in" not in completed.stdout
+    assert (
+        project_root / ".pqf-score" / "v9" / "matrix" / "test_verification.json"
+    ).exists() is False

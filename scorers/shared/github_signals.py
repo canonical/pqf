@@ -8,6 +8,20 @@ import requests
 _GITHUB_API = "https://api.github.com"
 
 
+class GitHubAcquisitionError(RuntimeError):
+    """Raised when required GitHub evidence could not be acquired."""
+
+    def __init__(self, status_code: int, url: str):
+        self.status_code = status_code
+        self.url = url
+        super().__init__(f"GitHub evidence acquisition failed: status={status_code} url={url}")
+
+
+def raise_for_required_github_evidence(response: requests.Response, url: str) -> None:
+    if not response.ok:
+        raise GitHubAcquisitionError(response.status_code, url)
+
+
 def build_github_session(github_token: str | None) -> requests.Session:
     session = requests.Session()
     session.headers.update(
@@ -19,6 +33,22 @@ def build_github_session(github_token: str | None) -> requests.Session:
     if github_token:
         session.headers["Authorization"] = f"token {github_token}"
     return session
+
+
+def github_session_get(
+    session: requests.Session,
+    url: str,
+    **kwargs: Any,
+) -> requests.Response:
+    response = session.get(url, **kwargs)
+    retry_anonymously = (
+        response.status_code == 401
+        or response.status_code == 429
+        or (response.status_code == 403 and response.headers.get("X-RateLimit-Remaining") == "0")
+    )
+    if retry_anonymously and session.headers.get("Authorization"):
+        return build_github_session(None).get(url, **kwargs)
+    return response
 
 
 def github_get(

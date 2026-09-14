@@ -187,15 +187,27 @@ def test_returns_defaults_when_repo_empty():
     }
 
 
-def test_dimensions_yaml_mentions_new_ssdlc_metrics():
+def test_framework_contracts_declare_ssdlc_metrics():
     from pathlib import Path
 
-    data = yaml.safe_load(Path("config/dimensions.yaml").read_text())
-    outputs = data["dimensions"]["security_ssdlc"]["outputs"]
-    assert "renovate_enabled" in outputs
-    assert "canonical_repo_automation_registered" in outputs
-    assert "sast_workflow_present" in outputs
-    assert "cve_tracking_process_present" in outputs
+    contracts = sorted(Path("framework/versions").glob("*/dimensions.yaml"))
+    assert contracts, "expected at least one framework contract"
+
+    for contract in contracts:
+        data = yaml.safe_load(contract.read_text())
+        outputs = data["dimensions"]["security_ssdlc"]["outputs"]
+        for key in (
+            "renovate_enabled",
+            "branch_protection_required_checks",
+            "signed_commits_required",
+        ):
+            assert key in outputs, f"{contract} security_ssdlc is missing {key}"
+
+    v1_outputs = yaml.safe_load(Path("framework/versions/v1/dimensions.yaml").read_text())[
+        "dimensions"
+    ]["security_ssdlc"]["outputs"]
+    assert "sast_workflow_present" in v1_outputs
+    assert "cve_tracking_process_present" in v1_outputs
 
 
 def test_signed_commits_required_true(mocker):

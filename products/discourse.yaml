@@ -6,23 +6,28 @@ description: '| Discourse is a modern forum software that is used to build commu
   a focus on simplicity, user-friendliness, and responsiveness, making it accessible
   from both desktops and mobile devices.'
 lifecycle: stable
-target_medal: silver
+introduced_in: v0
+targets:
+  v0: silver
+  v1: silver
 ownership:
   squad: americas
   stakeholders:
-    - IS
-    - Mauro Gaspari
-    - Aaron Prisk
-composed_of:
-  - id: discourse-k8s
-    product_type: charm
-    source:
-      repo: canonical/discourse-k8s-operator
-    allure_report_url: "https://canonical.github.io/discourse-k8s-operator/_latest"
-  - ref: nginx-ingress-integrator
+  - IS
+  - Mauro Gaspari
+  - Aaron Prisk
 documentation_url: https://charmhub.io/discourse-k8s
+composed_of:
+- id: discourse-k8s
+  product_type: charm
+  introduced_in: v0
+  source:
+    repo: canonical/discourse-k8s-operator
+  allure_report_url: https://canonical.github.io/discourse-k8s-operator/_latest
+- ref: nginx-ingress-integrator
+  introduced_in: v0
 context_refs:
-  - label: Postgresql K8S
-    repo: canonical/postgresql-k8s-operator
-  - label: Redis K8S
-    repo: canonical/redis-k8s-operator
+- label: Postgresql K8S
+  repo: canonical/postgresql-k8s-operator
+- label: Redis K8S
+  repo: canonical/redis-k8s-operator

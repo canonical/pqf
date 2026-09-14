@@ -1,10 +1,9 @@
 import { useState, useMemo } from 'react'
-import { Link } from 'react-router'
+import VersionLink from '../components/VersionLink'
 import { usePortfolio } from '../hooks/usePortfolio'
 import MedalBadge from '../components/MedalBadge'
 import LoadingSpinner from '../components/LoadingSpinner'
 import { RESULT_ORDER } from '../lib/groupedPortfolioView'
-import type { DriftInfo } from '../types'
 
 const SQUAD_LABELS: Record<string, string> = {
   americas: 'AMER',
@@ -14,28 +13,17 @@ const SQUAD_LABELS: Record<string, string> = {
 
 type SortField = 'name' | 'current_result' | 'target_result'
 
-function DriftIndicator({ drift }: { drift: DriftInfo | null }) {
-  if (!drift) return null
-
-  const deadline = new Date(drift.deadline).toISOString().slice(0, 10)
-
-  if (drift.status === 'overdue') {
-    return (
-      <span title={`Overdue since ${deadline}`} style={{ fontSize: '1rem', cursor: 'default' }}>
-        🔴
-      </span>
-    )
-  }
-
-  return (
-    <span title={`Remediating · deadline ${deadline}`} style={{ fontSize: '1rem', cursor: 'default' }}>
-      🟡
-    </span>
-  )
-}
-
 function squadLabel(squad: string): string {
   return SQUAD_LABELS[squad?.toLowerCase()] ?? squad?.toUpperCase() ?? '—'
+}
+
+// Guard the empty-portfolio case: `total: 0, meeting_target: 0` must render as neutral, not as
+// the "0 met target" alarm colour used when products exist but none of them meet target.
+function meetingTargetColor(compliance: { meeting_target: number; total: number }): string {
+  if (compliance.total === 0) return '#333'
+  if (compliance.meeting_target === compliance.total) return '#2d9e46'
+  if (compliance.meeting_target === 0) return '#c7162b'
+  return '#1d7a1d'
 }
 
 export default function Overview() {
@@ -63,29 +51,13 @@ export default function Overview() {
     })
   }, [portfolio, search, sortField, sortDir])
 
-  const stats = useMemo(() => {
-    if (!portfolio) return { atTarget: 0, overdue: 0, remediating: 0 }
-    const portfolioProducts = portfolio.products.filter(p => p.is_portfolio_entry)
-    const total = portfolioProducts.length
-    const atTarget = portfolioProducts.filter(
-      p => RESULT_ORDER[p.current_result] >= RESULT_ORDER[p.target_result]
-    ).length
-    const overdue = portfolioProducts.filter(p =>
-      Object.values(p.dimensions).some(d => d.drift?.status === 'overdue')
-    ).length
-    const remediating = portfolioProducts.filter(p =>
-      Object.values(p.dimensions).some(d => d.drift?.status === 'remediating')
-    ).length
-    return {
-      atTarget: total > 0 ? Math.round((atTarget / total) * 100) : 0,
-      overdue,
-      remediating,
-    }
-  }, [portfolio])
+  if (isLoading) return <LoadingSpinner />
+  if (isError) return <div className="p-notification--negative"><p>{error?.message}</p></div>
+  if (!portfolio) return null
 
-  const dimensions = portfolio
-    ? Object.keys(portfolio.dimensions_meta)
-    : []
+  const compliance = portfolio.compliance_summary
+
+  const dimensions = Object.keys(portfolio.dimensions_meta)
 
   function toggleSort(field: SortField) {
     if (sortField === field) setSortDir(d => (d === 'asc' ? 'desc' : 'asc'))
@@ -97,14 +69,6 @@ export default function Overview() {
     return sortDir === 'asc' ? 'ascending' : 'descending'
   }
 
-  if (isLoading) return <LoadingSpinner />
-  if (isError) return <div className="p-notification--negative"><p>{error?.message}</p></div>
-  if (!portfolio) return null
-
-  const hasDriftData = products.some(p =>
-    Object.values(p.dimensions).some(d => d.drift !== null)
-  )
-
   return (
     <div className="row" style={{ paddingTop: '1.5rem' }}>
       <div className="col-12">
@@ -115,28 +79,28 @@ export default function Overview() {
           <div className="col-4">
             <div className="p-card">
               <p style={{ fontSize: '2.5rem', fontWeight: 700, margin: '0 0 0.25rem', lineHeight: 1,
-                color: stats.atTarget === 100 ? '#2d9e46' : stats.atTarget === 0 ? '#c7162b' : '#1d7a1d' }}>
-                {stats.atTarget}%
+                color: meetingTargetColor(compliance) }}>
+                {compliance.meeting_target} / {compliance.total}
               </p>
-              <p className="u-text--muted" style={{ margin: 0 }}>At or above target</p>
+              <p className="u-text--muted" style={{ margin: 0 }}>Meeting target</p>
             </div>
           </div>
           <div className="col-4">
             <div className="p-card">
               <p style={{ fontSize: '2.5rem', fontWeight: 700, margin: '0 0 0.25rem', lineHeight: 1,
-                color: stats.overdue > 0 ? '#c7162b' : '#333' }}>
-                {stats.overdue}
+                color: compliance.below_target > 0 ? '#c7162b' : '#333' }}>
+                {compliance.below_target}
               </p>
-              <p className="u-text--muted" style={{ margin: 0 }}>Overdue</p>
+              <p className="u-text--muted" style={{ margin: 0 }}>Below target</p>
             </div>
           </div>
           <div className="col-4">
             <div className="p-card">
               <p style={{ fontSize: '2.5rem', fontWeight: 700, margin: '0 0 0.25rem', lineHeight: 1,
-                color: stats.remediating > 0 ? '#E98B06' : '#333' }}>
-                {stats.remediating}
+                color: compliance.insufficient_data > 0 ? '#E98B06' : '#333' }}>
+                {compliance.insufficient_data}
               </p>
-              <p className="u-text--muted" style={{ margin: 0 }}>Remediating</p>
+              <p className="u-text--muted" style={{ margin: 0 }}>Insufficient data</p>
             </div>
           </div>
         </div>
@@ -181,39 +145,31 @@ export default function Overview() {
                 >
                   Current
                 </th>
-                {hasDriftData && <th style={{ width: '20%' }}>Drift</th>}
               </tr>
             </thead>
             <tbody>
-              {products.map(product => {
-                const worstDrift = Object.values(product.dimensions)
-                  .map(d => d.drift)
-                  .find(d => d?.status === 'overdue') ??
-                  Object.values(product.dimensions).map(d => d.drift).find(d => d !== null) ?? null
-                return (
-                  <tr key={product.id}>
-                    <td>
-                      <Link to={`/products/${product.id}`}>{product.name}</Link>
-                    </td>
-                    <td>
-                      <span
-                        style={{
-                          fontSize: '0.75rem',
-                          fontWeight: 600,
-                          textTransform: 'uppercase',
-                          letterSpacing: '0.05em',
-                          color: '#666',
-                        }}
-                      >
-                        {squadLabel(product.squad)}
-                      </span>
-                    </td>
-                    <td><MedalBadge medal={product.target_result} size="small" /></td>
-                    <td><MedalBadge medal={product.current_result} size="small" /></td>
-                    {hasDriftData && <td><DriftIndicator drift={worstDrift} /></td>}
-                  </tr>
-                )
-              })}
+              {products.map(product => (
+                <tr key={product.id}>
+                  <td>
+                    <VersionLink to={`/products/${product.id}`}>{product.name}</VersionLink>
+                  </td>
+                  <td>
+                    <span
+                      style={{
+                        fontSize: '0.75rem',
+                        fontWeight: 600,
+                        textTransform: 'uppercase',
+                        letterSpacing: '0.05em',
+                        color: '#666',
+                      }}
+                    >
+                      {squadLabel(product.squad)}
+                    </span>
+                  </td>
+                  <td><MedalBadge medal={product.target_result} size="small" /></td>
+                  <td><MedalBadge medal={product.current_result} size="small" /></td>
+                </tr>
+              ))}
             </tbody>
           </table>
         </div>
@@ -228,9 +184,9 @@ export default function Overview() {
                   <th style={{ width: '20%' }}>Product</th>
                   {dimensions.map(dim => (
                     <th key={dim} style={{ width: `${80 / dimensions.length}%` }}>
-                      <Link to={`/dimensions/${dim}`}>
+                      <VersionLink to={`/dimensions/${dim}`}>
                         {portfolio.dimensions_meta[dim]?.label ?? dim.replace(/_/g, ' ')}
-                      </Link>
+                      </VersionLink>
                     </th>
                   ))}
                 </tr>
@@ -239,7 +195,7 @@ export default function Overview() {
                 {products.map(product => (
                   <tr key={product.id}>
                     <td style={{ width: '20%' }}>
-                      <Link to={`/products/${product.id}`}>{product.name}</Link>
+                      <VersionLink to={`/products/${product.id}`}>{product.name}</VersionLink>
                     </td>
                     {dimensions.map(dim => {
                       const d = product.dimensions[dim]
@@ -260,9 +216,9 @@ export default function Overview() {
           <small>Data generated at {new Date(portfolio.generated_at).toLocaleString()}</small>
         </p>
         <p>
-          <Link to="/about" className="p-button--neutral">
+          <VersionLink to="/about" className="p-button--neutral">
             About this framework
-          </Link>
+          </VersionLink>
         </p>
       </div>
     </div>

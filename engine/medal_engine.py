@@ -1,14 +1,7 @@
 # engine/medal_engine.py
 from __future__ import annotations
 
-from datetime import datetime
-
-from engine.aggregation import (
-    _compute_result,
-    aggregate_root_dimension,
-    compute_leaf_applicability,
-)
-from engine.drift_tracker import compute_dimension_drift
+from engine.aggregation import _compute_result, aggregate_root_dimension, compute_leaf_applicability
 from engine.graph import ProductGraph
 from engine.models import (
     MEDAL_RANK,
@@ -48,12 +41,38 @@ def _product_result(dimension_results: dict[str, DimensionResult], current_medal
     return Result.INSUFFICIENT_DATA
 
 
+def _dimension_meets_target(
+    medal: Medal,
+    applicability: ApplicabilityOutcome,
+    target: Medal,
+) -> bool:
+    return applicability == ApplicabilityOutcome.SCORED and MEDAL_RANK[medal] >= MEDAL_RANK[target]
+
+
+def _product_meets_target(
+    dimension_results: dict[str, DimensionResult],
+    current_medal: Medal,
+    target_medal: Medal,
+) -> bool:
+    if not any(
+        dim.applicability == ApplicabilityOutcome.SCORED for dim in dimension_results.values()
+    ):
+        return False
+
+    if any(
+        dim.applicability == ApplicabilityOutcome.INSUFFICIENT_DATA
+        for dim in dimension_results.values()
+    ):
+        return False
+
+    return MEDAL_RANK[current_medal] >= MEDAL_RANK[target_medal]
+
+
 def compute_leaf_product(
     product_id: str,
     product_type: str,
     leaf_metrics: dict[str, dict],
     dimensions_config: dict,
-    drift_history: dict,
     target_medal: str,
 ) -> ProductResult:
     """
@@ -72,28 +91,30 @@ def compute_leaf_product(
         else:
             dim_medal = evaluate_rubric(metrics, dim_config["medals"])
 
-        drift = compute_dimension_drift(product_id, dim_name, dim_medal, target, drift_history)
         dimension_results[dim_name] = DimensionResult(
             medal=dim_medal,
             target=target,
+            meets_target=_dimension_meets_target(dim_medal, applicability, target),
             applicability=applicability,
             result=_compute_result(dim_medal, applicability),
             metrics=metrics,
-            drift=drift,
             composition=None,
         )
 
     scored = [
-        r for r in dimension_results.values() if r.applicability == ApplicabilityOutcome.SCORED
+        result
+        for result in dimension_results.values()
+        if result.applicability == ApplicabilityOutcome.SCORED
     ]
     current_medal = (
-        min(scored, key=lambda r: MEDAL_RANK[r.medal]).medal if scored else Medal.UNRATED
+        min(scored, key=lambda result: MEDAL_RANK[result.medal]).medal if scored else Medal.UNRATED
     )
 
     return ProductResult(
         product_id=product_id,
         current_medal=current_medal,
         target_medal=target,
+        meets_target=_product_meets_target(dimension_results, current_medal, target),
         current_result=_product_result(dimension_results, current_medal),
         target_result=Result(target.value),
         dimensions=dimension_results,
@@ -105,9 +126,7 @@ def compute_root_product(
     graph: ProductGraph,
     all_leaf_results: dict[str, ProductResult],
     dimensions_config: dict,
-    drift_history: dict,
     target_medal: str,
-    now: datetime | None = None,
 ) -> ProductResult:
     """
     Compute medals for a root product by aggregating composed leaf results.
@@ -140,20 +159,25 @@ def compute_root_product(
             )
 
         dimension_results[dim_name] = aggregate_root_dimension(
-            leaf_dim_results, dim_config, drift_history, root_id, target_medal, now
+            leaf_dim_results,
+            dim_config,
+            target_medal,
         )
 
     scored = [
-        r for r in dimension_results.values() if r.applicability == ApplicabilityOutcome.SCORED
+        result
+        for result in dimension_results.values()
+        if result.applicability == ApplicabilityOutcome.SCORED
     ]
     current_medal = (
-        min(scored, key=lambda r: MEDAL_RANK[r.medal]).medal if scored else Medal.UNRATED
+        min(scored, key=lambda result: MEDAL_RANK[result.medal]).medal if scored else Medal.UNRATED
     )
 
     return ProductResult(
         product_id=root_id,
         current_medal=current_medal,
         target_medal=target,
+        meets_target=_product_meets_target(dimension_results, current_medal, target),
         current_result=_product_result(dimension_results, current_medal),
         target_result=Result(target.value),
         dimensions=dimension_results,
@@ -164,13 +188,9 @@ def compute_product(
     product: dict,
     computed: dict,
     dimensions_config: dict,
-    drift_history: dict,
 ) -> ProductResult:
     """
-    Legacy entry point used by assemble.py and __main__.py.
-
-    Pure function — reads drift_history but never mutates it.
-    Call engine.drift_tracker.update_drift_history() separately to persist drift state.
+    Compute medals for one product from the legacy unaggregated computed envelope.
     """
     target_medal = Medal(product["target_medal"])
     dimension_results: dict[str, DimensionResult] = {}
@@ -188,29 +208,30 @@ def compute_product(
             dim_medal = Medal.UNRATED
         else:
             dim_medal = evaluate_rubric(metrics, dim_config["medals"])
-        drift = compute_dimension_drift(
-            product["id"], dim_name, dim_medal, target_medal, drift_history
-        )
+
         dimension_results[dim_name] = DimensionResult(
             medal=dim_medal,
             target=target_medal,
+            meets_target=_dimension_meets_target(dim_medal, applicability, target_medal),
             result=_compute_result(dim_medal, applicability),
             metrics=metrics,
-            drift=drift,
             applicability=applicability,
         )
 
     scored = [
-        r for r in dimension_results.values() if r.applicability == ApplicabilityOutcome.SCORED
+        result
+        for result in dimension_results.values()
+        if result.applicability == ApplicabilityOutcome.SCORED
     ]
     current_medal = (
-        min(scored, key=lambda r: MEDAL_RANK[r.medal]).medal if scored else Medal.UNRATED
+        min(scored, key=lambda result: MEDAL_RANK[result.medal]).medal if scored else Medal.UNRATED
     )
 
     return ProductResult(
         product_id=product["id"],
         current_medal=current_medal,
         target_medal=target_medal,
+        meets_target=_product_meets_target(dimension_results, current_medal, target_medal),
         current_result=_product_result(dimension_results, current_medal),
         target_result=Result(target_medal.value),
         dimensions=dimension_results,

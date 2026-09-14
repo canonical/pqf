@@ -1,10 +1,12 @@
-import { Link } from 'react-router'
+import VersionLink from '../components/VersionLink'
 import { usePortfolio } from '../hooks/usePortfolio'
 import MedalBadge from '../components/MedalBadge'
 import LoadingSpinner from '../components/LoadingSpinner'
+import { useFrameworkVersion } from '../providers/FrameworkVersionProvider'
 
 export default function About() {
   const { data: portfolio, isLoading } = usePortfolio()
+  const { current } = useFrameworkVersion()
   if (isLoading) return <LoadingSpinner />
 
   const dimensions = portfolio ? Object.entries(portfolio.dimensions_meta) : []
@@ -16,8 +18,45 @@ export default function About() {
         <p>
           The Product Quality Framework (PQF) gives Platform Engineering a data-driven,
           auditable view of quality and compliance across tracked products. Each product is
-          scored across five dimensions and awarded a medal — Bronze, Silver, or Gold — based on
-          objective, automatically-computed criteria.
+          scored across a version-specific set of dimensions and awarded a medal — Bronze,
+          Silver, or Gold — based on objective, automatically-computed criteria.
+        </p>
+
+        <h2 className="p-heading--4">Framework versions</h2>
+        <p>
+          Each framework version defines its own product set and can select different products,
+          components, targets, metrics, and criteria. You are viewing {current.label}.
+        </p>
+        <ul className="p-list--divided">
+          <li className="p-list__item">
+            <strong>Active</strong> is the official current view of compliance.
+          </li>
+          <li className="p-list__item">
+            <strong>Upcoming</strong> is a readiness view for the next scoring contract and
+            product set.
+          </li>
+          <li className="p-list__item">
+            <strong>Archived</strong> preserves frozen historical evidence.
+          </li>
+        </ul>
+
+        <h2 className="p-heading--4">How scoring works</h2>
+        <ol className="p-list--divided">
+          <li className="p-list__item">Select a framework version and its product set.</li>
+          <li className="p-list__item">Measure applicable product components.</li>
+          <li className="p-list__item">Apply that version's criteria and targets.</li>
+          <li className="p-list__item">
+            Aggregate component results into each tracked product.
+          </li>
+        </ol>
+        <p>
+          The same measurement may be safely reused when versions ask the identical question of
+          the identical product, but each version always applies its own outputs, criteria, and
+          target.
+        </p>
+        <p>
+          If required evidence cannot be acquired, scoring fails rather than producing a low
+          result.
         </p>
 
         <h2 className="p-heading--4">Medal levels</h2>
@@ -59,7 +98,7 @@ export default function About() {
               {dimensions.map(([key, meta]) => (
                 <tr key={key}>
                   <td>
-                    <Link to={`/dimensions/${key}`}>{meta.label ?? key.replace(/_/g, ' ')}</Link>
+                    <VersionLink to={`/dimensions/${key}`}>{meta.label ?? key.replace(/_/g, ' ')}</VersionLink>
                   </td>
                   <td>{meta.description ?? '—'}</td>
                 </tr>
@@ -74,15 +113,15 @@ export default function About() {
         <ul className="p-list">
           <li className="p-list__item">
             <a
-              href="https://github.com/canonical/pqf/blob/main/docs/superpowers/specs/2026-06-29-pqf-tool-design.md"
+              href="https://github.com/canonical/pqf/blob/main/docs/architecture.md"
               target="_blank"
               rel="noreferrer"
             >
-              Full framework specification on GitHub ↗
+              Scoring architecture on GitHub ↗
             </a>
           </li>
           <li className="p-list__item">
-            <Link to="/">Overview</Link>
+            <VersionLink to="/">Overview</VersionLink>
           </li>
         </ul>
       </div>

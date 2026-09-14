@@ -3,7 +3,7 @@
   "$id": "https://github.com/srbouffard/pqf/config/schemas/product.schema.json",
   "title": "PQF Product Definition",
   "type": "object",
-  "required": ["id", "product_type", "name", "lifecycle", "target_medal", "ownership"],
+  "required": ["id", "product_type", "name", "lifecycle", "introduced_in", "targets", "ownership"],
   "additionalProperties": false,
   "properties": {
     "id": {
@@ -22,10 +22,9 @@
       "type": "string",
       "enum": ["experimental", "beta", "stable", "legacy"]
     },
-    "target_medal": {
-      "type": "string",
-      "enum": ["bronze", "silver", "gold"]
-    },
+    "introduced_in": {"$ref": "#/definitions/VersionId"},
+    "retired_in": {"$ref": "#/definitions/VersionId"},
+    "targets": {"$ref": "#/definitions/Targets"},
     "ownership": {
       "type": "object",
       "required": ["squad"],
@@ -80,7 +79,7 @@
         {
           "description": "Reference to a standalone leaf product defined in products/<id>.yaml.",
           "type": "object",
-          "required": ["ref"],
+          "required": ["ref", "introduced_in"],
           "additionalProperties": false,
           "properties": {
             "ref": {
@@ -88,6 +87,8 @@
               "pattern": "^[a-z0-9][a-z0-9-]*$",
               "description": "product_id of the standalone leaf product YAML."
             },
+            "introduced_in": {"$ref": "#/definitions/VersionId"},
+            "retired_in": {"$ref": "#/definitions/VersionId"},
             "excluded_from_parent_medal": {
               "type": "boolean",
               "description": "If true, this product's dimension scores do not roll up into the parent medal."
@@ -97,7 +98,7 @@
         {
           "description": "Inline leaf product — owned by this team, belongs to this root only.",
           "type": "object",
-          "required": ["id", "product_type", "source"],
+          "required": ["id", "product_type", "introduced_in", "source"],
           "additionalProperties": false,
           "properties": {
             "id": {
@@ -109,6 +110,8 @@
               "type": "string",
               "enum": ["charm", "snap"]
             },
+            "introduced_in": {"$ref": "#/definitions/VersionId"},
+            "retired_in": {"$ref": "#/definitions/VersionId"},
             "source": {"$ref": "#/definitions/Source"},
             "allure_report_url": {
               "type": "string",
@@ -140,6 +143,20 @@
           "description": "Optional GitHub owner/repo for linking. Not scored."
         }
       }
+    },
+    "TargetMedal": {
+      "type": "string",
+      "enum": ["bronze", "silver", "gold"]
+    },
+    "Targets": {
+      "type": "object",
+      "minProperties": 1,
+      "propertyNames": {"$ref": "#/definitions/VersionId"},
+      "additionalProperties": {"$ref": "#/definitions/TargetMedal"}
+    },
+    "VersionId": {
+      "type": "string",
+      "pattern": "^v[0-9]+$"
     }
   }
 }

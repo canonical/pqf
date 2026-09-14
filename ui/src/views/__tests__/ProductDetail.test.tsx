@@ -8,6 +8,13 @@ import type { Portfolio, LeafDimensionResult } from '../../types'
 vi.mock('../../hooks/usePortfolio')
 import { usePortfolio } from '../../hooks/usePortfolio'
 
+vi.mock('../../providers/FrameworkVersionProvider', () => ({
+  useFrameworkVersion: () => ({
+    current: { id: 'v0', sequence: 0, label: 'PQF V0', status: 'active', description: '', portfolio_url: '', generated_at: '', contract_digest: 'digest-v0' },
+    versions: [],
+  }),
+}))
+
 const mockPortfolio: Portfolio = {
   generated_at: '2026-06-30T00:00:00Z',
   products: [
@@ -21,6 +28,7 @@ const mockPortfolio: Portfolio = {
       current_result: 'bronze',
       squad: 'americas',
       is_portfolio_entry: true,
+      meets_target: false,
       documentation_url: 'https://charmhub.io/synapse',
       context_refs: [
         { label: 'Synapse Operator', repo: 'canonical/synapse-operator' },
@@ -31,7 +39,7 @@ const mockPortfolio: Portfolio = {
       dimensions: {
         test_verification: {
           result: 'silver',
-          drift: null,
+          meets_target: true,
           metrics: { coverage_pct: 87, stability_pct: 94, latest_build_passing: true },
           composition: null,
         },
@@ -46,6 +54,7 @@ const mockPortfolio: Portfolio = {
       current_result: 'bronze',
       squad: '',
       is_portfolio_entry: false,
+      meets_target: false,
       context_refs: [],
       parent_product_ids: ['matrix'],
       composed_of: null,
@@ -53,13 +62,13 @@ const mockPortfolio: Portfolio = {
       dimensions: {
         test_verification: {
           result: 'bronze',
-          drift: null,
+          meets_target: false,
           metrics: { coverage_pct: 65, latest_build_passing: true },
           composition: null,
         },
         substrate_compat: {
           result: 'not_applicable',
-          drift: null,
+          meets_target: false,
           metrics: { supports_juju_3: false, supports_juju_4: false, supports_ck8s: false },
           composition: null,
         },
@@ -79,6 +88,11 @@ const mockPortfolio: Portfolio = {
       },
     },
   },
+  framework: { id: 'v0', sequence: 0, label: 'PQF V0', status: 'active', description: 'Current framework revision' },
+  contract_digest: 'digest-v0',
+  source_revision: 'abc123',
+  implementation_fingerprints: {},
+  compliance_summary: { total: 1, meeting_target: 0, below_target: 1, insufficient_data: 0 },
 }
 
 function mockWith(portfolio: Portfolio) {
@@ -99,7 +113,7 @@ function portfolioWithComposition(overrides?: { composition: LeafDimensionResult
         dimensions: {
           test_verification: {
             result: 'silver',
-            drift: null,
+            meets_target: true,
             metrics: { coverage_pct: 87, stability_pct: 94, latest_build_passing: true },
             composition: overrides?.composition ?? [
               {
@@ -159,6 +173,14 @@ describe('ProductDetail', () => {
     expect(row).toHaveTextContent('N/A')
   })
 
+  it('shows the product target in the header for leaf products', () => {
+    wrap('synapse')
+    const headerCard = screen.getByRole('heading', { name: 'Synapse Charm' }).closest('.p-card') as HTMLElement
+    expect(headerCard).not.toBeNull()
+    expect(within(headerCard).getByText('TARGET')).toBeInTheDocument()
+    expect(within(headerCard).getByText('Gold')).toBeInTheDocument()
+  })
+
   it('renders scored unrated dimensions as below minimum', () => {
     const unratedPortfolio: Portfolio = {
       ...mockPortfolio,
@@ -169,7 +191,7 @@ describe('ProductDetail', () => {
             ...mockPortfolio.products[0].dimensions,
             documentation: {
               result: 'below_minimum',
-              drift: null,
+              meets_target: false,
               metrics: {
                 readme_present: true,
                 contributing_present: false,
@@ -212,11 +234,12 @@ describe('ProductDetail', () => {
           id: 'aproxy',
           name: 'Aproxy',
           current_result: 'below_minimum',
+          meets_target: false,
           dimensions: {
             ...mockPortfolio.products[0].dimensions,
             documentation: {
               result: 'below_minimum',
-              drift: null,
+              meets_target: false,
               metrics: {
                 readme_present: true,
                 contributing_present: false,
@@ -254,11 +277,11 @@ describe('ProductDetail', () => {
     wrap('synapse')
     const row = screen.getByRole('link', { name: 'substrate compat' }).closest('tr')!
     const cells = within(row).getAllByRole('cell')
-    // Evidence column is the 4th cell (index 3)
-    expect(cells[3]).toHaveTextContent('—')
+    // Evidence column is the 3rd cell (index 2): Dimension, Current, Evidence
+    expect(cells[2]).toHaveTextContent('—')
     // Should NOT render the metric keys from the (non-empty) metrics dict
-    expect(cells[3]).not.toHaveTextContent('Juju 3')
-    expect(cells[3]).not.toHaveTextContent('Juju 4')
+    expect(cells[2]).not.toHaveTextContent('Juju 3')
+    expect(cells[2]).not.toHaveTextContent('Juju 4')
   })
 
   it('leaf product evidence column shows threshold-colored metrics', () => {
@@ -282,7 +305,8 @@ describe('ProductDetail', () => {
     const table = dimensionsCard.querySelector('table') as HTMLTableElement
     expect(within(table).queryByRole('columnheader', { name: 'Target' })).not.toBeInTheDocument()
     expect(within(table).getByRole('columnheader', { name: 'Current' })).toBeInTheDocument()
-    expect(within(table).getByRole('columnheader', { name: 'Drift' })).toBeInTheDocument()
+    expect(within(table).queryByRole('columnheader', { name: 'Status' })).not.toBeInTheDocument()
+    expect(within(table).queryByRole('columnheader', { name: 'Drift' })).not.toBeInTheDocument()
     expect(within(table).getByRole('columnheader', { name: 'Evidence' })).toBeInTheDocument()
 
     const row = screen.getByRole('link', { name: 'test verification' }).closest('tr')
@@ -290,6 +314,23 @@ describe('ProductDetail', () => {
     expect(row).toHaveTextContent('Coverage')
     expect(row).toHaveTextContent('87 / 90')
     expect(row).toHaveTextContent('Build passing')
+  })
+
+  it('does not render a second Meets/Below target badge vocabulary; result and target medal badges are the row semantics', () => {
+    wrap('matrix')
+
+    const row = screen.getByRole('link', { name: 'test verification' }).closest('tr')
+    expect(row).not.toBeNull()
+    expect(row).not.toHaveTextContent('Meets target')
+    expect(row).not.toHaveTextContent('Below target')
+    expect(screen.queryByText(/remediating/i)).not.toBeInTheDocument()
+    expect(screen.queryByText(/overdue/i)).not.toBeInTheDocument()
+    expect(screen.queryByText(/deadline/i)).not.toBeInTheDocument()
+  })
+
+  it('does not render data-meets-target attributes anywhere in the product detail view', () => {
+    const { container } = wrap('synapse')
+    expect(container.querySelectorAll('[data-meets-target]')).toHaveLength(0)
   })
 
   it('renders linked product from context refs', () => {
@@ -300,6 +341,20 @@ describe('ProductDetail', () => {
   it('shows 404 message for unknown product', () => {
     wrap('unknown')
     expect(screen.getByText(/not found/i)).toBeInTheDocument()
+  })
+
+  it('scopes the not-found recovery link and dependency links to the selected framework version', () => {
+    wrap('unknown')
+    expect(screen.getByRole('link', { name: /back to overview/i })).toHaveAttribute('href', '/v0')
+  })
+
+  it('scopes dimension and component links to the selected framework version', () => {
+    wrap('matrix')
+    expect(screen.getByRole('link', { name: 'test verification' })).toHaveAttribute('href', '/v0/dimensions/test_verification')
+    const componentLinks = screen.getAllByRole('link').filter(link =>
+      link.getAttribute('href')?.startsWith('/v0/products/')
+    )
+    expect(componentLinks.length).toBeGreaterThan(0)
   })
 
   it('root product shows linked chips for components in header', () => {

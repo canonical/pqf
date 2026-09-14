@@ -13,9 +13,23 @@ _OPS: dict[str, Any] = {
     "!=": op_module.ne,
 }
 
-# Matches: <word> <operator> <value>
-# Operators checked longest-first to avoid ">" matching ">="
-_CONDITION_RE = re.compile(r"^(\w+)\s*(>=|<=|!=|>|<|==)\s*(.+)$")
+CONDITION_PATTERN = r"^([a-z][a-z0-9_]*)\s*(>=|<=|!=|>|<|==)\s*(.+)$"
+_CONDITION_RE = re.compile(CONDITION_PATTERN)
+
+
+def parse_condition(condition: str) -> tuple[str, str, str]:
+    """
+    Parse `<metric_key><optional-space><operator><optional-space><value>`.
+
+    The same grammar is used by rubric evaluation and repository validation so
+    cross-file checks stay aligned with runtime condition evaluation.
+    """
+    match = _CONDITION_RE.match(condition.strip())
+    if not match:
+        raise ValueError(f"Invalid condition syntax: {condition!r}")
+
+    key, op_str, raw_value = match.groups()
+    return key, op_str, raw_value.strip()
 
 
 def eval_condition(metrics: dict[str, Any], condition: str) -> bool:
@@ -29,12 +43,7 @@ def eval_condition(metrics: dict[str, Any], condition: str) -> bool:
     data is treated as failing the condition conservatively.
     Raises ValueError for unparseable condition syntax.
     """
-    match = _CONDITION_RE.match(condition.strip())
-    if not match:
-        raise ValueError(f"Invalid condition syntax: {condition!r}")
-
-    key, op_str, raw_value = match.groups()
-    raw_value = raw_value.strip()
+    key, op_str, raw_value = parse_condition(condition)
 
     left = metrics.get(key)
     if left is None:

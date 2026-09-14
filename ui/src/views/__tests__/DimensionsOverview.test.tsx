@@ -2,10 +2,28 @@ import { render, screen } from '@testing-library/react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { describe, expect, it, vi } from 'vitest'
 import App from '../../App'
-import type { Portfolio } from '../../types'
+import type { FrameworkVersionIndex, Portfolio } from '../../types'
 
 vi.mock('../../hooks/usePortfolio')
 import { usePortfolio } from '../../hooks/usePortfolio'
+
+vi.mock('../../hooks/useFrameworkVersions')
+import { useFrameworkVersions } from '../../hooks/useFrameworkVersions'
+
+const mockFrameworkVersions: FrameworkVersionIndex = {
+  versions: [
+    {
+      id: 'v0',
+      sequence: 0,
+      label: 'PQF V0',
+      status: 'active',
+      description: 'Current framework revision',
+      portfolio_url: 'versions/v0/portfolio.json',
+      generated_at: '2026-07-23T00:00:00Z',
+      contract_digest: 'digest-v0',
+    },
+  ],
+}
 
 const mockPortfolio: Portfolio = {
   generated_at: '2026-07-23T00:00:00Z',
@@ -19,13 +37,14 @@ const mockPortfolio: Portfolio = {
       current_result: 'bronze',
       squad: 'americas',
       is_portfolio_entry: true,
+      meets_target: false,
       composed_of: null,
       context_refs: [],
       parent_product_ids: [],
       dimensions: {
         test_verification: {
           result: 'bronze',
-          drift: null,
+          meets_target: false,
           metrics: {},
           composition: null,
         },
@@ -40,6 +59,7 @@ const mockPortfolio: Portfolio = {
       current_result: 'silver',
       squad: '',
       is_portfolio_entry: false,
+      meets_target: true,
       composed_of: null,
       context_refs: [],
       parent_product_ids: ['discourse'],
@@ -47,7 +67,7 @@ const mockPortfolio: Portfolio = {
       dimensions: {
         test_verification: {
           result: 'silver',
-          drift: null,
+          meets_target: true,
           metrics: {},
           composition: null,
         },
@@ -79,6 +99,11 @@ const mockPortfolio: Portfolio = {
       },
     },
   },
+  framework: { id: 'v0', sequence: 0, label: 'PQF V0', status: 'active', description: 'Current framework revision' },
+  contract_digest: 'digest-v0',
+  source_revision: 'abc123',
+  implementation_fingerprints: {},
+  compliance_summary: { total: 1, meeting_target: 0, below_target: 1, insufficient_data: 0 },
 }
 
 function wrap(path: string) {
@@ -89,8 +114,15 @@ function wrap(path: string) {
     isError: false,
     error: null,
   } as ReturnType<typeof usePortfolio>)
+  vi.mocked(useFrameworkVersions).mockReturnValue({
+    data: mockFrameworkVersions,
+    isLoading: false,
+    isError: false,
+    error: null,
+  } as ReturnType<typeof useFrameworkVersions>)
 
-  window.location.hash = `#${path}`
+  // Routes are version-scoped (Task 9); tests target the sole active version below.
+  window.location.hash = `#/v0${path}`
 
   return render(
     <QueryClientProvider client={queryClient}>
@@ -113,5 +145,11 @@ describe('DimensionsOverview route', () => {
     expect(screen.getByText('2 metrics')).toBeInTheDocument()
     expect(screen.getByText('Bronze')).toBeInTheDocument()
     expect(screen.getByText('Silver')).toBeInTheDocument()
+  })
+
+  it('scopes the dimension link to the selected framework version', async () => {
+    wrap('/dimensions')
+    const link = await screen.findByRole('link', { name: /test verification/i })
+    expect(link).toHaveAttribute('href', '#/v0/dimensions/test_verification')
   })
 })

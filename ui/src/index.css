@@ -7,3 +7,18 @@ body {
 .p-navigation {
   background-color: #262626;
 }
+
+.p-navigation__nav-selector-wrapper {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  padding: 0.5rem 1rem;
+  max-width: 100%;
+}
+
+@media (max-width: 620px) {
+  .p-navigation__nav-selector-wrapper {
+    justify-content: flex-end;
+    padding-top: 0;
+  }
+}
