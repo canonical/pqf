@@ -10,6 +10,7 @@ from typing import Any
 import requests
 
 _GITHUB_API = "https://api.github.com"
+_TRANSPORT_ATTEMPTS = 3
 
 
 class GitHubAcquisitionError(RuntimeError):
@@ -51,10 +52,13 @@ def decode_github_file_content(response: requests.Response, url: str) -> str:
 
 
 def _session_get(session: requests.Session, url: str, **kwargs: Any) -> requests.Response:
-    try:
-        return session.get(url, **kwargs)
-    except requests.RequestException:
-        raise GitHubAcquisitionError(0, url) from None
+    for attempt in range(_TRANSPORT_ATTEMPTS):
+        try:
+            return session.get(url, **kwargs)
+        except requests.RequestException:
+            if attempt == _TRANSPORT_ATTEMPTS - 1:
+                raise GitHubAcquisitionError(0, url) from None
+    raise AssertionError("unreachable")
 
 
 def build_github_session(github_token: str | None) -> requests.Session:

@@ -76,15 +76,29 @@ def test_session_get_does_not_retry_permission_failure():
 
 
 @responses.activate
-def test_session_get_wraps_transport_failure_as_acquisition_error():
+def test_session_get_retries_transport_failure():
     url = "https://api.github.com/repos/canonical/example/topics"
     responses.add(responses.GET, url, body=requests.ConnectionError("network unavailable"))
+    responses.add(responses.GET, url, json={"names": ["squad-example"]}, status=200)
+
+    response = github_signals.github_session_get(build_github_session("gh-token"), url)
+
+    assert response.ok
+    assert len(responses.calls) == 2
+
+
+@responses.activate
+def test_session_get_wraps_persistent_transport_failure_as_acquisition_error():
+    url = "https://api.github.com/repos/canonical/example/topics"
+    for _ in range(3):
+        responses.add(responses.GET, url, body=requests.ConnectionError("network unavailable"))
 
     with pytest.raises(GitHubAcquisitionError) as exc_info:
         github_signals.github_session_get(build_github_session("gh-token"), url)
 
     assert exc_info.value.status_code == 0
     assert exc_info.value.url == url
+    assert len(responses.calls) == 3
 
 
 @responses.activate
