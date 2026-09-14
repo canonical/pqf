@@ -519,7 +519,7 @@ def test_missing_workflows_dir_returns_false():
     }
 
 
-@pytest.mark.parametrize("status", [403, 429, 500])
+@pytest.mark.parametrize("status", [401, 403, 429, 500])
 @responses.activate
 def test_workflow_listing_failure_raises_acquisition_error(status):
     url = f"{_GITHUB_API}/repos/canonical/synapse-operator/contents/.github/workflows"
@@ -530,7 +530,7 @@ def test_workflow_listing_failure_raises_acquisition_error(status):
         status=status,
         headers={"X-RateLimit-Remaining": "0"} if status == 403 else {},
     )
-    if status in {403, 429}:
+    if status in {401, 403, 429}:
         responses.add(
             responses.GET,
             url,
@@ -545,10 +545,10 @@ def test_workflow_listing_failure_raises_acquisition_error(status):
     assert exc_info.value.url == url
     assert "secret-token" not in str(exc_info.value)
     assert "must not leak" not in str(exc_info.value)
-    assert len(responses.calls) == (2 if status in {403, 429} else 1)
+    assert len(responses.calls) == (2 if status in {401, 403, 429} else 1)
 
 
-@pytest.mark.parametrize("status", [403, 429, 500])
+@pytest.mark.parametrize("status", [401, 403, 429, 500])
 @responses.activate
 def test_workflow_file_failure_raises_acquisition_error(status):
     _mock_workflows_dir("canonical/synapse-operator", ["ci.yaml"])
@@ -560,7 +560,7 @@ def test_workflow_file_failure_raises_acquisition_error(status):
         status=status,
         headers={"X-RateLimit-Remaining": "0"} if status == 403 else {},
     )
-    if status in {403, 429}:
+    if status in {401, 403, 429}:
         responses.add(
             responses.GET,
             url,
@@ -575,7 +575,7 @@ def test_workflow_file_failure_raises_acquisition_error(status):
     assert exc_info.value.url == url
     assert "secret-token" not in str(exc_info.value)
     assert "must not leak" not in str(exc_info.value)
-    expected_calls = 3 if status in {403, 429} else 2
+    expected_calls = 3 if status in {401, 403, 429} else 2
     assert len(responses.calls) == expected_calls
 
 

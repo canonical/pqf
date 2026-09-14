@@ -83,6 +83,7 @@ def _has_squad_topic(owner_repo: str, session: requests.Session) -> bool:
         timeout=15,
     )
     if not resp.ok:
+        raise_for_required_github_evidence(resp, f"{_GITHUB_API}/repos/{owner_repo}/topics")
         return False
     topics = resp.json().get("names", [])
     return any(topic.startswith("squad-") for topic in topics)

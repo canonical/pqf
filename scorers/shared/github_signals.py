@@ -18,7 +18,7 @@ class GitHubAcquisitionError(RuntimeError):
 
 
 def raise_for_required_github_evidence(response: requests.Response, url: str) -> None:
-    if response.status_code in {403, 429} or 500 <= response.status_code < 600:
+    if response.status_code in {401, 403, 429} or 500 <= response.status_code < 600:
         raise GitHubAcquisitionError(response.status_code, url)
 
 
@@ -41,10 +41,12 @@ def github_session_get(
     **kwargs: Any,
 ) -> requests.Response:
     response = session.get(url, **kwargs)
-    rate_limited = response.status_code == 429 or (
-        response.status_code == 403 and response.headers.get("X-RateLimit-Remaining") == "0"
+    retry_anonymously = (
+        response.status_code == 401
+        or response.status_code == 429
+        or (response.status_code == 403 and response.headers.get("X-RateLimit-Remaining") == "0")
     )
-    if rate_limited and session.headers.get("Authorization"):
+    if retry_anonymously and session.headers.get("Authorization"):
         return build_github_session(None).get(url, **kwargs)
     return response
 

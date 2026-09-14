@@ -282,6 +282,66 @@ def test_has_squad_topic_true():
     assert result is True
 
 
+@pytest.mark.parametrize("status", [403, 429, 500])
+@responses.activate
+def test_has_squad_topic_raises_when_required_evidence_cannot_be_acquired(status):
+    url = f"{_GITHUB_API}/repos/canonical/test-repo/topics"
+    responses.add(
+        responses.GET,
+        url,
+        json={"message": "first failure must not leak"},
+        status=status,
+        headers={"X-RateLimit-Remaining": "0"} if status == 403 else {},
+    )
+    if status in {403, 429}:
+        responses.add(
+            responses.GET,
+            url,
+            json={"message": "final failure must not leak"},
+            status=status,
+        )
+    session = requests.Session()
+    session.headers.update({"Authorization": "token secret-token"})
+
+    with pytest.raises(GitHubAcquisitionError) as exc_info:
+        _has_squad_topic("canonical/test-repo", session)
+
+    assert exc_info.value.status_code == status
+    assert exc_info.value.url == url
+    assert "secret-token" not in str(exc_info.value)
+    assert "must not leak" not in str(exc_info.value)
+    assert len(responses.calls) == (2 if status in {403, 429} else 1)
+
+
+@responses.activate
+def test_has_squad_topic_raises_when_anonymous_retry_remains_unauthorized():
+    url = f"{_GITHUB_API}/repos/canonical/test-repo/topics"
+    responses.add(
+        responses.GET,
+        url,
+        json={"message": "authenticated body must not leak"},
+        status=401,
+    )
+    responses.add(
+        responses.GET,
+        url,
+        json={"message": "anonymous body must not leak"},
+        status=401,
+    )
+    session = requests.Session()
+    session.headers.update({"Authorization": "token secret-token"})
+
+    with pytest.raises(GitHubAcquisitionError) as exc_info:
+        _has_squad_topic("canonical/test-repo", session)
+
+    assert exc_info.value.status_code == 401
+    assert exc_info.value.url == url
+    assert "secret-token" not in str(exc_info.value)
+    assert "must not leak" not in str(exc_info.value)
+    assert len(responses.calls) == 2
+    assert "Authorization" not in responses.calls[1].request.headers
+
+
 @responses.activate
 def test_has_jira_sync_true():
     responses.add(

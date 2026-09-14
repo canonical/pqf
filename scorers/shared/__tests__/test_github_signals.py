@@ -32,6 +32,25 @@ def test_session_get_retries_rate_limited_request_anonymously():
 
 
 @responses.activate
+def test_session_get_retries_authenticated_unauthorized_request_anonymously():
+    url = "https://api.github.com/repos/canonical/example/topics"
+    responses.add(
+        responses.GET,
+        url,
+        json={"message": "Bad credentials"},
+        status=401,
+    )
+    responses.add(responses.GET, url, json={"names": ["squad-example"]}, status=200)
+
+    response = github_signals.github_session_get(build_github_session("gh-token"), url)
+
+    assert response.ok
+    assert len(responses.calls) == 2
+    assert responses.calls[0].request.headers["Authorization"] == "token gh-token"
+    assert "Authorization" not in responses.calls[1].request.headers
+
+
+@responses.activate
 def test_session_get_does_not_retry_permission_failure():
     url = "https://api.github.com/repos/canonical/example/traffic/views"
     responses.add(
