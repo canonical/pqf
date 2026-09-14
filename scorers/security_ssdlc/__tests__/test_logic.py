@@ -1,17 +1,21 @@
+import pytest
 import yaml
 
 from engine.models import EvaluationUnit, ProductType
 from scorers.security_ssdlc.logic import (
     _has_branch_protection_required_checks,
+    _has_signed_commits_required,
     _is_registered_in_repo_automation,
     compute_metrics,
 )
+from scorers.shared.github_signals import GitHubAcquisitionError
 
 
 class _Response:
-    def __init__(self, ok: bool, payload: dict):
+    def __init__(self, ok: bool, payload: dict, status_code: int = 200):
         self.ok = ok
         self._payload = payload
+        self.status_code = status_code
 
     def json(self):
         return self._payload
@@ -38,6 +42,62 @@ def test_branch_protection_required_checks_true(mocker):
 
     mocker.patch("scorers.security_ssdlc.logic.github_get", side_effect=fake_github_get)
     assert _has_branch_protection_required_checks("canonical/test-repo", "token") is True
+
+
+def test_branch_protection_404_is_valid_absence(mocker):
+    mocker.patch(
+        "scorers.security_ssdlc.logic.github_get",
+        side_effect=[
+            _Response(True, {"default_branch": "main"}),
+            _Response(False, {"message": "Branch not protected"}, 404),
+        ],
+    )
+
+    assert _has_branch_protection_required_checks("canonical/test-repo", "token") is False
+
+
+def test_branch_protection_server_failure_raises(mocker):
+    mocker.patch(
+        "scorers.security_ssdlc.logic.github_get",
+        side_effect=[
+            _Response(True, {"default_branch": "main"}),
+            _Response(False, {"message": "server error"}, 500),
+        ],
+    )
+
+    with pytest.raises(GitHubAcquisitionError):
+        _has_branch_protection_required_checks("canonical/test-repo", "token")
+
+
+@pytest.mark.parametrize(
+    "responses",
+    [
+        [_Response(True, {}), _Response(True, {})],
+        [_Response(True, {"default_branch": "main"}), _Response(True, [])],
+        [
+            _Response(True, {"default_branch": "main"}),
+            _Response(True, {"required_status_checks": {"contexts": "ci"}}),
+        ],
+    ],
+)
+def test_branch_protection_malformed_response_raises(mocker, responses):
+    mocker.patch("scorers.security_ssdlc.logic.github_get", side_effect=responses)
+
+    with pytest.raises(GitHubAcquisitionError):
+        _has_branch_protection_required_checks("canonical/test-repo", "token")
+
+
+def test_signed_commit_requirement_malformed_response_raises(mocker):
+    mocker.patch(
+        "scorers.security_ssdlc.logic.github_get",
+        side_effect=[
+            _Response(True, {"default_branch": "main"}),
+            _Response(True, {"required_signatures": {"enabled": "false"}}),
+        ],
+    )
+
+    with pytest.raises(GitHubAcquisitionError):
+        _has_signed_commits_required("canonical/test-repo", "token")
 
 
 def test_repo_automation_registration_reads_from_authoritative_list(mocker):
@@ -226,6 +286,9 @@ def test_signed_commits_required_true(mocker):
             )
         return _Response(False, {})
 
+    mocker.patch("scorers.security_ssdlc.logic.repo_file_exists", return_value=False)
+    mocker.patch("scorers.security_ssdlc.logic.search_code_count", return_value=0)
+    mocker.patch("scorers.security_ssdlc.logic.workflow_files", return_value=[])
     mocker.patch("scorers.security_ssdlc.logic.github_get", side_effect=fake_github_get)
     result = compute_metrics(UNIT, "token")
     assert result["signed_commits_required"] is True
@@ -241,6 +304,9 @@ def test_signed_commits_required_false_when_not_configured(mocker):
             return _Response(True, {"required_status_checks": {"contexts": ["ci"], "checks": []}})
         return _Response(False, {})
 
+    mocker.patch("scorers.security_ssdlc.logic.repo_file_exists", return_value=False)
+    mocker.patch("scorers.security_ssdlc.logic.search_code_count", return_value=0)
+    mocker.patch("scorers.security_ssdlc.logic.workflow_files", return_value=[])
     mocker.patch("scorers.security_ssdlc.logic.github_get", side_effect=fake_github_get)
     result = compute_metrics(UNIT, "token")
     assert result["signed_commits_required"] is False

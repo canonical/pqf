@@ -350,6 +350,15 @@ def test_has_squad_topic_raises_when_required_evidence_cannot_be_acquired(status
 
 
 @responses.activate
+def test_has_squad_topic_raises_when_topics_payload_is_malformed():
+    url = "https://api.github.com/repos/canonical/example/topics"
+    responses.add(responses.GET, url, json={"names": "squad-example"}, status=200)
+
+    with pytest.raises(GitHubAcquisitionError):
+        _has_squad_topic("canonical/example", _make_github_session("token"))
+
+
+@responses.activate
 def test_has_jira_sync_treats_not_found_as_absent():
     url = f"{_GITHUB_API}/repos/canonical/test-repo/contents/.github/.jira_sync_config.yaml"
     responses.add(

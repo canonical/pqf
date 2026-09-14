@@ -1,5 +1,4 @@
 # scorers/substrate_compat/logic.py
-import base64
 import re
 from typing import Any
 
@@ -7,8 +6,11 @@ import requests
 
 from engine.models import EvaluationUnit
 from scorers.shared.github_signals import (
+    GitHubAcquisitionError,
+    decode_github_file_content,
     github_session_get,
     raise_for_required_github_evidence,
+    required_github_json,
 )
 
 _GITHUB_API = "https://api.github.com"
@@ -331,20 +333,39 @@ def _fetch_workflow_contents(owner_repo: str, github_token: str) -> list[str]:
             f"{_GITHUB_API}/repos/{owner_repo}/contents/.github/workflows",
         )
         return []
+    entries = required_github_json(
+        list_resp,
+        f"{_GITHUB_API}/repos/{owner_repo}/contents/.github/workflows",
+        list,
+    )
     contents = []
-    for entry in list_resp.json():
+    for entry in entries:
+        if not isinstance(entry, dict):
+            raise GitHubAcquisitionError(
+                list_resp.status_code,
+                f"{_GITHUB_API}/repos/{owner_repo}/contents/.github/workflows",
+            )
         if entry.get("type") != "file":
             continue
-        name = entry.get("name", "")
+        name = entry.get("name")
+        if not isinstance(name, str):
+            raise GitHubAcquisitionError(
+                list_resp.status_code,
+                f"{_GITHUB_API}/repos/{owner_repo}/contents/.github/workflows",
+            )
         if not (name.endswith(".yml") or name.endswith(".yaml")):
             continue
-        file_resp = github_session_get(session, entry["url"], timeout=15)
+        file_url = entry.get("url")
+        if not isinstance(file_url, str) or not file_url:
+            raise GitHubAcquisitionError(
+                list_resp.status_code,
+                f"{_GITHUB_API}/repos/{owner_repo}/contents/.github/workflows",
+            )
+        file_resp = github_session_get(session, file_url, timeout=15)
         if file_resp.ok:
-            data = file_resp.json()
-            raw = base64.b64decode(data.get("content", "")).decode("utf-8", errors="replace")
-            contents.append(raw)
+            contents.append(decode_github_file_content(file_resp, file_url))
         else:
-            raise_for_required_github_evidence(file_resp, entry["url"])
+            raise_for_required_github_evidence(file_resp, file_url)
     return contents
 
 

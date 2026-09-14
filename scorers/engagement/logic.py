@@ -7,8 +7,10 @@ import requests
 
 from engine.models import EvaluationUnit
 from scorers.shared.github_signals import (
+    GitHubAcquisitionError,
     github_session_get,
     raise_for_required_github_evidence,
+    required_github_json,
 )
 
 _GITHUB_API = "https://api.github.com"
@@ -61,9 +63,9 @@ def _paginate_json_array(
         if not resp.ok:
             raise_for_required_github_evidence(resp, url)
             break
-        page_items = resp.json()
-        if not isinstance(page_items, list):
-            break
+        page_items = required_github_json(resp, url, list)
+        if not all(isinstance(item, dict) for item in page_items):
+            raise GitHubAcquisitionError(resp.status_code, url)
         for item in page_items:
             if stop_when and stop_when(item):
                 return items
@@ -85,7 +87,17 @@ def _has_squad_topic(owner_repo: str, session: requests.Session) -> bool:
     if not resp.ok:
         raise_for_required_github_evidence(resp, f"{_GITHUB_API}/repos/{owner_repo}/topics")
         return False
-    topics = resp.json().get("names", [])
+    payload = required_github_json(
+        resp,
+        f"{_GITHUB_API}/repos/{owner_repo}/topics",
+        dict,
+    )
+    topics = payload.get("names")
+    if not isinstance(topics, list) or not all(isinstance(topic, str) for topic in topics):
+        raise GitHubAcquisitionError(
+            resp.status_code,
+            f"{_GITHUB_API}/repos/{owner_repo}/topics",
+        )
     return any(topic.startswith("squad-") for topic in topics)
 
 
