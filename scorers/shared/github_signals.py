@@ -38,15 +38,13 @@ def decode_github_file_content(response: requests.Response, url: str) -> str:
     content = payload.get("content")
     if not isinstance(content, str):
         raise GitHubAcquisitionError(response.status_code, url)
-    if payload.get("encoding") == "base64":
-        try:
-            compact_content = "".join(content.split())
-            return base64.b64decode(compact_content, validate=True).decode(
-                "utf-8", errors="replace"
-            )
-        except (binascii.Error, ValueError):
-            raise GitHubAcquisitionError(response.status_code, url) from None
-    return content
+    if payload.get("encoding") != "base64":
+        raise GitHubAcquisitionError(response.status_code, url)
+    try:
+        compact_content = "".join(content.split())
+        return base64.b64decode(compact_content, validate=True).decode("utf-8")
+    except (binascii.Error, UnicodeDecodeError, ValueError):
+        raise GitHubAcquisitionError(response.status_code, url) from None
 
 
 def _session_get(session: requests.Session, url: str, **kwargs: Any) -> requests.Response:
@@ -93,17 +91,7 @@ def github_get(
 ) -> requests.Response:
     session = build_github_session(github_token)
     headers = {"Accept": accept} if accept else None
-    response = _session_get(session, url, headers=headers, timeout=15)
-    # If we tried with a token but got an auth/visibility-related error,
-    # retry anonymously (some repos being scored are public)
-    if github_token and response.status_code in {401, 403, 404}:
-        response = _session_get(
-            build_github_session(None),
-            url,
-            headers=headers,
-            timeout=15,
-        )
-    return response
+    return github_session_get(session, url, headers=headers, timeout=15)
 
 
 def repo_file_exists(owner_repo: str, path: str, github_token: str | None) -> bool:
@@ -178,27 +166,23 @@ def workflow_files(owner_repo: str, github_token: str | None) -> list[tuple[str,
 
 
 def search_code_count(query: str, github_token: str | None) -> int:
-    # Use same authenticated -> anonymous retry behavior as github_get for public repos.
     session = build_github_session(github_token)
-    response = _session_get(
+    response = github_session_get(
         session,
         f"{_GITHUB_API}/search/code",
         params={"q": query, "per_page": 1},
         timeout=15,
     )
-    if github_token and response.status_code in {401, 403, 404}:
-        # Retry anonymously
-        response = _session_get(
-            build_github_session(None),
-            f"{_GITHUB_API}/search/code",
-            params={"q": query, "per_page": 1},
-            timeout=15,
-        )
     url = f"{_GITHUB_API}/search/code"
     raise_for_required_github_evidence(response, url)
     payload = required_github_json(response, url, dict)
     count = payload.get("total_count")
-    if not isinstance(count, int) or isinstance(count, bool) or count < 0:
+    if (
+        not isinstance(count, int)
+        or isinstance(count, bool)
+        or count < 0
+        or payload.get("incomplete_results") is not False
+    ):
         raise GitHubAcquisitionError(response.status_code, url)
     return count
 
@@ -225,34 +209,39 @@ def default_branch_check_runs(
     url = f"{_GITHUB_API}/repos/{owner_repo}/commits/{head_sha}/check-runs"
     headers = {"Accept": "application/vnd.github+json"}
     runs: list[dict[str, Any]] = []
+    expected_total: int | None = None
     page = 1
     while True:
         session = build_github_session(github_token)
-        checks_response = _session_get(
+        checks_response = github_session_get(
             session,
             url,
             headers=headers,
             params={"per_page": 100, "page": page},
             timeout=15,
         )
-        if github_token and checks_response.status_code in {401, 403}:
-            checks_response = _session_get(
-                build_github_session(None),
-                url,
-                headers=headers,
-                params={"per_page": 100, "page": page},
-                timeout=15,
-            )
         raise_for_required_github_evidence(checks_response, url)
         checks_payload = required_github_json(checks_response, url, dict)
+        total_count = checks_payload.get("total_count")
+        if (
+            not isinstance(total_count, int)
+            or isinstance(total_count, bool)
+            or total_count < 0
+            or (expected_total is not None and total_count != expected_total)
+        ):
+            raise GitHubAcquisitionError(checks_response.status_code, url)
+        expected_total = total_count
         page_runs = checks_payload.get("check_runs")
         if not isinstance(page_runs, list) or not all(isinstance(run, dict) for run in page_runs):
             raise GitHubAcquisitionError(checks_response.status_code, url)
         runs.extend(page_runs)
+        if len(runs) > expected_total:
+            raise GitHubAcquisitionError(checks_response.status_code, url)
+        if len(runs) == expected_total:
+            return runs
         if len(page_runs) < 100:
-            break
+            raise GitHubAcquisitionError(checks_response.status_code, url)
         page += 1
-    return runs
 
 
 def repo_releases(owner_repo: str, github_token: str | None) -> list[dict[str, Any]]:

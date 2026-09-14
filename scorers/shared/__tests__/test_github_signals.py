@@ -122,6 +122,10 @@ def test_repo_file_exists_preserves_successful_absence_semantics():
         ({"message": "server error"}, 500),
         ({}, 200),
         ({"encoding": "base64", "content": "%%%"}, 200),
+        ({"encoding": "base64", "content": "/w=="}, 200),
+        ({"encoding": "none", "content": ""}, 200),
+        ({"content": "plain text"}, 200),
+        ({"encoding": "utf-8", "content": "plain text"}, 200),
         (["not", "a", "file"], 200),
     ],
 )
@@ -150,25 +154,23 @@ def test_search_code_count_returns_total_count():
     responses.add(
         responses.GET,
         "https://api.github.com/search/code",
-        json={"total_count": 3},
+        json={"total_count": 3, "incomplete_results": False},
         status=200,
     )
     assert search_code_count("repo:canonical/example import jubilant", "gh-token") == 3
 
 
 @responses.activate
-def test_search_code_count_retries_anonymously_on_auth_error():
-    # First attempt with token returns 403 (visibility/auth related),
-    # second (anonymous) attempt succeeds with the count.
+def test_search_code_count_retries_anonymously_on_unauthorized():
     responses.add(
         responses.GET,
         "https://api.github.com/search/code",
-        status=403,
+        status=401,
     )
     responses.add(
         responses.GET,
         "https://api.github.com/search/code",
-        json={"total_count": 2},
+        json={"total_count": 2, "incomplete_results": False},
         status=200,
     )
     assert search_code_count("repo:canonical/example import jubilant", "gh-token") == 2
@@ -180,6 +182,9 @@ def test_search_code_count_retries_anonymously_on_auth_error():
         ({"message": "server error"}, 500),
         ({}, 200),
         ({"total_count": "many"}, 200),
+        ({"total_count": 3}, 200),
+        ({"total_count": 3, "incomplete_results": True}, 200),
+        ({"total_count": 3, "incomplete_results": 0}, 200),
     ],
 )
 @responses.activate
@@ -317,7 +322,7 @@ def test_default_branch_check_runs_returns_check_runs():
         responses.GET,
         "https://api.github.com/repos/canonical/example/commits/abc123/check-runs",
         match=[responses.matchers.query_param_matcher({"per_page": "100", "page": "1"})],
-        json={"check_runs": [{"name": "ci", "conclusion": "success"}]},
+        json={"total_count": 1, "check_runs": [{"name": "ci", "conclusion": "success"}]},
         status=200,
     )
 
@@ -345,14 +350,17 @@ def test_default_branch_check_runs_paginates_all_pages():
         responses.GET,
         "https://api.github.com/repos/canonical/example/commits/abc123/check-runs",
         match=[responses.matchers.query_param_matcher({"per_page": "100", "page": "1"})],
-        json={"check_runs": page1_runs},
+        json={"total_count": 101, "check_runs": page1_runs},
         status=200,
     )
     responses.add(
         responses.GET,
         "https://api.github.com/repos/canonical/example/commits/abc123/check-runs",
         match=[responses.matchers.query_param_matcher({"per_page": "100", "page": "2"})],
-        json={"check_runs": [{"name": "docs", "conclusion": "success"}]},
+        json={
+            "total_count": 101,
+            "check_runs": [{"name": "docs", "conclusion": "success"}],
+        },
         status=200,
     )
 
@@ -360,6 +368,96 @@ def test_default_branch_check_runs_paginates_all_pages():
     assert len(runs) == 101
     assert runs[0]["name"] == "ci-0"
     assert runs[-1]["name"] == "docs"
+
+
+@pytest.mark.parametrize("total_count", [None, "1", True, -1, 0])
+@responses.activate
+def test_default_branch_check_runs_rejects_invalid_total_count(total_count):
+    repo_url = "https://api.github.com/repos/canonical/example"
+    responses.add(
+        responses.GET,
+        repo_url,
+        json={"default_branch": "main"},
+        status=200,
+    )
+    responses.add(
+        responses.GET,
+        f"{repo_url}/branches/main",
+        json={"commit": {"sha": "abc123"}},
+        status=200,
+    )
+    responses.add(
+        responses.GET,
+        f"{repo_url}/commits/abc123/check-runs",
+        json={
+            "total_count": total_count,
+            "check_runs": [{"name": "ci", "conclusion": "success"}],
+        },
+        status=200,
+    )
+
+    with pytest.raises(GitHubAcquisitionError):
+        default_branch_check_runs("canonical/example", None)
+
+
+@responses.activate
+def test_default_branch_check_runs_rejects_truncated_pagination():
+    repo_url = "https://api.github.com/repos/canonical/example"
+    checks_url = f"{repo_url}/commits/abc123/check-runs"
+    responses.add(responses.GET, repo_url, json={"default_branch": "main"}, status=200)
+    responses.add(
+        responses.GET,
+        f"{repo_url}/branches/main",
+        json={"commit": {"sha": "abc123"}},
+        status=200,
+    )
+    responses.add(
+        responses.GET,
+        checks_url,
+        match=[responses.matchers.query_param_matcher({"per_page": "100", "page": "1"})],
+        json={"total_count": 2, "check_runs": [{"name": "ci"}]},
+        status=200,
+    )
+    responses.add(
+        responses.GET,
+        checks_url,
+        match=[responses.matchers.query_param_matcher({"per_page": "100", "page": "2"})],
+        json={"total_count": 2, "check_runs": []},
+        status=200,
+    )
+
+    with pytest.raises(GitHubAcquisitionError):
+        default_branch_check_runs("canonical/example", None)
+
+
+@responses.activate
+def test_default_branch_check_runs_rejects_inconsistent_paginated_total_count():
+    repo_url = "https://api.github.com/repos/canonical/example"
+    checks_url = f"{repo_url}/commits/abc123/check-runs"
+    responses.add(responses.GET, repo_url, json={"default_branch": "main"}, status=200)
+    responses.add(
+        responses.GET,
+        f"{repo_url}/branches/main",
+        json={"commit": {"sha": "abc123"}},
+        status=200,
+    )
+    responses.add(
+        responses.GET,
+        checks_url,
+        match=[responses.matchers.query_param_matcher({"per_page": "100", "page": "1"})],
+        json={"total_count": 101, "check_runs": [{"name": str(i)} for i in range(100)]},
+        status=200,
+    )
+    responses.add(
+        responses.GET,
+        checks_url,
+        match=[responses.matchers.query_param_matcher({"per_page": "100", "page": "2"})],
+        json={"total_count": 102, "check_runs": [{"name": "last"}]},
+        status=200,
+    )
+
+    with pytest.raises(GitHubAcquisitionError):
+        default_branch_check_runs("canonical/example", None)
 
 
 @pytest.mark.parametrize(

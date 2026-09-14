@@ -1,4 +1,5 @@
 import pytest
+import responses
 import yaml
 
 from engine.models import EvaluationUnit, ProductType
@@ -54,6 +55,37 @@ def test_branch_protection_404_is_valid_absence(mocker):
     )
 
     assert _has_branch_protection_required_checks("canonical/test-repo", "token") is False
+
+
+@responses.activate
+def test_branch_protection_permission_403_does_not_fall_back_to_anonymous_404():
+    repo_url = "https://api.github.com/repos/canonical/test-repo"
+    protection_url = f"{repo_url}/branches/main/protection"
+    responses.add(
+        responses.GET,
+        repo_url,
+        json={"default_branch": "main"},
+        status=200,
+    )
+    responses.add(
+        responses.GET,
+        protection_url,
+        json={"message": "Resource not accessible by integration"},
+        status=403,
+        headers={"X-RateLimit-Remaining": "999"},
+    )
+    responses.add(
+        responses.GET,
+        protection_url,
+        json={"message": "Not Found"},
+        status=404,
+    )
+
+    with pytest.raises(GitHubAcquisitionError) as exc_info:
+        _has_branch_protection_required_checks("canonical/test-repo", "token")
+
+    assert exc_info.value.status_code == 403
+    assert len(responses.calls) == 2
 
 
 def test_branch_protection_server_failure_raises(mocker):
