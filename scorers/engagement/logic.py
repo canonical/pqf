@@ -128,7 +128,8 @@ def _compute_issue_triage_stats(
         comments_url = f"{_GITHUB_API}/repos/{owner_repo}/issues/{number}/comments"
         resp = github_session_get(session, comments_url, timeout=15)
         if not resp.ok:
-            continue
+            raise_for_required_github_evidence(resp, comments_url)
+            resp.raise_for_status()
         for comment in resp.json():
             if comment["user"]["login"] != author:
                 first_comment = _parse_dt(comment["created_at"])
@@ -157,7 +158,8 @@ def _compute_pr_review_stats(
         reviews_url = f"{_GITHUB_API}/repos/{owner_repo}/pulls/{number}/reviews"
         resp = github_session_get(session, reviews_url, timeout=15)
         if not resp.ok:
-            continue
+            raise_for_required_github_evidence(resp, reviews_url)
+            resp.raise_for_status()
         reviews = resp.json()
         review_times_dt = [
             dt for dt in (_try_parse_dt(review.get("submitted_at")) for review in reviews) if dt

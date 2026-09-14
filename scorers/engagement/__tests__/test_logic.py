@@ -6,6 +6,8 @@ import responses
 
 from engine.models import EvaluationUnit, ProductType
 from scorers.engagement.logic import (
+    _compute_issue_triage_stats,
+    _compute_pr_review_stats,
     _fetch_repo_views_14d,
     _has_jira_sync,
     _has_squad_topic,
@@ -167,6 +169,40 @@ def test_avg_triage_days_computed_correctly(mocker):
     assert result["ownership_signal"] is True
     assert result["has_jira_sync"] is True
     assert result["repo_views_14d"] == 1250
+
+
+@pytest.mark.parametrize("status", [401, 403, 404, 429, 500])
+@responses.activate
+def test_issue_comment_acquisition_raises_on_final_required_evidence_failure(status):
+    url = f"{_GITHUB_API}/repos/canonical/example/issues/1/comments"
+    responses.add(responses.GET, url, json={"message": "failure"}, status=status)
+
+    with pytest.raises(GitHubAcquisitionError) as exc_info:
+        _compute_issue_triage_stats(
+            [_ISSUES[0]],
+            _make_github_session(""),
+            "canonical/example",
+        )
+
+    assert exc_info.value.status_code == status
+    assert exc_info.value.url == url
+
+
+@pytest.mark.parametrize("status", [401, 403, 404, 429, 500])
+@responses.activate
+def test_pr_review_acquisition_raises_on_final_required_evidence_failure(status):
+    url = f"{_GITHUB_API}/repos/canonical/example/pulls/10/reviews"
+    responses.add(responses.GET, url, json={"message": "failure"}, status=status)
+
+    with pytest.raises(GitHubAcquisitionError) as exc_info:
+        _compute_pr_review_stats(
+            [_PULLS[0]],
+            _make_github_session(""),
+            "canonical/example",
+        )
+
+    assert exc_info.value.status_code == status
+    assert exc_info.value.url == url
 
 
 @responses.activate
