@@ -23,7 +23,7 @@ make install-all   # Python deps + Node deps
 ## Running tests
 
 ```bash
-make test          # Python unit tests (110 tests, ~2s)
+make test          # Python unit tests
 make test-ui       # Vitest UI unit tests
 make test-all      # Both
 make lint          # Python ruff lint
@@ -70,6 +70,20 @@ To change metric logic, result criteria, or product definitions and preview the 
 Editing an **archived** framework version to change scoring is never allowed: archived measurements
 are frozen and are never recomputed. Prefer adding changes to the **upcoming** version; changing the
 **active** version alters today's official compliance view and needs framework-owner review.
+
+The canonical model and its invariants are documented in
+[How versioned scoring works](docs/architecture.md#how-versioned-scoring-works).
+
+### Version-aware review checklist
+
+- [ ] The intended framework version was selected from lifecycle metadata.
+- [ ] The version-filtered product-set boundary, including composition edges, is correct.
+- [ ] Sparse `targets` resolve to the intended target for every affected product and version.
+- [ ] Detector changes publish a new immutable implementation revision instead of changing one in place.
+- [ ] Each runner registers its logic and every scoring-relevant helper and prompt in
+      `RUNNER_SOURCE_FILES`.
+- [ ] Acquired low evidence (`false`, `0`, or an empty collection) is distinct from required
+      acquisition failure, which must fail the scoring job.
 
 ---
 

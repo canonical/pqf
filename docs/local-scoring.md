@@ -26,7 +26,16 @@ The Makefile reads `GITHUB_TOKEN` from `gh auth token`, so you do not need to ex
 
 Local scoring now runs against an explicit framework contract under `framework/versions/<id>/`.
 Every runtime command must receive `FRAMEWORK_VERSION=<id>`; there is no unversioned contract and
-nothing defaults to a version.
+nothing defaults to a version. This deliberately keeps a local run focused on one contract and
+makes the version being previewed unambiguous.
+
+Production may group several selected framework versions for the same product into one process to
+avoid acquiring identical evidence repeatedly. That grouping is only an execution optimization:
+each version resolves its own product set, targets, implementation revisions, output filtering, and
+result criteria. Raw runner output is reused only when the complete `EvaluationUnit`,
+`ScorerContext`, runner key, and complete runner-identity digest all match. That digest covers
+binding metadata, the dispatched runner wrapper, runner logic, scoring-relevant shared helpers, and
+prompt assets.
 
 - **Active** and **upcoming** framework versions can be scored, merged, and assembled locally.
 - **Archived** framework versions are frozen snapshots. Local scoring rejects them instead of
@@ -53,11 +62,12 @@ make dev
 ```
 
 Open <http://localhost:5173>. Keep the dev server running while you repeat the scoring commands;
-it reloads the rebuilt versioned portfolio data automatically.
+it reloads the rebuilt versioned product-set data automatically.
 
-`make _version-index` rebuilds `public/framework-versions.json`. Run it after the active and
-upcoming local portfolios both exist under `public/versions/`, otherwise the index will fail fast
-because active/upcoming entries must stay in sync with their published contracts.
+`make _version-index` rebuilds `public/framework-versions.json`. Run it after local product-set
+artifacts for the active and upcoming versions both exist under `public/versions/`, otherwise the
+index will fail fast because active/upcoming entries must stay in sync with their published
+contracts.
 
 ## What to rerun after a change
 
@@ -105,7 +115,7 @@ the default no-AI loop.
 - `public/framework-versions.json`: active/upcoming/archive index consumed by the UI version selector
 
 Use `make score-all-no-llm FRAMEWORK_VERSION=v1` only when you need to compare the whole
-portfolio. Use `make score-all FRAMEWORK_VERSION=v1` for the same comparison with AI-assisted
+product set. Use `make score-all FRAMEWORK_VERSION=v1` for the same comparison with AI-assisted
 metrics enabled.
 
 ## Keep generated previews out of commits

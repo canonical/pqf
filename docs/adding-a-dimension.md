@@ -30,12 +30,12 @@ A quality dimension is one axis of the result rubric (e.g., Test Verification, D
 2. A new `scorers/<name>/` directory with `logic.py`, `scorer.py`, and tests
 3. Metric implementation bindings and the runner registration in `scorers/registry.py` so the dimension can be dispatched
 
-> **Which framework version?** Add new dimensions to the **upcoming** version
-> (`framework/versions/v1/`). Adding a scored dimension to the **active** version changes today's
-> official compliance view and needs explicit framework-owner review; CI's semantic change report
-> flags it as a scoring-semantic change. **Archived** versions are frozen and must never be edited
-> to change scoring. A framework contract is a full snapshot — editing one version never affects
-> another.
+> **Which framework version?** Inspect `framework/versions/*/framework.yaml` for the current
+> lifecycle roles and add new dimensions to the version marked **upcoming**. Adding a scored
+> dimension to the version marked **active** changes today's official compliance view and needs
+> explicit framework-owner review; CI's semantic change report flags it as a scoring-semantic
+> change. **Archived** versions are frozen and must never be edited to change scoring. A framework
+> contract is a full snapshot — editing one version never affects another.
 
 ---
 
@@ -124,6 +124,8 @@ touch scorers/my_dimension/__tests__/test_logic.py
 - Accepts `unit: EvaluationUnit` and any credentials it needs (e.g. `github_token: str`)
 - Returns `dict[str, Any]` with **exactly** the keys declared in `dimensions.yaml` `outputs`
 - Has **no side effects** — no `os.environ`, no file I/O, no print statements
+- Receives all external evidence and access configuration through parameters rather than reading
+  hidden process state
 
 Use `unit.repo`, `unit.subpath`, `unit.allure_report_url`, and `unit.documentation_url` to access
 the leaf product's source information.
@@ -132,6 +134,12 @@ Use helpers from `scorers.shared.github_signals` rather than making raw `request
 handle auth retry, base URL, and monorepo subpath scoping automatically. See
 [adding-a-metric.md — Reference: shared GitHub signal helpers](adding-a-metric.md#reference-shared-github-signal-helpers)
 for the full list.
+
+Required external evidence acquisition must raise after supported retries and fail the scoring job.
+Never translate API, authentication, rate-limit, or server failures into `false`, zero, or an empty
+collection. Those values represent valid measured absence only after acquisition succeeded.
+Scorer-defined valid absence (for example, an allowed `404`) and explicitly optional,
+unmeasurable signals remain distinct from acquisition failure.
 
 ```python
 from __future__ import annotations
@@ -307,8 +315,10 @@ METRIC_BINDINGS = MappingProxyType({
 })
 ```
 
-List every file whose contents can change the metric result, including shared helpers and prompt
-assets. Their contents form the implementation fingerprint recorded with computed results.
+List every source dependency whose contents can change runner output, including runner logic,
+shared helpers, and prompt assets. These registered files, together with the dispatched runner
+wrapper and relevant binding metadata, form the implementation fingerprint recorded with computed
+results.
 
 `make validate` fails if a contract declares an unknown implementation, one that belongs to another
 dimension, one that resolves to a different output key, or one whose runner is not registered. No
@@ -333,14 +343,14 @@ make dev   # → http://localhost:5173, then pick that version in the framework 
 
 The generated `computed/`, `public/`, and `.pqf-score/` files are GHA-maintained previews —
 inspect them locally, but never commit them. See [Run PQF locally](local-scoring.md) for
-AI-assisted scoring, full-portfolio runs, and generated-artifact guidance.
+AI-assisted scoring, full product-set runs, and generated-artifact guidance.
 
 ---
 
 ## Step 8: Checklist before opening a PR
 
 - [ ] `framework/versions/<version>/dimensions.yaml` has the new dimension with `label`, `description`, `applies_to`, `aggregation`, `required_metrics_for_scoring`, `outputs` (each with an `implementation`), and `medals`
-- [ ] The dimension was added to the **upcoming** version, or an active-contract change was explicitly agreed with framework owners
+- [ ] The dimension was added to the version currently marked **upcoming**, or a change to the version currently marked **active** was explicitly agreed with framework owners
 - [ ] `scorers/registry.py` — runner, complete scoring-relevant source tuple, and one `MetricBinding` per declared implementation
 - [ ] `scorers/my_dimension/logic.py` is a pure function — no `os.environ`, no file I/O, no framework-version branching; returns exactly the keys declared in `outputs`
 - [ ] `scorers/my_dimension/scorer.py` delegates to `scorers.run.main(fixed_dimension=...)`

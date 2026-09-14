@@ -9,11 +9,12 @@ We use a concrete example throughout: adding a **`has_runbook`** metric to the
 documentation-only illustration — it does not imply a required source change in the current
 branch.
 
-> **Which framework version?** Metrics are declared per framework version. Add new metrics to the
-> **upcoming** version (`framework/versions/v1/`) by default — that is the planning bar. Adding or
-> changing a scored metric in the **active** version is a scoring-semantic change to today's
-> official compliance view, and needs explicit framework-owner review. **Archived** versions are
-> frozen and must never be edited to change scoring.
+> **Which framework version?** Metrics are declared per framework version. Inspect
+> `framework/versions/*/framework.yaml` for the current lifecycle roles. Add new metrics to the
+> version marked **upcoming** by default — that is the planning bar. Adding or changing a scored
+> metric in the version marked **active** is a scoring-semantic change to today's official
+> compliance view and needs explicit framework-owner review. **Archived** versions are frozen and
+> must never be edited to change scoring.
 
 ---
 
@@ -62,7 +63,8 @@ If you need to change *how* an existing metric is measured, do not edit the exis
 implementation's behaviour in place. Add a new revision (`runbook-present/v2`) with its own
 binding, and point the contract that should adopt it at the new ID. That keeps the semantic change
 visible in review and stops one correction from silently rescoring every version that references
-the old ID.
+the old ID. Different framework versions may select different implementation revisions for the
+same metric ID.
 
 ---
 
@@ -169,7 +171,7 @@ you are targeting (here, the upcoming `v1`). Place it after the existing determi
 
 ---
 
-## Step 3 — Bind the implementation revision in `scorers/registry.py`
+## Step 3 — Bind the implementation revision and register runner sources
 
 `scorers/registry.py` maps each implementation revision ID to the dimension, output key, and pure
 runner that produces it:
@@ -190,6 +192,17 @@ runner that produces it:
 
 `make validate` checks that every declared implementation exists, belongs to the dimension that
 declares it, resolves to the same output key, and references a known runner.
+
+Also inspect that runner's `RUNNER_SOURCE_FILES` entry. Register every source dependency whose
+contents can change its output, including its `logic.py`, scoring-relevant shared helpers, and
+prompt assets. The registered file contents, dispatched runner wrapper, and relevant binding
+metadata form the runner-source fingerprint.
+
+Production can reuse raw runner output across framework versions only when the complete cache
+identity matches: the full `EvaluationUnit`, `ScorerContext`, runner key, and complete
+runner-identity digest. The digest includes the runner-source fingerprint plus the dispatched
+wrapper and relevant binding metadata. After lookup, each contract still filters the raw output to
+the implementations it selects and independently evaluates its required metrics and criteria.
 
 ---
 
@@ -355,7 +368,7 @@ every scored product in that version:
 
 These generated files are GHA-maintained previews — inspect them locally, but never commit them.
 See [Run PQF locally](local-scoring.md) for AI-assisted scoring, criteria-only changes,
-full-portfolio runs, and generated-artifact guidance.
+full product-set runs, and generated-artifact guidance.
 
 ---
 
@@ -422,7 +435,7 @@ These helpers live in `scorers/shared/github_signals.py` and are imported direct
 | Helper | Signature | Returns | When to use |
 |--------|-----------|---------|-------------|
 | `repo_file_exists` | `(owner_repo, path, token)` | `bool` | Check if a file exists at a specific path |
-| `repo_file_text` | `(owner_repo, path, token)` | `str` | Fetch the text content of a file (empty string on failure) |
+| `repo_file_text` | `(owner_repo, path, token)` | `str` | Fetch file text; returns empty only for a scorer-defined valid absence |
 | `repo_topics` | `(owner_repo, token)` | `list[str]` | List GitHub repository topics |
 | `workflow_files` | `(owner_repo, token)` | `list[tuple[str, str]]` | All `(filename, content)` pairs from `.github/workflows/` |
 | `default_branch_check_runs` | `(owner_repo, token)` | `list[dict]` | Latest CI check runs on the default branch HEAD |
@@ -430,7 +443,11 @@ These helpers live in `scorers/shared/github_signals.py` and are imported direct
 | `repo_releases` | `(owner_repo, token)` | `list[dict]` | All GitHub releases for a repository |
 
 > All helpers retry anonymously when a token produces an auth error on a public repo, so you
-> rarely need to handle 401/403 specially in `logic.py`.
+> rarely need to handle 401/403 specially in `logic.py`. If required GitHub-backed evidence still
+> cannot be acquired after supported retries, the helper raises and the scoring job fails. Do not
+> convert API, authentication, rate-limit, or server failures into `false`, `0`, or empty evidence.
+> A scorer-defined valid absence remains a measured value; an explicitly optional signal that the
+> API cannot expose reliably may return `null`.
 
 ---
 
@@ -461,14 +478,16 @@ Local runtime commands never default to a framework version. Pass `FRAMEWORK_VER
 Archived measurements are frozen and are never recomputed. Score the active or upcoming version
 instead.
 
-**`make score-no-llm` exits non-zero with `json.JSONDecodeError`**
-A helper returned an unexpected response type. Add a `print` statement or use `pdb` to inspect
-what the GitHub API returned. Common cause: rate limiting (try `gh auth token` to refresh).
+**`make score-no-llm` exits non-zero with a GitHub acquisition error**
+Required GitHub-backed evidence could not be acquired after supported retries. Check the reported
+endpoint and authentication or rate-limit state; do not replace the exception with a low metric
+value.
 
 **New metric shows `null` for all products in the dashboard**
-The scorer ran but the key was `None` in Python. Check that your helper returns `False` (not
-`None`) in the default/error path. `None` serialises to `null` in JSON and causes
-`insufficient_data` for required metrics.
+The scorer ran but the key was `None` in Python. Return `False`, zero, or an empty collection only
+when acquisition succeeded and that value represents measured absence. `None` serialises to
+`null` and is reserved for a genuinely unmeasurable optional signal; it causes
+`insufficient_data` when the metric is required.
 
 **Dashboard doesn't show the new metric at all**
 Check that you are looking at the framework version you edited in the version selector, and that

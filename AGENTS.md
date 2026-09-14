@@ -10,13 +10,13 @@ tracked products via medal grades (bronze / silver / gold). It has two main part
    and the selected version's `public/versions/<version>/portfolio.json`
 
 Everything is **framework-versioned**: `framework/versions/<version>/{framework,dimensions}.yaml`
-is a full, self-contained snapshot of the scoring contract. V0 is **active** (today's official
-view, scored nightly); V1 is **upcoming** (previewed weekly and on demand); archived versions are
-frozen and never rescored. GitHub Actions runs the scorers per version, uploads the generated
-artifacts, and publishes them through the GitHub Pages deployment workflow. The deploy step keeps
-archived version directories intact, mirrors the active version at the root compatibility paths
-(`public/portfolio.json` and `public/badges/`), and preserves the pre-versioning snapshot at
-`/legacy/`.
+is a full, self-contained snapshot of the scoring contract. Lifecycle roles come from each
+version's `framework.yaml`: the active version is the official nightly view, the optional upcoming
+version is previewed weekly and on demand, and archived versions are frozen and never rescored.
+GitHub Actions runs the scorers per version, uploads the generated artifacts, and publishes them
+through the GitHub Pages deployment workflow. The deploy step keeps archived version directories
+intact, mirrors the active version at the root compatibility paths (`public/portfolio.json` and
+`public/badges/`), and preserves the pre-versioning snapshot at `/legacy/`.
 
 **Full architecture:** [docs/architecture.md](docs/architecture.md)
 
@@ -48,14 +48,20 @@ archived version directories intact, mirrors the active version at the root comp
 - `computed/versions/` files are GHA-written. Never hand-edit or commit them.
 - `public/versions/<version>/portfolio.json` and `public/framework-versions.json` are GHA-written.
   Never hand-edit them — regenerate with `engine/assemble.py` / `engine/version_index.py`.
+- Production groups selected framework versions by product, but a cached runner result is reusable
+  only when the complete evaluation unit, scorer context, runner key, and every registered runner
+  source fingerprint match. Contracts still filter outputs and evaluate criteria per version.
+- In explanatory prose, call version membership the **product set**. Keep `portfolio.json` and
+  existing `Portfolio` identifiers only as compatibility implementation names.
 
 ### React UI
 
 - All UI components use `@canonical/react-components` (Vanilla Framework wrappers). No Tailwind,
   no shadcn, no custom CSS frameworks.
 - `public/framework-versions.json` is loaded first and is the sole authority for lifecycle and
-  display metadata; the portfolio's embedded `framework` block is provenance only. Routes are
-  version-scoped (`#/<version>/...`). Never import Python engine code from JS/TS.
+  display metadata; the selected `portfolio.json` artifact's embedded `framework` block is
+  provenance only. Routes are version-scoped (`#/<version>/...`). Never import Python engine code
+  from JS/TS.
 - TypeScript strict mode; no `any` except in test mocks.
 - Vitest + React Testing Library for unit tests (co-located `.test.tsx`); Playwright for E2E.
 - Vite base path is `./` (relative) for GH Pages compatibility.
@@ -82,6 +88,9 @@ When changing scorers, rubrics, or scoring semantics, preserve these rules:
 
 - **Keep metrics simple and deterministic.** A metric should stay easy to explain in one sentence.
 - **Separate measured-low from unmeasurable.** `bronze` means the repo was measured and performed poorly. `unrated` / `insufficient_data` means the signal could not be measured confidently.
+- **Fail closed on required evidence.** Required external evidence acquisition fails the scoring
+  job after supported retries; never turn API, authentication, rate-limit, or server failures into
+  `false`, `0`, or empty evidence.
 - **Support only sanctioned variants.** The allowed variance classes are:
   - monorepo vs non-monorepo,
   - charm vs snap,
@@ -136,7 +145,7 @@ Always use `make` targets. CI uses the same targets.
 Dimensions are declared **per framework version** — always read the contract you are changing
 (`framework/versions/<version>/dimensions.yaml`) rather than trusting a summary. Current state:
 
-**V0 (active)** — four dimensions:
+**V0 contract** — four dimensions:
 
 | Dimension | Result criteria |
 |-----------|-----------------|
@@ -145,7 +154,7 @@ Dimensions are declared **per framework version** — always read the contract y
 | `security_ssdlc` | Bronze: `renovate_enabled`. Silver: + `branch_protection_required_checks`. Gold: + `signed_commits_required`. |
 | `engagement` | Bronze: `ownership_signal`. Silver: + `response_coverage_rate >= 80`. Gold: + `response_coverage_rate >= 90`. |
 
-**V1 (upcoming)** — adds `substrate_compat` and promotes further signals:
+**V1 contract** — adds `substrate_compat` and promotes further signals:
 
 | Dimension | Result criteria |
 |-----------|-----------------|

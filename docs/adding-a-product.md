@@ -15,17 +15,17 @@ Add a product when a Canonical Platform Engineering team wants to start tracking
 
 ## Step 0: Pick the framework version it joins in
 
-Catalog membership is **version-scoped**. Every product, component, and composition edge declares
+Product-set membership is **version-scoped**. Every product, component, and composition edge declares
 the framework version it enters in, so adding a product never silently changes an older version's
 results.
 
-Read `framework/versions/*/framework.yaml` to see the current lifecycle state. Today **V0 is
-active** and **V1 is upcoming**.
+Read `framework/versions/*/framework.yaml` to determine which version currently has each lifecycle
+role; version IDs do not permanently mean active or upcoming.
 
-- Onboard into the **active** version (`introduced_in: v0`) when the product should count towards
-  today's official compliance view immediately.
-- Onboard into the **upcoming** version (`introduced_in: v1`) when the product should only appear
-  in the planning/readiness view until that version activates.
+- Onboarding into the version whose metadata says **active** changes the official compliance view
+  as soon as its product-set artifacts refresh.
+- Onboarding into the version whose metadata says **upcoming** is readiness work: the product
+  appears in the planning view and becomes official only after that version activates.
 - You cannot introduce a product in an **archived** version. Archived results are frozen and are
   never recomputed.
 
@@ -92,8 +92,8 @@ context_refs:
     repo: canonical/traefik-k8s-operator
 ```
 
-Here `wazuh-indexer` is absent from V0 entirely — including search, aggregate counts, and the
-parent's roll-up — and appears only in the V1 readiness view.
+Here `wazuh-indexer` is absent from V0's product set entirely — including search, aggregate counts,
+and the parent's roll-up — and joins the product set in V1.
 
 ---
 
@@ -194,7 +194,7 @@ make validate
 
 Commit your new `products/<id>.yaml` and open a PR. CI validates the YAML against the schema, runs
 the version-boundary and target-resolution checks for every framework version, publishes a semantic
-change report classifying your change (here: catalog membership/target), and runs the test suite.
+change report classifying your change (here: product-set membership/target), and runs the test suite.
 A reviewer will check that:
 - The `source.repo` slugs are correct
 - The `squad` matches the team's actual ownership
@@ -206,12 +206,14 @@ A reviewer will check that:
 ## Step 3: After merging
 
 Once merged, `compute-metrics.yml` recomputes every **live** framework version affected by the
-catalog change and will:
+product-set change and will:
 1. Run the selected framework's dimensions against the new product's leaf units
 2. Write `computed/versions/<version>/<id>.json` (a `leaf_metrics` envelope keyed by leaf product ID)
 3. Regenerate `public/versions/<version>/portfolio.json` (including the new product)
 4. Regenerate `public/framework-versions.json`
 5. Deploy the updated dashboard
+
+These generated artifacts are written by GitHub Actions; never hand-edit or commit them.
 
 The product appears in the active view within 24 hours of merge (or immediately if you trigger the
 workflow manually via `workflow_dispatch` with the framework version). A product introduced only in
