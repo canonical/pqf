@@ -31,12 +31,15 @@ scorers/registry.py                   ← you bind an implementation revision ID
           ▼
 framework/versions/<version>/dimensions.yaml
           │  ← you declare the output (selecting that implementation) here
-          │    assemble.py reads outputs + medals
+          │    scorer writes local raw output
           ▼
-computed/versions/<version>/<product>.json    ← GHA-written (or make _merge locally)
-          │
+.pqf-score/<version>/<product>/               ← local, gitignored intermediate
+          │  make _merge
           ▼
-public/versions/<version>/portfolio.json      ← GHA-written (or make _assemble locally)
+computed/versions/<version>/<product>.json    ← canonical GHA artifact (regenerated locally)
+          │  make _assemble reads outputs + medals
+          ▼
+public/versions/<version>/portfolio.json      ← canonical GHA artifact (regenerated locally)
           │
           ▼
 Dashboard (make dev → localhost:5173) ← new metric appears under that framework version
@@ -85,13 +88,15 @@ gh auth login
 
 ## Step 1 — Understand the existing dimension
 
-Open `framework/versions/v1/dimensions.yaml` and find the `documentation` block. The `outputs`
-section lists every metric key the scorer must return and the implementation revision that produces
-it, `required_metrics_for_scoring` lists the keys that must be measurable for the dimension to be
-scored at all, and `medals` defines which keys gate each tier.
+Identify the version currently marked **upcoming** in
+`framework/versions/*/framework.yaml`, then open
+`framework/versions/<version>/dimensions.yaml` and find the `documentation` block. The `outputs`
+section lists every metric key the scorer must return and the implementation revision that
+produces it, `required_metrics_for_scoring` lists the keys that must be measurable for the
+dimension to be scored at all, and `medals` defines which keys gate each tier.
 
 ```yaml
-# framework/versions/v1/dimensions.yaml (existing — do not edit yet)
+# framework/versions/<version>/dimensions.yaml (existing — do not edit yet)
   documentation:
     label: "Documentation"
     required_metrics_for_scoring: [readme_present, contributing_present, has_security, release_notes_process_implemented]
@@ -131,12 +136,12 @@ contract in mind.
 
 ## Step 2 — Declare the new metric in the framework contract
 
-Add `has_runbook` to the `outputs` map of the `documentation` dimension in the framework version
-you are targeting (here, the upcoming `v1`). Place it after the existing deterministic metrics
-(before the `informational` ones at the bottom is a good convention):
+Add `has_runbook` to the `outputs` map of the `documentation` dimension in the version currently
+marked **upcoming**. Place it after the existing deterministic metrics (before the
+`informational` ones at the bottom is a good convention):
 
 ```diff
-# framework/versions/v1/dimensions.yaml
+# framework/versions/<version>/dimensions.yaml
        release_notes_process_implemented:
          implementation: "release-notes-process-implemented/v1"
          type: boolean
@@ -256,6 +261,7 @@ key to it:
          ),
          "uses_rtd_hosting": _uses_rtd_hosting(unit, github_token),
          "release_notes_process_implemented": _release_notes_process_implemented(unit, github_token),
+         "has_changelog": _has_changelog(unit, github_token),
 +        "has_runbook": _has_runbook(unit, github_token),
      }
 ```
@@ -285,6 +291,7 @@ Look for the existing test that covers default (all-false) outputs and add your 
          "diataxis_coverage_ai": 0,
          "uses_rtd_hosting": False,
          "release_notes_process_implemented": False,
+         "has_changelog": False,
 +        "has_runbook": False,
      }
 ```
@@ -348,16 +355,16 @@ mismatch between the output key declared in the framework contract and the key n
 
 ## Step 8 — Score locally and see it in the dashboard
 
-Run the full local pipeline against any product, for the framework version you edited (we use
-`matrix` and `v1` here as an example). Every runtime command needs an explicit `FRAMEWORK_VERSION`:
+Run the full local pipeline against any product and the framework version you edited. Every
+runtime command needs an explicit `FRAMEWORK_VERSION`:
 
 ```bash
-make score-no-llm PRODUCT=matrix FRAMEWORK_VERSION=v1  # → .pqf-score/v1/matrix/
-make _merge PRODUCT=matrix FRAMEWORK_VERSION=v1        # → computed/versions/v1/matrix.json
-make _assemble FRAMEWORK_VERSION=v1                    # → public/versions/v1/portfolio.json
-make _version-index                                    # → public/framework-versions.json
+make score-no-llm PRODUCT=matrix FRAMEWORK_VERSION=<version>  # → .pqf-score/<version>/matrix/
+make _merge PRODUCT=matrix FRAMEWORK_VERSION=<version>        # → computed/versions/<version>/matrix.json
+make _assemble FRAMEWORK_VERSION=<version>                    # → public/versions/<version>/portfolio.json
+make _version-index                                           # → public/framework-versions.json
 
-make dev                           # start Vite dev server → http://localhost:5173
+make dev  # start Vite dev server → http://localhost:5173
 ```
 
 Select that framework version in the dashboard's version selector, then navigate to the
@@ -366,9 +373,11 @@ every scored product in that version:
 
 ![Documentation dimension detail showing the new metric](screenshots/dimension-detail-documentation-after.png)
 
-These generated files are GHA-maintained previews — inspect them locally, but never commit them.
-See [Run PQF locally](local-scoring.md) for AI-assisted scoring, criteria-only changes,
-full product-set runs, and generated-artifact guidance.
+`.pqf-score/` contains gitignored local scorer intermediates. `_merge`, `_assemble`, and
+`_version-index` then regenerate local copies of the canonical `computed/` and `public/`
+artifacts that GitHub Actions maintains. Inspect all of these outputs locally, but never stage or
+commit them. See [Run PQF locally](local-scoring.md) for AI-assisted scoring, criteria-only
+changes, full product-set runs, and generated-artifact guidance.
 
 ---
 
@@ -379,7 +388,7 @@ version's `medals` section. Tiers are **cumulative** — a product earning silve
 all bronze criteria.
 
 ```diff
-# framework/versions/v1/dimensions.yaml
+# framework/versions/<version>/dimensions.yaml
      medals:
        bronze: ["readme_present == true"]
 -      silver: ["readme_present == true", "contributing_present == true"]
@@ -405,7 +414,7 @@ re-running the scorer:
 
 ```bash
 make validate
-make _assemble FRAMEWORK_VERSION=v1   # re-evaluates results from current computed/versions/v1/
+make _assemble FRAMEWORK_VERSION=<version>  # re-evaluates current computed/versions/<version>/
 make dev
 ```
 
@@ -423,7 +432,7 @@ make dev
 - [ ] `make score-no-llm PRODUCT=<any-product> FRAMEWORK_VERSION=<version>` runs without error
 - [ ] `make _merge PRODUCT=<any-product> FRAMEWORK_VERSION=<version> && make _assemble FRAMEWORK_VERSION=<version>` updates `public/versions/<version>/portfolio.json`
 - [ ] New metric appears in the dashboard under that framework version (`make dev`)
-- [ ] No generated `computed/`, `public/`, or `.pqf-score/` preview files are staged
+- [ ] No local `.pqf-score/` intermediates or regenerated `computed/` / `public/` artifacts are staged
 
 ---
 

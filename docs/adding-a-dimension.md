@@ -341,9 +341,11 @@ make _version-index
 make dev   # → http://localhost:5173, then pick that version in the framework selector
 ```
 
-The generated `computed/`, `public/`, and `.pqf-score/` files are GHA-maintained previews —
-inspect them locally, but never commit them. See [Run PQF locally](local-scoring.md) for
-AI-assisted scoring, full product-set runs, and generated-artifact guidance.
+`.pqf-score/` contains gitignored local scorer intermediates. `_merge`, `_assemble`, and
+`_version-index` regenerate local copies of the canonical `computed/` and `public/` artifacts
+maintained by GitHub Actions. Inspect all of these outputs locally, but never stage or commit them.
+See [Run PQF locally](local-scoring.md) for AI-assisted scoring, full product-set runs, and
+generated-artifact guidance.
 
 ---
 
@@ -361,4 +363,4 @@ AI-assisted scoring, full product-set runs, and generated-artifact guidance.
 - [ ] `make score-no-llm PRODUCT=<any-product> FRAMEWORK_VERSION=<version>` runs without error
 - [ ] `make _merge PRODUCT=<any-product> FRAMEWORK_VERSION=<version> && make _assemble FRAMEWORK_VERSION=<version>` updates `public/versions/<version>/portfolio.json`
 - [ ] New dimension appears correctly in the dashboard under that framework version (`make dev`)
-- [ ] No generated `computed/`, `public/`, or `.pqf-score/` preview files are staged
+- [ ] No local `.pqf-score/` intermediates or regenerated `computed/` / `public/` artifacts are staged
