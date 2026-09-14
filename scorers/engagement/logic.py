@@ -266,11 +266,14 @@ def _fetch_repo_views_14d(owner_repo: str, session: requests.Session) -> int | N
     Fetch total repository views from the last 14 days.
     Returns None if the API is unavailable or returns an error.
     """
-    resp = github_session_get(
-        session,
-        f"{_GITHUB_API}/repos/{owner_repo}/traffic/views",
-        timeout=15,
-    )
+    try:
+        resp = github_session_get(
+            session,
+            f"{_GITHUB_API}/repos/{owner_repo}/traffic/views",
+            timeout=15,
+        )
+    except GitHubAcquisitionError:
+        return None
     if not resp.ok:
         return None
     try:

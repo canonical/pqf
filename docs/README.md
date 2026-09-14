@@ -1,6 +1,6 @@
 # PQF Documentation
 
-**[Live dashboard →](https://srbouffard.github.io/pqf/)**
+**[Live dashboard →](https://canonical.github.io/pqf/)**
 
 ---
 

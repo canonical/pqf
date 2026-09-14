@@ -18,8 +18,8 @@ export default function About() {
         <p>
           The Product Quality Framework (PQF) gives Platform Engineering a data-driven,
           auditable view of quality and compliance across tracked products. Each product is
-          scored across five dimensions and awarded a medal — Bronze, Silver, or Gold — based on
-          objective, automatically-computed criteria.
+          scored across a version-specific set of dimensions and awarded a medal — Bronze,
+          Silver, or Gold — based on objective, automatically-computed criteria.
         </p>
 
         <h2 className="p-heading--4">Framework versions</h2>

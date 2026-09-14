@@ -71,6 +71,12 @@ describe('About', () => {
     expect(screen.getByRole('heading', { name: /about/i })).toBeInTheDocument()
   })
 
+  it('describes dimensions without assuming a version-specific count', () => {
+    wrap()
+    expect(screen.getByText(/version-specific set of dimensions/i)).toBeInTheDocument()
+    expect(screen.queryByText(/five dimensions/i)).not.toBeInTheDocument()
+  })
+
   it('explains medal levels', () => {
     wrap()
     expect(screen.getByText(/fully compliant/i)).toBeInTheDocument()
