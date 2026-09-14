@@ -1,6 +1,11 @@
 from __future__ import annotations
 
+import ast
 import hashlib
+import inspect
+import json
+import textwrap
+from collections.abc import Callable
 from dataclasses import dataclass
 from pathlib import Path
 from types import MappingProxyType
@@ -343,13 +348,51 @@ def _runner_source_digest(runner_key: str) -> str:
     digest = hashlib.sha256()
     for source_path in RUNNER_SOURCE_FILES[runner_key]:
         content = source_path.read_bytes()
-        digest.update(len(content).to_bytes(8, byteorder="big"))
-        digest.update(content)
+        _update_digest(digest, "source", content)
+    _update_digest(digest, "runner", _normalized_callable_source(RUNNERS[runner_key]))
+    _update_digest(digest, "bindings", _runner_binding_metadata(runner_key))
     return digest.hexdigest()
+
+
+def _update_digest(digest: Any, label: str, content: str | bytes) -> None:
+    encoded = content.encode() if isinstance(content, str) else content
+    for part in (label.encode(), encoded):
+        digest.update(len(part).to_bytes(8, byteorder="big"))
+        digest.update(part)
+
+
+def _normalized_callable_source(runner: Callable[..., Any]) -> str:
+    source = textwrap.dedent(inspect.getsource(runner))
+    return ast.dump(ast.parse(source), annotate_fields=True, include_attributes=False)
+
+
+def _binding_metadata(implementation_id: str, binding: MetricBinding) -> str:
+    return json.dumps(
+        {
+            "dimension": binding.dimension,
+            "implementation_id": implementation_id,
+            "output_key": binding.output_key,
+            "runner_key": binding.runner_key,
+        },
+        sort_keys=True,
+        separators=(",", ":"),
+    )
+
+
+def _runner_binding_metadata(runner_key: str) -> str:
+    bindings = [
+        _binding_metadata(implementation_id, binding)
+        for implementation_id, binding in METRIC_BINDINGS.items()
+        if binding.runner_key == runner_key
+    ]
+    return json.dumps(sorted(bindings), separators=(",", ":"))
 
 
 def implementation_fingerprints(dimension_config: dict[str, Any]) -> dict[str, str]:
     fingerprints: dict[str, str] = {}
     for implementation_id, binding in _selected_bindings(dimension_config):
-        fingerprints[implementation_id] = _runner_source_digest(binding.runner_key)
+        digest = hashlib.sha256()
+        _update_digest(digest, "runner", _runner_source_digest(binding.runner_key))
+        _update_digest(digest, "binding", _binding_metadata(implementation_id, binding))
+        fingerprints[implementation_id] = digest.hexdigest()
     return fingerprints

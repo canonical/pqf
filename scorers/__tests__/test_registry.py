@@ -274,6 +274,82 @@ def test_run_dimension_cache_separates_changes_to_each_registered_source(tmp_pat
     assert calls == 2 * len(source_paths)
 
 
+def test_run_dimension_cache_separates_runner_wrapper_changes(monkeypatch):
+    calls: list[str] = []
+
+    def first_runner(unit: EvaluationUnit, context: registry.ScorerContext) -> dict[str, object]:
+        calls.append("first")
+        return {"latest_build_passing": True}
+
+    def second_runner(unit: EvaluationUnit, context: registry.ScorerContext) -> dict[str, object]:
+        calls.append("second")
+        return {"latest_build_passing": False}
+
+    config = {
+        "outputs": {
+            "latest_build_passing": {"implementation": "latest-build-passing/v1"},
+        }
+    }
+    context = registry.ScorerContext(github_token="token")
+    runner_cache: registry.RunnerCache = {}
+
+    monkeypatch.setattr(
+        registry, "RUNNERS", {**registry.RUNNERS, "test_verification": first_runner}
+    )
+    first = registry.run_dimension(
+        UNIT, "test_verification", config, context, runner_cache=runner_cache
+    )
+    monkeypatch.setattr(
+        registry, "RUNNERS", {**registry.RUNNERS, "test_verification": second_runner}
+    )
+    second = registry.run_dimension(
+        UNIT, "test_verification", config, context, runner_cache=runner_cache
+    )
+
+    assert first == {"latest_build_passing": True}
+    assert second == {"latest_build_passing": False}
+    assert calls == ["first", "second"]
+
+
+def test_run_dimension_cache_separates_metric_binding_changes(monkeypatch):
+    calls = 0
+
+    def fake_runner(unit: EvaluationUnit, context: registry.ScorerContext) -> dict[str, object]:
+        nonlocal calls
+        calls += 1
+        return {"latest_build_passing": True}
+
+    monkeypatch.setattr(registry, "RUNNERS", {**registry.RUNNERS, "test_verification": fake_runner})
+    context = registry.ScorerContext(github_token="token")
+    runner_cache: registry.RunnerCache = {}
+    registry.run_dimension(
+        UNIT,
+        "test_verification",
+        {"outputs": {"latest_build_passing": {"implementation": "latest-build-passing/v1"}}},
+        context,
+        runner_cache=runner_cache,
+    )
+
+    alternate_implementation = "latest-build-passing/v2"
+    monkeypatch.setattr(
+        registry,
+        "METRIC_BINDINGS",
+        {
+            **registry.METRIC_BINDINGS,
+            alternate_implementation: registry.METRIC_BINDINGS["latest-build-passing/v1"],
+        },
+    )
+    registry.run_dimension(
+        UNIT,
+        "test_verification",
+        {"outputs": {"latest_build_passing": {"implementation": alternate_implementation}}},
+        context,
+        runner_cache=runner_cache,
+    )
+
+    assert calls == 2
+
+
 def test_run_dimension_rejects_unknown_implementation_id():
     with pytest.raises(ValueError, match="unknown metric implementation"):
         registry.run_dimension(
@@ -341,7 +417,7 @@ def test_implementation_fingerprints_hash_complete_runner_sources(tmp_path, monk
         "uses-jubilant/v1",
     }
     assert len(fingerprints["latest-build-passing/v1"]) == 64
-    assert fingerprints["latest-build-passing/v1"] == fingerprints["uses-jubilant/v1"]
+    assert fingerprints["latest-build-passing/v1"] != fingerprints["uses-jubilant/v1"]
 
     initial = fingerprints["latest-build-passing/v1"]
     helper.write_text("helper-v2")
@@ -364,6 +440,59 @@ def test_implementation_fingerprints_hash_complete_runner_sources(tmp_path, monk
         }
     )
     assert prompt_changed["latest-build-passing/v1"] != initial
+
+
+def test_implementation_fingerprints_hash_runner_wrapper_source(monkeypatch):
+    config = {
+        "outputs": {
+            "latest_build_passing": {"implementation": "latest-build-passing/v1"},
+        }
+    }
+    initial = registry.implementation_fingerprints(config)["latest-build-passing/v1"]
+
+    def replacement_runner(
+        unit: EvaluationUnit, context: registry.ScorerContext
+    ) -> dict[str, object]:
+        return {"latest_build_passing": False}
+
+    monkeypatch.setattr(
+        registry,
+        "RUNNERS",
+        {**registry.RUNNERS, "test_verification": replacement_runner},
+    )
+
+    changed = registry.implementation_fingerprints(config)["latest-build-passing/v1"]
+
+    assert changed != initial
+
+
+def test_implementation_fingerprints_hash_metric_binding_metadata(monkeypatch):
+    original = registry.implementation_fingerprints(
+        {
+            "outputs": {
+                "latest_build_passing": {"implementation": "latest-build-passing/v1"},
+            }
+        }
+    )["latest-build-passing/v1"]
+
+    alternate_implementation = "latest-build-passing/v2"
+    monkeypatch.setattr(
+        registry,
+        "METRIC_BINDINGS",
+        {
+            **registry.METRIC_BINDINGS,
+            alternate_implementation: registry.METRIC_BINDINGS["latest-build-passing/v1"],
+        },
+    )
+    changed = registry.implementation_fingerprints(
+        {
+            "outputs": {
+                "latest_build_passing": {"implementation": alternate_implementation},
+            }
+        }
+    )[alternate_implementation]
+
+    assert changed != original
 
 
 @pytest.mark.parametrize("framework_id", ["v0", "v1"])

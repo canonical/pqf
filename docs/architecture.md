@@ -4,8 +4,10 @@
 
 ## Data Flow
 
-Every run is scoped to exactly one **framework version**. The framework contract, not a single
-mutable config file, decides which dimensions, metrics, criteria, products, and targets apply.
+Every scoring result and generated artifact is scoped to exactly one **framework version**. One
+production job for a top-level product may process several selected versions in a single batch;
+each version's framework contract, not a mutable shared config file, decides which dimensions,
+metrics, criteria, products, and targets apply to that version's results.
 
 ```
 products/*.yaml          framework/versions/<version>/{framework,dimensions}.yaml
@@ -67,7 +69,7 @@ that turn evidence into results:
 | Complete `EvaluationUnit` | Prevents reuse across different products, repositories, subpaths, URLs, types, or targets |
 | `ScorerContext` | Prevents reuse across different credentials or model configuration |
 | Runner key | Prevents reuse across dimensions or implementations backed by another runner |
-| Complete runner-source digest | Invalidates reuse when logic, shared helpers, prompts, or other registered source dependencies change |
+| Complete runner-identity digest | Invalidates reuse when logic, shared helpers, prompts, the dispatched registry wrapper, or relevant metric-to-runner bindings change |
 
 The cache stores only raw runner output. Each framework version still selects its own output
 implementation IDs, required metrics, criteria, target, and aggregation behavior after lookup.
@@ -191,12 +193,13 @@ outputs:
     label: "Integration test evidence"
 ```
 
-`scorers/registry.py` maps each implementation ID to a pure metric function. Metric functions never
-receive a framework version and never branch on version IDs. A changed detector becomes a **new**
-implementation revision (`.../v2`), and a contract opts into it explicitly — which keeps the
-semantic change visible in review instead of silently changing every version that references the
-existing ID. Its fingerprint covers the runner logic plus scoring-relevant shared helpers and
-prompt assets. Implementation revision IDs are immutable, and unknown IDs are validation errors.
+`scorers/registry.py` binds each implementation ID and output key to a runner wrapper around pure
+metric logic. Metric functions never receive a framework version and never branch on version IDs.
+A changed detector becomes a **new** implementation revision (`.../v2`), and a contract opts into
+it explicitly — which keeps the semantic change visible in review instead of silently changing
+every version that references the existing ID. Its fingerprint covers the binding metadata, runner
+wrapper, runner logic, scoring-relevant shared helpers, and prompt assets. Implementation revision
+IDs are immutable, and unknown IDs are validation errors.
 
 Archived versions do not require their implementations to stay executable, because archived
 artifacts are never recomputed. Implementations must remain available while the active or upcoming
@@ -276,9 +279,13 @@ Inline leaves are the common case. Use standalone leaves only when the same char
 
 ### Scoring deduplication by `(repo, subpath)`
 
-`engine/graph.py` returns one `EvaluationUnit` per unique `(repo, subpath)` pair. If the same charm appears under multiple root products, scorers only run once and the result is reused.
+Within one version's product graph, `engine/graph.py` returns one `EvaluationUnit` per unique
+`(repo, subpath)` pair. Within one product job, the runner cache can also reuse identical raw
+runner output across the selected versions.
 
-> **Planned improvement:** `compute-metrics.yml` runs one job per framework version × root product. True `(repo, subpath)` deduplication at the workflow level (avoiding redundant scorer invocations across root products) is a planned follow-up PR.
+`compute-metrics.yml` runs one job per root product, with all selected versions for that product
+grouped into the job. True `(repo, subpath)` deduplication across different root-product jobs
+remains a planned improvement.
 
 ---
 
@@ -296,8 +303,9 @@ Inline leaves are the common case. Use standalone leaves only when the same char
 **Steps:**
 1. On pull requests, publish a semantic change report classifying framework/catalog changes as
    metadata-only, additive informational, scoring-semantic, or catalog membership/target
-2. Build the version × product matrix with `engine/workflow_matrix.py`
-3. Run the selected framework's dimensions for each product → `computed/versions/<id>/{product}.json`
+2. Build the product-grouped selected-version matrix with `engine/workflow_matrix.py`
+3. Run each product job across its ordered selected versions and write each version's outputs →
+   `computed/versions/<id>/{product}.json`
 4. Merge scorer outputs and run `engine/assemble.py` per version → `public/versions/<id>/portfolio.json`
 5. Carry forward archived version directories from the published site, regenerate the active root
    compatibility mirror at `public/portfolio.json`, rebuild `public/badges/`, and run
