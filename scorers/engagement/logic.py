@@ -91,12 +91,18 @@ def _has_squad_topic(owner_repo: str, session: requests.Session) -> bool:
 
 def _has_jira_sync(owner_repo: str, session: requests.Session) -> bool:
     """True if .github/.jira_sync_config.yaml exists in the repo."""
+    url = f"{_GITHUB_API}/repos/{owner_repo}/contents/.github/.jira_sync_config.yaml"
     resp = github_session_get(
         session,
-        f"{_GITHUB_API}/repos/{owner_repo}/contents/.github/.jira_sync_config.yaml",
+        url,
         timeout=15,
     )
-    return resp.status_code == 200
+    if resp.status_code == 404:
+        return False
+    if not resp.ok:
+        raise_for_required_github_evidence(resp, url)
+        resp.raise_for_status()
+    return True
 
 
 def _compute_issue_triage_stats(

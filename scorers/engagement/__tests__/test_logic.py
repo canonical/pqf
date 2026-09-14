@@ -328,6 +328,36 @@ def test_has_jira_sync_treats_not_found_as_absent():
     assert result is False
 
 
+@pytest.mark.parametrize("status", [401, 403, 429, 500])
+@responses.activate
+def test_has_jira_sync_raises_when_acquisition_fails(status):
+    url = f"{_GITHUB_API}/repos/canonical/test-repo/contents/.github/.jira_sync_config.yaml"
+    responses.add(
+        responses.GET,
+        url,
+        json={"message": "first failure must not leak"},
+        status=status,
+    )
+    if status in {401, 429}:
+        responses.add(
+            responses.GET,
+            url,
+            json={"message": "final failure must not leak"},
+            status=status,
+        )
+
+    with pytest.raises(GitHubAcquisitionError) as exc_info:
+        _has_jira_sync("canonical/test-repo", _make_github_session("secret-token"))
+
+    assert exc_info.value.status_code == status
+    assert exc_info.value.url == url
+    assert "secret-token" not in str(exc_info.value)
+    assert "must not leak" not in str(exc_info.value)
+    assert len(responses.calls) == (2 if status in {401, 429} else 1)
+    if status in {401, 429}:
+        assert "Authorization" not in responses.calls[1].request.headers
+
+
 @responses.activate
 def test_has_squad_topic_raises_when_anonymous_retry_remains_unauthorized():
     url = f"{_GITHUB_API}/repos/canonical/test-repo/topics"
