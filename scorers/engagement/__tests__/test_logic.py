@@ -171,7 +171,7 @@ def test_avg_triage_days_computed_correctly(mocker):
     assert result["repo_views_14d"] == 1250
 
 
-@pytest.mark.parametrize("status", [401, 403, 404, 429, 500])
+@pytest.mark.parametrize("status", [400, 401, 403, 404, 405, 422, 429, 500])
 @responses.activate
 def test_issue_comment_acquisition_raises_on_final_required_evidence_failure(status):
     url = f"{_GITHUB_API}/repos/canonical/example/issues/1/comments"
@@ -188,7 +188,7 @@ def test_issue_comment_acquisition_raises_on_final_required_evidence_failure(sta
     assert exc_info.value.url == url
 
 
-@pytest.mark.parametrize("status", [401, 403, 404, 429, 500])
+@pytest.mark.parametrize("status", [400, 401, 403, 404, 405, 422, 429, 500])
 @responses.activate
 def test_pr_review_acquisition_raises_on_final_required_evidence_failure(status):
     url = f"{_GITHUB_API}/repos/canonical/example/pulls/10/reviews"
@@ -318,7 +318,7 @@ def test_has_squad_topic_true():
     assert result is True
 
 
-@pytest.mark.parametrize("status", [404, 403, 429, 500])
+@pytest.mark.parametrize("status", [400, 404, 403, 405, 422, 429, 500])
 @responses.activate
 def test_has_squad_topic_raises_when_required_evidence_cannot_be_acquired(status):
     url = f"{_GITHUB_API}/repos/canonical/test-repo/topics"
@@ -364,7 +364,7 @@ def test_has_jira_sync_treats_not_found_as_absent():
     assert result is False
 
 
-@pytest.mark.parametrize("status", [401, 403, 429, 500])
+@pytest.mark.parametrize("status", [400, 401, 403, 405, 422, 429, 500])
 @responses.activate
 def test_has_jira_sync_raises_when_acquisition_fails(status):
     url = f"{_GITHUB_API}/repos/canonical/test-repo/contents/.github/.jira_sync_config.yaml"
@@ -650,7 +650,7 @@ def test_paginate_json_array_stops_at_ordered_cutoff():
     assert session.calls == 1
 
 
-@pytest.mark.parametrize("status", [404, 403, 429, 500])
+@pytest.mark.parametrize("status", [400, 404, 403, 405, 422, 429, 500])
 @pytest.mark.parametrize("endpoint", ["issues", "pulls"])
 @responses.activate
 def test_paginate_json_array_raises_when_required_evidence_cannot_be_acquired(endpoint, status):
@@ -699,14 +699,14 @@ def test_fetch_repo_views_14d_success():
     assert result == 1250
 
 
+@pytest.mark.parametrize("status", [400, 403, 405, 422])
 @responses.activate
-def test_fetch_repo_views_14d_forbidden():
-    """Traffic API returns 403 Forbidden (no read access)."""
+def test_fetch_repo_views_14d_returns_none_for_unsuccessful_optional_response(status):
     responses.add(
         responses.GET,
         f"{_GITHUB_API}/repos/canonical/test-repo/traffic/views",
-        json={"message": "Forbidden"},
-        status=403,
+        json={"message": "Unavailable"},
+        status=status,
     )
     session = requests.Session()
     session.headers.update({"Authorization": "token"})
