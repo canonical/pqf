@@ -548,7 +548,7 @@ def test_workflow_listing_failure_raises_acquisition_error(status):
     assert len(responses.calls) == (2 if status in {401, 403, 429} else 1)
 
 
-@pytest.mark.parametrize("status", [401, 403, 429, 500])
+@pytest.mark.parametrize("status", [404, 401, 403, 429, 500])
 @responses.activate
 def test_workflow_file_failure_raises_acquisition_error(status):
     _mock_workflows_dir("canonical/synapse-operator", ["ci.yaml"])

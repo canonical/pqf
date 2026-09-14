@@ -18,7 +18,7 @@ class GitHubAcquisitionError(RuntimeError):
 
 
 def raise_for_required_github_evidence(response: requests.Response, url: str) -> None:
-    if response.status_code in {401, 403, 429} or 500 <= response.status_code < 600:
+    if response.status_code in {401, 403, 404, 429} or 500 <= response.status_code < 600:
         raise GitHubAcquisitionError(response.status_code, url)
 
 

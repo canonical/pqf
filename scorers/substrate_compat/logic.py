@@ -324,6 +324,8 @@ def _fetch_workflow_contents(owner_repo: str, github_token: str) -> list[str]:
         timeout=15,
     )
     if not list_resp.ok:
+        if list_resp.status_code == 404:
+            return []
         raise_for_required_github_evidence(
             list_resp,
             f"{_GITHUB_API}/repos/{owner_repo}/contents/.github/workflows",
