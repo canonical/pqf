@@ -8,6 +8,20 @@ import requests
 _GITHUB_API = "https://api.github.com"
 
 
+class GitHubAcquisitionError(RuntimeError):
+    """Raised when required GitHub evidence could not be acquired."""
+
+    def __init__(self, status_code: int, url: str):
+        self.status_code = status_code
+        self.url = url
+        super().__init__(f"GitHub evidence acquisition failed: status={status_code} url={url}")
+
+
+def raise_for_required_github_evidence(response: requests.Response, url: str) -> None:
+    if response.status_code in {403, 429} or 500 <= response.status_code < 600:
+        raise GitHubAcquisitionError(response.status_code, url)
+
+
 def build_github_session(github_token: str | None) -> requests.Session:
     session = requests.Session()
     session.headers.update(

@@ -1,5 +1,4 @@
 # scorers/engagement/logic.py
-import sys
 from collections.abc import Callable
 from datetime import UTC, datetime, timedelta
 from typing import Any
@@ -7,7 +6,10 @@ from typing import Any
 import requests
 
 from engine.models import EvaluationUnit
-from scorers.shared.github_signals import github_session_get
+from scorers.shared.github_signals import (
+    github_session_get,
+    raise_for_required_github_evidence,
+)
 
 _GITHUB_API = "https://api.github.com"
 _LOOKBACK_DAYS = 90
@@ -57,14 +59,7 @@ def _paginate_json_array(
             timeout=timeout,
         )
         if not resp.ok:
-            print(
-                "GitHub API request failed: "
-                f"status={resp.status_code} url={url} "
-                f"rate_remaining={resp.headers.get('X-RateLimit-Remaining', 'unknown')} "
-                f"rate_reset={resp.headers.get('X-RateLimit-Reset', 'unknown')} "
-                f"retry_after={resp.headers.get('Retry-After', 'none')}",
-                file=sys.stderr,
-            )
+            raise_for_required_github_evidence(resp, url)
             break
         page_items = resp.json()
         if not isinstance(page_items, list):

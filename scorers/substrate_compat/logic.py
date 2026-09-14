@@ -6,7 +6,10 @@ from typing import Any
 import requests
 
 from engine.models import EvaluationUnit
-from scorers.shared.github_signals import github_session_get
+from scorers.shared.github_signals import (
+    github_session_get,
+    raise_for_required_github_evidence,
+)
 
 _GITHUB_API = "https://api.github.com"
 _BLOCK_SCALAR_PATTERN = re.compile(
@@ -321,6 +324,10 @@ def _fetch_workflow_contents(owner_repo: str, github_token: str) -> list[str]:
         timeout=15,
     )
     if not list_resp.ok:
+        raise_for_required_github_evidence(
+            list_resp,
+            f"{_GITHUB_API}/repos/{owner_repo}/contents/.github/workflows",
+        )
         return []
     contents = []
     for entry in list_resp.json():
@@ -334,6 +341,8 @@ def _fetch_workflow_contents(owner_repo: str, github_token: str) -> list[str]:
             data = file_resp.json()
             raw = base64.b64decode(data.get("content", "")).decode("utf-8", errors="replace")
             contents.append(raw)
+        else:
+            raise_for_required_github_evidence(file_resp, entry["url"])
     return contents
 
 

@@ -1,5 +1,6 @@
 from datetime import UTC, datetime
 
+import pytest
 import requests
 import responses
 
@@ -8,9 +9,11 @@ from scorers.engagement.logic import (
     _fetch_repo_views_14d,
     _has_jira_sync,
     _has_squad_topic,
+    _make_github_session,
     _paginate_json_array,
     compute_metrics,
 )
+from scorers.shared.github_signals import GitHubAcquisitionError
 
 _GITHUB_API = "https://api.github.com"
 
@@ -506,35 +509,38 @@ def test_paginate_json_array_stops_at_ordered_cutoff():
     assert session.calls == 1
 
 
-def test_paginate_json_array_reports_github_api_failure(capsys):
-    class _Resp:
-        ok = False
-        status_code = 403
-        headers = {
-            "X-RateLimit-Remaining": "0",
-            "X-RateLimit-Reset": "1789161109",
-            "Retry-After": "60",
-        }
+@pytest.mark.parametrize("status", [403, 429, 500])
+@pytest.mark.parametrize("endpoint", ["issues", "pulls"])
+@responses.activate
+def test_paginate_json_array_raises_when_required_evidence_cannot_be_acquired(endpoint, status):
+    url = f"https://api.github.com/repos/canonical/example/{endpoint}"
+    responses.add(
+        responses.GET,
+        url,
+        json={"message": "first failure must not leak"},
+        status=status,
+        headers={"X-RateLimit-Remaining": "0"} if status == 403 else {},
+    )
+    if status in {403, 429}:
+        responses.add(
+            responses.GET,
+            url,
+            json={"message": "final failure must not leak"},
+            status=status,
+        )
 
-    class _Session:
-        headers = {}
-
-        def get(self, url, params, timeout):
-            return _Resp()
-
-    assert (
+    with pytest.raises(GitHubAcquisitionError) as exc_info:
         _paginate_json_array(
-            _Session(),
-            "https://api.github.com/repos/canonical/example/issues",
+            _make_github_session("secret-token"),
+            url,
             {"state": "all", "per_page": 100},
         )
-        == []
-    )
-    assert capsys.readouterr().err == (
-        "GitHub API request failed: status=403 "
-        "url=https://api.github.com/repos/canonical/example/issues "
-        "rate_remaining=0 rate_reset=1789161109 retry_after=60\n"
-    )
+
+    assert exc_info.value.status_code == status
+    assert exc_info.value.url == url
+    assert str(exc_info.value) == f"GitHub evidence acquisition failed: status={status} url={url}"
+    assert "secret-token" not in str(exc_info.value)
+    assert len(responses.calls) == (2 if status in {403, 429} else 1)
 
 
 @responses.activate

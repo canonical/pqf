@@ -1,9 +1,11 @@
 # scorers/substrate_compat/__tests__/test_logic.py
 import base64
 
+import pytest
 import responses
 
 from engine.models import EvaluationUnit, ProductType
+from scorers.shared.github_signals import GitHubAcquisitionError
 from scorers.substrate_compat.logic import _make_github_session, compute_metrics
 
 _GITHUB_API = "https://api.github.com"
@@ -515,6 +517,66 @@ def test_missing_workflows_dir_returns_false():
         "substrate_test_evidence_present": False,
         "uses_canonical_k8s": False,
     }
+
+
+@pytest.mark.parametrize("status", [403, 429, 500])
+@responses.activate
+def test_workflow_listing_failure_raises_acquisition_error(status):
+    url = f"{_GITHUB_API}/repos/canonical/synapse-operator/contents/.github/workflows"
+    responses.add(
+        responses.GET,
+        url,
+        json={"message": "first failure must not leak"},
+        status=status,
+        headers={"X-RateLimit-Remaining": "0"} if status == 403 else {},
+    )
+    if status in {403, 429}:
+        responses.add(
+            responses.GET,
+            url,
+            json={"message": "final failure must not leak"},
+            status=status,
+        )
+
+    with pytest.raises(GitHubAcquisitionError) as exc_info:
+        compute_metrics(UNIT, "secret-token")
+
+    assert exc_info.value.status_code == status
+    assert exc_info.value.url == url
+    assert "secret-token" not in str(exc_info.value)
+    assert "must not leak" not in str(exc_info.value)
+    assert len(responses.calls) == (2 if status in {403, 429} else 1)
+
+
+@pytest.mark.parametrize("status", [403, 429, 500])
+@responses.activate
+def test_workflow_file_failure_raises_acquisition_error(status):
+    _mock_workflows_dir("canonical/synapse-operator", ["ci.yaml"])
+    url = f"{_GITHUB_API}/repos/canonical/synapse-operator/contents/.github/workflows/ci.yaml"
+    responses.add(
+        responses.GET,
+        url,
+        json={"message": "first failure must not leak"},
+        status=status,
+        headers={"X-RateLimit-Remaining": "0"} if status == 403 else {},
+    )
+    if status in {403, 429}:
+        responses.add(
+            responses.GET,
+            url,
+            json={"message": "final failure must not leak"},
+            status=status,
+        )
+
+    with pytest.raises(GitHubAcquisitionError) as exc_info:
+        compute_metrics(UNIT, "secret-token")
+
+    assert exc_info.value.status_code == status
+    assert exc_info.value.url == url
+    assert "secret-token" not in str(exc_info.value)
+    assert "must not leak" not in str(exc_info.value)
+    expected_calls = 3 if status in {403, 429} else 2
+    assert len(responses.calls) == expected_calls
 
 
 def test_returns_defaults_when_repo_empty():
