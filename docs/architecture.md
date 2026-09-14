@@ -33,11 +33,65 @@ products/*.yaml          framework/versions/<version>/{framework,dimensions}.yam
   engine/version_index.py  ──► public/framework-versions.json   (lifecycle/display index)
       │
       ▼
-  ui/ (React 19 + Vite)        (loads the index first, then the selected version's portfolio)
+  ui/ (React 19 + Vite)        (loads the index first, then the selected version's portfolio.json)
       │
       ▼
   GitHub Pages
 ```
+
+### How versioned scoring works
+
+Version-aware scoring separates shared evidence acquisition from the contract-specific decisions
+that turn evidence into results:
+
+1. `engine/workflow_matrix.py` selects live framework versions from lifecycle metadata, relevant
+   changes, the active/upcoming cadence, and bootstrap debt such as a missing, stale-contract, or
+   overdue published `portfolio.json`.
+2. For each selected version, `engine/graph.py` resolves that version's product set, component
+   boundaries, composition edges, and effective targets.
+3. The matrix groups every selected version for one top-level product into one workflow job. The
+   job passes the ordered `framework_versions` list to `scorers/batch.py`.
+4. The batch runner resolves each version's leaf `EvaluationUnit` objects and executes only the
+   runner implementations selected by that version's contract.
+5. Within that job, a `RunnerCache` may reuse raw runner output only when the complete cache
+   identity below is equal.
+6. After raw-output lookup, each contract filters the runner output to its selected outputs, then
+   independently applies its required metrics, medal criteria, resolved target, and aggregation
+   behavior.
+7. The workflow merges per-dimension output into versioned computed envelopes and
+   `engine/assemble.py` assembles each selected version's product set as
+   `public/versions/<version>/portfolio.json`.
+
+| Cache key input | Why it is required |
+|-----------------|--------------------|
+| Complete `EvaluationUnit` | Prevents reuse across different products, repositories, subpaths, URLs, types, or targets |
+| `ScorerContext` | Prevents reuse across different credentials or model configuration |
+| Runner key | Prevents reuse across dimensions or implementations backed by another runner |
+| Complete runner-source digest | Invalidates reuse when logic, shared helpers, prompts, or other registered source dependencies change |
+
+The cache stores only raw runner output. Each framework version still selects its own output
+implementation IDs, required metrics, criteria, target, and aggregation behavior after lookup.
+
+### Measurement failures
+
+PQF distinguishes acquired evidence that measures low from evidence that could not be measured:
+
+| Outcome | Meaning |
+|---------|---------|
+| `false`, `0`, low number | Evidence was acquired and measured low |
+| `null` | A supported metric is genuinely unmeasurable |
+| `below_minimum` | Required evidence was measured but baseline criteria failed |
+| `insufficient_data` | A required metric is unavailable |
+| Acquisition exception | GitHub evidence could not be fetched reliably; the scoring job fails and publishes nothing |
+
+Required GitHub acquisition fails closed. For public evidence, an authenticated request is retried
+anonymously when authentication fails or the authenticated client is rate-limited; if the required
+request still fails, `GitHubAcquisitionError` stops the compute job. A response is treated as
+absence only where the scorer defines that response as valid evidence of absence—for example, a
+`404` for an optional Jira sync file or for the `.github/workflows` directory. Optional signals
+that an API cannot expose reliably, such as repository traffic, may explicitly return `null`
+instead. These cases do not expose credentials, response bodies, or operational secrets in the
+published product set.
 
 ---
 
@@ -53,7 +107,7 @@ products/*.yaml          framework/versions/<version>/{framework,dimensions}.yam
 | `computed/versions/<id>/` | GHA only | `leaf_metrics` envelope keyed by leaf product ID — **never hand-edited** |
 | `engine/` | Contributors | Framework discovery/validation, result computation, product-set assembly, version index |
 | `public/versions/<id>/` | GHA only | Versioned source-of-truth `portfolio.json` per framework version — **never hand-edited** |
-| `public/portfolio.json` | GHA only | Active-version compatibility mirror for legacy consumers; regenerated from the active portfolio |
+| `public/portfolio.json` | GHA only | Active-version compatibility mirror for legacy consumers; regenerated from the active version's `portfolio.json` |
 | `public/badges/` | GHA only | Stable active-only badge contract consumed by external links |
 | `public/framework-versions.json` | GHA only | Authoritative lifecycle/display index consumed by the UI |
 | `public/legacy/` | gh-pages only | Frozen pre-versioning snapshot published at `/legacy/` and kept outside the versioned artifact model |
@@ -89,9 +143,10 @@ created by copying the active contract into a new directory and editing the copy
 | `upcoming` | The single next framework under preparation. A planning/readiness view, recomputed weekly and on manual dispatch. |
 | `archived` | A former active framework. Its published measurements are frozen and its scorers never run again. |
 
-Today **V0 is active** and **V1 is upcoming**. `make validate` enforces the lifecycle invariants:
-exactly one active version, at most one upcoming version, unique IDs and sequence numbers, and
-lifecycle order consistent with sequence order.
+`make validate` enforces the lifecycle invariants: exactly one active version, at most one upcoming
+version, unique IDs and sequence numbers, and lifecycle order consistent with sequence order.
+Lifecycle behavior always derives from this metadata; no version ID permanently means active or
+upcoming.
 
 Activation is a single reviewed source change that marks the old active version `archived` and the
 upcoming version `active`.
@@ -109,9 +164,10 @@ Archived versions follow four rules:
 
 1. **Frozen measurements.** No cadence, manual dispatch, or bootstrap path may schedule an archived
    version for scoring, so archived measured values can never change.
-2. **Migratable payload format.** A reviewed format migration may transform an archived portfolio so
-   a newer UI schema can read it, provided it preserves the recorded metric values, results, product
-   membership, generation time, and scoring-contract identity (framework ID and contract digest).
+2. **Migratable payload format.** A reviewed format migration may transform an archived
+   `portfolio.json` artifact so a newer UI schema can read it, provided it preserves the recorded
+   metric values, results, product membership, generation time, and scoring-contract identity
+   (framework ID and contract digest).
    PR review is the governance gate; the engine does not hard-lock archived files.
 3. **No archived rescoring.** Digest validation applies to archived artifacts exactly as to live
    ones. A mismatch means archived scoring rules were changed after the fact — that is an error,
@@ -119,8 +175,8 @@ Archived versions follow four rules:
 4. **Index authority.** `public/framework-versions.json` is authoritative for lifecycle and display
    metadata. The versioned `public/versions/<id>/portfolio.json` files are the source of truth for
    each framework version, while the root `public/portfolio.json` and `public/badges/` are the
-   active-version compatibility surfaces. A portfolio's embedded `framework` block is historical
-   provenance only and must never drive selector labels or version badges.
+   active-version compatibility surfaces. A `portfolio.json` artifact's embedded `framework` block
+   is historical provenance only and must never drive selector labels or version badges.
 
 ### Metric identity vs implementation revision
 
@@ -250,8 +306,9 @@ Inline leaves are the common case. Use standalone leaves only when the same char
    nothing is committed to `main`
 
 Archived versions are never selected: their measurements are frozen. Whatever the cadence selects
-is unioned with a bootstrap set — every live version whose published portfolio is missing or was
-built from a different scoring contract — so the version index can always be rebuilt completely.
+is unioned with a bootstrap set — every live version whose published `portfolio.json` is missing
+or was built from a different scoring contract — so the version index can always be rebuilt
+completely.
 For a UI-only push with current live artifacts, the selected matrix is empty, current versioned
 artifacts are carried forward, and the latest UI is deployed without invoking repository scorers.
 Keeping production publication in this single workflow also ensures a newer main-branch run cancels
@@ -270,9 +327,10 @@ the versions it selected and replaces every unselected version with the latest d
 regenerating the active root mirror, badges, and version index. Concurrent cadence and push runs
 therefore cannot overwrite one another's newer version snapshots. If both runs selected the same
 version at the same source revision and contract digest, the copy with the later `generated_at`
-wins. The matrix also treats an active portfolio not generated on the current UTC date, or an
-upcoming portfolio not generated in the current ISO week, as due. A later run therefore inherits a
-cadence refresh if GitHub replaces a pending scheduled deployment.
+wins. The matrix also treats the active version's `portfolio.json` as due when it was not generated
+on the current UTC date, and the upcoming version's `portfolio.json` as due when it was not
+generated in the current ISO week. A later run therefore inherits a cadence refresh if GitHub
+replaces a pending scheduled deployment.
 
 ### `deploy-legacy.yml` — one-off legacy snapshot
 
@@ -351,7 +409,7 @@ version rather than the active one.
 ### Version-addressed `portfolio.json` (no backend)
 
 The React dashboard has no server-side API. It fetches `framework-versions.json`, then the selected
-version's `portfolio.json`, and renders from that. Each versioned portfolio embeds its framework
+version's `portfolio.json`, and renders from that. Each versioned `portfolio.json` embeds its framework
 identity, contract digest, implementation fingerprints, generation timestamp, source revision,
 resolved dimension/metric metadata, the version-filtered product graph, resolved targets, results,
 and the compliance summary counts. That makes every versioned artifact self-describing, so current

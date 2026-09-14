@@ -22,15 +22,23 @@
 | **Medal** | The scored tiers when a result is awarded or compared to a target |
 | **Evidence** | Raw metric values used to explain a result |
 | **Framework version** | A full, immutable snapshot of the scoring contract (`framework/versions/<version>/`) |
+| **Scoring contract** | One framework version's declared outputs, implementation IDs, required metrics, medal criteria, applicability, and aggregation rules |
+| **Measurement** | Raw evidence produced by a scorer runner before a scoring contract filters outputs and applies its criteria |
+| **Product set** | The products, component boundaries, composition edges, and targets resolved for one framework version |
 | **Active** | The framework version that defines today's official compliance view (scored nightly) |
 | **Upcoming** | The next framework version, previewed early (scored weekly and on demand) |
 | **Archived** | A retired framework version — its measurements are frozen and never rescored |
+
+Each version's generated product-set artifact is named `portfolio.json`; the filename is retained
+for compatibility and is not the preferred term for the product set itself. See
+[How versioned scoring works](architecture.md#how-versioned-scoring-works) for the canonical
+versioned-scoring explanation.
 
 ## Contributing
 
 | Guide | Description |
 |-------|-------------|
-| [Architecture](architecture.md) | How the system works — data flow, GHA pipeline, design decisions |
+| [Architecture](architecture.md) | Canonical versioned-scoring explanation, data flow, GHA pipeline, and design decisions |
 | [Adding a product](adding-a-product.md) | How to onboard a new product into PQF |
 | [Adding a metric](adding-a-metric.md) | How to add a metric to an existing dimension |
 | [Adding a dimension/scorer](adding-a-dimension.md) | How to create a new quality dimension and scorer |

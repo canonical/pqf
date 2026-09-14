@@ -5,7 +5,17 @@
 
 PQF tracks the quality and compliance state of Canonical Platform Engineering's tracked products. Products are scored automatically across a set of quality dimensions (test verification, documentation, security & SSDLC, engagement, and — from v1 — substrate compatibility) and awarded a **bronze / silver / gold** result based on the criteria declared by a framework version.
 
-Every scoring contract is **versioned**. `framework/versions/<version>/` holds a full, self-contained snapshot of the rubric; `public/framework-versions.json` is the authority for which version is **active** (today's official view), **upcoming** (the next rubric, previewed early), or **archived** (frozen and never rescored). The dashboard lets you switch between published versions. See [Architecture](docs/architecture.md#framework-versions) for the full model.
+Every scoring contract is **versioned**. `framework/versions/<version>/` holds a full,
+self-contained snapshot of the rubric; `public/framework-versions.json` is the authority for which
+version is **active** (today's official view), **upcoming** (the next rubric, previewed early), or
+**archived** (frozen and never rescored). The dashboard lets you switch between published versions.
+
+**How versions affect results:** Each version independently resolves its product set, component
+boundaries, targets, required metrics, and medal criteria. Active, upcoming, and archived behavior
+comes from lifecycle metadata rather than fixed version IDs: live versions are recomputed on their
+configured cadence, while archived measurements remain frozen. See
+[How versioned scoring works](docs/architecture.md#how-versioned-scoring-works) for the canonical
+explanation.
 
 **[Live dashboard →](https://canonical.github.io/pqf/)**
 
