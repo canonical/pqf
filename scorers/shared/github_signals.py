@@ -2,6 +2,9 @@ from __future__ import annotations
 
 import base64
 import binascii
+import io
+import tarfile
+from functools import cache
 from typing import Any
 
 import requests
@@ -165,6 +168,43 @@ def workflow_files(owner_repo: str, github_token: str | None) -> list[tuple[str,
     return results
 
 
+@cache
+def _repository_archive(owner_repo: str, github_token: str | None) -> bytes:
+    url = f"{_GITHUB_API}/repos/{owner_repo}/tarball"
+    response = github_get(url, github_token)
+    raise_for_required_github_evidence(response, url)
+    return response.content
+
+
+def _text_contains_terms(content: bytes, terms: list[str]) -> bool:
+    if b"\0" in content:
+        return False
+    try:
+        text = content.decode("utf-8").casefold()
+    except UnicodeDecodeError:
+        return False
+    return all(term in text for term in terms)
+
+
+def _archive_search_count(owner_repo: str, needle: str, github_token: str | None) -> int:
+    try:
+        archive = tarfile.open(fileobj=io.BytesIO(_repository_archive(owner_repo, github_token)))
+        terms = [term.casefold() for term in needle.split()]
+        with archive:
+            return sum(
+                _text_contains_terms(content, terms)
+                for member in archive
+                if member.isfile()
+                and (extracted := archive.extractfile(member)) is not None
+                and (content := extracted.read())
+            )
+    except (OSError, tarfile.TarError):
+        raise GitHubAcquisitionError(
+            200,
+            f"{_GITHUB_API}/repos/{owner_repo}/tarball",
+        ) from None
+
+
 def search_code_count(query: str, github_token: str | None) -> int:
     session = build_github_session(github_token)
     response = github_session_get(
@@ -174,6 +214,12 @@ def search_code_count(query: str, github_token: str | None) -> int:
         timeout=15,
     )
     url = f"{_GITHUB_API}/search/code"
+    if response.status_code == 401:
+        parts = query.split()
+        repo_qualifiers = [part.removeprefix("repo:") for part in parts if part.startswith("repo:")]
+        needle = " ".join(part for part in parts if not part.startswith("repo:"))
+        if len(repo_qualifiers) == 1 and needle:
+            return _archive_search_count(repo_qualifiers[0], needle, github_token)
     raise_for_required_github_evidence(response, url)
     payload = required_github_json(response, url, dict)
     count = payload.get("total_count")

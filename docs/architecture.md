@@ -95,6 +95,11 @@ that an API cannot expose reliably, such as repository traffic, may explicitly r
 instead. These cases do not expose credentials, response bodies, or operational secrets in the
 published product set.
 
+GitHub Actions tokens are repository-scoped and cannot use code search across the tracked product
+set. When that endpoint rejects both authenticated and anonymous access, code-presence checks scan
+the complete public repository archive instead. Archive acquisition and parsing remain fail closed,
+and binary files are excluded from matching.
+
 ---
 
 ## Component Responsibilities

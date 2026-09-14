@@ -1,3 +1,6 @@
+import io
+import tarfile
+
 import pytest
 import requests
 import responses
@@ -174,6 +177,50 @@ def test_search_code_count_retries_anonymously_on_unauthorized():
         status=200,
     )
     assert search_code_count("repo:canonical/example import jubilant", "gh-token") == 2
+
+
+@responses.activate
+def test_search_code_count_falls_back_to_complete_repository_archive():
+    archive = io.BytesIO()
+    with tarfile.open(fileobj=archive, mode="w:gz") as tar:
+        content = b"from jubilant import Juju\n"
+        info = tarfile.TarInfo("canonical-example/tests/integration/test_smoke.py")
+        info.size = len(content)
+        tar.addfile(info, io.BytesIO(content))
+
+    responses.add(responses.GET, "https://api.github.com/search/code", status=401)
+    responses.add(responses.GET, "https://api.github.com/search/code", status=401)
+    responses.add(
+        responses.GET,
+        "https://api.github.com/repos/canonical/example/tarball",
+        body=archive.getvalue(),
+        status=200,
+        content_type="application/x-gzip",
+    )
+
+    assert search_code_count("repo:canonical/example import jubilant", "gh-token") == 1
+
+
+@responses.activate
+def test_search_code_count_archive_fallback_ignores_binary_files():
+    github_signals._repository_archive.cache_clear()
+    archive = io.BytesIO()
+    with tarfile.open(fileobj=archive, mode="w:gz") as tar:
+        content = b"\x89PNG\r\n\x00import jubilant"
+        info = tarfile.TarInfo("canonical-example/icon.png")
+        info.size = len(content)
+        tar.addfile(info, io.BytesIO(content))
+
+    responses.add(responses.GET, "https://api.github.com/search/code", status=401)
+    responses.add(responses.GET, "https://api.github.com/search/code", status=401)
+    responses.add(
+        responses.GET,
+        "https://api.github.com/repos/canonical/example/tarball",
+        body=archive.getvalue(),
+        status=200,
+    )
+
+    assert search_code_count("repo:canonical/example import jubilant", "gh-token") == 0
 
 
 @pytest.mark.parametrize(
