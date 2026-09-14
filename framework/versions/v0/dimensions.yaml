@@ -116,7 +116,6 @@ dimensions:
     aggregation: "worst_in_scope"
     required_metrics_for_scoring:
       - ownership_signal
-      - response_coverage_rate
     outputs:
       ownership_signal:
         implementation: "ownership-signal/v1"
@@ -131,5 +130,5 @@ dimensions:
         description: "Percentage of recent issues and PRs that received a first response within the measurement window."
     medals:
       bronze: ["ownership_signal == true"]
-      silver: ["ownership_signal == true", "response_coverage_rate >= 80"]
-      gold: ["ownership_signal == true", "response_coverage_rate >= 90"]
+      silver: ["ownership_signal == true"]
+      gold: ["ownership_signal == true"]

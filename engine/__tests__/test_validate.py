@@ -488,6 +488,16 @@ class TestRepositoryValidation:
         errors = validate_repository(REPO_ROOT / "framework" / "versions", REPO_ROOT / "products")
         assert errors == []
 
+    @pytest.mark.parametrize("version", ["v0", "v1"])
+    def test_live_engagement_contract_scores_medals_from_ownership_only(self, version):
+        dimensions_path = REPO_ROOT / "framework" / "versions" / version / "dimensions.yaml"
+        engagement = yaml.safe_load(dimensions_path.read_text())["dimensions"]["engagement"]
+
+        assert engagement["required_metrics_for_scoring"] == ["ownership_signal"]
+        assert engagement["medals"] == {
+            medal: ["ownership_signal == true"] for medal in ("bronze", "silver", "gold")
+        }
+
     def test_reports_missing_framework_dimensions_snapshot_file(self, tmp_path):
         framework_root = tmp_path / "framework" / "versions"
         version_dir = framework_root / "v0"

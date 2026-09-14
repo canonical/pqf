@@ -217,9 +217,6 @@ dimensions:
     aggregation: "worst_in_scope"
     required_metrics_for_scoring:
       - ownership_signal
-      - response_coverage_rate
-      - avg_triage_days
-      - avg_pr_review_days
     outputs:
       ownership_signal:
         implementation: "ownership-signal/v1"
@@ -259,17 +256,5 @@ dimensions:
         informational: true
     medals:
       bronze: ["ownership_signal == true"]
-      silver:
-        [
-          "ownership_signal == true",
-          "response_coverage_rate >= 80",
-          "avg_triage_days <= 3",
-          "avg_pr_review_days <= 5",
-        ]
-      gold:
-        [
-          "ownership_signal == true",
-          "response_coverage_rate >= 90",
-          "avg_triage_days <= 2",
-          "avg_pr_review_days <= 3",
-        ]
+      silver: ["ownership_signal == true"]
+      gold: ["ownership_signal == true"]
