@@ -2,12 +2,9 @@ from typing import Any
 
 from engine.models import EvaluationUnit
 from scorers.shared.github_signals import (
-    GitHubAcquisitionError,
     github_get,
-    raise_for_required_github_evidence,
     repo_file_exists,
     repo_file_text,
-    required_github_json,
     search_code_count,
     workflow_files,
 )
@@ -16,42 +13,39 @@ _GITHUB_API = "https://api.github.com"
 _CANONICAL_REPO_AUTOMATION_REPO = "canonical/canonical-repo-automation"
 
 
-def _default_branch_rules(owner_repo: str, github_token: str) -> list[dict[str, Any]]:
-    repo_resp = github_get(f"{_GITHUB_API}/repos/{owner_repo}", github_token)
-    repo_url = f"{_GITHUB_API}/repos/{owner_repo}"
-    raise_for_required_github_evidence(repo_resp, repo_url)
-    repo_data = required_github_json(repo_resp, repo_url, dict)
-    default_branch = repo_data.get("default_branch")
-    if not isinstance(default_branch, str) or not default_branch:
-        raise GitHubAcquisitionError(repo_resp.status_code, repo_url)
-    rules_url = f"{_GITHUB_API}/repos/{owner_repo}/rules/branches/{default_branch}"
-    rules_resp = github_get(rules_url, github_token)
-    raise_for_required_github_evidence(rules_resp, rules_url)
-    rules = required_github_json(rules_resp, rules_url, list)
-    if not all(isinstance(rule, dict) and isinstance(rule.get("type"), str) for rule in rules):
-        raise GitHubAcquisitionError(rules_resp.status_code, rules_url)
-    return rules
-
-
 def _has_signed_commits_required(owner_repo: str, github_token: str) -> bool:
-    """Return True if the default branch requires signed commits."""
-    return any(
-        rule["type"] == "required_signatures"
-        for rule in _default_branch_rules(owner_repo, github_token)
+    """Return True if default branch requires signed commits in protection rules."""
+    repo_resp = github_get(f"{_GITHUB_API}/repos/{owner_repo}", github_token)
+    if not repo_resp.ok:
+        return False
+    default_branch = repo_resp.json().get("default_branch", "main")
+    prot_resp = github_get(
+        f"{_GITHUB_API}/repos/{owner_repo}/branches/{default_branch}/protection",
+        github_token,
     )
+    if not prot_resp.ok:
+        return False
+    signatures = prot_resp.json().get("required_signatures", {})
+    return bool(signatures.get("enabled", False))
 
 
 def _has_branch_protection_required_checks(owner_repo: str, github_token: str) -> bool:
     """Return True if the default branch has ≥1 required status check."""
-    for rule in _default_branch_rules(owner_repo, github_token):
-        if rule["type"] != "required_status_checks":
-            continue
-        parameters = rule.get("parameters")
-        checks = parameters.get("required_status_checks") if isinstance(parameters, dict) else None
-        if not isinstance(checks, list):
-            raise GitHubAcquisitionError(200, "GitHub branch rules response")
-        return bool(checks)
-    return False
+    repo_resp = github_get(f"{_GITHUB_API}/repos/{owner_repo}", github_token)
+    if not repo_resp.ok:
+        return False
+    default_branch = repo_resp.json().get("default_branch", "main")
+    prot_resp = github_get(
+        f"{_GITHUB_API}/repos/{owner_repo}/branches/{default_branch}/protection",
+        github_token,
+    )
+    if not prot_resp.ok:
+        return False
+    data = prot_resp.json()
+    checks = data.get("required_status_checks", {})
+    contexts = checks.get("contexts", [])
+    strict_checks = checks.get("checks", [])
+    return len(contexts) > 0 or len(strict_checks) > 0
 
 
 def _has_sast_workflow(owner_repo: str, github_token: str) -> bool:

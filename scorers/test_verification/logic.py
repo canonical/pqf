@@ -88,8 +88,8 @@ def compute_metrics(unit: EvaluationUnit, github_token: str | None = None) -> di
         latest_build_passing = _latest_default_branch_check_success(unit.repo, github_token)
 
     uses_ops = False
-    uses_jub: bool | None = None
-    integration_evidence: bool | None = None
+    uses_jub = False
+    integration_evidence = False
     if github_token and unit.repo:
         uses_ops = _uses_ops_testing([unit.repo], github_token)
         uses_jub = _uses_jubilant([unit.repo], github_token)

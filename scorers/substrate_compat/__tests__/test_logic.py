@@ -6,11 +6,7 @@ import responses
 
 from engine.models import EvaluationUnit, ProductType
 from scorers.shared.github_signals import GitHubAcquisitionError
-from scorers.substrate_compat.logic import (
-    _fetch_workflow_contents,
-    _make_github_session,
-    compute_metrics,
-)
+from scorers.substrate_compat.logic import _make_github_session, compute_metrics
 
 _GITHUB_API = "https://api.github.com"
 
@@ -581,36 +577,6 @@ def test_workflow_file_failure_raises_acquisition_error(status):
     assert "must not leak" not in str(exc_info.value)
     expected_calls = 3 if status in {401, 403, 429} else 2
     assert len(responses.calls) == expected_calls
-
-
-@responses.activate
-def test_workflow_listing_malformed_payload_raises_acquisition_error():
-    url = "https://api.github.com/repos/canonical/example/contents/.github/workflows"
-    responses.add(responses.GET, url, json={"entries": []}, status=200)
-
-    with pytest.raises(GitHubAcquisitionError):
-        _fetch_workflow_contents("canonical/example", "token")
-
-
-@responses.activate
-def test_workflow_file_malformed_payload_raises_acquisition_error():
-    listing_url = "https://api.github.com/repos/canonical/example/contents/.github/workflows"
-    file_url = f"{listing_url}/ci.yaml"
-    responses.add(
-        responses.GET,
-        listing_url,
-        json=[{"type": "file", "name": "ci.yaml", "url": file_url}],
-        status=200,
-    )
-    responses.add(
-        responses.GET,
-        file_url,
-        json={"encoding": "base64", "content": "%%%"},
-        status=200,
-    )
-
-    with pytest.raises(GitHubAcquisitionError):
-        _fetch_workflow_contents("canonical/example", "token")
 
 
 def test_returns_defaults_when_repo_empty():

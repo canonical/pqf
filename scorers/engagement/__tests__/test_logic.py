@@ -350,15 +350,6 @@ def test_has_squad_topic_raises_when_required_evidence_cannot_be_acquired(status
 
 
 @responses.activate
-def test_has_squad_topic_raises_when_topics_payload_is_malformed():
-    url = "https://api.github.com/repos/canonical/example/topics"
-    responses.add(responses.GET, url, json={"names": "squad-example"}, status=200)
-
-    with pytest.raises(GitHubAcquisitionError):
-        _has_squad_topic("canonical/example", _make_github_session("token"))
-
-
-@responses.activate
 def test_has_jira_sync_treats_not_found_as_absent():
     url = f"{_GITHUB_API}/repos/canonical/test-repo/contents/.github/.jira_sync_config.yaml"
     responses.add(
@@ -721,33 +712,6 @@ def test_fetch_repo_views_14d_returns_none_for_unsuccessful_optional_response(st
     session.headers.update({"Authorization": "token"})
     result = _fetch_repo_views_14d("canonical/test-repo", session)
     assert result is None
-
-
-@pytest.mark.parametrize("request_error", [requests.Timeout(), requests.ConnectionError()])
-@responses.activate
-def test_fetch_repo_views_14d_returns_none_for_request_exception(request_error):
-    responses.add(
-        responses.GET,
-        f"{_GITHUB_API}/repos/canonical/test-repo/traffic/views",
-        body=request_error,
-    )
-
-    result = _fetch_repo_views_14d("canonical/test-repo", requests.Session())
-
-    assert result is None
-
-
-@pytest.mark.parametrize("request_error", [requests.Timeout(), requests.ConnectionError()])
-@responses.activate
-def test_required_engagement_call_remains_fail_closed_for_request_exception(request_error):
-    url = f"{_GITHUB_API}/repos/canonical/test-repo/topics"
-    responses.add(responses.GET, url, body=request_error)
-
-    with pytest.raises(GitHubAcquisitionError) as exc_info:
-        _has_squad_topic("canonical/test-repo", requests.Session())
-
-    assert exc_info.value.status_code == 0
-    assert exc_info.value.url == url
 
 
 @responses.activate

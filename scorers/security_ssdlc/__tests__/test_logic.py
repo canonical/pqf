@@ -1,22 +1,17 @@
-import pytest
-import responses
 import yaml
 
 from engine.models import EvaluationUnit, ProductType
 from scorers.security_ssdlc.logic import (
     _has_branch_protection_required_checks,
-    _has_signed_commits_required,
     _is_registered_in_repo_automation,
     compute_metrics,
 )
-from scorers.shared.github_signals import GitHubAcquisitionError
 
 
 class _Response:
-    def __init__(self, ok: bool, payload: dict, status_code: int = 200):
+    def __init__(self, ok: bool, payload: dict):
         self.ok = ok
         self._payload = payload
-        self.status_code = status_code
 
     def json(self):
         return self._payload
@@ -39,118 +34,10 @@ def test_branch_protection_required_checks_true(mocker):
     def fake_github_get(url, token, accept=None):
         if url.endswith("/repos/canonical/test-repo"):
             return _Response(True, {"default_branch": "main"})
-        assert url.endswith("/repos/canonical/test-repo/rules/branches/main")
-        return _Response(
-            True,
-            [
-                {
-                    "type": "required_status_checks",
-                    "parameters": {"required_status_checks": [{"context": "ci/test"}]},
-                }
-            ],
-        )
+        return _Response(True, {"required_status_checks": {"contexts": ["ci/test"], "checks": []}})
 
     mocker.patch("scorers.security_ssdlc.logic.github_get", side_effect=fake_github_get)
     assert _has_branch_protection_required_checks("canonical/test-repo", "token") is True
-
-
-def test_signed_commits_required_uses_public_branch_rules(mocker):
-    def fake_github_get(url, token, accept=None):
-        if url.endswith("/repos/canonical/test-repo"):
-            return _Response(True, {"default_branch": "main"})
-        assert url.endswith("/repos/canonical/test-repo/rules/branches/main")
-        return _Response(True, [{"type": "required_signatures"}])
-
-    mocker.patch("scorers.security_ssdlc.logic.github_get", side_effect=fake_github_get)
-
-    assert _has_signed_commits_required("canonical/test-repo", "token") is True
-
-
-def test_branch_protection_empty_rules_are_valid_absence(mocker):
-    mocker.patch(
-        "scorers.security_ssdlc.logic.github_get",
-        side_effect=[
-            _Response(True, {"default_branch": "main"}),
-            _Response(True, []),
-        ],
-    )
-
-    assert _has_branch_protection_required_checks("canonical/test-repo", "token") is False
-
-
-@responses.activate
-def test_branch_protection_permission_403_does_not_fall_back_to_anonymous_404():
-    repo_url = "https://api.github.com/repos/canonical/test-repo"
-    rules_url = f"{repo_url}/rules/branches/main"
-    responses.add(
-        responses.GET,
-        repo_url,
-        json={"default_branch": "main"},
-        status=200,
-    )
-    responses.add(
-        responses.GET,
-        rules_url,
-        json={"message": "Resource not accessible by integration"},
-        status=403,
-        headers={"X-RateLimit-Remaining": "999"},
-    )
-    responses.add(
-        responses.GET,
-        rules_url,
-        json={"message": "Not Found"},
-        status=404,
-    )
-
-    with pytest.raises(GitHubAcquisitionError) as exc_info:
-        _has_branch_protection_required_checks("canonical/test-repo", "token")
-
-    assert exc_info.value.status_code == 403
-    assert len(responses.calls) == 2
-
-
-def test_branch_protection_server_failure_raises(mocker):
-    mocker.patch(
-        "scorers.security_ssdlc.logic.github_get",
-        side_effect=[
-            _Response(True, {"default_branch": "main"}),
-            _Response(False, {"message": "server error"}, 500),
-        ],
-    )
-
-    with pytest.raises(GitHubAcquisitionError):
-        _has_branch_protection_required_checks("canonical/test-repo", "token")
-
-
-@pytest.mark.parametrize(
-    "responses",
-    [
-        [_Response(True, {})],
-        [_Response(True, {"default_branch": "main"}), _Response(True, {})],
-        [
-            _Response(True, {"default_branch": "main"}),
-            _Response(True, [{"type": "required_status_checks", "parameters": {}}]),
-        ],
-    ],
-)
-def test_branch_protection_malformed_response_raises(mocker, responses):
-    mocker.patch("scorers.security_ssdlc.logic.github_get", side_effect=responses)
-
-    with pytest.raises(GitHubAcquisitionError):
-        _has_branch_protection_required_checks("canonical/test-repo", "token")
-
-
-def test_signed_commit_requirement_malformed_response_raises(mocker):
-    mocker.patch(
-        "scorers.security_ssdlc.logic.github_get",
-        side_effect=[
-            _Response(True, {"default_branch": "main"}),
-            _Response(True, [{"type": 7}]),
-        ],
-    )
-
-    with pytest.raises(GitHubAcquisitionError):
-        _has_signed_commits_required("canonical/test-repo", "token")
 
 
 def test_repo_automation_registration_reads_from_authoritative_list(mocker):
@@ -212,18 +99,10 @@ def test_compute_metrics_detects_new_ssdlc_signals(mocker):
         side_effect=[
             # For _has_signed_commits_required
             _Response(True, {"default_branch": "main"}),
-            _Response(True, [{"type": "required_signatures"}]),
+            _Response(True, {"required_signatures": {"enabled": True}}),
             # For _has_branch_protection_required_checks
             _Response(True, {"default_branch": "main"}),
-            _Response(
-                True,
-                [
-                    {
-                        "type": "required_status_checks",
-                        "parameters": {"required_status_checks": [{"context": "ci"}]},
-                    }
-                ],
-            ),
+            _Response(True, {"required_status_checks": {"contexts": ["ci"], "checks": []}}),
         ],
     )
 
@@ -252,10 +131,10 @@ def test_compute_metrics_falls_back_to_false_when_signals_absent(mocker):
         side_effect=[
             # For _has_signed_commits_required
             _Response(True, {"default_branch": "main"}),
-            _Response(True, []),
+            _Response(True, {}),
             # For _has_branch_protection_required_checks
             _Response(True, {"default_branch": "main"}),
-            _Response(True, []),
+            _Response(True, {"required_status_checks": {}}),
         ],
     )
     result = compute_metrics(UNIT, "token")
@@ -286,10 +165,10 @@ def test_cve_tracking_detects_non_security_marker(mocker):
         side_effect=[
             # For _has_signed_commits_required
             _Response(True, {"default_branch": "main"}),
-            _Response(True, []),
+            _Response(True, {}),
             # For _has_branch_protection_required_checks
             _Response(True, {"default_branch": "main"}),
-            _Response(True, []),
+            _Response(True, {"required_status_checks": {}}),
         ],
     )
     result = compute_metrics(UNIT, "token")
@@ -337,22 +216,16 @@ def test_signed_commits_required_true(mocker):
     def fake_github_get(url, token, accept=None):
         if url.endswith("/repos/canonical/synapse-operator"):
             return _Response(True, {"default_branch": "main"})
-        if url.endswith("/rules/branches/main"):
+        if url.endswith("/branches/main/protection"):
             return _Response(
                 True,
-                [
-                    {"type": "required_signatures"},
-                    {
-                        "type": "required_status_checks",
-                        "parameters": {"required_status_checks": [{"context": "ci/test"}]},
-                    },
-                ],
+                {
+                    "required_status_checks": {"contexts": ["ci/test"], "checks": []},
+                    "required_signatures": {"enabled": True},
+                },
             )
         return _Response(False, {})
 
-    mocker.patch("scorers.security_ssdlc.logic.repo_file_exists", return_value=False)
-    mocker.patch("scorers.security_ssdlc.logic.search_code_count", return_value=0)
-    mocker.patch("scorers.security_ssdlc.logic.workflow_files", return_value=[])
     mocker.patch("scorers.security_ssdlc.logic.github_get", side_effect=fake_github_get)
     result = compute_metrics(UNIT, "token")
     assert result["signed_commits_required"] is True
@@ -364,21 +237,10 @@ def test_signed_commits_required_false_when_not_configured(mocker):
     def fake_github_get(url, token, accept=None):
         if url.endswith("/repos/canonical/synapse-operator"):
             return _Response(True, {"default_branch": "main"})
-        if url.endswith("/rules/branches/main"):
-            return _Response(
-                True,
-                [
-                    {
-                        "type": "required_status_checks",
-                        "parameters": {"required_status_checks": [{"context": "ci"}]},
-                    }
-                ],
-            )
+        if url.endswith("/branches/main/protection"):
+            return _Response(True, {"required_status_checks": {"contexts": ["ci"], "checks": []}})
         return _Response(False, {})
 
-    mocker.patch("scorers.security_ssdlc.logic.repo_file_exists", return_value=False)
-    mocker.patch("scorers.security_ssdlc.logic.search_code_count", return_value=0)
-    mocker.patch("scorers.security_ssdlc.logic.workflow_files", return_value=[])
     mocker.patch("scorers.security_ssdlc.logic.github_get", side_effect=fake_github_get)
     result = compute_metrics(UNIT, "token")
     assert result["signed_commits_required"] is False

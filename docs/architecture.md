@@ -86,19 +86,17 @@ PQF distinguishes acquired evidence that measures low from evidence that could n
 | `insufficient_data` | A required metric is unavailable |
 | Acquisition exception | GitHub evidence could not be fetched reliably; the scoring job fails and publishes nothing |
 
-Required GitHub acquisition fails closed. For public evidence, an authenticated request is retried
-anonymously when authentication fails or the authenticated client is rate-limited; if the required
-request still fails, `GitHubAcquisitionError` stops the compute job. A response is treated as
-absence only where the scorer defines that response as valid evidence of absence—for example, a
-`404` for an optional Jira sync file or for the `.github/workflows` directory. Optional signals
-that an API cannot expose reliably, such as repository traffic, may explicitly return `null`
-instead. These cases do not expose credentials, response bodies, or operational secrets in the
-published product set.
+Required acquisition paths that use the shared GitHub evidence helpers fail closed. For public
+evidence, an authenticated request may be retried anonymously when authentication fails or the
+authenticated client is rate-limited; if the required request still fails,
+`GitHubAcquisitionError` stops the compute job. A response is treated as absence only where the
+scorer defines that response as valid evidence of absence. Optional signals that an API cannot
+expose reliably, such as repository traffic, may explicitly return `null` instead.
 
-GitHub Actions tokens are repository-scoped and cannot use code search across the tracked product
-set. When that endpoint rejects both authenticated and anonymous access, code-presence checks scan
-the complete public repository archive instead. Archive acquisition and parsing remain fail closed,
-and binary files are excluded from matching.
+This behavior is not yet uniform across every scorer, and full product-set runs also need a
+documented GitHub API request-budget strategy. [Issue #34](https://github.com/canonical/pqf/issues/34)
+tracks that reliability work. Until it is complete, new scorer code must not convert API,
+authentication, rate-limit, or server failures into measured `false`, zero, or empty evidence.
 
 ---
 
