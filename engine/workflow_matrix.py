@@ -16,12 +16,11 @@ index and recover work when GitHub replaces a pending scheduled run. Archived
 versions are never selected: their measurements are frozen and their scorers must
 never run again.
 
-Each selected framework version contributes one matrix row per product, for every
-product whose introduced_in/retired_in boundaries include that framework version.
-Each job is expected to loop over that framework version's dimensions itself, which
-keeps the matrix small and amortizes checkout/install across all dimensions. The
-output is printed as compact JSON shaped for consumption via `fromJson(...)` in a
-workflow `strategy.matrix`.
+Selected framework versions are grouped into one matrix row per product, containing
+only versions within that product's introduced_in/retired_in boundaries. Each job
+scores every selected version and dimension for its product, which lets compatible
+runner output be reused safely across contracts. The output is printed as compact
+JSON shaped for consumption via `fromJson(...)` in a workflow `strategy.matrix`.
 """
 
 from __future__ import annotations
@@ -326,21 +325,24 @@ def build_matrix_rows(
     frameworks: list[FrameworkVersion],
     selected: list[FrameworkVersion],
     products_dir: Path,
-) -> list[dict[str, str]]:
-    """Build {"framework_version", "product"} rows for the selected versions.
+) -> list[dict[str, Any]]:
+    """Build one {"product", "framework_versions"} row per selected product.
 
-    Dimensions are deliberately *not* part of the matrix: each job discovers and runs
-    every dimension declared by its framework version. Products whose
-    introduced_in/retired_in boundaries exclude a selected framework version are
-    skipped for that version.
+    Versions retain framework sequence order. Products whose introduced_in/retired_in
+    boundaries exclude a selected version simply omit that version, and products with
+    no selected versions produce no row.
     """
     products = _load_products(products_dir)
-    rows: list[dict[str, str]] = []
-    for framework in selected:
-        for product in products:
-            if not is_in_version(product, frameworks, framework):
-                continue
-            rows.append({"framework_version": framework.id, "product": product["id"]})
+    ordered_selected = sorted(selected, key=lambda framework: framework.sequence)
+    rows: list[dict[str, Any]] = []
+    for product in products:
+        version_ids = [
+            framework.id
+            for framework in ordered_selected
+            if is_in_version(product, frameworks, framework)
+        ]
+        if version_ids:
+            rows.append({"product": product["id"], "framework_versions": version_ids})
     return rows
 
 

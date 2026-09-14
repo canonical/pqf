@@ -157,7 +157,7 @@ def test_nightly_selection_returns_only_active_rows(fixtures):
     assert [f.id for f in selected] == ["v1"]
 
     rows = build_matrix_rows(frameworks, selected, products_dir)
-    assert {row["framework_version"] for row in rows} == {"v1"}
+    assert {version for row in rows for version in row["framework_versions"]} == {"v1"}
     assert {row["product"] for row in rows} == {"matrix"}
 
 
@@ -169,24 +169,26 @@ def test_weekly_selection_returns_only_upcoming_rows(fixtures):
     assert [f.id for f in selected] == ["v2"]
 
     rows = build_matrix_rows(frameworks, selected, products_dir)
-    assert {row["framework_version"] for row in rows} == {"v2"}
+    assert {version for row in rows for version in row["framework_versions"]} == {"v2"}
     assert {row["product"] for row in rows} == {"matrix", "new-in-v2"}
 
 
-def test_matrix_rows_are_version_and_product_only(fixtures):
-    """Dimensions are looped inside each job, so they must not appear in the matrix."""
+def test_matrix_rows_group_ordered_versions_once_per_product(fixtures):
     framework_root, products_dir = fixtures
     frameworks = discover_frameworks(framework_root)
 
-    selected = select_frameworks(frameworks, cadence="nightly")
+    selected = select_frameworks(
+        frameworks,
+        cadence="changed",
+        changed_paths=["scorers/documentation/logic.py"],
+    )
     rows = build_matrix_rows(frameworks, selected, products_dir)
 
-    assert rows, "expected at least one matrix row"
-    for row in rows:
-        assert set(row) == {"framework_version", "product"}
-    assert len(rows) == len({(row["framework_version"], row["product"]) for row in rows}), (
-        "one row per (framework version, product); no duplicates"
-    )
+    assert rows == [
+        {"product": "matrix", "framework_versions": ["v1", "v2"]},
+        {"product": "new-in-v2", "framework_versions": ["v2"]},
+    ]
+    assert len(rows) == len({row["product"] for row in rows})
 
 
 def test_manual_selection_accepts_active_version(fixtures):
@@ -530,7 +532,9 @@ def test_cli_bootstraps_live_versions_with_a_stale_published_digest(fixtures, tm
 
     assert completed.returncode == 0, completed.stderr
     payload = json.loads(completed.stdout)
-    assert {row["framework_version"] for row in payload["include"]} == {"v2"}
+    assert {version for row in payload["include"] for version in row["framework_versions"]} == {
+        "v2"
+    }
 
 
 def test_bootstrap_does_not_duplicate_already_selected_versions(fixtures, tmp_path):
@@ -585,8 +589,8 @@ def _real_dimension_matrix_size(version_ids: set[str]) -> int:
     )
 
 
-def test_real_catalog_matrix_is_one_job_per_version_and_product():
-    """A push/PR touching shared inputs must stay at one job per live version+product."""
+def test_real_catalog_matrix_is_one_job_per_product():
+    """A push/PR touching shared inputs groups all live versions by product."""
     frameworks = discover_frameworks(REPO_ROOT / "framework" / "versions")
     live_ids = {f.id for f in frameworks if f.status.value in ("active", "upcoming")}
 
@@ -599,16 +603,24 @@ def test_real_catalog_matrix_is_one_job_per_version_and_product():
 
     rows = build_matrix_rows(frameworks, selected, REPO_ROOT / "products")
 
-    expected = _real_expected_row_count(live_ids)
-    assert len(rows) == expected
-    assert len(rows) == len({(row["framework_version"], row["product"]) for row in rows})
+    expected_products = {
+        product["id"]
+        for product in _real_products()
+        if any(
+            framework.id in live_ids and is_in_version(product, frameworks, framework)
+            for framework in frameworks
+        )
+    }
+    assert len(rows) == len(expected_products)
+    assert len(rows) == len({row["product"] for row in rows})
     for row in rows:
-        assert set(row) == {"framework_version", "product"}
+        assert set(row) == {"framework_versions", "product"}
+        assert row["framework_versions"] == sorted(
+            row["framework_versions"],
+            key=lambda version_id: get_framework(frameworks, version_id).sequence,
+        )
 
-    assert len(rows) < _real_dimension_matrix_size(live_ids), (
-        "the version/product matrix must be strictly smaller than the previous "
-        "version/product/dimension matrix"
-    )
+    assert len(rows) <= _real_expected_row_count(live_ids)
 
     assert len(rows) <= 256, (
         f"GitHub Actions refuses a matrix with more than 256 jobs; the real catalog "
@@ -623,7 +635,7 @@ def test_real_catalog_nightly_matrix_covers_only_the_active_version():
     selected = select_frameworks(frameworks, cadence="nightly")
     rows = build_matrix_rows(frameworks, selected, REPO_ROOT / "products")
 
-    assert {row["framework_version"] for row in rows} == active_ids
+    assert {version for row in rows for version in row["framework_versions"]} == active_ids
     assert len(rows) == _real_expected_row_count(active_ids)
 
 
@@ -655,8 +667,10 @@ def test_cli_prints_compact_json_matrix_for_nightly(fixtures):
     assert "\n" not in completed.stdout.strip()
     payload = json.loads(completed.stdout)
     assert set(payload) == {"include"}
-    assert {row["framework_version"] for row in payload["include"]} == {"v1"}
-    assert all(set(row) == {"framework_version", "product"} for row in payload["include"])
+    assert {version for row in payload["include"] for version in row["framework_versions"]} == {
+        "v1"
+    }
+    assert all(set(row) == {"framework_versions", "product"} for row in payload["include"])
 
 
 def test_cli_derives_cadence_from_schedule_cron(fixtures):
@@ -673,7 +687,9 @@ def test_cli_derives_cadence_from_schedule_cron(fixtures):
 
     assert completed.returncode == 0, completed.stderr
     payload = json.loads(completed.stdout)
-    assert {row["framework_version"] for row in payload["include"]} == {"v2"}
+    assert {version for row in payload["include"] for version in row["framework_versions"]} == {
+        "v2"
+    }
 
 
 def test_cli_rejects_unknown_schedule_cron(fixtures):
@@ -734,7 +750,9 @@ def test_cli_changed_cadence_reads_changed_paths_file(fixtures, tmp_path):
 
     assert completed.returncode == 0, completed.stderr
     payload = json.loads(completed.stdout)
-    assert {row["framework_version"] for row in payload["include"]} == {"v2"}
+    assert {version for row in payload["include"] for version in row["framework_versions"]} == {
+        "v2"
+    }
 
 
 def test_cli_bootstraps_live_versions_missing_from_published_dir(fixtures, tmp_path):
@@ -760,7 +778,9 @@ def test_cli_bootstraps_live_versions_missing_from_published_dir(fixtures, tmp_p
 
     assert completed.returncode == 0, completed.stderr
     payload = json.loads(completed.stdout)
-    assert {row["framework_version"] for row in payload["include"]} == {"v2"}, (
+    assert {version for row in payload["include"] for version in row["framework_versions"]} == {
+        "v2"
+    }, (
         "an unrelated change selects nothing, but the unpublished live version v2 "
         "must still be bootstrapped"
     )

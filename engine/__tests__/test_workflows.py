@@ -203,7 +203,7 @@ def test_compute_metrics_deploys_production_from_engine_artifacts() -> None:
     assert "^[0-9a-fA-F]{40}$" in build_run
     assert "git ls-files" in build_run
 
-    # ---- compute-metrics: one job per (version, product), looping dimensions ----
+    # ---- compute-metrics: one job per product, batching selected versions ----
     compute_metrics = jobs["compute-metrics"]
     assert compute_metrics["needs"] == "determine-matrix"
     assert (
@@ -213,22 +213,14 @@ def test_compute_metrics_deploys_production_from_engine_artifacts() -> None:
     scorer_step = next(
         step
         for step in compute_metrics["steps"]
-        if step.get("name") == "Run every dimension for this framework version"
+        if step.get("name") == "Run every dimension for selected framework versions"
     )
     scorer_run = scorer_step["run"]
-    assert "scorers/run.py" in scorer_run
-    assert "--list-dimensions" in scorer_run, (
-        "each job must discover its framework version's dimensions itself"
-    )
-    assert "for dimension in $dimensions; do" in scorer_run
-    assert '--dimension "$dimension"' in scorer_run
+    assert "python3 -m scorers.batch" in scorer_run
+    assert '--framework-versions-json "$FRAMEWORK_VERSIONS"' in scorer_run
     assert '--product-yaml "products/$PRODUCT.yaml"' in scorer_run
-    assert "matrix.dimension" not in scorer_run, (
-        "dimension must not be a matrix axis; jobs loop over dimensions instead"
-    )
-    assert "matrix.dimension" not in yaml.safe_dump(compute_metrics), (
-        "the matrix is (framework_version, product) only"
-    )
+    assert scorer_step["env"]["FRAMEWORK_VERSIONS"] == ("${{ toJson(matrix.framework_versions) }}")
+    assert "${{ matrix.framework_version }}" not in yaml.safe_dump(compute_metrics)
     assert "Check if product needs rescoring" not in step_names(compute_metrics), (
         "per-product PR rescore skip removed; filtering is now version-level via determine-matrix"
     )
@@ -236,8 +228,9 @@ def test_compute_metrics_deploys_production_from_engine_artifacts() -> None:
     upload_step = next(
         step for step in compute_metrics["steps"] if step.get("name") == "Upload scorer output"
     )
-    assert upload_step["with"]["name"] == (
-        "scorer-output-${{ matrix.framework_version }}-${{ matrix.product }}"
+    assert upload_step["with"]["name"] == "scorer-output-${{ matrix.product }}"
+    assert "[.include[].framework_versions[]] | unique" in build_run, (
+        "versions output must flatten grouped framework version lists"
     )
 
     # ---- merge-computed: merges per-dimension outputs into per-version/product envelopes ----
