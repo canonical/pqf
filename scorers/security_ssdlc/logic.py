@@ -16,8 +16,7 @@ _GITHUB_API = "https://api.github.com"
 _CANONICAL_REPO_AUTOMATION_REPO = "canonical/canonical-repo-automation"
 
 
-def _has_signed_commits_required(owner_repo: str, github_token: str) -> bool:
-    """Return True if default branch requires signed commits in protection rules."""
+def _default_branch_rules(owner_repo: str, github_token: str) -> list[dict[str, Any]]:
     repo_resp = github_get(f"{_GITHUB_API}/repos/{owner_repo}", github_token)
     repo_url = f"{_GITHUB_API}/repos/{owner_repo}"
     raise_for_required_github_evidence(repo_resp, repo_url)
@@ -25,44 +24,34 @@ def _has_signed_commits_required(owner_repo: str, github_token: str) -> bool:
     default_branch = repo_data.get("default_branch")
     if not isinstance(default_branch, str) or not default_branch:
         raise GitHubAcquisitionError(repo_resp.status_code, repo_url)
-    protection_url = f"{_GITHUB_API}/repos/{owner_repo}/branches/{default_branch}/protection"
-    prot_resp = github_get(protection_url, github_token)
-    if prot_resp.status_code == 404:
-        return False
-    raise_for_required_github_evidence(prot_resp, protection_url)
-    protection = required_github_json(prot_resp, protection_url, dict)
-    signatures = protection.get("required_signatures", {})
-    if not isinstance(signatures, dict):
-        raise GitHubAcquisitionError(prot_resp.status_code, protection_url)
-    enabled = signatures.get("enabled", False)
-    if not isinstance(enabled, bool):
-        raise GitHubAcquisitionError(prot_resp.status_code, protection_url)
-    return enabled
+    rules_url = f"{_GITHUB_API}/repos/{owner_repo}/rules/branches/{default_branch}"
+    rules_resp = github_get(rules_url, github_token)
+    raise_for_required_github_evidence(rules_resp, rules_url)
+    rules = required_github_json(rules_resp, rules_url, list)
+    if not all(isinstance(rule, dict) and isinstance(rule.get("type"), str) for rule in rules):
+        raise GitHubAcquisitionError(rules_resp.status_code, rules_url)
+    return rules
+
+
+def _has_signed_commits_required(owner_repo: str, github_token: str) -> bool:
+    """Return True if the default branch requires signed commits."""
+    return any(
+        rule["type"] == "required_signatures"
+        for rule in _default_branch_rules(owner_repo, github_token)
+    )
 
 
 def _has_branch_protection_required_checks(owner_repo: str, github_token: str) -> bool:
     """Return True if the default branch has ≥1 required status check."""
-    repo_resp = github_get(f"{_GITHUB_API}/repos/{owner_repo}", github_token)
-    repo_url = f"{_GITHUB_API}/repos/{owner_repo}"
-    raise_for_required_github_evidence(repo_resp, repo_url)
-    repo_data = required_github_json(repo_resp, repo_url, dict)
-    default_branch = repo_data.get("default_branch")
-    if not isinstance(default_branch, str) or not default_branch:
-        raise GitHubAcquisitionError(repo_resp.status_code, repo_url)
-    protection_url = f"{_GITHUB_API}/repos/{owner_repo}/branches/{default_branch}/protection"
-    prot_resp = github_get(protection_url, github_token)
-    if prot_resp.status_code == 404:
-        return False
-    raise_for_required_github_evidence(prot_resp, protection_url)
-    data = required_github_json(prot_resp, protection_url, dict)
-    checks = data.get("required_status_checks", {})
-    if not isinstance(checks, dict):
-        raise GitHubAcquisitionError(prot_resp.status_code, protection_url)
-    contexts = checks.get("contexts", [])
-    strict_checks = checks.get("checks", [])
-    if not isinstance(contexts, list) or not isinstance(strict_checks, list):
-        raise GitHubAcquisitionError(prot_resp.status_code, protection_url)
-    return len(contexts) > 0 or len(strict_checks) > 0
+    for rule in _default_branch_rules(owner_repo, github_token):
+        if rule["type"] != "required_status_checks":
+            continue
+        parameters = rule.get("parameters")
+        checks = parameters.get("required_status_checks") if isinstance(parameters, dict) else None
+        if not isinstance(checks, list):
+            raise GitHubAcquisitionError(200, "GitHub branch rules response")
+        return bool(checks)
+    return False
 
 
 def _has_sast_workflow(owner_repo: str, github_token: str) -> bool:
