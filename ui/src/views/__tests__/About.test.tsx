@@ -10,8 +10,21 @@ import { usePortfolio } from '../../hooks/usePortfolio'
 
 vi.mock('../../providers/FrameworkVersionProvider', () => ({
   useFrameworkVersion: () => ({
-    current: { id: 'v0', sequence: 0, label: 'PQF V0', status: 'active', description: '', portfolio_url: '', generated_at: '', contract_digest: 'digest-v0' },
-    versions: [],
+    current: {
+      id: 'v0',
+      sequence: 0,
+      label: 'PQF V0',
+      status: 'active',
+      description: '',
+      portfolio_url: '',
+      generated_at: '',
+      contract_digest: 'digest-v0',
+    },
+    versions: [
+      { id: 'v0', sequence: 0, label: 'PQF V0', status: 'active' },
+      { id: 'v1', sequence: 1, label: 'PQF V1', status: 'upcoming' },
+      { id: 'legacy', sequence: -1, label: 'Legacy', status: 'archived' },
+    ],
   }),
 }))
 
@@ -81,11 +94,28 @@ describe('About', () => {
     expect(screen.getByRole('link', { name: 'Documentation' })).toHaveAttribute('href', '/v0/dimensions/documentation')
   })
 
-  it('links framework specification to the canonical repo', () => {
+  it('explains framework lifecycle and version-specific product sets', () => {
     wrap()
-    expect(screen.getByRole('link', { name: /full framework specification on github/i })).toHaveAttribute(
+    expect(screen.getByRole('heading', { name: /framework versions/i })).toBeInTheDocument()
+    expect(screen.getByText(/official current view/i)).toBeInTheDocument()
+    expect(screen.getByText(/readiness.*next scoring contract/i)).toBeInTheDocument()
+    expect(screen.getByText(/frozen historical/i)).toBeInTheDocument()
+    expect(screen.getAllByText(/product set/i)).not.toHaveLength(0)
+  })
+
+  it('explains measurement, scoring, and unavailable evidence', () => {
+    wrap()
+    expect(screen.getByRole('heading', { name: /how scoring works/i })).toBeInTheDocument()
+    expect(screen.getByText(/same measurement.*safely reused/i)).toBeInTheDocument()
+    expect(screen.getAllByText(/version.*criteria.*target/i)).not.toHaveLength(0)
+    expect(screen.getByText(/required evidence.*cannot be acquired.*scoring fails/i)).toBeInTheDocument()
+  })
+
+  it('links to the current architecture documentation', () => {
+    wrap()
+    expect(screen.getByRole('link', { name: /scoring architecture on github/i })).toHaveAttribute(
       'href',
-      'https://github.com/canonical/pqf/blob/main/docs/superpowers/specs/2026-06-29-pqf-tool-design.md',
+      'https://github.com/canonical/pqf/blob/main/docs/architecture.md',
     )
   })
 
