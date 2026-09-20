@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-19T02:44:28.846861+00:00",
+  "generated_at": "2026-09-20T02:33:29.119569+00:00",
   "framework": {
     "id": "v0",
     "sequence": 0,
@@ -73,11 +73,11 @@
             {
               "product_id": "rockcraft",
               "repo": "canonical/rockcraft",
-              "medal": "unrated",
-              "result": "below_minimum",
+              "medal": "bronze",
+              "result": "bronze",
               "applicability": "scored",
               "metrics": {
-                "latest_build_passing": false,
+                "latest_build_passing": true,
                 "uses_jubilant": false
               },
               "excluded_from_parent_medal": false
@@ -85,11 +85,11 @@
             {
               "product_id": "charmcraft",
               "repo": "canonical/charmcraft",
-              "medal": "unrated",
-              "result": "below_minimum",
+              "medal": "gold",
+              "result": "gold",
               "applicability": "scored",
               "metrics": {
-                "latest_build_passing": false,
+                "latest_build_passing": true,
                 "uses_jubilant": true
               },
               "excluded_from_parent_medal": false
@@ -98,10 +98,10 @@
               "product_id": "paas-charm",
               "repo": "canonical/paas-charm",
               "medal": "unrated",
-              "result": "insufficient_data",
-              "applicability": "insufficient_data",
+              "result": "below_minimum",
+              "applicability": "scored",
               "metrics": {
-                "latest_build_passing": null,
+                "latest_build_passing": false,
                 "uses_jubilant": true
               },
               "excluded_from_parent_medal": false
@@ -299,12 +299,12 @@
             {
               "product_id": "aproxy-charm",
               "repo": "canonical/aproxy-operator",
-              "medal": "bronze",
-              "result": "bronze",
+              "medal": "gold",
+              "result": "gold",
               "applicability": "scored",
               "metrics": {
                 "latest_build_passing": true,
-                "uses_jubilant": false
+                "uses_jubilant": true
               },
               "excluded_from_parent_medal": false
             },
@@ -486,7 +486,7 @@
               "applicability": "scored",
               "metrics": {
                 "latest_build_passing": false,
-                "uses_jubilant": false
+                "uses_jubilant": true
               },
               "excluded_from_parent_medal": false
             },
@@ -1248,9 +1248,9 @@
       "name": "Content cache operators",
       "description": "The Content Cache Operators provide a static web content cache backed by nginx.\nThe ``content-cache`` machine charm manages the nginx instance, while the\n``content-cache-backends-config`` subordinate charm provides configuration for\nthe backend services to expose behind the cache.",
       "lifecycle": "stable",
-      "current_medal": "bronze",
+      "current_medal": "unrated",
       "target_medal": "silver",
-      "current_result": "bronze",
+      "current_result": "below_minimum",
       "target_result": "silver",
       "meets_target": false,
       "squad": "apac",
@@ -1271,21 +1271,21 @@
       "parent_product_ids": [],
       "dimensions": {
         "test_verification": {
-          "medal": "bronze",
+          "medal": "unrated",
           "target": "silver",
           "applicability": "scored",
           "meets_target": false,
-          "result": "bronze",
+          "result": "below_minimum",
           "metrics": {},
           "composition": [
             {
               "product_id": "content-cache-charm",
               "repo": "canonical/content-cache-operator",
-              "medal": "bronze",
-              "result": "bronze",
+              "medal": "unrated",
+              "result": "below_minimum",
               "applicability": "scored",
               "metrics": {
-                "latest_build_passing": true,
+                "latest_build_passing": false,
                 "uses_jubilant": false
               },
               "excluded_from_parent_medal": false
@@ -1293,11 +1293,11 @@
             {
               "product_id": "content-cache-backends-config",
               "repo": "canonical/content-cache-operator",
-              "medal": "bronze",
-              "result": "bronze",
+              "medal": "unrated",
+              "result": "below_minimum",
               "applicability": "scored",
               "metrics": {
-                "latest_build_passing": true,
+                "latest_build_passing": false,
                 "uses_jubilant": false
               },
               "excluded_from_parent_medal": false
@@ -1657,7 +1657,7 @@
               "applicability": "scored",
               "metrics": {
                 "ownership_signal": true,
-                "response_coverage_rate": 91.1
+                "response_coverage_rate": 89.5
               },
               "excluded_from_parent_medal": false
             }
@@ -2273,7 +2273,7 @@
               "applicability": "scored",
               "metrics": {
                 "ownership_signal": true,
-                "response_coverage_rate": 96.7
+                "response_coverage_rate": 87.9
               },
               "excluded_from_parent_medal": false
             },
@@ -2285,7 +2285,7 @@
               "applicability": "scored",
               "metrics": {
                 "ownership_signal": true,
-                "response_coverage_rate": 96.7
+                "response_coverage_rate": 87.9
               },
               "excluded_from_parent_medal": false
             }
@@ -2487,7 +2487,7 @@
               "applicability": "scored",
               "metrics": {
                 "latest_build_passing": false,
-                "uses_jubilant": false
+                "uses_jubilant": true
               },
               "excluded_from_parent_medal": false
             },
@@ -3565,7 +3565,7 @@
               "applicability": "scored",
               "metrics": {
                 "ownership_signal": true,
-                "response_coverage_rate": 43.3
+                "response_coverage_rate": 41.7
               },
               "excluded_from_parent_medal": false
             },
@@ -3589,7 +3589,7 @@
               "applicability": "scored",
               "metrics": {
                 "ownership_signal": true,
-                "response_coverage_rate": 82.9
+                "response_coverage_rate": 83.3
               },
               "excluded_from_parent_medal": false
             }
@@ -4490,7 +4490,7 @@
               "applicability": "scored",
               "metrics": {
                 "ownership_signal": true,
-                "response_coverage_rate": 91.7
+                "response_coverage_rate": 90.9
               },
               "excluded_from_parent_medal": false
             },
@@ -4637,7 +4637,7 @@
               "applicability": "scored",
               "metrics": {
                 "ownership_signal": true,
-                "response_coverage_rate": 85.7
+                "response_coverage_rate": 86.4
               },
               "excluded_from_parent_medal": false
             }
@@ -4999,7 +4999,7 @@
               "applicability": "scored",
               "metrics": {
                 "ownership_signal": true,
-                "response_coverage_rate": 77.8
+                "response_coverage_rate": 80.0
               },
               "excluded_from_parent_medal": false
             }
@@ -5315,7 +5315,7 @@
           "result": "gold",
           "metrics": {
             "ownership_signal": true,
-            "response_coverage_rate": 91.7
+            "response_coverage_rate": 90.9
           },
           "composition": null
         }
@@ -5764,7 +5764,7 @@
               "applicability": "scored",
               "metrics": {
                 "ownership_signal": true,
-                "response_coverage_rate": 94.3
+                "response_coverage_rate": 94.5
               },
               "excluded_from_parent_medal": false
             },
@@ -5776,7 +5776,7 @@
               "applicability": "scored",
               "metrics": {
                 "ownership_signal": true,
-                "response_coverage_rate": 94.3
+                "response_coverage_rate": 94.5
               },
               "excluded_from_parent_medal": false
             }
@@ -6347,7 +6347,7 @@
               "applicability": "scored",
               "metrics": {
                 "ownership_signal": true,
-                "response_coverage_rate": 83.9
+                "response_coverage_rate": 83.3
               },
               "excluded_from_parent_medal": false
             },
@@ -6653,13 +6653,13 @@
       ],
       "dimensions": {
         "test_verification": {
-          "medal": "unrated",
+          "medal": "bronze",
           "target": "gold",
           "applicability": "scored",
           "meets_target": false,
-          "result": "below_minimum",
+          "result": "bronze",
           "metrics": {
-            "latest_build_passing": false,
+            "latest_build_passing": true,
             "uses_jubilant": false
           },
           "composition": null
@@ -6731,13 +6731,13 @@
       ],
       "dimensions": {
         "test_verification": {
-          "medal": "unrated",
+          "medal": "gold",
           "target": "gold",
           "applicability": "scored",
-          "meets_target": false,
-          "result": "below_minimum",
+          "meets_target": true,
+          "result": "gold",
           "metrics": {
-            "latest_build_passing": false,
+            "latest_build_passing": true,
             "uses_jubilant": true
           },
           "composition": null
@@ -6790,9 +6790,9 @@
       "name": "paas-charm",
       "description": "",
       "lifecycle": "stable",
-      "current_medal": "bronze",
+      "current_medal": "unrated",
       "target_medal": "gold",
-      "current_result": "bronze",
+      "current_result": "below_minimum",
       "target_result": "gold",
       "meets_target": false,
       "squad": "",
@@ -6811,11 +6811,11 @@
         "test_verification": {
           "medal": "unrated",
           "target": "gold",
-          "applicability": "insufficient_data",
+          "applicability": "scored",
           "meets_target": false,
-          "result": "insufficient_data",
+          "result": "below_minimum",
           "metrics": {
-            "latest_build_passing": null,
+            "latest_build_passing": false,
             "uses_jubilant": true
           },
           "composition": null
@@ -6887,14 +6887,14 @@
       ],
       "dimensions": {
         "test_verification": {
-          "medal": "bronze",
+          "medal": "gold",
           "target": "silver",
           "applicability": "scored",
-          "meets_target": false,
-          "result": "bronze",
+          "meets_target": true,
+          "result": "gold",
           "metrics": {
             "latest_build_passing": true,
-            "uses_jubilant": false
+            "uses_jubilant": true
           },
           "composition": null
         },
@@ -7050,7 +7050,7 @@
           "result": "below_minimum",
           "metrics": {
             "latest_build_passing": false,
-            "uses_jubilant": false
+            "uses_jubilant": true
           },
           "composition": null
         },
@@ -7804,9 +7804,9 @@
       "name": "content-cache-charm",
       "description": "",
       "lifecycle": "stable",
-      "current_medal": "bronze",
+      "current_medal": "unrated",
       "target_medal": "silver",
-      "current_result": "bronze",
+      "current_result": "below_minimum",
       "target_result": "silver",
       "meets_target": false,
       "squad": "",
@@ -7823,13 +7823,13 @@
       ],
       "dimensions": {
         "test_verification": {
-          "medal": "bronze",
+          "medal": "unrated",
           "target": "silver",
           "applicability": "scored",
           "meets_target": false,
-          "result": "bronze",
+          "result": "below_minimum",
           "metrics": {
-            "latest_build_passing": true,
+            "latest_build_passing": false,
             "uses_jubilant": false
           },
           "composition": null
@@ -7882,9 +7882,9 @@
       "name": "content-cache-backends-config",
       "description": "",
       "lifecycle": "stable",
-      "current_medal": "bronze",
+      "current_medal": "unrated",
       "target_medal": "silver",
-      "current_result": "bronze",
+      "current_result": "below_minimum",
       "target_result": "silver",
       "meets_target": false,
       "squad": "",
@@ -7901,13 +7901,13 @@
       ],
       "dimensions": {
         "test_verification": {
-          "medal": "bronze",
+          "medal": "unrated",
           "target": "silver",
           "applicability": "scored",
           "meets_target": false,
-          "result": "bronze",
+          "result": "below_minimum",
           "metrics": {
-            "latest_build_passing": true,
+            "latest_build_passing": false,
             "uses_jubilant": false
           },
           "composition": null
@@ -8104,7 +8104,7 @@
           "result": "gold",
           "metrics": {
             "ownership_signal": true,
-            "response_coverage_rate": 91.1
+            "response_coverage_rate": 89.5
           },
           "composition": null
         }
@@ -8728,7 +8728,7 @@
           "result": "gold",
           "metrics": {
             "ownership_signal": true,
-            "response_coverage_rate": 96.7
+            "response_coverage_rate": 87.9
           },
           "composition": null
         }
@@ -8806,7 +8806,7 @@
           "result": "gold",
           "metrics": {
             "ownership_signal": true,
-            "response_coverage_rate": 96.7
+            "response_coverage_rate": 87.9
           },
           "composition": null
         }
@@ -9078,7 +9078,7 @@
           "result": "below_minimum",
           "metrics": {
             "latest_build_passing": false,
-            "uses_jubilant": false
+            "uses_jubilant": true
           },
           "composition": null
         },
@@ -9820,7 +9820,7 @@
           "result": "gold",
           "metrics": {
             "ownership_signal": true,
-            "response_coverage_rate": 43.3
+            "response_coverage_rate": 41.7
           },
           "composition": null
         }
@@ -9976,7 +9976,7 @@
           "result": "gold",
           "metrics": {
             "ownership_signal": true,
-            "response_coverage_rate": 82.9
+            "response_coverage_rate": 83.3
           },
           "composition": null
         }
@@ -11068,7 +11068,7 @@
           "result": "gold",
           "metrics": {
             "ownership_signal": true,
-            "response_coverage_rate": 85.7
+            "response_coverage_rate": 86.4
           },
           "composition": null
         }
@@ -11302,7 +11302,7 @@
           "result": "gold",
           "metrics": {
             "ownership_signal": true,
-            "response_coverage_rate": 77.8
+            "response_coverage_rate": 80.0
           },
           "composition": null
         }
@@ -11926,7 +11926,7 @@
           "result": "gold",
           "metrics": {
             "ownership_signal": true,
-            "response_coverage_rate": 94.3
+            "response_coverage_rate": 94.5
           },
           "composition": null
         }
@@ -12004,7 +12004,7 @@
           "result": "gold",
           "metrics": {
             "ownership_signal": true,
-            "response_coverage_rate": 94.3
+            "response_coverage_rate": 94.5
           },
           "composition": null
         }
@@ -12316,7 +12316,7 @@
           "result": "gold",
           "metrics": {
             "ownership_signal": true,
-            "response_coverage_rate": 83.9
+            "response_coverage_rate": 83.3
           },
           "composition": null
         }
