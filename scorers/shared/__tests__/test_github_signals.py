@@ -35,6 +35,57 @@ def test_github_get_can_still_read_public_evidence_outside_token_repository_scop
     assert github_get(url, "gh-token").json() == {"name": "README.md"}
 
 
+@pytest.mark.parametrize("use_session", [False, True])
+@responses.activate
+def test_rate_limit_retries_keep_authentication_and_honor_retry_after(mocker, use_session):
+    url = "https://api.github.com/search/code"
+    sleep = mocker.patch("time.sleep")
+    responses.get(url, status=403, headers={"Retry-After": "60"})
+    responses.get(url, json={"total_count": 1})
+
+    response = (
+        github_signals.github_session_get(build_github_session("gh-token"), url)
+        if use_session
+        else github_get(url, "gh-token")
+    )
+
+    assert response.json() == {"total_count": 1}
+    sleep.assert_called_once_with(60)
+    assert all(
+        call.request.headers["Authorization"] == "token gh-token" for call in responses.calls
+    )
+
+
+@responses.activate
+def test_primary_rate_limit_waits_until_reset(mocker):
+    url = "https://api.github.com/repos/canonical/example/issues"
+    mocker.patch("time.time", return_value=1000)
+    sleep = mocker.patch("time.sleep")
+    responses.get(
+        url, status=403, headers={"X-RateLimit-Remaining": "0", "X-RateLimit-Reset": "1060"}
+    )
+    responses.get(url, json=[])
+
+    assert github_get(url, "gh-token").json() == []
+    sleep.assert_called_once_with(61)
+
+
+@responses.activate
+def test_rate_limit_retries_are_bounded_and_preserve_error(mocker):
+    url = "https://api.github.com/search/code"
+    sleep = mocker.patch("time.sleep")
+    responses.get(url, status=429, headers={"Retry-After": "60"})
+
+    response = github_get(url, "gh-token")
+
+    assert response.status_code == 429
+    assert len(responses.calls) == 4
+    assert sleep.call_count == 3
+    assert all(
+        call.request.headers["Authorization"] == "token gh-token" for call in responses.calls
+    )
+
+
 @responses.activate
 def test_session_get_retries_rate_limited_request_anonymously():
     url = "https://api.github.com/repos/canonical/example/issues"

@@ -22,6 +22,12 @@ gh auth login
 
 The Makefile reads `GITHUB_TOKEN` from `gh auth token`, so you do not need to export it.
 
+GitHub evidence requests retry rate limits up to three times with the same credentials, honoring
+`Retry-After` or the primary rate-limit reset time (at most one hour per wait). Retry waits are
+logged. Exhausted retries and permission failures still fail scoring; they are never converted
+into missing files, disabled protections, or zero-valued metrics. An unsuccessful anonymous
+fallback preserves the original authenticated response.
+
 ## Choose a framework version
 
 Local scoring now runs against an explicit framework contract under `framework/versions/<id>/`.

@@ -1,11 +1,14 @@
 from __future__ import annotations
 
 import base64
+import logging
+import time
 from typing import Any
 
 import requests
 
 _GITHUB_API = "https://api.github.com"
+_LOGGER = logging.getLogger(__name__)
 
 
 class GitHubAcquisitionError(RuntimeError):
@@ -35,19 +38,52 @@ def build_github_session(github_token: str | None) -> requests.Session:
     return session
 
 
+def _rate_limit_delay(response: requests.Response) -> float | None:
+    if response.status_code not in {403, 429}:
+        return None
+    retry_after = response.headers.get("Retry-After", "")
+    if retry_after.isdigit():
+        return float(retry_after)
+    reset = response.headers.get("X-RateLimit-Reset", "")
+    if response.headers.get("X-RateLimit-Remaining") == "0" and reset.isdigit():
+        return max(1, int(reset) - time.time() + 1)
+    return None
+
+
+def _get_with_rate_limit_retries(
+    session: requests.Session, url: str, **kwargs: Any
+) -> requests.Response:
+    for attempt in range(4):
+        response = session.get(url, **kwargs)
+        delay = _rate_limit_delay(response)
+        if delay is None or delay > 3601 or attempt == 3:
+            return response
+        _LOGGER.warning(
+            "GitHub rate limit for %s; retrying in %.0fs (%s/3)", url, delay, attempt + 1
+        )
+        time.sleep(delay)
+    raise AssertionError("Unreachable retry state")
+
+
 def github_session_get(
     session: requests.Session,
     url: str,
     **kwargs: Any,
 ) -> requests.Response:
-    response = session.get(url, **kwargs)
+    response = _get_with_rate_limit_retries(session, url, **kwargs)
     retry_anonymously = (
         response.status_code == 401
         or response.status_code == 429
         or (response.status_code == 403 and response.headers.get("X-RateLimit-Remaining") == "0")
     )
-    if retry_anonymously and session.headers.get("Authorization"):
-        return build_github_session(None).get(url, **kwargs)
+    if (
+        retry_anonymously
+        and _rate_limit_delay(response) is None
+        and session.headers.get("Authorization")
+    ):
+        anonymous_response = _get_with_rate_limit_retries(build_github_session(None), url, **kwargs)
+        if anonymous_response.ok:
+            return anonymous_response
     return response
 
 
@@ -59,11 +95,17 @@ def github_get(
 ) -> requests.Response:
     session = build_github_session(github_token)
     headers = {"Accept": accept} if accept else None
-    response = session.get(url, headers=headers, timeout=15)
+    response = _get_with_rate_limit_retries(session, url, headers=headers, timeout=15)
     # If we tried with a token but got an auth/visibility-related error,
     # retry anonymously (some repos being scored are public)
-    if github_token and response.status_code in {401, 403, 404}:
-        anonymous_response = build_github_session(None).get(url, headers=headers, timeout=15)
+    if (
+        github_token
+        and response.status_code in {401, 403, 404}
+        and _rate_limit_delay(response) is None
+    ):
+        anonymous_response = _get_with_rate_limit_retries(
+            build_github_session(None), url, headers=headers, timeout=15
+        )
         if anonymous_response.ok:
             return anonymous_response
     return response
