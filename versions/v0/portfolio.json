@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-06T02:44:31.273122+00:00",
+  "generated_at": "2026-10-07T02:42:31.275218+00:00",
   "framework": {
     "id": "v0",
     "sequence": 0,
@@ -25,8 +25,8 @@
   },
   "compliance_summary": {
     "total": 34,
-    "meeting_target": 7,
-    "below_target": 24,
+    "meeting_target": 9,
+    "below_target": 22,
     "insufficient_data": 3
   },
   "products": [
@@ -85,11 +85,11 @@
             {
               "product_id": "charmcraft",
               "repo": "canonical/charmcraft",
-              "medal": "gold",
-              "result": "gold",
+              "medal": "unrated",
+              "result": "below_minimum",
               "applicability": "scored",
               "metrics": {
-                "latest_build_passing": true,
+                "latest_build_passing": false,
                 "uses_jubilant": true
               },
               "excluded_from_parent_medal": false
@@ -102,7 +102,7 @@
               "applicability": "scored",
               "metrics": {
                 "latest_build_passing": false,
-                "uses_jubilant": true
+                "uses_jubilant": false
               },
               "excluded_from_parent_medal": false
             }
@@ -228,7 +228,7 @@
               "applicability": "scored",
               "metrics": {
                 "ownership_signal": false,
-                "response_coverage_rate": 85.6
+                "response_coverage_rate": 85.7
               },
               "excluded_from_parent_medal": false
             },
@@ -252,7 +252,7 @@
               "applicability": "scored",
               "metrics": {
                 "ownership_signal": true,
-                "response_coverage_rate": 87.9
+                "response_coverage_rate": 86.2
               },
               "excluded_from_parent_medal": false
             }
@@ -299,12 +299,12 @@
             {
               "product_id": "aproxy-charm",
               "repo": "canonical/aproxy-operator",
-              "medal": "gold",
-              "result": "gold",
+              "medal": "bronze",
+              "result": "bronze",
               "applicability": "scored",
               "metrics": {
                 "latest_build_passing": true,
-                "uses_jubilant": true
+                "uses_jubilant": false
               },
               "excluded_from_parent_medal": false
             },
@@ -510,7 +510,7 @@
               "applicability": "scored",
               "metrics": {
                 "latest_build_passing": false,
-                "uses_jubilant": true
+                "uses_jubilant": false
               },
               "excluded_from_parent_medal": false
             },
@@ -522,7 +522,7 @@
               "applicability": "scored",
               "metrics": {
                 "latest_build_passing": false,
-                "uses_jubilant": true
+                "uses_jubilant": false
               },
               "excluded_from_parent_medal": false
             }
@@ -676,7 +676,7 @@
               "applicability": "scored",
               "metrics": {
                 "ownership_signal": true,
-                "response_coverage_rate": 93.8
+                "response_coverage_rate": 100.0
               },
               "excluded_from_parent_medal": false
             },
@@ -688,7 +688,7 @@
               "applicability": "scored",
               "metrics": {
                 "ownership_signal": true,
-                "response_coverage_rate": 93.8
+                "response_coverage_rate": 100.0
               },
               "excluded_from_parent_medal": false
             },
@@ -700,7 +700,7 @@
               "applicability": "scored",
               "metrics": {
                 "ownership_signal": true,
-                "response_coverage_rate": 93.8
+                "response_coverage_rate": 100.0
               },
               "excluded_from_parent_medal": false
             },
@@ -712,7 +712,7 @@
               "applicability": "scored",
               "metrics": {
                 "ownership_signal": true,
-                "response_coverage_rate": 93.8
+                "response_coverage_rate": 100.0
               },
               "excluded_from_parent_medal": false
             }
@@ -1234,7 +1234,7 @@
               "applicability": "scored",
               "metrics": {
                 "ownership_signal": true,
-                "response_coverage_rate": 60.0
+                "response_coverage_rate": 58.8
               },
               "excluded_from_parent_medal": false
             }
@@ -1248,9 +1248,9 @@
       "name": "Content cache operators",
       "description": "The Content Cache Operators provide a static web content cache backed by nginx.\nThe ``content-cache`` machine charm manages the nginx instance, while the\n``content-cache-backends-config`` subordinate charm provides configuration for\nthe backend services to expose behind the cache.",
       "lifecycle": "stable",
-      "current_medal": "unrated",
+      "current_medal": "bronze",
       "target_medal": "silver",
-      "current_result": "below_minimum",
+      "current_result": "bronze",
       "target_result": "silver",
       "meets_target": false,
       "squad": "apac",
@@ -1271,21 +1271,21 @@
       "parent_product_ids": [],
       "dimensions": {
         "test_verification": {
-          "medal": "unrated",
+          "medal": "bronze",
           "target": "silver",
           "applicability": "scored",
           "meets_target": false,
-          "result": "below_minimum",
+          "result": "bronze",
           "metrics": {},
           "composition": [
             {
               "product_id": "content-cache-charm",
               "repo": "canonical/content-cache-operator",
-              "medal": "unrated",
-              "result": "below_minimum",
+              "medal": "bronze",
+              "result": "bronze",
               "applicability": "scored",
               "metrics": {
-                "latest_build_passing": false,
+                "latest_build_passing": true,
                 "uses_jubilant": false
               },
               "excluded_from_parent_medal": false
@@ -1293,11 +1293,11 @@
             {
               "product_id": "content-cache-backends-config",
               "repo": "canonical/content-cache-operator",
-              "medal": "unrated",
-              "result": "below_minimum",
+              "medal": "bronze",
+              "result": "bronze",
               "applicability": "scored",
               "metrics": {
-                "latest_build_passing": false,
+                "latest_build_passing": true,
                 "uses_jubilant": false
               },
               "excluded_from_parent_medal": false
@@ -1396,7 +1396,7 @@
               "applicability": "scored",
               "metrics": {
                 "ownership_signal": true,
-                "response_coverage_rate": 83.8
+                "response_coverage_rate": 86.8
               },
               "excluded_from_parent_medal": false
             },
@@ -1408,7 +1408,7 @@
               "applicability": "scored",
               "metrics": {
                 "ownership_signal": true,
-                "response_coverage_rate": 83.8
+                "response_coverage_rate": 86.8
               },
               "excluded_from_parent_medal": false
             }
@@ -1422,11 +1422,11 @@
       "name": "Digest Squid auth helper",
       "description": "A Juju subordinate charm for the Squid reverse proxy charm that enables digest or basic authentication using squid-auth-helper relation.",
       "lifecycle": "stable",
-      "current_medal": "unrated",
+      "current_medal": "bronze",
       "target_medal": "bronze",
-      "current_result": "below_minimum",
+      "current_result": "bronze",
       "target_result": "bronze",
-      "meets_target": false,
+      "meets_target": true,
       "squad": "emea",
       "is_portfolio_entry": true,
       "documentation_url": "",
@@ -1441,21 +1441,21 @@
       "parent_product_ids": [],
       "dimensions": {
         "test_verification": {
-          "medal": "unrated",
+          "medal": "bronze",
           "target": "bronze",
           "applicability": "scored",
-          "meets_target": false,
-          "result": "below_minimum",
+          "meets_target": true,
+          "result": "bronze",
           "metrics": {},
           "composition": [
             {
               "product_id": "digest-squid-auth-helper-charm",
               "repo": "canonical/digest-squid-auth-helper",
-              "medal": "unrated",
-              "result": "below_minimum",
+              "medal": "bronze",
+              "result": "bronze",
               "applicability": "scored",
               "metrics": {
-                "latest_build_passing": false,
+                "latest_build_passing": true,
                 "uses_jubilant": false
               },
               "excluded_from_parent_medal": false
@@ -1526,7 +1526,7 @@
               "applicability": "scored",
               "metrics": {
                 "ownership_signal": true,
-                "response_coverage_rate": 66.7
+                "response_coverage_rate": 57.1
               },
               "excluded_from_parent_medal": false
             }
@@ -1657,7 +1657,7 @@
               "applicability": "scored",
               "metrics": {
                 "ownership_signal": true,
-                "response_coverage_rate": 88.3
+                "response_coverage_rate": 89.7
               },
               "excluded_from_parent_medal": false
             }
@@ -1671,11 +1671,11 @@
       "name": "DNS",
       "description": "The DNS operators provide a collection of charms required to deploy a fully\nfunctional DNS solution, facilitating the integration of DNS services with\nother charms.\n\nThe goal is to provide an easy-to-use and reliable DNS deployment that offers\nsimple integration for existing charmed applications, enabling them to request\nresource records and automate DNS processes.",
       "lifecycle": "stable",
-      "current_medal": "unrated",
+      "current_medal": "bronze",
       "target_medal": "bronze",
-      "current_result": "below_minimum",
+      "current_result": "bronze",
       "target_result": "bronze",
-      "meets_target": false,
+      "meets_target": true,
       "squad": "apac",
       "is_portfolio_entry": true,
       "documentation_url": "https://documentation.ubuntu.com/dns-operators/",
@@ -1714,33 +1714,33 @@
       "parent_product_ids": [],
       "dimensions": {
         "test_verification": {
-          "medal": "unrated",
+          "medal": "bronze",
           "target": "bronze",
           "applicability": "scored",
-          "meets_target": false,
-          "result": "below_minimum",
+          "meets_target": true,
+          "result": "bronze",
           "metrics": {},
           "composition": [
             {
               "product_id": "bind",
               "repo": "canonical/dns-operators",
-              "medal": "unrated",
-              "result": "below_minimum",
+              "medal": "bronze",
+              "result": "bronze",
               "applicability": "scored",
               "metrics": {
-                "latest_build_passing": false,
-                "uses_jubilant": true
+                "latest_build_passing": true,
+                "uses_jubilant": false
               },
               "excluded_from_parent_medal": false
             },
             {
               "product_id": "dns-policy",
               "repo": "canonical/dns-operators",
-              "medal": "unrated",
-              "result": "below_minimum",
+              "medal": "gold",
+              "result": "gold",
               "applicability": "scored",
               "metrics": {
-                "latest_build_passing": false,
+                "latest_build_passing": true,
                 "uses_jubilant": true
               },
               "excluded_from_parent_medal": false
@@ -1748,35 +1748,35 @@
             {
               "product_id": "dns-integrator",
               "repo": "canonical/dns-operators",
-              "medal": "unrated",
-              "result": "below_minimum",
+              "medal": "bronze",
+              "result": "bronze",
               "applicability": "scored",
               "metrics": {
-                "latest_build_passing": false,
-                "uses_jubilant": true
+                "latest_build_passing": true,
+                "uses_jubilant": false
               },
               "excluded_from_parent_medal": false
             },
             {
               "product_id": "dns-resolver",
               "repo": "canonical/dns-operators",
-              "medal": "unrated",
-              "result": "below_minimum",
+              "medal": "bronze",
+              "result": "bronze",
               "applicability": "scored",
               "metrics": {
-                "latest_build_passing": false,
-                "uses_jubilant": true
+                "latest_build_passing": true,
+                "uses_jubilant": false
               },
               "excluded_from_parent_medal": false
             },
             {
               "product_id": "dns-secondary",
               "repo": "canonical/dns-operators",
-              "medal": "unrated",
-              "result": "below_minimum",
+              "medal": "gold",
+              "result": "gold",
               "applicability": "scored",
               "metrics": {
-                "latest_build_passing": false,
+                "latest_build_passing": true,
                 "uses_jubilant": true
               },
               "excluded_from_parent_medal": false
@@ -1784,11 +1784,11 @@
             {
               "product_id": "charmed-bind",
               "repo": "canonical/dns-operators",
-              "medal": "unrated",
-              "result": "below_minimum",
+              "medal": "gold",
+              "result": "gold",
               "applicability": "scored",
               "metrics": {
-                "latest_build_passing": false,
+                "latest_build_passing": true,
                 "uses_jubilant": true
               },
               "excluded_from_parent_medal": false
@@ -1796,11 +1796,11 @@
             {
               "product_id": "charmed-dns-policy",
               "repo": "canonical/dns-operators",
-              "medal": "unrated",
-              "result": "below_minimum",
+              "medal": "gold",
+              "result": "gold",
               "applicability": "scored",
               "metrics": {
-                "latest_build_passing": false,
+                "latest_build_passing": true,
                 "uses_jubilant": true
               },
               "excluded_from_parent_medal": false
@@ -2039,7 +2039,7 @@
               "applicability": "scored",
               "metrics": {
                 "ownership_signal": true,
-                "response_coverage_rate": 55.2
+                "response_coverage_rate": 56.7
               },
               "excluded_from_parent_medal": false
             },
@@ -2051,7 +2051,7 @@
               "applicability": "scored",
               "metrics": {
                 "ownership_signal": true,
-                "response_coverage_rate": 55.2
+                "response_coverage_rate": 56.7
               },
               "excluded_from_parent_medal": false
             },
@@ -2063,7 +2063,7 @@
               "applicability": "scored",
               "metrics": {
                 "ownership_signal": true,
-                "response_coverage_rate": 55.2
+                "response_coverage_rate": 56.7
               },
               "excluded_from_parent_medal": false
             },
@@ -2075,7 +2075,7 @@
               "applicability": "scored",
               "metrics": {
                 "ownership_signal": true,
-                "response_coverage_rate": 55.2
+                "response_coverage_rate": 56.7
               },
               "excluded_from_parent_medal": false
             },
@@ -2087,7 +2087,7 @@
               "applicability": "scored",
               "metrics": {
                 "ownership_signal": true,
-                "response_coverage_rate": 55.2
+                "response_coverage_rate": 56.7
               },
               "excluded_from_parent_medal": false
             },
@@ -2099,7 +2099,7 @@
               "applicability": "scored",
               "metrics": {
                 "ownership_signal": true,
-                "response_coverage_rate": 55.2
+                "response_coverage_rate": 56.7
               },
               "excluded_from_parent_medal": false
             },
@@ -2111,7 +2111,7 @@
               "applicability": "scored",
               "metrics": {
                 "ownership_signal": true,
-                "response_coverage_rate": 55.2
+                "response_coverage_rate": 56.7
               },
               "excluded_from_parent_medal": false
             }
@@ -2148,34 +2148,34 @@
       "parent_product_ids": [],
       "dimensions": {
         "test_verification": {
-          "medal": "gold",
+          "medal": "bronze",
           "target": "silver",
           "applicability": "scored",
-          "meets_target": true,
-          "result": "gold",
+          "meets_target": false,
+          "result": "bronze",
           "metrics": {},
           "composition": [
             {
               "product_id": "falco-charm",
               "repo": "canonical/falco-operators",
-              "medal": "gold",
-              "result": "gold",
+              "medal": "bronze",
+              "result": "bronze",
               "applicability": "scored",
               "metrics": {
                 "latest_build_passing": true,
-                "uses_jubilant": true
+                "uses_jubilant": false
               },
               "excluded_from_parent_medal": false
             },
             {
               "product_id": "falcosidekick-k8s",
               "repo": "canonical/falco-operators",
-              "medal": "gold",
-              "result": "gold",
+              "medal": "bronze",
+              "result": "bronze",
               "applicability": "scored",
               "metrics": {
                 "latest_build_passing": true,
-                "uses_jubilant": true
+                "uses_jubilant": false
               },
               "excluded_from_parent_medal": false
             }
@@ -2273,7 +2273,7 @@
               "applicability": "scored",
               "metrics": {
                 "ownership_signal": true,
-                "response_coverage_rate": 90.9
+                "response_coverage_rate": 91.4
               },
               "excluded_from_parent_medal": false
             },
@@ -2285,7 +2285,7 @@
               "applicability": "scored",
               "metrics": {
                 "ownership_signal": true,
-                "response_coverage_rate": 90.9
+                "response_coverage_rate": 91.4
               },
               "excluded_from_parent_medal": false
             }
@@ -2403,7 +2403,7 @@
               "applicability": "scored",
               "metrics": {
                 "ownership_signal": true,
-                "response_coverage_rate": 64.9
+                "response_coverage_rate": 67.0
               },
               "excluded_from_parent_medal": false
             }
@@ -2487,7 +2487,7 @@
               "applicability": "scored",
               "metrics": {
                 "latest_build_passing": false,
-                "uses_jubilant": true
+                "uses_jubilant": false
               },
               "excluded_from_parent_medal": false
             },
@@ -2499,7 +2499,7 @@
               "applicability": "scored",
               "metrics": {
                 "latest_build_passing": false,
-                "uses_jubilant": true
+                "uses_jubilant": false
               },
               "excluded_from_parent_medal": false
             }
@@ -2653,7 +2653,7 @@
               "applicability": "scored",
               "metrics": {
                 "ownership_signal": true,
-                "response_coverage_rate": 95.7
+                "response_coverage_rate": 92.0
               },
               "excluded_from_parent_medal": false
             },
@@ -2665,7 +2665,7 @@
               "applicability": "scored",
               "metrics": {
                 "ownership_signal": true,
-                "response_coverage_rate": 95.9
+                "response_coverage_rate": 92.0
               },
               "excluded_from_parent_medal": false
             },
@@ -2677,7 +2677,7 @@
               "applicability": "scored",
               "metrics": {
                 "ownership_signal": true,
-                "response_coverage_rate": 95.7
+                "response_coverage_rate": 92.0
               },
               "excluded_from_parent_medal": false
             },
@@ -2689,7 +2689,7 @@
               "applicability": "scored",
               "metrics": {
                 "ownership_signal": true,
-                "response_coverage_rate": 95.7
+                "response_coverage_rate": 92.0
               },
               "excluded_from_parent_medal": false
             }
@@ -2852,11 +2852,11 @@
       "parent_product_ids": [],
       "dimensions": {
         "test_verification": {
-          "medal": "gold",
+          "medal": "bronze",
           "target": "silver",
           "applicability": "scored",
-          "meets_target": true,
-          "result": "gold",
+          "meets_target": false,
+          "result": "bronze",
           "metrics": {},
           "composition": [
             {
@@ -2886,24 +2886,24 @@
             {
               "product_id": "http-proxy-configurator",
               "repo": "canonical/http-proxy-operators",
-              "medal": "gold",
-              "result": "gold",
+              "medal": "bronze",
+              "result": "bronze",
               "applicability": "scored",
               "metrics": {
                 "latest_build_passing": true,
-                "uses_jubilant": true
+                "uses_jubilant": false
               },
               "excluded_from_parent_medal": false
             },
             {
               "product_id": "charmed-http-proxy-policy",
               "repo": "canonical/http-proxy-operators",
-              "medal": "gold",
-              "result": "gold",
+              "medal": "bronze",
+              "result": "bronze",
               "applicability": "scored",
               "metrics": {
                 "latest_build_passing": true,
-                "uses_jubilant": true
+                "uses_jubilant": false
               },
               "excluded_from_parent_medal": false
             }
@@ -3057,7 +3057,7 @@
               "applicability": "scored",
               "metrics": {
                 "ownership_signal": true,
-                "response_coverage_rate": null
+                "response_coverage_rate": 80.0
               },
               "excluded_from_parent_medal": false
             },
@@ -3069,7 +3069,7 @@
               "applicability": "scored",
               "metrics": {
                 "ownership_signal": true,
-                "response_coverage_rate": null
+                "response_coverage_rate": 80.0
               },
               "excluded_from_parent_medal": false
             },
@@ -3081,7 +3081,7 @@
               "applicability": "scored",
               "metrics": {
                 "ownership_signal": true,
-                "response_coverage_rate": null
+                "response_coverage_rate": 80.0
               },
               "excluded_from_parent_medal": false
             },
@@ -3093,7 +3093,7 @@
               "applicability": "scored",
               "metrics": {
                 "ownership_signal": true,
-                "response_coverage_rate": null
+                "response_coverage_rate": 80.0
               },
               "excluded_from_parent_medal": false
             }
@@ -3150,7 +3150,7 @@
               "applicability": "scored",
               "metrics": {
                 "latest_build_passing": false,
-                "uses_jubilant": true
+                "uses_jubilant": false
               },
               "excluded_from_parent_medal": false
             }
@@ -3220,7 +3220,7 @@
               "applicability": "scored",
               "metrics": {
                 "ownership_signal": true,
-                "response_coverage_rate": 95.0
+                "response_coverage_rate": 95.2
               },
               "excluded_from_parent_medal": false
             }
@@ -3289,7 +3289,7 @@
               "applicability": "scored",
               "metrics": {
                 "latest_build_passing": false,
-                "uses_jubilant": true
+                "uses_jubilant": false
               },
               "excluded_from_parent_medal": false
             }
@@ -3410,12 +3410,12 @@
             {
               "product_id": "jenkins-k8s",
               "repo": "canonical/jenkins-k8s-operator",
-              "medal": "gold",
-              "result": "gold",
+              "medal": "bronze",
+              "result": "bronze",
               "applicability": "scored",
               "metrics": {
                 "latest_build_passing": true,
-                "uses_jubilant": true
+                "uses_jubilant": false
               },
               "excluded_from_parent_medal": false
             },
@@ -3439,7 +3439,7 @@
               "applicability": "scored",
               "metrics": {
                 "latest_build_passing": false,
-                "uses_jubilant": true
+                "uses_jubilant": false
               },
               "excluded_from_parent_medal": false
             }
@@ -3565,7 +3565,7 @@
               "applicability": "scored",
               "metrics": {
                 "ownership_signal": true,
-                "response_coverage_rate": 41.6
+                "response_coverage_rate": 40.9
               },
               "excluded_from_parent_medal": false
             },
@@ -3589,7 +3589,7 @@
               "applicability": "scored",
               "metrics": {
                 "ownership_signal": true,
-                "response_coverage_rate": 85.3
+                "response_coverage_rate": 84.8
               },
               "excluded_from_parent_medal": false
             }
@@ -3653,7 +3653,7 @@
               "applicability": "scored",
               "metrics": {
                 "latest_build_passing": false,
-                "uses_jubilant": true
+                "uses_jubilant": false
               },
               "excluded_from_parent_medal": false
             },
@@ -3665,7 +3665,7 @@
               "applicability": "scored",
               "metrics": {
                 "latest_build_passing": false,
-                "uses_jubilant": true
+                "uses_jubilant": false
               },
               "excluded_from_parent_medal": false
             },
@@ -3677,7 +3677,7 @@
               "applicability": "scored",
               "metrics": {
                 "latest_build_passing": false,
-                "uses_jubilant": true
+                "uses_jubilant": false
               },
               "excluded_from_parent_medal": false
             },
@@ -3689,7 +3689,7 @@
               "applicability": "scored",
               "metrics": {
                 "latest_build_passing": false,
-                "uses_jubilant": true
+                "uses_jubilant": false
               },
               "excluded_from_parent_medal": false
             },
@@ -3701,7 +3701,7 @@
               "applicability": "scored",
               "metrics": {
                 "latest_build_passing": false,
-                "uses_jubilant": true
+                "uses_jubilant": false
               },
               "excluded_from_parent_medal": false
             }
@@ -3883,7 +3883,7 @@
               "applicability": "scored",
               "metrics": {
                 "ownership_signal": true,
-                "response_coverage_rate": 93.1
+                "response_coverage_rate": 93.3
               },
               "excluded_from_parent_medal": false
             },
@@ -3895,7 +3895,7 @@
               "applicability": "scored",
               "metrics": {
                 "ownership_signal": true,
-                "response_coverage_rate": 93.1
+                "response_coverage_rate": 93.3
               },
               "excluded_from_parent_medal": false
             },
@@ -3907,7 +3907,7 @@
               "applicability": "scored",
               "metrics": {
                 "ownership_signal": true,
-                "response_coverage_rate": 93.1
+                "response_coverage_rate": 93.3
               },
               "excluded_from_parent_medal": false
             },
@@ -3919,7 +3919,7 @@
               "applicability": "scored",
               "metrics": {
                 "ownership_signal": true,
-                "response_coverage_rate": 93.1
+                "response_coverage_rate": 93.3
               },
               "excluded_from_parent_medal": false
             },
@@ -3931,7 +3931,7 @@
               "applicability": "scored",
               "metrics": {
                 "ownership_signal": true,
-                "response_coverage_rate": 93.1
+                "response_coverage_rate": 93.3
               },
               "excluded_from_parent_medal": false
             }
@@ -4670,22 +4670,22 @@
       "parent_product_ids": [],
       "dimensions": {
         "test_verification": {
-          "medal": "gold",
+          "medal": "bronze",
           "target": "bronze",
           "applicability": "scored",
           "meets_target": true,
-          "result": "gold",
+          "result": "bronze",
           "metrics": {},
           "composition": [
             {
               "product_id": "netbox-k8s",
               "repo": "canonical/netbox-k8s-operator",
-              "medal": "gold",
-              "result": "gold",
+              "medal": "bronze",
+              "result": "bronze",
               "applicability": "scored",
               "metrics": {
                 "latest_build_passing": true,
-                "uses_jubilant": true
+                "uses_jubilant": false
               },
               "excluded_from_parent_medal": false
             }
@@ -4791,22 +4791,22 @@
       ],
       "dimensions": {
         "test_verification": {
-          "medal": "gold",
+          "medal": "bronze",
           "target": "bronze",
           "applicability": "scored",
           "meets_target": true,
-          "result": "gold",
+          "result": "bronze",
           "metrics": {},
           "composition": [
             {
               "product_id": "nginx-ingress-integrator-charm",
               "repo": "canonical/nginx-ingress-integrator-operator",
-              "medal": "gold",
-              "result": "gold",
+              "medal": "bronze",
+              "result": "bronze",
               "applicability": "scored",
               "metrics": {
                 "latest_build_passing": true,
-                "uses_jubilant": true
+                "uses_jubilant": false
               },
               "excluded_from_parent_medal": false
             }
@@ -4999,7 +4999,7 @@
               "applicability": "scored",
               "metrics": {
                 "ownership_signal": true,
-                "response_coverage_rate": 71.4
+                "response_coverage_rate": 75.0
               },
               "excluded_from_parent_medal": false
             }
@@ -5449,12 +5449,12 @@
             {
               "product_id": "github-runner-planner",
               "repo": "canonical/github-runner-operators",
-              "medal": "gold",
-              "result": "gold",
+              "medal": "bronze",
+              "result": "bronze",
               "applicability": "scored",
               "metrics": {
                 "latest_build_passing": true,
-                "uses_jubilant": true
+                "uses_jubilant": false
               },
               "excluded_from_parent_medal": false
             },
@@ -5740,7 +5740,7 @@
               "applicability": "scored",
               "metrics": {
                 "ownership_signal": true,
-                "response_coverage_rate": 72.7
+                "response_coverage_rate": 81.8
               },
               "excluded_from_parent_medal": false
             },
@@ -5764,7 +5764,7 @@
               "applicability": "scored",
               "metrics": {
                 "ownership_signal": true,
-                "response_coverage_rate": 94.8
+                "response_coverage_rate": 95.5
               },
               "excluded_from_parent_medal": false
             },
@@ -5776,7 +5776,7 @@
               "applicability": "scored",
               "metrics": {
                 "ownership_signal": true,
-                "response_coverage_rate": 94.8
+                "response_coverage_rate": 95.5
               },
               "excluded_from_parent_medal": false
             }
@@ -5894,7 +5894,7 @@
               "applicability": "scored",
               "metrics": {
                 "ownership_signal": true,
-                "response_coverage_rate": 86.7
+                "response_coverage_rate": 93.8
               },
               "excluded_from_parent_medal": false
             }
@@ -6019,7 +6019,7 @@
               "applicability": "scored",
               "metrics": {
                 "ownership_signal": true,
-                "response_coverage_rate": 87.7
+                "response_coverage_rate": 88.4
               },
               "excluded_from_parent_medal": false
             }
@@ -6359,7 +6359,7 @@
               "applicability": "scored",
               "metrics": {
                 "ownership_signal": true,
-                "response_coverage_rate": 38.5
+                "response_coverage_rate": 35.7
               },
               "excluded_from_parent_medal": false
             },
@@ -6404,22 +6404,22 @@
       "parent_product_ids": [],
       "dimensions": {
         "test_verification": {
-          "medal": "gold",
+          "medal": "bronze",
           "target": "gold",
           "applicability": "scored",
-          "meets_target": true,
-          "result": "gold",
+          "meets_target": false,
+          "result": "bronze",
           "metrics": {},
           "composition": [
             {
               "product_id": "wireguard-gateway",
               "repo": "canonical/wireguard-gateway-operator",
-              "medal": "gold",
-              "result": "gold",
+              "medal": "bronze",
+              "result": "bronze",
               "applicability": "scored",
               "metrics": {
                 "latest_build_passing": true,
-                "uses_jubilant": true
+                "uses_jubilant": false
               },
               "excluded_from_parent_medal": false
             }
@@ -6620,7 +6620,7 @@
               "applicability": "scored",
               "metrics": {
                 "ownership_signal": true,
-                "response_coverage_rate": 60.0
+                "response_coverage_rate": 57.1
               },
               "excluded_from_parent_medal": false
             }
@@ -6700,7 +6700,7 @@
           "result": "below_minimum",
           "metrics": {
             "ownership_signal": false,
-            "response_coverage_rate": 85.6
+            "response_coverage_rate": 85.7
           },
           "composition": null
         }
@@ -6731,13 +6731,13 @@
       ],
       "dimensions": {
         "test_verification": {
-          "medal": "gold",
+          "medal": "unrated",
           "target": "gold",
           "applicability": "scored",
-          "meets_target": true,
-          "result": "gold",
+          "meets_target": false,
+          "result": "below_minimum",
           "metrics": {
-            "latest_build_passing": true,
+            "latest_build_passing": false,
             "uses_jubilant": true
           },
           "composition": null
@@ -6816,7 +6816,7 @@
           "result": "below_minimum",
           "metrics": {
             "latest_build_passing": false,
-            "uses_jubilant": true
+            "uses_jubilant": false
           },
           "composition": null
         },
@@ -6856,7 +6856,7 @@
           "result": "gold",
           "metrics": {
             "ownership_signal": true,
-            "response_coverage_rate": 87.9
+            "response_coverage_rate": 86.2
           },
           "composition": null
         }
@@ -6887,14 +6887,14 @@
       ],
       "dimensions": {
         "test_verification": {
-          "medal": "gold",
+          "medal": "bronze",
           "target": "silver",
           "applicability": "scored",
-          "meets_target": true,
-          "result": "gold",
+          "meets_target": false,
+          "result": "bronze",
           "metrics": {
             "latest_build_passing": true,
-            "uses_jubilant": true
+            "uses_jubilant": false
           },
           "composition": null
         },
@@ -7090,7 +7090,7 @@
           "result": "gold",
           "metrics": {
             "ownership_signal": true,
-            "response_coverage_rate": 93.8
+            "response_coverage_rate": 100.0
           },
           "composition": null
         }
@@ -7168,7 +7168,7 @@
           "result": "gold",
           "metrics": {
             "ownership_signal": true,
-            "response_coverage_rate": 93.8
+            "response_coverage_rate": 100.0
           },
           "composition": null
         }
@@ -7206,7 +7206,7 @@
           "result": "below_minimum",
           "metrics": {
             "latest_build_passing": false,
-            "uses_jubilant": true
+            "uses_jubilant": false
           },
           "composition": null
         },
@@ -7246,7 +7246,7 @@
           "result": "gold",
           "metrics": {
             "ownership_signal": true,
-            "response_coverage_rate": 93.8
+            "response_coverage_rate": 100.0
           },
           "composition": null
         }
@@ -7284,7 +7284,7 @@
           "result": "below_minimum",
           "metrics": {
             "latest_build_passing": false,
-            "uses_jubilant": true
+            "uses_jubilant": false
           },
           "composition": null
         },
@@ -7324,7 +7324,7 @@
           "result": "gold",
           "metrics": {
             "ownership_signal": true,
-            "response_coverage_rate": 93.8
+            "response_coverage_rate": 100.0
           },
           "composition": null
         }
@@ -7792,7 +7792,7 @@
           "result": "gold",
           "metrics": {
             "ownership_signal": true,
-            "response_coverage_rate": 60.0
+            "response_coverage_rate": 58.8
           },
           "composition": null
         }
@@ -7804,9 +7804,9 @@
       "name": "content-cache-charm",
       "description": "",
       "lifecycle": "stable",
-      "current_medal": "unrated",
+      "current_medal": "bronze",
       "target_medal": "silver",
-      "current_result": "below_minimum",
+      "current_result": "bronze",
       "target_result": "silver",
       "meets_target": false,
       "squad": "",
@@ -7823,13 +7823,13 @@
       ],
       "dimensions": {
         "test_verification": {
-          "medal": "unrated",
+          "medal": "bronze",
           "target": "silver",
           "applicability": "scored",
           "meets_target": false,
-          "result": "below_minimum",
+          "result": "bronze",
           "metrics": {
-            "latest_build_passing": false,
+            "latest_build_passing": true,
             "uses_jubilant": false
           },
           "composition": null
@@ -7870,7 +7870,7 @@
           "result": "gold",
           "metrics": {
             "ownership_signal": true,
-            "response_coverage_rate": 83.8
+            "response_coverage_rate": 86.8
           },
           "composition": null
         }
@@ -7882,9 +7882,9 @@
       "name": "content-cache-backends-config",
       "description": "",
       "lifecycle": "stable",
-      "current_medal": "unrated",
+      "current_medal": "bronze",
       "target_medal": "silver",
-      "current_result": "below_minimum",
+      "current_result": "bronze",
       "target_result": "silver",
       "meets_target": false,
       "squad": "",
@@ -7901,13 +7901,13 @@
       ],
       "dimensions": {
         "test_verification": {
-          "medal": "unrated",
+          "medal": "bronze",
           "target": "silver",
           "applicability": "scored",
           "meets_target": false,
-          "result": "below_minimum",
+          "result": "bronze",
           "metrics": {
-            "latest_build_passing": false,
+            "latest_build_passing": true,
             "uses_jubilant": false
           },
           "composition": null
@@ -7948,7 +7948,7 @@
           "result": "gold",
           "metrics": {
             "ownership_signal": true,
-            "response_coverage_rate": 83.8
+            "response_coverage_rate": 86.8
           },
           "composition": null
         }
@@ -7960,11 +7960,11 @@
       "name": "digest-squid-auth-helper-charm",
       "description": "",
       "lifecycle": "stable",
-      "current_medal": "unrated",
+      "current_medal": "bronze",
       "target_medal": "bronze",
-      "current_result": "below_minimum",
+      "current_result": "bronze",
       "target_result": "bronze",
-      "meets_target": false,
+      "meets_target": true,
       "squad": "",
       "is_portfolio_entry": false,
       "documentation_url": "",
@@ -7979,13 +7979,13 @@
       ],
       "dimensions": {
         "test_verification": {
-          "medal": "unrated",
+          "medal": "bronze",
           "target": "bronze",
           "applicability": "scored",
-          "meets_target": false,
-          "result": "below_minimum",
+          "meets_target": true,
+          "result": "bronze",
           "metrics": {
-            "latest_build_passing": false,
+            "latest_build_passing": true,
             "uses_jubilant": false
           },
           "composition": null
@@ -8026,7 +8026,7 @@
           "result": "gold",
           "metrics": {
             "ownership_signal": true,
-            "response_coverage_rate": 66.7
+            "response_coverage_rate": 57.1
           },
           "composition": null
         }
@@ -8104,7 +8104,7 @@
           "result": "gold",
           "metrics": {
             "ownership_signal": true,
-            "response_coverage_rate": 88.3
+            "response_coverage_rate": 89.7
           },
           "composition": null
         }
@@ -8116,11 +8116,11 @@
       "name": "bind",
       "description": "",
       "lifecycle": "stable",
-      "current_medal": "unrated",
+      "current_medal": "bronze",
       "target_medal": "bronze",
-      "current_result": "below_minimum",
+      "current_result": "bronze",
       "target_result": "bronze",
-      "meets_target": false,
+      "meets_target": true,
       "squad": "",
       "is_portfolio_entry": false,
       "documentation_url": "",
@@ -8135,14 +8135,14 @@
       ],
       "dimensions": {
         "test_verification": {
-          "medal": "unrated",
+          "medal": "bronze",
           "target": "bronze",
           "applicability": "scored",
-          "meets_target": false,
-          "result": "below_minimum",
+          "meets_target": true,
+          "result": "bronze",
           "metrics": {
-            "latest_build_passing": false,
-            "uses_jubilant": true
+            "latest_build_passing": true,
+            "uses_jubilant": false
           },
           "composition": null
         },
@@ -8182,7 +8182,7 @@
           "result": "gold",
           "metrics": {
             "ownership_signal": true,
-            "response_coverage_rate": 55.2
+            "response_coverage_rate": 56.7
           },
           "composition": null
         }
@@ -8194,11 +8194,11 @@
       "name": "dns-policy",
       "description": "",
       "lifecycle": "stable",
-      "current_medal": "unrated",
+      "current_medal": "bronze",
       "target_medal": "bronze",
-      "current_result": "below_minimum",
+      "current_result": "bronze",
       "target_result": "bronze",
-      "meets_target": false,
+      "meets_target": true,
       "squad": "",
       "is_portfolio_entry": false,
       "documentation_url": "",
@@ -8213,13 +8213,13 @@
       ],
       "dimensions": {
         "test_verification": {
-          "medal": "unrated",
+          "medal": "gold",
           "target": "bronze",
           "applicability": "scored",
-          "meets_target": false,
-          "result": "below_minimum",
+          "meets_target": true,
+          "result": "gold",
           "metrics": {
-            "latest_build_passing": false,
+            "latest_build_passing": true,
             "uses_jubilant": true
           },
           "composition": null
@@ -8260,7 +8260,7 @@
           "result": "gold",
           "metrics": {
             "ownership_signal": true,
-            "response_coverage_rate": 55.2
+            "response_coverage_rate": 56.7
           },
           "composition": null
         }
@@ -8272,11 +8272,11 @@
       "name": "dns-integrator",
       "description": "",
       "lifecycle": "stable",
-      "current_medal": "unrated",
+      "current_medal": "bronze",
       "target_medal": "bronze",
-      "current_result": "below_minimum",
+      "current_result": "bronze",
       "target_result": "bronze",
-      "meets_target": false,
+      "meets_target": true,
       "squad": "",
       "is_portfolio_entry": false,
       "documentation_url": "",
@@ -8291,14 +8291,14 @@
       ],
       "dimensions": {
         "test_verification": {
-          "medal": "unrated",
+          "medal": "bronze",
           "target": "bronze",
           "applicability": "scored",
-          "meets_target": false,
-          "result": "below_minimum",
+          "meets_target": true,
+          "result": "bronze",
           "metrics": {
-            "latest_build_passing": false,
-            "uses_jubilant": true
+            "latest_build_passing": true,
+            "uses_jubilant": false
           },
           "composition": null
         },
@@ -8338,7 +8338,7 @@
           "result": "gold",
           "metrics": {
             "ownership_signal": true,
-            "response_coverage_rate": 55.2
+            "response_coverage_rate": 56.7
           },
           "composition": null
         }
@@ -8350,11 +8350,11 @@
       "name": "dns-resolver",
       "description": "",
       "lifecycle": "stable",
-      "current_medal": "unrated",
+      "current_medal": "bronze",
       "target_medal": "bronze",
-      "current_result": "below_minimum",
+      "current_result": "bronze",
       "target_result": "bronze",
-      "meets_target": false,
+      "meets_target": true,
       "squad": "",
       "is_portfolio_entry": false,
       "documentation_url": "",
@@ -8369,14 +8369,14 @@
       ],
       "dimensions": {
         "test_verification": {
-          "medal": "unrated",
+          "medal": "bronze",
           "target": "bronze",
           "applicability": "scored",
-          "meets_target": false,
-          "result": "below_minimum",
+          "meets_target": true,
+          "result": "bronze",
           "metrics": {
-            "latest_build_passing": false,
-            "uses_jubilant": true
+            "latest_build_passing": true,
+            "uses_jubilant": false
           },
           "composition": null
         },
@@ -8416,7 +8416,7 @@
           "result": "gold",
           "metrics": {
             "ownership_signal": true,
-            "response_coverage_rate": 55.2
+            "response_coverage_rate": 56.7
           },
           "composition": null
         }
@@ -8428,11 +8428,11 @@
       "name": "dns-secondary",
       "description": "",
       "lifecycle": "stable",
-      "current_medal": "unrated",
+      "current_medal": "bronze",
       "target_medal": "bronze",
-      "current_result": "below_minimum",
+      "current_result": "bronze",
       "target_result": "bronze",
-      "meets_target": false,
+      "meets_target": true,
       "squad": "",
       "is_portfolio_entry": false,
       "documentation_url": "",
@@ -8447,13 +8447,13 @@
       ],
       "dimensions": {
         "test_verification": {
-          "medal": "unrated",
+          "medal": "gold",
           "target": "bronze",
           "applicability": "scored",
-          "meets_target": false,
-          "result": "below_minimum",
+          "meets_target": true,
+          "result": "gold",
           "metrics": {
-            "latest_build_passing": false,
+            "latest_build_passing": true,
             "uses_jubilant": true
           },
           "composition": null
@@ -8494,7 +8494,7 @@
           "result": "gold",
           "metrics": {
             "ownership_signal": true,
-            "response_coverage_rate": 55.2
+            "response_coverage_rate": 56.7
           },
           "composition": null
         }
@@ -8506,11 +8506,11 @@
       "name": "charmed-bind",
       "description": "",
       "lifecycle": "stable",
-      "current_medal": "unrated",
+      "current_medal": "bronze",
       "target_medal": "bronze",
-      "current_result": "below_minimum",
+      "current_result": "bronze",
       "target_result": "bronze",
-      "meets_target": false,
+      "meets_target": true,
       "squad": "",
       "is_portfolio_entry": false,
       "documentation_url": "",
@@ -8525,13 +8525,13 @@
       ],
       "dimensions": {
         "test_verification": {
-          "medal": "unrated",
+          "medal": "gold",
           "target": "bronze",
           "applicability": "scored",
-          "meets_target": false,
-          "result": "below_minimum",
+          "meets_target": true,
+          "result": "gold",
           "metrics": {
-            "latest_build_passing": false,
+            "latest_build_passing": true,
             "uses_jubilant": true
           },
           "composition": null
@@ -8572,7 +8572,7 @@
           "result": "gold",
           "metrics": {
             "ownership_signal": true,
-            "response_coverage_rate": 55.2
+            "response_coverage_rate": 56.7
           },
           "composition": null
         }
@@ -8584,11 +8584,11 @@
       "name": "charmed-dns-policy",
       "description": "",
       "lifecycle": "stable",
-      "current_medal": "unrated",
+      "current_medal": "bronze",
       "target_medal": "bronze",
-      "current_result": "below_minimum",
+      "current_result": "bronze",
       "target_result": "bronze",
-      "meets_target": false,
+      "meets_target": true,
       "squad": "",
       "is_portfolio_entry": false,
       "documentation_url": "",
@@ -8603,13 +8603,13 @@
       ],
       "dimensions": {
         "test_verification": {
-          "medal": "unrated",
+          "medal": "gold",
           "target": "bronze",
           "applicability": "scored",
-          "meets_target": false,
-          "result": "below_minimum",
+          "meets_target": true,
+          "result": "gold",
           "metrics": {
-            "latest_build_passing": false,
+            "latest_build_passing": true,
             "uses_jubilant": true
           },
           "composition": null
@@ -8650,7 +8650,7 @@
           "result": "gold",
           "metrics": {
             "ownership_signal": true,
-            "response_coverage_rate": 55.2
+            "response_coverage_rate": 56.7
           },
           "composition": null
         }
@@ -8681,14 +8681,14 @@
       ],
       "dimensions": {
         "test_verification": {
-          "medal": "gold",
+          "medal": "bronze",
           "target": "silver",
           "applicability": "scored",
-          "meets_target": true,
-          "result": "gold",
+          "meets_target": false,
+          "result": "bronze",
           "metrics": {
             "latest_build_passing": true,
-            "uses_jubilant": true
+            "uses_jubilant": false
           },
           "composition": null
         },
@@ -8728,7 +8728,7 @@
           "result": "gold",
           "metrics": {
             "ownership_signal": true,
-            "response_coverage_rate": 90.9
+            "response_coverage_rate": 91.4
           },
           "composition": null
         }
@@ -8759,14 +8759,14 @@
       ],
       "dimensions": {
         "test_verification": {
-          "medal": "gold",
+          "medal": "bronze",
           "target": "silver",
           "applicability": "scored",
-          "meets_target": true,
-          "result": "gold",
+          "meets_target": false,
+          "result": "bronze",
           "metrics": {
             "latest_build_passing": true,
-            "uses_jubilant": true
+            "uses_jubilant": false
           },
           "composition": null
         },
@@ -8806,7 +8806,7 @@
           "result": "gold",
           "metrics": {
             "ownership_signal": true,
-            "response_coverage_rate": 90.9
+            "response_coverage_rate": 91.4
           },
           "composition": null
         }
@@ -8884,7 +8884,7 @@
           "result": "gold",
           "metrics": {
             "ownership_signal": true,
-            "response_coverage_rate": 64.9
+            "response_coverage_rate": 67.0
           },
           "composition": null
         }
@@ -8962,7 +8962,7 @@
           "result": "gold",
           "metrics": {
             "ownership_signal": true,
-            "response_coverage_rate": 95.7
+            "response_coverage_rate": 92.0
           },
           "composition": null
         }
@@ -9040,7 +9040,7 @@
           "result": "gold",
           "metrics": {
             "ownership_signal": true,
-            "response_coverage_rate": 95.9
+            "response_coverage_rate": 92.0
           },
           "composition": null
         }
@@ -9078,7 +9078,7 @@
           "result": "below_minimum",
           "metrics": {
             "latest_build_passing": false,
-            "uses_jubilant": true
+            "uses_jubilant": false
           },
           "composition": null
         },
@@ -9118,7 +9118,7 @@
           "result": "gold",
           "metrics": {
             "ownership_signal": true,
-            "response_coverage_rate": 95.7
+            "response_coverage_rate": 92.0
           },
           "composition": null
         }
@@ -9156,7 +9156,7 @@
           "result": "below_minimum",
           "metrics": {
             "latest_build_passing": false,
-            "uses_jubilant": true
+            "uses_jubilant": false
           },
           "composition": null
         },
@@ -9196,7 +9196,7 @@
           "result": "gold",
           "metrics": {
             "ownership_signal": true,
-            "response_coverage_rate": 95.7
+            "response_coverage_rate": 92.0
           },
           "composition": null
         }
@@ -9352,7 +9352,7 @@
           "result": "gold",
           "metrics": {
             "ownership_signal": true,
-            "response_coverage_rate": null
+            "response_coverage_rate": 80.0
           },
           "composition": null
         }
@@ -9430,7 +9430,7 @@
           "result": "gold",
           "metrics": {
             "ownership_signal": true,
-            "response_coverage_rate": null
+            "response_coverage_rate": 80.0
           },
           "composition": null
         }
@@ -9461,14 +9461,14 @@
       ],
       "dimensions": {
         "test_verification": {
-          "medal": "gold",
+          "medal": "bronze",
           "target": "silver",
           "applicability": "scored",
-          "meets_target": true,
-          "result": "gold",
+          "meets_target": false,
+          "result": "bronze",
           "metrics": {
             "latest_build_passing": true,
-            "uses_jubilant": true
+            "uses_jubilant": false
           },
           "composition": null
         },
@@ -9508,7 +9508,7 @@
           "result": "gold",
           "metrics": {
             "ownership_signal": true,
-            "response_coverage_rate": null
+            "response_coverage_rate": 80.0
           },
           "composition": null
         }
@@ -9539,14 +9539,14 @@
       ],
       "dimensions": {
         "test_verification": {
-          "medal": "gold",
+          "medal": "bronze",
           "target": "silver",
           "applicability": "scored",
-          "meets_target": true,
-          "result": "gold",
+          "meets_target": false,
+          "result": "bronze",
           "metrics": {
             "latest_build_passing": true,
-            "uses_jubilant": true
+            "uses_jubilant": false
           },
           "composition": null
         },
@@ -9586,7 +9586,7 @@
           "result": "gold",
           "metrics": {
             "ownership_signal": true,
-            "response_coverage_rate": null
+            "response_coverage_rate": 80.0
           },
           "composition": null
         }
@@ -9624,7 +9624,7 @@
           "result": "below_minimum",
           "metrics": {
             "latest_build_passing": false,
-            "uses_jubilant": true
+            "uses_jubilant": false
           },
           "composition": null
         },
@@ -9664,7 +9664,7 @@
           "result": "gold",
           "metrics": {
             "ownership_signal": true,
-            "response_coverage_rate": 95.0
+            "response_coverage_rate": 95.2
           },
           "composition": null
         }
@@ -9702,7 +9702,7 @@
           "result": "below_minimum",
           "metrics": {
             "latest_build_passing": false,
-            "uses_jubilant": true
+            "uses_jubilant": false
           },
           "composition": null
         },
@@ -9773,14 +9773,14 @@
       ],
       "dimensions": {
         "test_verification": {
-          "medal": "gold",
+          "medal": "bronze",
           "target": "bronze",
           "applicability": "scored",
           "meets_target": true,
-          "result": "gold",
+          "result": "bronze",
           "metrics": {
             "latest_build_passing": true,
-            "uses_jubilant": true
+            "uses_jubilant": false
           },
           "composition": null
         },
@@ -9820,7 +9820,7 @@
           "result": "gold",
           "metrics": {
             "ownership_signal": true,
-            "response_coverage_rate": 41.6
+            "response_coverage_rate": 40.9
           },
           "composition": null
         }
@@ -9936,7 +9936,7 @@
           "result": "below_minimum",
           "metrics": {
             "latest_build_passing": false,
-            "uses_jubilant": true
+            "uses_jubilant": false
           },
           "composition": null
         },
@@ -9976,7 +9976,7 @@
           "result": "gold",
           "metrics": {
             "ownership_signal": true,
-            "response_coverage_rate": 85.3
+            "response_coverage_rate": 84.8
           },
           "composition": null
         }
@@ -10014,7 +10014,7 @@
           "result": "below_minimum",
           "metrics": {
             "latest_build_passing": false,
-            "uses_jubilant": true
+            "uses_jubilant": false
           },
           "composition": null
         },
@@ -10054,7 +10054,7 @@
           "result": "gold",
           "metrics": {
             "ownership_signal": true,
-            "response_coverage_rate": 93.1
+            "response_coverage_rate": 93.3
           },
           "composition": null
         }
@@ -10092,7 +10092,7 @@
           "result": "below_minimum",
           "metrics": {
             "latest_build_passing": false,
-            "uses_jubilant": true
+            "uses_jubilant": false
           },
           "composition": null
         },
@@ -10132,7 +10132,7 @@
           "result": "gold",
           "metrics": {
             "ownership_signal": true,
-            "response_coverage_rate": 93.1
+            "response_coverage_rate": 93.3
           },
           "composition": null
         }
@@ -10170,7 +10170,7 @@
           "result": "below_minimum",
           "metrics": {
             "latest_build_passing": false,
-            "uses_jubilant": true
+            "uses_jubilant": false
           },
           "composition": null
         },
@@ -10210,7 +10210,7 @@
           "result": "gold",
           "metrics": {
             "ownership_signal": true,
-            "response_coverage_rate": 93.1
+            "response_coverage_rate": 93.3
           },
           "composition": null
         }
@@ -10248,7 +10248,7 @@
           "result": "below_minimum",
           "metrics": {
             "latest_build_passing": false,
-            "uses_jubilant": true
+            "uses_jubilant": false
           },
           "composition": null
         },
@@ -10288,7 +10288,7 @@
           "result": "gold",
           "metrics": {
             "ownership_signal": true,
-            "response_coverage_rate": 93.1
+            "response_coverage_rate": 93.3
           },
           "composition": null
         }
@@ -10326,7 +10326,7 @@
           "result": "below_minimum",
           "metrics": {
             "latest_build_passing": false,
-            "uses_jubilant": true
+            "uses_jubilant": false
           },
           "composition": null
         },
@@ -10366,7 +10366,7 @@
           "result": "gold",
           "metrics": {
             "ownership_signal": true,
-            "response_coverage_rate": 93.1
+            "response_coverage_rate": 93.3
           },
           "composition": null
         }
@@ -11099,14 +11099,14 @@
       ],
       "dimensions": {
         "test_verification": {
-          "medal": "gold",
+          "medal": "bronze",
           "target": "bronze",
           "applicability": "scored",
           "meets_target": true,
-          "result": "gold",
+          "result": "bronze",
           "metrics": {
             "latest_build_passing": true,
-            "uses_jubilant": true
+            "uses_jubilant": false
           },
           "composition": null
         },
@@ -11177,14 +11177,14 @@
       ],
       "dimensions": {
         "test_verification": {
-          "medal": "gold",
+          "medal": "bronze",
           "target": "bronze",
           "applicability": "scored",
           "meets_target": true,
-          "result": "gold",
+          "result": "bronze",
           "metrics": {
             "latest_build_passing": true,
-            "uses_jubilant": true
+            "uses_jubilant": false
           },
           "composition": null
         },
@@ -11302,7 +11302,7 @@
           "result": "gold",
           "metrics": {
             "ownership_signal": true,
-            "response_coverage_rate": 71.4
+            "response_coverage_rate": 75.0
           },
           "composition": null
         }
@@ -11770,7 +11770,7 @@
           "result": "gold",
           "metrics": {
             "ownership_signal": true,
-            "response_coverage_rate": 72.7
+            "response_coverage_rate": 81.8
           },
           "composition": null
         }
@@ -11879,14 +11879,14 @@
       ],
       "dimensions": {
         "test_verification": {
-          "medal": "gold",
+          "medal": "bronze",
           "target": "gold",
           "applicability": "scored",
-          "meets_target": true,
-          "result": "gold",
+          "meets_target": false,
+          "result": "bronze",
           "metrics": {
             "latest_build_passing": true,
-            "uses_jubilant": true
+            "uses_jubilant": false
           },
           "composition": null
         },
@@ -11926,7 +11926,7 @@
           "result": "gold",
           "metrics": {
             "ownership_signal": true,
-            "response_coverage_rate": 94.8
+            "response_coverage_rate": 95.5
           },
           "composition": null
         }
@@ -12004,7 +12004,7 @@
           "result": "gold",
           "metrics": {
             "ownership_signal": true,
-            "response_coverage_rate": 94.8
+            "response_coverage_rate": 95.5
           },
           "composition": null
         }
@@ -12082,7 +12082,7 @@
           "result": "gold",
           "metrics": {
             "ownership_signal": true,
-            "response_coverage_rate": 86.7
+            "response_coverage_rate": 93.8
           },
           "composition": null
         }
@@ -12160,7 +12160,7 @@
           "result": "gold",
           "metrics": {
             "ownership_signal": true,
-            "response_coverage_rate": 87.7
+            "response_coverage_rate": 88.4
           },
           "composition": null
         }
@@ -12394,7 +12394,7 @@
           "result": "gold",
           "metrics": {
             "ownership_signal": true,
-            "response_coverage_rate": 38.5
+            "response_coverage_rate": 35.7
           },
           "composition": null
         }
@@ -12503,14 +12503,14 @@
       ],
       "dimensions": {
         "test_verification": {
-          "medal": "gold",
+          "medal": "bronze",
           "target": "gold",
           "applicability": "scored",
-          "meets_target": true,
-          "result": "gold",
+          "meets_target": false,
+          "result": "bronze",
           "metrics": {
             "latest_build_passing": true,
-            "uses_jubilant": true
+            "uses_jubilant": false
           },
           "composition": null
         },
@@ -12628,7 +12628,7 @@
           "result": "gold",
           "metrics": {
             "ownership_signal": true,
-            "response_coverage_rate": 60.0
+            "response_coverage_rate": 57.1
           },
           "composition": null
         }
