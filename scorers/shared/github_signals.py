@@ -63,7 +63,9 @@ def github_get(
     # If we tried with a token but got an auth/visibility-related error,
     # retry anonymously (some repos being scored are public)
     if github_token and response.status_code in {401, 403, 404}:
-        response = build_github_session(None).get(url, headers=headers, timeout=15)
+        anonymous_response = build_github_session(None).get(url, headers=headers, timeout=15)
+        if anonymous_response.ok:
+            return anonymous_response
     return response
 
 

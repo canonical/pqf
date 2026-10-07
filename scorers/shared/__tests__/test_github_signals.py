@@ -1,14 +1,38 @@
+import pytest
 import responses
 
 from scorers.shared import github_signals
 from scorers.shared.github_signals import (
     build_github_session,
     default_branch_check_runs,
+    github_get,
     repo_file_exists,
     repo_topics,
     search_code_count,
     workflow_files,
 )
+
+
+@pytest.mark.parametrize("status", [403, 404])
+@responses.activate
+def test_github_get_preserves_authenticated_error_when_anonymous_access_fails(status):
+    url = "https://api.github.com/repos/canonical/example/branches/main/protection"
+    responses.get(url, status=status, json={"message": "Authenticated result"})
+    responses.get(url, status=401, json={"message": "Requires authentication"})
+
+    response = github_get(url, "gh-token")
+
+    assert response.status_code == status
+    assert response.json()["message"] == "Authenticated result"
+
+
+@responses.activate
+def test_github_get_can_still_read_public_evidence_outside_token_repository_scope():
+    url = "https://api.github.com/repos/canonical/example/contents/README.md"
+    responses.get(url, status=404)
+    responses.get(url, json={"name": "README.md"})
+
+    assert github_get(url, "gh-token").json() == {"name": "README.md"}
 
 
 @responses.activate
