@@ -1,0 +1,19 @@
+id: gopkg
+product_type: root
+name: gopkg.in
+description: The gopkg.in versioned import path service for Go, packaged as a rock and
+  operated on Kubernetes by the gopkg-k8s charm.
+lifecycle: beta
+introduced_in: v0
+targets:
+  v0: bronze
+  v1: bronze
+ownership:
+  squad: amer
+documentation_url: https://canonical.com/juju/docs/gopkg-charm/latest/
+composed_of:
+- id: gopkg-k8s
+  product_type: charm
+  introduced_in: v0
+  source:
+    repo: canonical/gopkg-charmed
