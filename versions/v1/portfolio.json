@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-05T02:45:20.612071+00:00",
+  "generated_at": "2026-10-07T14:05:50.159786+00:00",
   "framework": {
     "id": "v1",
     "sequence": 1,
@@ -8,7 +8,7 @@
     "description": "The first operational PQF quality bar."
   },
   "contract_digest": "0f33b7f5b5660b8dd4560349ebc9c3e07631362edd660e4549afecacbb1f802a",
-  "source_revision": "efce6c27ae5f7b87a0c7c88e5292b84fabc0bf87",
+  "source_revision": "a9e8878176b818898556cef5365c64732eac0323",
   "implementation_fingerprints": {
     "avg-pr-review-days/v1": "6b88bc39b4413d6c5f2740e91ad1c1561e14c6b1109e5ec1f30efe0741c78684",
     "avg-triage-days/v1": "7269acf4e352a6d42a0c76b553cd9f8c7c67e16cd2ba0693e3751a443c28abc2",
@@ -40,9 +40,9 @@
     "uses-rtd-hosting/v1": "10530d9bfbd1fbb902dbf7ab5c937a49ff3b2e79f761218fa7abb3c66551634a"
   },
   "compliance_summary": {
-    "total": 35,
+    "total": 36,
     "meeting_target": 3,
-    "below_target": 29,
+    "below_target": 30,
     "insufficient_data": 3
   },
   "products": [
@@ -104,11 +104,11 @@
             {
               "product_id": "charmcraft",
               "repo": "canonical/charmcraft",
-              "medal": "bronze",
-              "result": "bronze",
+              "medal": "unrated",
+              "result": "below_minimum",
               "applicability": "scored",
               "metrics": {
-                "latest_build_passing": true,
+                "latest_build_passing": false,
                 "integration_test_evidence_present": false,
                 "uses_jubilant": true,
                 "coverage_pct": null,
@@ -321,8 +321,8 @@
               "metrics": {
                 "ownership_signal": false,
                 "response_coverage_rate": 85.7,
-                "avg_triage_days": 268.7,
-                "avg_pr_review_days": 1.4,
+                "avg_triage_days": 282.6,
+                "avg_pr_review_days": 1.3,
                 "has_jira_sync": true,
                 "repo_views_14d": null
               },
@@ -336,8 +336,8 @@
               "applicability": "scored",
               "metrics": {
                 "ownership_signal": false,
-                "response_coverage_rate": 80.7,
-                "avg_triage_days": 194.0,
+                "response_coverage_rate": 81.3,
+                "avg_triage_days": 190.3,
                 "avg_pr_review_days": 1.1,
                 "has_jira_sync": true,
                 "repo_views_14d": null
@@ -352,7 +352,7 @@
               "applicability": "scored",
               "metrics": {
                 "ownership_signal": true,
-                "response_coverage_rate": 87.9,
+                "response_coverage_rate": 86.4,
                 "avg_triage_days": 104.0,
                 "avg_pr_review_days": 1.2,
                 "has_jira_sync": true,
@@ -409,7 +409,7 @@
               "metrics": {
                 "latest_build_passing": true,
                 "integration_test_evidence_present": false,
-                "uses_jubilant": true,
+                "uses_jubilant": false,
                 "coverage_pct": null,
                 "stability_pct": null
               },
@@ -653,7 +653,7 @@
               "metrics": {
                 "latest_build_passing": false,
                 "integration_test_evidence_present": true,
-                "uses_jubilant": true,
+                "uses_jubilant": false,
                 "coverage_pct": null,
                 "stability_pct": null
               },
@@ -668,7 +668,7 @@
               "metrics": {
                 "latest_build_passing": false,
                 "integration_test_evidence_present": true,
-                "uses_jubilant": true,
+                "uses_jubilant": false,
                 "coverage_pct": null,
                 "stability_pct": null
               },
@@ -683,7 +683,7 @@
               "metrics": {
                 "latest_build_passing": false,
                 "integration_test_evidence_present": true,
-                "uses_jubilant": false,
+                "uses_jubilant": true,
                 "coverage_pct": null,
                 "stability_pct": null
               },
@@ -942,7 +942,7 @@
                 "ownership_signal": true,
                 "response_coverage_rate": 100.0,
                 "avg_triage_days": 0.0,
-                "avg_pr_review_days": 0.1,
+                "avg_pr_review_days": 0.2,
                 "has_jira_sync": true,
                 "repo_views_14d": null
               },
@@ -958,7 +958,7 @@
                 "ownership_signal": true,
                 "response_coverage_rate": 100.0,
                 "avg_triage_days": 0.0,
-                "avg_pr_review_days": 0.1,
+                "avg_pr_review_days": 0.2,
                 "has_jira_sync": true,
                 "repo_views_14d": null
               },
@@ -974,7 +974,7 @@
                 "ownership_signal": true,
                 "response_coverage_rate": 100.0,
                 "avg_triage_days": 0.0,
-                "avg_pr_review_days": 0.1,
+                "avg_pr_review_days": 0.2,
                 "has_jira_sync": true,
                 "repo_views_14d": null
               },
@@ -990,7 +990,7 @@
                 "ownership_signal": true,
                 "response_coverage_rate": 100.0,
                 "avg_triage_days": 0.0,
-                "avg_pr_review_days": 0.1,
+                "avg_pr_review_days": 0.2,
                 "has_jira_sync": true,
                 "repo_views_14d": null
               },
@@ -1696,9 +1696,9 @@
               "applicability": "scored",
               "metrics": {
                 "ownership_signal": true,
-                "response_coverage_rate": 64.7,
-                "avg_triage_days": 184.4,
-                "avg_pr_review_days": 22.5,
+                "response_coverage_rate": 58.8,
+                "avg_triage_days": 147.5,
+                "avg_pr_review_days": 31.3,
                 "has_jira_sync": true,
                 "repo_views_14d": null
               },
@@ -1737,21 +1737,21 @@
       "parent_product_ids": [],
       "dimensions": {
         "test_verification": {
-          "medal": "unrated",
+          "medal": "silver",
           "target": "silver",
           "applicability": "scored",
-          "meets_target": false,
-          "result": "below_minimum",
+          "meets_target": true,
+          "result": "silver",
           "metrics": {},
           "composition": [
             {
               "product_id": "content-cache-charm",
               "repo": "canonical/content-cache-operator",
-              "medal": "unrated",
-              "result": "below_minimum",
+              "medal": "silver",
+              "result": "silver",
               "applicability": "scored",
               "metrics": {
-                "latest_build_passing": false,
+                "latest_build_passing": true,
                 "integration_test_evidence_present": true,
                 "uses_jubilant": false,
                 "coverage_pct": null,
@@ -1762,11 +1762,11 @@
             {
               "product_id": "content-cache-backends-config",
               "repo": "canonical/content-cache-operator",
-              "medal": "unrated",
-              "result": "below_minimum",
+              "medal": "silver",
+              "result": "silver",
               "applicability": "scored",
               "metrics": {
-                "latest_build_passing": false,
+                "latest_build_passing": true,
                 "integration_test_evidence_present": true,
                 "uses_jubilant": false,
                 "coverage_pct": null,
@@ -1916,8 +1916,8 @@
               "applicability": "scored",
               "metrics": {
                 "ownership_signal": true,
-                "response_coverage_rate": 81.6,
-                "avg_triage_days": 22.6,
+                "response_coverage_rate": 86.8,
+                "avg_triage_days": 25.4,
                 "avg_pr_review_days": 0.3,
                 "has_jira_sync": true,
                 "repo_views_14d": null
@@ -1932,8 +1932,8 @@
               "applicability": "scored",
               "metrics": {
                 "ownership_signal": true,
-                "response_coverage_rate": 81.6,
-                "avg_triage_days": 22.6,
+                "response_coverage_rate": 86.8,
+                "avg_triage_days": 25.4,
                 "avg_pr_review_days": 0.3,
                 "has_jira_sync": true,
                 "repo_views_14d": null
@@ -1989,23 +1989,23 @@
       "parent_product_ids": [],
       "dimensions": {
         "test_verification": {
-          "medal": "silver",
+          "medal": "unrated",
           "target": "gold",
           "applicability": "scored",
           "meets_target": false,
-          "result": "silver",
+          "result": "below_minimum",
           "metrics": {},
           "composition": [
             {
               "product_id": "airbyte-k8s",
               "repo": "canonical/airbyte-k8s-operator",
-              "medal": "silver",
-              "result": "silver",
+              "medal": "gold",
+              "result": "gold",
               "applicability": "scored",
               "metrics": {
                 "latest_build_passing": true,
                 "integration_test_evidence_present": true,
-                "uses_jubilant": false,
+                "uses_jubilant": true,
                 "coverage_pct": null,
                 "stability_pct": null
               },
@@ -2029,13 +2029,13 @@
             {
               "product_id": "superset-k8s",
               "repo": "canonical/superset-k8s-operator",
-              "medal": "gold",
-              "result": "gold",
+              "medal": "silver",
+              "result": "silver",
               "applicability": "scored",
               "metrics": {
                 "latest_build_passing": true,
                 "integration_test_evidence_present": true,
-                "uses_jubilant": true,
+                "uses_jubilant": false,
                 "coverage_pct": null,
                 "stability_pct": null
               },
@@ -2059,11 +2059,11 @@
             {
               "product_id": "datahub-k8s",
               "repo": "canonical/datahub-k8s-operator",
-              "medal": "gold",
-              "result": "gold",
+              "medal": "unrated",
+              "result": "below_minimum",
               "applicability": "scored",
               "metrics": {
-                "latest_build_passing": true,
+                "latest_build_passing": false,
                 "integration_test_evidence_present": true,
                 "uses_jubilant": true,
                 "coverage_pct": null,
@@ -2432,9 +2432,9 @@
               "applicability": "scored",
               "metrics": {
                 "ownership_signal": false,
-                "response_coverage_rate": 90.9,
+                "response_coverage_rate": 81.8,
                 "avg_triage_days": 127.0,
-                "avg_pr_review_days": 0.7,
+                "avg_pr_review_days": 0.6,
                 "has_jira_sync": false,
                 "repo_views_14d": null
               },
@@ -2448,9 +2448,9 @@
               "applicability": "scored",
               "metrics": {
                 "ownership_signal": false,
-                "response_coverage_rate": 66.7,
+                "response_coverage_rate": 67.4,
                 "avg_triage_days": 0.0,
-                "avg_pr_review_days": 2.2,
+                "avg_pr_review_days": 2.4,
                 "has_jira_sync": false,
                 "repo_views_14d": null
               },
@@ -2464,9 +2464,9 @@
               "applicability": "scored",
               "metrics": {
                 "ownership_signal": false,
-                "response_coverage_rate": 100.0,
+                "response_coverage_rate": 88.9,
                 "avg_triage_days": 0.0,
-                "avg_pr_review_days": 0.3,
+                "avg_pr_review_days": 0.4,
                 "has_jira_sync": false,
                 "repo_views_14d": null
               },
@@ -2480,7 +2480,7 @@
               "applicability": "scored",
               "metrics": {
                 "ownership_signal": false,
-                "response_coverage_rate": 100.0,
+                "response_coverage_rate": 87.5,
                 "avg_triage_days": 0.0,
                 "avg_pr_review_days": 0.7,
                 "has_jira_sync": false,
@@ -2533,21 +2533,21 @@
       "parent_product_ids": [],
       "dimensions": {
         "test_verification": {
-          "medal": "unrated",
+          "medal": "silver",
           "target": "bronze",
           "applicability": "scored",
-          "meets_target": false,
-          "result": "below_minimum",
+          "meets_target": true,
+          "result": "silver",
           "metrics": {},
           "composition": [
             {
               "product_id": "digest-squid-auth-helper-charm",
               "repo": "canonical/digest-squid-auth-helper",
-              "medal": "unrated",
-              "result": "below_minimum",
+              "medal": "silver",
+              "result": "silver",
               "applicability": "scored",
               "metrics": {
-                "latest_build_passing": false,
+                "latest_build_passing": true,
                 "integration_test_evidence_present": true,
                 "uses_jubilant": false,
                 "coverage_pct": null,
@@ -2650,9 +2650,9 @@
               "applicability": "scored",
               "metrics": {
                 "ownership_signal": true,
-                "response_coverage_rate": null,
-                "avg_triage_days": null,
-                "avg_pr_review_days": null,
+                "response_coverage_rate": 57.1,
+                "avg_triage_days": 569.3,
+                "avg_pr_review_days": 0.0,
                 "has_jira_sync": true,
                 "repo_views_14d": null
               },
@@ -2716,7 +2716,7 @@
               "metrics": {
                 "latest_build_passing": false,
                 "integration_test_evidence_present": false,
-                "uses_jubilant": false,
+                "uses_jubilant": true,
                 "coverage_pct": 83,
                 "stability_pct": 92
               },
@@ -2817,9 +2817,9 @@
               "applicability": "scored",
               "metrics": {
                 "ownership_signal": true,
-                "response_coverage_rate": 88.3,
+                "response_coverage_rate": 89.7,
                 "avg_triage_days": 262.5,
-                "avg_pr_review_days": 1.9,
+                "avg_pr_review_days": 2.0,
                 "has_jira_sync": true,
                 "repo_views_14d": null
               },
@@ -2878,21 +2878,21 @@
       "parent_product_ids": [],
       "dimensions": {
         "test_verification": {
-          "medal": "unrated",
+          "medal": "gold",
           "target": "bronze",
           "applicability": "scored",
-          "meets_target": false,
-          "result": "below_minimum",
+          "meets_target": true,
+          "result": "gold",
           "metrics": {},
           "composition": [
             {
               "product_id": "bind",
               "repo": "canonical/dns-operators",
-              "medal": "unrated",
-              "result": "below_minimum",
+              "medal": "gold",
+              "result": "gold",
               "applicability": "scored",
               "metrics": {
-                "latest_build_passing": false,
+                "latest_build_passing": true,
                 "integration_test_evidence_present": true,
                 "uses_jubilant": true,
                 "coverage_pct": null,
@@ -2903,11 +2903,11 @@
             {
               "product_id": "dns-policy",
               "repo": "canonical/dns-operators",
-              "medal": "unrated",
-              "result": "below_minimum",
+              "medal": "gold",
+              "result": "gold",
               "applicability": "scored",
               "metrics": {
-                "latest_build_passing": false,
+                "latest_build_passing": true,
                 "integration_test_evidence_present": true,
                 "uses_jubilant": true,
                 "coverage_pct": null,
@@ -2918,11 +2918,11 @@
             {
               "product_id": "dns-integrator",
               "repo": "canonical/dns-operators",
-              "medal": "unrated",
-              "result": "below_minimum",
+              "medal": "gold",
+              "result": "gold",
               "applicability": "scored",
               "metrics": {
-                "latest_build_passing": false,
+                "latest_build_passing": true,
                 "integration_test_evidence_present": true,
                 "uses_jubilant": true,
                 "coverage_pct": null,
@@ -2933,11 +2933,11 @@
             {
               "product_id": "dns-resolver",
               "repo": "canonical/dns-operators",
-              "medal": "unrated",
-              "result": "below_minimum",
+              "medal": "gold",
+              "result": "gold",
               "applicability": "scored",
               "metrics": {
-                "latest_build_passing": false,
+                "latest_build_passing": true,
                 "integration_test_evidence_present": true,
                 "uses_jubilant": true,
                 "coverage_pct": null,
@@ -2948,11 +2948,11 @@
             {
               "product_id": "dns-secondary",
               "repo": "canonical/dns-operators",
-              "medal": "unrated",
-              "result": "below_minimum",
+              "medal": "gold",
+              "result": "gold",
               "applicability": "scored",
               "metrics": {
-                "latest_build_passing": false,
+                "latest_build_passing": true,
                 "integration_test_evidence_present": true,
                 "uses_jubilant": true,
                 "coverage_pct": null,
@@ -2963,11 +2963,11 @@
             {
               "product_id": "charmed-bind",
               "repo": "canonical/dns-operators",
-              "medal": "unrated",
-              "result": "below_minimum",
+              "medal": "gold",
+              "result": "gold",
               "applicability": "scored",
               "metrics": {
-                "latest_build_passing": false,
+                "latest_build_passing": true,
                 "integration_test_evidence_present": true,
                 "uses_jubilant": true,
                 "coverage_pct": null,
@@ -2978,11 +2978,11 @@
             {
               "product_id": "charmed-dns-policy",
               "repo": "canonical/dns-operators",
-              "medal": "unrated",
-              "result": "below_minimum",
+              "medal": "gold",
+              "result": "gold",
               "applicability": "scored",
               "metrics": {
-                "latest_build_passing": false,
+                "latest_build_passing": true,
                 "integration_test_evidence_present": true,
                 "uses_jubilant": true,
                 "coverage_pct": null,
@@ -3367,9 +3367,9 @@
               "applicability": "scored",
               "metrics": {
                 "ownership_signal": true,
-                "response_coverage_rate": 55.2,
+                "response_coverage_rate": 56.7,
                 "avg_triage_days": 517.8,
-                "avg_pr_review_days": 19.4,
+                "avg_pr_review_days": 18.2,
                 "has_jira_sync": true,
                 "repo_views_14d": null
               },
@@ -3383,9 +3383,9 @@
               "applicability": "scored",
               "metrics": {
                 "ownership_signal": true,
-                "response_coverage_rate": 55.2,
+                "response_coverage_rate": 56.7,
                 "avg_triage_days": 517.8,
-                "avg_pr_review_days": 19.4,
+                "avg_pr_review_days": 18.2,
                 "has_jira_sync": true,
                 "repo_views_14d": null
               },
@@ -3399,9 +3399,9 @@
               "applicability": "scored",
               "metrics": {
                 "ownership_signal": true,
-                "response_coverage_rate": 55.2,
+                "response_coverage_rate": 56.7,
                 "avg_triage_days": 517.8,
-                "avg_pr_review_days": 19.4,
+                "avg_pr_review_days": 18.2,
                 "has_jira_sync": true,
                 "repo_views_14d": null
               },
@@ -3415,9 +3415,9 @@
               "applicability": "scored",
               "metrics": {
                 "ownership_signal": true,
-                "response_coverage_rate": 55.2,
+                "response_coverage_rate": 56.7,
                 "avg_triage_days": 517.8,
-                "avg_pr_review_days": 19.4,
+                "avg_pr_review_days": 18.2,
                 "has_jira_sync": true,
                 "repo_views_14d": null
               },
@@ -3431,9 +3431,9 @@
               "applicability": "scored",
               "metrics": {
                 "ownership_signal": true,
-                "response_coverage_rate": 55.2,
+                "response_coverage_rate": 56.7,
                 "avg_triage_days": 517.8,
-                "avg_pr_review_days": 19.4,
+                "avg_pr_review_days": 18.2,
                 "has_jira_sync": true,
                 "repo_views_14d": null
               },
@@ -3447,9 +3447,9 @@
               "applicability": "scored",
               "metrics": {
                 "ownership_signal": true,
-                "response_coverage_rate": 55.2,
+                "response_coverage_rate": 56.7,
                 "avg_triage_days": 517.8,
-                "avg_pr_review_days": 19.4,
+                "avg_pr_review_days": 18.2,
                 "has_jira_sync": true,
                 "repo_views_14d": null
               },
@@ -3463,9 +3463,9 @@
               "applicability": "scored",
               "metrics": {
                 "ownership_signal": true,
-                "response_coverage_rate": 55.2,
+                "response_coverage_rate": 56.7,
                 "avg_triage_days": 517.8,
-                "avg_pr_review_days": 19.4,
+                "avg_pr_review_days": 18.2,
                 "has_jira_sync": true,
                 "repo_views_14d": null
               },
@@ -3535,7 +3535,7 @@
               "metrics": {
                 "latest_build_passing": true,
                 "integration_test_evidence_present": false,
-                "uses_jubilant": false,
+                "uses_jubilant": true,
                 "coverage_pct": null,
                 "stability_pct": null
               },
@@ -3683,9 +3683,9 @@
               "applicability": "scored",
               "metrics": {
                 "ownership_signal": true,
-                "response_coverage_rate": 90.6,
+                "response_coverage_rate": 91.4,
                 "avg_triage_days": 0.0,
-                "avg_pr_review_days": 5.5,
+                "avg_pr_review_days": 5.0,
                 "has_jira_sync": true,
                 "repo_views_14d": null
               },
@@ -3699,9 +3699,9 @@
               "applicability": "scored",
               "metrics": {
                 "ownership_signal": true,
-                "response_coverage_rate": 90.6,
+                "response_coverage_rate": 91.4,
                 "avg_triage_days": 0.0,
-                "avg_pr_review_days": 5.5,
+                "avg_pr_review_days": 5.0,
                 "has_jira_sync": true,
                 "repo_views_14d": null
               },
@@ -3736,21 +3736,21 @@
       "parent_product_ids": [],
       "dimensions": {
         "test_verification": {
-          "medal": "unrated",
+          "medal": "gold",
           "target": "gold",
           "applicability": "scored",
-          "meets_target": false,
-          "result": "below_minimum",
+          "meets_target": true,
+          "result": "gold",
           "metrics": {},
           "composition": [
             {
               "product_id": "gateway-api-integrator-charm",
               "repo": "canonical/gateway-api-integrator-operator",
-              "medal": "unrated",
-              "result": "below_minimum",
+              "medal": "gold",
+              "result": "gold",
               "applicability": "scored",
               "metrics": {
-                "latest_build_passing": false,
+                "latest_build_passing": true,
                 "integration_test_evidence_present": true,
                 "uses_jubilant": true,
                 "coverage_pct": null,
@@ -3853,9 +3853,163 @@
               "applicability": "scored",
               "metrics": {
                 "ownership_signal": true,
-                "response_coverage_rate": 64.9,
-                "avg_triage_days": 64.5,
-                "avg_pr_review_days": 2.8,
+                "response_coverage_rate": 69.1,
+                "avg_triage_days": 75.2,
+                "avg_pr_review_days": 3.5,
+                "has_jira_sync": true,
+                "repo_views_14d": null
+              },
+              "excluded_from_parent_medal": false
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "gopkg",
+      "product_type": "root",
+      "name": "gopkg.in",
+      "description": "The gopkg.in versioned import path service for Go, packaged as a rock and operated on Kubernetes by the gopkg-k8s charm.",
+      "lifecycle": "beta",
+      "current_medal": "unrated",
+      "target_medal": "bronze",
+      "current_result": "below_minimum",
+      "target_result": "bronze",
+      "meets_target": false,
+      "squad": "amer",
+      "is_portfolio_entry": true,
+      "documentation_url": "https://canonical.com/juju/docs/gopkg-charm/latest/",
+      "source": null,
+      "composed_of": [
+        {
+          "product_id": "gopkg-k8s",
+          "excluded_from_parent_medal": false
+        }
+      ],
+      "context_refs": [],
+      "parent_product_ids": [],
+      "dimensions": {
+        "test_verification": {
+          "medal": "bronze",
+          "target": "bronze",
+          "applicability": "scored",
+          "meets_target": true,
+          "result": "bronze",
+          "metrics": {},
+          "composition": [
+            {
+              "product_id": "gopkg-k8s",
+              "repo": "canonical/gopkg-charmed",
+              "medal": "bronze",
+              "result": "bronze",
+              "applicability": "scored",
+              "metrics": {
+                "latest_build_passing": true,
+                "integration_test_evidence_present": false,
+                "uses_jubilant": false,
+                "coverage_pct": null,
+                "stability_pct": null
+              },
+              "excluded_from_parent_medal": false
+            }
+          ]
+        },
+        "documentation": {
+          "medal": "silver",
+          "target": "bronze",
+          "applicability": "scored",
+          "meets_target": true,
+          "result": "silver",
+          "metrics": {},
+          "composition": [
+            {
+              "product_id": "gopkg-k8s",
+              "repo": "canonical/gopkg-charmed",
+              "medal": "silver",
+              "result": "silver",
+              "applicability": "scored",
+              "metrics": {
+                "readme_present": true,
+                "contributing_present": true,
+                "has_security": true,
+                "release_notes_process_implemented": false,
+                "documentation_workflows_passing": false,
+                "diataxis_coverage_ai": 0,
+                "uses_rtd_hosting": false,
+                "has_changelog": false
+              },
+              "excluded_from_parent_medal": false
+            }
+          ]
+        },
+        "substrate_compat": {
+          "medal": "unrated",
+          "target": "bronze",
+          "applicability": "scored",
+          "meets_target": false,
+          "result": "below_minimum",
+          "metrics": {},
+          "composition": [
+            {
+              "product_id": "gopkg-k8s",
+              "repo": "canonical/gopkg-charmed",
+              "medal": "unrated",
+              "result": "below_minimum",
+              "applicability": "scored",
+              "metrics": {
+                "supports_juju_3": false,
+                "substrate_test_evidence_present": false,
+                "supports_juju_4": false,
+                "uses_canonical_k8s": false
+              },
+              "excluded_from_parent_medal": false
+            }
+          ]
+        },
+        "security_ssdlc": {
+          "medal": "bronze",
+          "target": "bronze",
+          "applicability": "scored",
+          "meets_target": true,
+          "result": "bronze",
+          "metrics": {},
+          "composition": [
+            {
+              "product_id": "gopkg-k8s",
+              "repo": "canonical/gopkg-charmed",
+              "medal": "bronze",
+              "result": "bronze",
+              "applicability": "scored",
+              "metrics": {
+                "renovate_enabled": true,
+                "branch_protection_required_checks": false,
+                "signed_commits_required": false,
+                "sast_workflow_present": false,
+                "cve_tracking_process_present": true
+              },
+              "excluded_from_parent_medal": false
+            }
+          ]
+        },
+        "engagement": {
+          "medal": "gold",
+          "target": "bronze",
+          "applicability": "scored",
+          "meets_target": true,
+          "result": "gold",
+          "metrics": {},
+          "composition": [
+            {
+              "product_id": "gopkg-k8s",
+              "repo": "canonical/gopkg-charmed",
+              "medal": "gold",
+              "result": "gold",
+              "applicability": "scored",
+              "metrics": {
+                "ownership_signal": true,
+                "response_coverage_rate": 78.3,
+                "avg_triage_days": 0.0,
+                "avg_pr_review_days": 0.9,
                 "has_jira_sync": true,
                 "repo_views_14d": null
               },
@@ -3918,7 +4072,7 @@
               "metrics": {
                 "latest_build_passing": false,
                 "integration_test_evidence_present": false,
-                "uses_jubilant": false,
+                "uses_jubilant": true,
                 "coverage_pct": null,
                 "stability_pct": null
               },
@@ -3927,11 +4081,11 @@
             {
               "product_id": "ingress-configurator",
               "repo": "canonical/ingress-configurator-operator",
-              "medal": "unrated",
-              "result": "below_minimum",
+              "medal": "silver",
+              "result": "silver",
               "applicability": "scored",
               "metrics": {
-                "latest_build_passing": false,
+                "latest_build_passing": true,
                 "integration_test_evidence_present": true,
                 "uses_jubilant": false,
                 "coverage_pct": null,
@@ -3963,7 +4117,7 @@
               "metrics": {
                 "latest_build_passing": false,
                 "integration_test_evidence_present": false,
-                "uses_jubilant": false,
+                "uses_jubilant": true,
                 "coverage_pct": null,
                 "stability_pct": null
               },
@@ -4205,7 +4359,7 @@
               "applicability": "scored",
               "metrics": {
                 "ownership_signal": true,
-                "response_coverage_rate": 95.7,
+                "response_coverage_rate": 92.0,
                 "avg_triage_days": 28.0,
                 "avg_pr_review_days": 0.8,
                 "has_jira_sync": true,
@@ -4221,9 +4375,9 @@
               "applicability": "scored",
               "metrics": {
                 "ownership_signal": true,
-                "response_coverage_rate": 96.0,
+                "response_coverage_rate": 90.2,
                 "avg_triage_days": 18.3,
-                "avg_pr_review_days": 1.3,
+                "avg_pr_review_days": 1.4,
                 "has_jira_sync": true,
                 "repo_views_14d": null
               },
@@ -4237,7 +4391,7 @@
               "applicability": "scored",
               "metrics": {
                 "ownership_signal": true,
-                "response_coverage_rate": 95.7,
+                "response_coverage_rate": 92.0,
                 "avg_triage_days": 28.0,
                 "avg_pr_review_days": 0.8,
                 "has_jira_sync": true,
@@ -4253,7 +4407,7 @@
               "applicability": "scored",
               "metrics": {
                 "ownership_signal": true,
-                "response_coverage_rate": 95.7,
+                "response_coverage_rate": 92.0,
                 "avg_triage_days": 28.0,
                 "avg_pr_review_days": 0.8,
                 "has_jira_sync": true,
@@ -4466,13 +4620,13 @@
             {
               "product_id": "squid-forward-proxy",
               "repo": "canonical/http-proxy-operators",
-              "medal": "silver",
-              "result": "silver",
+              "medal": "gold",
+              "result": "gold",
               "applicability": "scored",
               "metrics": {
                 "latest_build_passing": true,
                 "integration_test_evidence_present": true,
-                "uses_jubilant": false,
+                "uses_jubilant": true,
                 "coverage_pct": null,
                 "stability_pct": null
               },
@@ -4759,9 +4913,9 @@
               "applicability": "scored",
               "metrics": {
                 "ownership_signal": true,
-                "response_coverage_rate": null,
-                "avg_triage_days": null,
-                "avg_pr_review_days": null,
+                "response_coverage_rate": 80.0,
+                "avg_triage_days": 162.9,
+                "avg_pr_review_days": 2.0,
                 "has_jira_sync": true,
                 "repo_views_14d": null
               },
@@ -4775,9 +4929,9 @@
               "applicability": "scored",
               "metrics": {
                 "ownership_signal": true,
-                "response_coverage_rate": null,
-                "avg_triage_days": null,
-                "avg_pr_review_days": null,
+                "response_coverage_rate": 80.0,
+                "avg_triage_days": 162.9,
+                "avg_pr_review_days": 2.0,
                 "has_jira_sync": true,
                 "repo_views_14d": null
               },
@@ -4791,9 +4945,9 @@
               "applicability": "scored",
               "metrics": {
                 "ownership_signal": true,
-                "response_coverage_rate": null,
-                "avg_triage_days": null,
-                "avg_pr_review_days": null,
+                "response_coverage_rate": 80.0,
+                "avg_triage_days": 162.9,
+                "avg_pr_review_days": 2.0,
                 "has_jira_sync": true,
                 "repo_views_14d": null
               },
@@ -4807,9 +4961,9 @@
               "applicability": "scored",
               "metrics": {
                 "ownership_signal": true,
-                "response_coverage_rate": null,
-                "avg_triage_days": null,
-                "avg_pr_review_days": null,
+                "response_coverage_rate": 80.0,
+                "avg_triage_days": 162.9,
+                "avg_pr_review_days": 2.0,
                 "has_jira_sync": true,
                 "repo_views_14d": null
               },
@@ -4970,7 +5124,7 @@
               "applicability": "scored",
               "metrics": {
                 "ownership_signal": true,
-                "response_coverage_rate": 95.0,
+                "response_coverage_rate": 95.2,
                 "avg_triage_days": 310.5,
                 "avg_pr_review_days": 0.0,
                 "has_jira_sync": true,
@@ -5431,9 +5585,9 @@
               "applicability": "scored",
               "metrics": {
                 "ownership_signal": true,
-                "response_coverage_rate": 33.7,
+                "response_coverage_rate": 40.9,
                 "avg_triage_days": 184.7,
-                "avg_pr_review_days": 0.6,
+                "avg_pr_review_days": 5.5,
                 "has_jira_sync": true,
                 "repo_views_14d": null
               },
@@ -5463,8 +5617,8 @@
               "applicability": "scored",
               "metrics": {
                 "ownership_signal": true,
-                "response_coverage_rate": 85.3,
-                "avg_triage_days": 157.4,
+                "response_coverage_rate": 84.8,
+                "avg_triage_days": 209.8,
                 "avg_pr_review_days": 1.5,
                 "has_jira_sync": true,
                 "repo_views_14d": null
@@ -5547,7 +5701,7 @@
               "metrics": {
                 "latest_build_passing": false,
                 "integration_test_evidence_present": false,
-                "uses_jubilant": true,
+                "uses_jubilant": false,
                 "coverage_pct": null,
                 "stability_pct": null
               },
@@ -5577,7 +5731,7 @@
               "metrics": {
                 "latest_build_passing": false,
                 "integration_test_evidence_present": false,
-                "uses_jubilant": false,
+                "uses_jubilant": true,
                 "coverage_pct": null,
                 "stability_pct": null
               },
@@ -5881,7 +6035,7 @@
               "applicability": "scored",
               "metrics": {
                 "ownership_signal": true,
-                "response_coverage_rate": 93.1,
+                "response_coverage_rate": 93.3,
                 "avg_triage_days": 0.0,
                 "avg_pr_review_days": 0.9,
                 "has_jira_sync": true,
@@ -5897,7 +6051,7 @@
               "applicability": "scored",
               "metrics": {
                 "ownership_signal": true,
-                "response_coverage_rate": 93.1,
+                "response_coverage_rate": 93.3,
                 "avg_triage_days": 0.0,
                 "avg_pr_review_days": 0.9,
                 "has_jira_sync": true,
@@ -5913,7 +6067,7 @@
               "applicability": "scored",
               "metrics": {
                 "ownership_signal": true,
-                "response_coverage_rate": 93.1,
+                "response_coverage_rate": 93.3,
                 "avg_triage_days": 0.0,
                 "avg_pr_review_days": 0.9,
                 "has_jira_sync": true,
@@ -5929,7 +6083,7 @@
               "applicability": "scored",
               "metrics": {
                 "ownership_signal": true,
-                "response_coverage_rate": 93.1,
+                "response_coverage_rate": 93.3,
                 "avg_triage_days": 0.0,
                 "avg_pr_review_days": 0.9,
                 "has_jira_sync": true,
@@ -5945,7 +6099,7 @@
               "applicability": "scored",
               "metrics": {
                 "ownership_signal": true,
-                "response_coverage_rate": 93.1,
+                "response_coverage_rate": 93.3,
                 "avg_triage_days": 0.0,
                 "avg_pr_review_days": 0.9,
                 "has_jira_sync": true,
@@ -6131,13 +6285,13 @@
             {
               "product_id": "saml-integrator",
               "repo": "canonical/saml-integrator-operator",
-              "medal": "gold",
-              "result": "gold",
+              "medal": "silver",
+              "result": "silver",
               "applicability": "scored",
               "metrics": {
                 "latest_build_passing": true,
                 "integration_test_evidence_present": true,
-                "uses_jubilant": true,
+                "uses_jubilant": false,
                 "coverage_pct": null,
                 "stability_pct": null
               },
@@ -7085,7 +7239,7 @@
               "applicability": "scored",
               "metrics": {
                 "ownership_signal": true,
-                "response_coverage_rate": 100.0,
+                "response_coverage_rate": 94.4,
                 "avg_triage_days": 0.6,
                 "avg_pr_review_days": 1.2,
                 "has_jira_sync": true,
@@ -7125,23 +7279,23 @@
       ],
       "dimensions": {
         "test_verification": {
-          "medal": "silver",
+          "medal": "gold",
           "target": "bronze",
           "applicability": "scored",
           "meets_target": true,
-          "result": "silver",
+          "result": "gold",
           "metrics": {},
           "composition": [
             {
               "product_id": "nginx-ingress-integrator-charm",
               "repo": "canonical/nginx-ingress-integrator-operator",
-              "medal": "silver",
-              "result": "silver",
+              "medal": "gold",
+              "result": "gold",
               "applicability": "scored",
               "metrics": {
                 "latest_build_passing": true,
                 "integration_test_evidence_present": true,
-                "uses_jubilant": false,
+                "uses_jubilant": true,
                 "coverage_pct": null,
                 "stability_pct": null
               },
@@ -7401,9 +7555,9 @@
               "applicability": "scored",
               "metrics": {
                 "ownership_signal": true,
-                "response_coverage_rate": 83.3,
+                "response_coverage_rate": 75.0,
                 "avg_triage_days": 266.1,
-                "avg_pr_review_days": 0.0,
+                "avg_pr_review_days": 0.2,
                 "has_jira_sync": true,
                 "repo_views_14d": null
               },
@@ -7746,15 +7900,15 @@
       ],
       "dimensions": {
         "test_verification": {
-          "medal": "gold",
+          "medal": "silver",
           "target": "gold",
           "applicability": "scored",
-          "meets_target": true,
-          "result": "gold",
+          "meets_target": false,
+          "result": "silver",
           "metrics": {
             "latest_build_passing": true,
             "integration_test_evidence_present": true,
-            "uses_jubilant": true,
+            "uses_jubilant": false,
             "coverage_pct": null,
             "stability_pct": null
           },
@@ -8388,7 +8542,7 @@
               "applicability": "scored",
               "metrics": {
                 "ownership_signal": true,
-                "response_coverage_rate": 91.7,
+                "response_coverage_rate": 90.9,
                 "avg_triage_days": 241.8,
                 "avg_pr_review_days": 0.1,
                 "has_jira_sync": true,
@@ -8420,9 +8574,9 @@
               "applicability": "scored",
               "metrics": {
                 "ownership_signal": true,
-                "response_coverage_rate": 60.0,
+                "response_coverage_rate": 83.3,
                 "avg_triage_days": 613.0,
-                "avg_pr_review_days": 0.6,
+                "avg_pr_review_days": 0.9,
                 "has_jira_sync": true,
                 "repo_views_14d": null
               },
@@ -8452,8 +8606,8 @@
               "applicability": "scored",
               "metrics": {
                 "ownership_signal": true,
-                "response_coverage_rate": 94.7,
-                "avg_triage_days": 1.4,
+                "response_coverage_rate": 94.9,
+                "avg_triage_days": 0.8,
                 "avg_pr_review_days": 0.3,
                 "has_jira_sync": true,
                 "repo_views_14d": null
@@ -8468,8 +8622,8 @@
               "applicability": "scored",
               "metrics": {
                 "ownership_signal": true,
-                "response_coverage_rate": 94.7,
-                "avg_triage_days": 1.4,
+                "response_coverage_rate": 94.9,
+                "avg_triage_days": 0.8,
                 "avg_pr_review_days": 0.3,
                 "has_jira_sync": true,
                 "repo_views_14d": null
@@ -8622,9 +8776,9 @@
               "applicability": "scored",
               "metrics": {
                 "ownership_signal": true,
-                "response_coverage_rate": 86.7,
+                "response_coverage_rate": 93.8,
                 "avg_triage_days": 226.1,
-                "avg_pr_review_days": 0.6,
+                "avg_pr_review_days": 0.9,
                 "has_jira_sync": true,
                 "repo_views_14d": null
               },
@@ -8682,7 +8836,7 @@
               "metrics": {
                 "latest_build_passing": false,
                 "integration_test_evidence_present": false,
-                "uses_jubilant": true,
+                "uses_jubilant": false,
                 "coverage_pct": null,
                 "stability_pct": null
               },
@@ -8783,9 +8937,9 @@
               "applicability": "scored",
               "metrics": {
                 "ownership_signal": true,
-                "response_coverage_rate": 86.8,
-                "avg_triage_days": 184.6,
-                "avg_pr_review_days": 2.1,
+                "response_coverage_rate": 89.1,
+                "avg_triage_days": 196.1,
+                "avg_pr_review_days": 2.0,
                 "has_jira_sync": true,
                 "repo_views_14d": null
               },
@@ -8820,23 +8974,23 @@
       "parent_product_ids": [],
       "dimensions": {
         "test_verification": {
-          "medal": "gold",
+          "medal": "silver",
           "target": "bronze",
           "applicability": "scored",
           "meets_target": true,
-          "result": "gold",
+          "result": "silver",
           "metrics": {},
           "composition": [
             {
               "product_id": "ubuntu-motd-server",
               "repo": "canonical/ubuntu-motd-server-operator",
-              "medal": "gold",
-              "result": "gold",
+              "medal": "silver",
+              "result": "silver",
               "applicability": "scored",
               "metrics": {
                 "latest_build_passing": true,
                 "integration_test_evidence_present": true,
-                "uses_jubilant": true,
+                "uses_jubilant": false,
                 "coverage_pct": null,
                 "stability_pct": null
               },
@@ -8937,7 +9091,7 @@
               "applicability": "scored",
               "metrics": {
                 "ownership_signal": true,
-                "response_coverage_rate": 93.8,
+                "response_coverage_rate": 100.0,
                 "avg_triage_days": 0.0,
                 "avg_pr_review_days": 0.0,
                 "has_jira_sync": true,
@@ -9011,11 +9165,11 @@
             {
               "product_id": "wazuh-indexer",
               "repo": "canonical/wazuh-indexer-operator",
-              "medal": "silver",
-              "result": "silver",
+              "medal": "unrated",
+              "result": "below_minimum",
               "applicability": "scored",
               "metrics": {
-                "latest_build_passing": true,
+                "latest_build_passing": false,
                 "integration_test_evidence_present": true,
                 "uses_jubilant": false,
                 "coverage_pct": null,
@@ -9243,7 +9397,7 @@
               "applicability": "scored",
               "metrics": {
                 "ownership_signal": true,
-                "response_coverage_rate": 41.7,
+                "response_coverage_rate": 35.7,
                 "avg_triage_days": 0.0,
                 "avg_pr_review_days": 1.1,
                 "has_jira_sync": true,
@@ -9580,7 +9734,7 @@
               "applicability": "scored",
               "metrics": {
                 "ownership_signal": true,
-                "response_coverage_rate": 56.2,
+                "response_coverage_rate": 57.1,
                 "avg_triage_days": 367.6,
                 "avg_pr_review_days": 0.5,
                 "has_jira_sync": true,
@@ -9687,8 +9841,8 @@
           "metrics": {
             "ownership_signal": false,
             "response_coverage_rate": 85.7,
-            "avg_triage_days": 268.7,
-            "avg_pr_review_days": 1.4,
+            "avg_triage_days": 282.6,
+            "avg_pr_review_days": 1.3,
             "has_jira_sync": true,
             "repo_views_14d": null
           },
@@ -9721,13 +9875,13 @@
       ],
       "dimensions": {
         "test_verification": {
-          "medal": "bronze",
+          "medal": "unrated",
           "target": "gold",
           "applicability": "scored",
           "meets_target": false,
-          "result": "bronze",
+          "result": "below_minimum",
           "metrics": {
-            "latest_build_passing": true,
+            "latest_build_passing": false,
             "integration_test_evidence_present": false,
             "uses_jubilant": true,
             "coverage_pct": null,
@@ -9790,8 +9944,8 @@
           "result": "below_minimum",
           "metrics": {
             "ownership_signal": false,
-            "response_coverage_rate": 80.7,
-            "avg_triage_days": 194.0,
+            "response_coverage_rate": 81.3,
+            "avg_triage_days": 190.3,
             "avg_pr_review_days": 1.1,
             "has_jira_sync": true,
             "repo_views_14d": null
@@ -9894,7 +10048,7 @@
           "result": "gold",
           "metrics": {
             "ownership_signal": true,
-            "response_coverage_rate": 87.9,
+            "response_coverage_rate": 86.4,
             "avg_triage_days": 104.0,
             "avg_pr_review_days": 1.2,
             "has_jira_sync": true,
@@ -9937,7 +10091,7 @@
           "metrics": {
             "latest_build_passing": true,
             "integration_test_evidence_present": false,
-            "uses_jubilant": true,
+            "uses_jubilant": false,
             "coverage_pct": null,
             "stability_pct": null
           },
@@ -10145,7 +10299,7 @@
           "metrics": {
             "latest_build_passing": false,
             "integration_test_evidence_present": true,
-            "uses_jubilant": true,
+            "uses_jubilant": false,
             "coverage_pct": null,
             "stability_pct": null
           },
@@ -10208,7 +10362,7 @@
             "ownership_signal": true,
             "response_coverage_rate": 100.0,
             "avg_triage_days": 0.0,
-            "avg_pr_review_days": 0.1,
+            "avg_pr_review_days": 0.2,
             "has_jira_sync": true,
             "repo_views_14d": null
           },
@@ -10233,110 +10387,6 @@
       "source": {
         "repo": "canonical/backup-operators",
         "subpath": "bacula_fd_operator"
-      },
-      "composed_of": null,
-      "context_refs": [],
-      "parent_product_ids": [
-        "backup"
-      ],
-      "dimensions": {
-        "test_verification": {
-          "medal": "unrated",
-          "target": "silver",
-          "applicability": "scored",
-          "meets_target": false,
-          "result": "below_minimum",
-          "metrics": {
-            "latest_build_passing": false,
-            "integration_test_evidence_present": true,
-            "uses_jubilant": true,
-            "coverage_pct": null,
-            "stability_pct": null
-          },
-          "composition": null
-        },
-        "documentation": {
-          "medal": "unrated",
-          "target": "silver",
-          "applicability": "scored",
-          "meets_target": false,
-          "result": "below_minimum",
-          "metrics": {
-            "readme_present": false,
-            "contributing_present": false,
-            "has_security": false,
-            "release_notes_process_implemented": false,
-            "documentation_workflows_passing": false,
-            "diataxis_coverage_ai": 0,
-            "uses_rtd_hosting": false,
-            "has_changelog": false
-          },
-          "composition": null
-        },
-        "substrate_compat": {
-          "medal": "silver",
-          "target": "silver",
-          "applicability": "scored",
-          "meets_target": true,
-          "result": "silver",
-          "metrics": {
-            "supports_juju_3": true,
-            "substrate_test_evidence_present": true,
-            "supports_juju_4": false,
-            "uses_canonical_k8s": false
-          },
-          "composition": null
-        },
-        "security_ssdlc": {
-          "medal": "bronze",
-          "target": "silver",
-          "applicability": "scored",
-          "meets_target": false,
-          "result": "bronze",
-          "metrics": {
-            "renovate_enabled": true,
-            "branch_protection_required_checks": false,
-            "signed_commits_required": false,
-            "sast_workflow_present": false,
-            "cve_tracking_process_present": false
-          },
-          "composition": null
-        },
-        "engagement": {
-          "medal": "gold",
-          "target": "silver",
-          "applicability": "scored",
-          "meets_target": true,
-          "result": "gold",
-          "metrics": {
-            "ownership_signal": true,
-            "response_coverage_rate": 100.0,
-            "avg_triage_days": 0.0,
-            "avg_pr_review_days": 0.1,
-            "has_jira_sync": true,
-            "repo_views_14d": null
-          },
-          "composition": null
-        }
-      }
-    },
-    {
-      "id": "backup-integrator",
-      "product_type": "charm",
-      "name": "backup-integrator",
-      "description": "",
-      "lifecycle": "stable",
-      "current_medal": "unrated",
-      "target_medal": "silver",
-      "current_result": "below_minimum",
-      "target_result": "silver",
-      "meets_target": false,
-      "squad": "",
-      "is_portfolio_entry": false,
-      "documentation_url": "",
-      "source": {
-        "repo": "canonical/backup-operators",
-        "subpath": "backup_integrator_operator"
       },
       "composed_of": null,
       "context_refs": [],
@@ -10416,7 +10466,111 @@
             "ownership_signal": true,
             "response_coverage_rate": 100.0,
             "avg_triage_days": 0.0,
-            "avg_pr_review_days": 0.1,
+            "avg_pr_review_days": 0.2,
+            "has_jira_sync": true,
+            "repo_views_14d": null
+          },
+          "composition": null
+        }
+      }
+    },
+    {
+      "id": "backup-integrator",
+      "product_type": "charm",
+      "name": "backup-integrator",
+      "description": "",
+      "lifecycle": "stable",
+      "current_medal": "unrated",
+      "target_medal": "silver",
+      "current_result": "below_minimum",
+      "target_result": "silver",
+      "meets_target": false,
+      "squad": "",
+      "is_portfolio_entry": false,
+      "documentation_url": "",
+      "source": {
+        "repo": "canonical/backup-operators",
+        "subpath": "backup_integrator_operator"
+      },
+      "composed_of": null,
+      "context_refs": [],
+      "parent_product_ids": [
+        "backup"
+      ],
+      "dimensions": {
+        "test_verification": {
+          "medal": "unrated",
+          "target": "silver",
+          "applicability": "scored",
+          "meets_target": false,
+          "result": "below_minimum",
+          "metrics": {
+            "latest_build_passing": false,
+            "integration_test_evidence_present": true,
+            "uses_jubilant": true,
+            "coverage_pct": null,
+            "stability_pct": null
+          },
+          "composition": null
+        },
+        "documentation": {
+          "medal": "unrated",
+          "target": "silver",
+          "applicability": "scored",
+          "meets_target": false,
+          "result": "below_minimum",
+          "metrics": {
+            "readme_present": false,
+            "contributing_present": false,
+            "has_security": false,
+            "release_notes_process_implemented": false,
+            "documentation_workflows_passing": false,
+            "diataxis_coverage_ai": 0,
+            "uses_rtd_hosting": false,
+            "has_changelog": false
+          },
+          "composition": null
+        },
+        "substrate_compat": {
+          "medal": "silver",
+          "target": "silver",
+          "applicability": "scored",
+          "meets_target": true,
+          "result": "silver",
+          "metrics": {
+            "supports_juju_3": true,
+            "substrate_test_evidence_present": true,
+            "supports_juju_4": false,
+            "uses_canonical_k8s": false
+          },
+          "composition": null
+        },
+        "security_ssdlc": {
+          "medal": "bronze",
+          "target": "silver",
+          "applicability": "scored",
+          "meets_target": false,
+          "result": "bronze",
+          "metrics": {
+            "renovate_enabled": true,
+            "branch_protection_required_checks": false,
+            "signed_commits_required": false,
+            "sast_workflow_present": false,
+            "cve_tracking_process_present": false
+          },
+          "composition": null
+        },
+        "engagement": {
+          "medal": "gold",
+          "target": "silver",
+          "applicability": "scored",
+          "meets_target": true,
+          "result": "gold",
+          "metrics": {
+            "ownership_signal": true,
+            "response_coverage_rate": 100.0,
+            "avg_triage_days": 0.0,
+            "avg_pr_review_days": 0.2,
             "has_jira_sync": true,
             "repo_views_14d": null
           },
@@ -10520,7 +10674,7 @@
             "ownership_signal": true,
             "response_coverage_rate": 100.0,
             "avg_triage_days": 0.0,
-            "avg_pr_review_days": 0.1,
+            "avg_pr_review_days": 0.2,
             "has_jira_sync": true,
             "repo_views_14d": null
           },
@@ -11142,9 +11296,9 @@
           "result": "gold",
           "metrics": {
             "ownership_signal": true,
-            "response_coverage_rate": 64.7,
-            "avg_triage_days": 184.4,
-            "avg_pr_review_days": 22.5,
+            "response_coverage_rate": 58.8,
+            "avg_triage_days": 147.5,
+            "avg_pr_review_days": 31.3,
             "has_jira_sync": true,
             "repo_views_14d": null
           },
@@ -11177,13 +11331,13 @@
       ],
       "dimensions": {
         "test_verification": {
-          "medal": "unrated",
+          "medal": "silver",
           "target": "silver",
           "applicability": "scored",
-          "meets_target": false,
-          "result": "below_minimum",
+          "meets_target": true,
+          "result": "silver",
           "metrics": {
-            "latest_build_passing": false,
+            "latest_build_passing": true,
             "integration_test_evidence_present": true,
             "uses_jubilant": false,
             "coverage_pct": null,
@@ -11246,8 +11400,8 @@
           "result": "gold",
           "metrics": {
             "ownership_signal": true,
-            "response_coverage_rate": 81.6,
-            "avg_triage_days": 22.6,
+            "response_coverage_rate": 86.8,
+            "avg_triage_days": 25.4,
             "avg_pr_review_days": 0.3,
             "has_jira_sync": true,
             "repo_views_14d": null
@@ -11281,13 +11435,13 @@
       ],
       "dimensions": {
         "test_verification": {
-          "medal": "unrated",
+          "medal": "silver",
           "target": "silver",
           "applicability": "scored",
-          "meets_target": false,
-          "result": "below_minimum",
+          "meets_target": true,
+          "result": "silver",
           "metrics": {
-            "latest_build_passing": false,
+            "latest_build_passing": true,
             "integration_test_evidence_present": true,
             "uses_jubilant": false,
             "coverage_pct": null,
@@ -11350,8 +11504,8 @@
           "result": "gold",
           "metrics": {
             "ownership_signal": true,
-            "response_coverage_rate": 81.6,
-            "avg_triage_days": 22.6,
+            "response_coverage_rate": 86.8,
+            "avg_triage_days": 25.4,
             "avg_pr_review_days": 0.3,
             "has_jira_sync": true,
             "repo_views_14d": null
@@ -11385,15 +11539,15 @@
       ],
       "dimensions": {
         "test_verification": {
-          "medal": "silver",
+          "medal": "gold",
           "target": "gold",
           "applicability": "scored",
-          "meets_target": false,
-          "result": "silver",
+          "meets_target": true,
+          "result": "gold",
           "metrics": {
             "latest_build_passing": true,
             "integration_test_evidence_present": true,
-            "uses_jubilant": false,
+            "uses_jubilant": true,
             "coverage_pct": null,
             "stability_pct": null
           },
@@ -11558,9 +11712,9 @@
           "result": "below_minimum",
           "metrics": {
             "ownership_signal": false,
-            "response_coverage_rate": 90.9,
+            "response_coverage_rate": 81.8,
             "avg_triage_days": 127.0,
-            "avg_pr_review_days": 0.7,
+            "avg_pr_review_days": 0.6,
             "has_jira_sync": false,
             "repo_views_14d": null
           },
@@ -11593,15 +11747,15 @@
       ],
       "dimensions": {
         "test_verification": {
-          "medal": "gold",
+          "medal": "silver",
           "target": "gold",
           "applicability": "scored",
-          "meets_target": true,
-          "result": "gold",
+          "meets_target": false,
+          "result": "silver",
           "metrics": {
             "latest_build_passing": true,
             "integration_test_evidence_present": true,
-            "uses_jubilant": true,
+            "uses_jubilant": false,
             "coverage_pct": null,
             "stability_pct": null
           },
@@ -11662,9 +11816,9 @@
           "result": "below_minimum",
           "metrics": {
             "ownership_signal": false,
-            "response_coverage_rate": 66.7,
+            "response_coverage_rate": 67.4,
             "avg_triage_days": 0.0,
-            "avg_pr_review_days": 2.2,
+            "avg_pr_review_days": 2.4,
             "has_jira_sync": false,
             "repo_views_14d": null
           },
@@ -11766,9 +11920,9 @@
           "result": "below_minimum",
           "metrics": {
             "ownership_signal": false,
-            "response_coverage_rate": 100.0,
+            "response_coverage_rate": 88.9,
             "avg_triage_days": 0.0,
-            "avg_pr_review_days": 0.3,
+            "avg_pr_review_days": 0.4,
             "has_jira_sync": false,
             "repo_views_14d": null
           },
@@ -11801,13 +11955,13 @@
       ],
       "dimensions": {
         "test_verification": {
-          "medal": "gold",
+          "medal": "unrated",
           "target": "gold",
           "applicability": "scored",
-          "meets_target": true,
-          "result": "gold",
+          "meets_target": false,
+          "result": "below_minimum",
           "metrics": {
-            "latest_build_passing": true,
+            "latest_build_passing": false,
             "integration_test_evidence_present": true,
             "uses_jubilant": true,
             "coverage_pct": null,
@@ -11870,7 +12024,7 @@
           "result": "below_minimum",
           "metrics": {
             "ownership_signal": false,
-            "response_coverage_rate": 100.0,
+            "response_coverage_rate": 87.5,
             "avg_triage_days": 0.0,
             "avg_pr_review_days": 0.7,
             "has_jira_sync": false,
@@ -12009,13 +12163,13 @@
       ],
       "dimensions": {
         "test_verification": {
-          "medal": "unrated",
+          "medal": "silver",
           "target": "bronze",
           "applicability": "scored",
-          "meets_target": false,
-          "result": "below_minimum",
+          "meets_target": true,
+          "result": "silver",
           "metrics": {
-            "latest_build_passing": false,
+            "latest_build_passing": true,
             "integration_test_evidence_present": true,
             "uses_jubilant": false,
             "coverage_pct": null,
@@ -12078,9 +12232,9 @@
           "result": "gold",
           "metrics": {
             "ownership_signal": true,
-            "response_coverage_rate": null,
-            "avg_triage_days": null,
-            "avg_pr_review_days": null,
+            "response_coverage_rate": 57.1,
+            "avg_triage_days": 569.3,
+            "avg_pr_review_days": 0.0,
             "has_jira_sync": true,
             "repo_views_14d": null
           },
@@ -12121,7 +12275,7 @@
           "metrics": {
             "latest_build_passing": false,
             "integration_test_evidence_present": false,
-            "uses_jubilant": false,
+            "uses_jubilant": true,
             "coverage_pct": 83,
             "stability_pct": 92
           },
@@ -12182,9 +12336,9 @@
           "result": "gold",
           "metrics": {
             "ownership_signal": true,
-            "response_coverage_rate": 88.3,
+            "response_coverage_rate": 89.7,
             "avg_triage_days": 262.5,
-            "avg_pr_review_days": 1.9,
+            "avg_pr_review_days": 2.0,
             "has_jira_sync": true,
             "repo_views_14d": null
           },
@@ -12217,13 +12371,13 @@
       ],
       "dimensions": {
         "test_verification": {
-          "medal": "unrated",
+          "medal": "gold",
           "target": "bronze",
           "applicability": "scored",
-          "meets_target": false,
-          "result": "below_minimum",
+          "meets_target": true,
+          "result": "gold",
           "metrics": {
-            "latest_build_passing": false,
+            "latest_build_passing": true,
             "integration_test_evidence_present": true,
             "uses_jubilant": true,
             "coverage_pct": null,
@@ -12286,9 +12440,9 @@
           "result": "gold",
           "metrics": {
             "ownership_signal": true,
-            "response_coverage_rate": 55.2,
+            "response_coverage_rate": 56.7,
             "avg_triage_days": 517.8,
-            "avg_pr_review_days": 19.4,
+            "avg_pr_review_days": 18.2,
             "has_jira_sync": true,
             "repo_views_14d": null
           },
@@ -12321,13 +12475,13 @@
       ],
       "dimensions": {
         "test_verification": {
-          "medal": "unrated",
+          "medal": "gold",
           "target": "bronze",
           "applicability": "scored",
-          "meets_target": false,
-          "result": "below_minimum",
+          "meets_target": true,
+          "result": "gold",
           "metrics": {
-            "latest_build_passing": false,
+            "latest_build_passing": true,
             "integration_test_evidence_present": true,
             "uses_jubilant": true,
             "coverage_pct": null,
@@ -12390,9 +12544,9 @@
           "result": "gold",
           "metrics": {
             "ownership_signal": true,
-            "response_coverage_rate": 55.2,
+            "response_coverage_rate": 56.7,
             "avg_triage_days": 517.8,
-            "avg_pr_review_days": 19.4,
+            "avg_pr_review_days": 18.2,
             "has_jira_sync": true,
             "repo_views_14d": null
           },
@@ -12425,13 +12579,13 @@
       ],
       "dimensions": {
         "test_verification": {
-          "medal": "unrated",
+          "medal": "gold",
           "target": "bronze",
           "applicability": "scored",
-          "meets_target": false,
-          "result": "below_minimum",
+          "meets_target": true,
+          "result": "gold",
           "metrics": {
-            "latest_build_passing": false,
+            "latest_build_passing": true,
             "integration_test_evidence_present": true,
             "uses_jubilant": true,
             "coverage_pct": null,
@@ -12494,9 +12648,9 @@
           "result": "gold",
           "metrics": {
             "ownership_signal": true,
-            "response_coverage_rate": 55.2,
+            "response_coverage_rate": 56.7,
             "avg_triage_days": 517.8,
-            "avg_pr_review_days": 19.4,
+            "avg_pr_review_days": 18.2,
             "has_jira_sync": true,
             "repo_views_14d": null
           },
@@ -12529,13 +12683,13 @@
       ],
       "dimensions": {
         "test_verification": {
-          "medal": "unrated",
+          "medal": "gold",
           "target": "bronze",
           "applicability": "scored",
-          "meets_target": false,
-          "result": "below_minimum",
+          "meets_target": true,
+          "result": "gold",
           "metrics": {
-            "latest_build_passing": false,
+            "latest_build_passing": true,
             "integration_test_evidence_present": true,
             "uses_jubilant": true,
             "coverage_pct": null,
@@ -12598,9 +12752,9 @@
           "result": "gold",
           "metrics": {
             "ownership_signal": true,
-            "response_coverage_rate": 55.2,
+            "response_coverage_rate": 56.7,
             "avg_triage_days": 517.8,
-            "avg_pr_review_days": 19.4,
+            "avg_pr_review_days": 18.2,
             "has_jira_sync": true,
             "repo_views_14d": null
           },
@@ -12633,13 +12787,13 @@
       ],
       "dimensions": {
         "test_verification": {
-          "medal": "unrated",
+          "medal": "gold",
           "target": "bronze",
           "applicability": "scored",
-          "meets_target": false,
-          "result": "below_minimum",
+          "meets_target": true,
+          "result": "gold",
           "metrics": {
-            "latest_build_passing": false,
+            "latest_build_passing": true,
             "integration_test_evidence_present": true,
             "uses_jubilant": true,
             "coverage_pct": null,
@@ -12702,9 +12856,9 @@
           "result": "gold",
           "metrics": {
             "ownership_signal": true,
-            "response_coverage_rate": 55.2,
+            "response_coverage_rate": 56.7,
             "avg_triage_days": 517.8,
-            "avg_pr_review_days": 19.4,
+            "avg_pr_review_days": 18.2,
             "has_jira_sync": true,
             "repo_views_14d": null
           },
@@ -12718,11 +12872,11 @@
       "name": "charmed-bind",
       "description": "",
       "lifecycle": "stable",
-      "current_medal": "unrated",
+      "current_medal": "bronze",
       "target_medal": "bronze",
-      "current_result": "below_minimum",
+      "current_result": "bronze",
       "target_result": "bronze",
-      "meets_target": false,
+      "meets_target": true,
       "squad": "",
       "is_portfolio_entry": false,
       "documentation_url": "",
@@ -12737,13 +12891,13 @@
       ],
       "dimensions": {
         "test_verification": {
-          "medal": "unrated",
+          "medal": "gold",
           "target": "bronze",
           "applicability": "scored",
-          "meets_target": false,
-          "result": "below_minimum",
+          "meets_target": true,
+          "result": "gold",
           "metrics": {
-            "latest_build_passing": false,
+            "latest_build_passing": true,
             "integration_test_evidence_present": true,
             "uses_jubilant": true,
             "coverage_pct": null,
@@ -12806,9 +12960,9 @@
           "result": "gold",
           "metrics": {
             "ownership_signal": true,
-            "response_coverage_rate": 55.2,
+            "response_coverage_rate": 56.7,
             "avg_triage_days": 517.8,
-            "avg_pr_review_days": 19.4,
+            "avg_pr_review_days": 18.2,
             "has_jira_sync": true,
             "repo_views_14d": null
           },
@@ -12822,11 +12976,11 @@
       "name": "charmed-dns-policy",
       "description": "",
       "lifecycle": "stable",
-      "current_medal": "unrated",
+      "current_medal": "bronze",
       "target_medal": "bronze",
-      "current_result": "below_minimum",
+      "current_result": "bronze",
       "target_result": "bronze",
-      "meets_target": false,
+      "meets_target": true,
       "squad": "",
       "is_portfolio_entry": false,
       "documentation_url": "",
@@ -12841,13 +12995,13 @@
       ],
       "dimensions": {
         "test_verification": {
-          "medal": "unrated",
+          "medal": "gold",
           "target": "bronze",
           "applicability": "scored",
-          "meets_target": false,
-          "result": "below_minimum",
+          "meets_target": true,
+          "result": "gold",
           "metrics": {
-            "latest_build_passing": false,
+            "latest_build_passing": true,
             "integration_test_evidence_present": true,
             "uses_jubilant": true,
             "coverage_pct": null,
@@ -12910,9 +13064,9 @@
           "result": "gold",
           "metrics": {
             "ownership_signal": true,
-            "response_coverage_rate": 55.2,
+            "response_coverage_rate": 56.7,
             "avg_triage_days": 517.8,
-            "avg_pr_review_days": 19.4,
+            "avg_pr_review_days": 18.2,
             "has_jira_sync": true,
             "repo_views_14d": null
           },
@@ -13014,9 +13168,9 @@
           "result": "gold",
           "metrics": {
             "ownership_signal": true,
-            "response_coverage_rate": 90.6,
+            "response_coverage_rate": 91.4,
             "avg_triage_days": 0.0,
-            "avg_pr_review_days": 5.5,
+            "avg_pr_review_days": 5.0,
             "has_jira_sync": true,
             "repo_views_14d": null
           },
@@ -13057,7 +13211,7 @@
           "metrics": {
             "latest_build_passing": true,
             "integration_test_evidence_present": false,
-            "uses_jubilant": false,
+            "uses_jubilant": true,
             "coverage_pct": null,
             "stability_pct": null
           },
@@ -13118,9 +13272,9 @@
           "result": "gold",
           "metrics": {
             "ownership_signal": true,
-            "response_coverage_rate": 90.6,
+            "response_coverage_rate": 91.4,
             "avg_triage_days": 0.0,
-            "avg_pr_review_days": 5.5,
+            "avg_pr_review_days": 5.0,
             "has_jira_sync": true,
             "repo_views_14d": null
           },
@@ -13153,13 +13307,13 @@
       ],
       "dimensions": {
         "test_verification": {
-          "medal": "unrated",
+          "medal": "gold",
           "target": "gold",
           "applicability": "scored",
-          "meets_target": false,
-          "result": "below_minimum",
+          "meets_target": true,
+          "result": "gold",
           "metrics": {
-            "latest_build_passing": false,
+            "latest_build_passing": true,
             "integration_test_evidence_present": true,
             "uses_jubilant": true,
             "coverage_pct": null,
@@ -13222,9 +13376,113 @@
           "result": "gold",
           "metrics": {
             "ownership_signal": true,
-            "response_coverage_rate": 64.9,
-            "avg_triage_days": 64.5,
-            "avg_pr_review_days": 2.8,
+            "response_coverage_rate": 69.1,
+            "avg_triage_days": 75.2,
+            "avg_pr_review_days": 3.5,
+            "has_jira_sync": true,
+            "repo_views_14d": null
+          },
+          "composition": null
+        }
+      }
+    },
+    {
+      "id": "gopkg-k8s",
+      "product_type": "charm",
+      "name": "gopkg-k8s",
+      "description": "",
+      "lifecycle": "stable",
+      "current_medal": "unrated",
+      "target_medal": "bronze",
+      "current_result": "below_minimum",
+      "target_result": "bronze",
+      "meets_target": false,
+      "squad": "",
+      "is_portfolio_entry": false,
+      "documentation_url": "",
+      "source": {
+        "repo": "canonical/gopkg-charmed",
+        "subpath": null
+      },
+      "composed_of": null,
+      "context_refs": [],
+      "parent_product_ids": [
+        "gopkg"
+      ],
+      "dimensions": {
+        "test_verification": {
+          "medal": "bronze",
+          "target": "bronze",
+          "applicability": "scored",
+          "meets_target": true,
+          "result": "bronze",
+          "metrics": {
+            "latest_build_passing": true,
+            "integration_test_evidence_present": false,
+            "uses_jubilant": false,
+            "coverage_pct": null,
+            "stability_pct": null
+          },
+          "composition": null
+        },
+        "documentation": {
+          "medal": "silver",
+          "target": "bronze",
+          "applicability": "scored",
+          "meets_target": true,
+          "result": "silver",
+          "metrics": {
+            "readme_present": true,
+            "contributing_present": true,
+            "has_security": true,
+            "release_notes_process_implemented": false,
+            "documentation_workflows_passing": false,
+            "diataxis_coverage_ai": 0,
+            "uses_rtd_hosting": false,
+            "has_changelog": false
+          },
+          "composition": null
+        },
+        "substrate_compat": {
+          "medal": "unrated",
+          "target": "bronze",
+          "applicability": "scored",
+          "meets_target": false,
+          "result": "below_minimum",
+          "metrics": {
+            "supports_juju_3": false,
+            "substrate_test_evidence_present": false,
+            "supports_juju_4": false,
+            "uses_canonical_k8s": false
+          },
+          "composition": null
+        },
+        "security_ssdlc": {
+          "medal": "bronze",
+          "target": "bronze",
+          "applicability": "scored",
+          "meets_target": true,
+          "result": "bronze",
+          "metrics": {
+            "renovate_enabled": true,
+            "branch_protection_required_checks": false,
+            "signed_commits_required": false,
+            "sast_workflow_present": false,
+            "cve_tracking_process_present": true
+          },
+          "composition": null
+        },
+        "engagement": {
+          "medal": "gold",
+          "target": "bronze",
+          "applicability": "scored",
+          "meets_target": true,
+          "result": "gold",
+          "metrics": {
+            "ownership_signal": true,
+            "response_coverage_rate": 78.3,
+            "avg_triage_days": 0.0,
+            "avg_pr_review_days": 0.9,
             "has_jira_sync": true,
             "repo_views_14d": null
           },
@@ -13265,7 +13523,7 @@
           "metrics": {
             "latest_build_passing": false,
             "integration_test_evidence_present": false,
-            "uses_jubilant": false,
+            "uses_jubilant": true,
             "coverage_pct": null,
             "stability_pct": null
           },
@@ -13326,7 +13584,7 @@
           "result": "gold",
           "metrics": {
             "ownership_signal": true,
-            "response_coverage_rate": 95.7,
+            "response_coverage_rate": 92.0,
             "avg_triage_days": 28.0,
             "avg_pr_review_days": 0.8,
             "has_jira_sync": true,
@@ -13361,13 +13619,13 @@
       ],
       "dimensions": {
         "test_verification": {
-          "medal": "unrated",
+          "medal": "silver",
           "target": "gold",
           "applicability": "scored",
           "meets_target": false,
-          "result": "below_minimum",
+          "result": "silver",
           "metrics": {
-            "latest_build_passing": false,
+            "latest_build_passing": true,
             "integration_test_evidence_present": true,
             "uses_jubilant": false,
             "coverage_pct": null,
@@ -13430,9 +13688,9 @@
           "result": "gold",
           "metrics": {
             "ownership_signal": true,
-            "response_coverage_rate": 96.0,
+            "response_coverage_rate": 90.2,
             "avg_triage_days": 18.3,
-            "avg_pr_review_days": 1.3,
+            "avg_pr_review_days": 1.4,
             "has_jira_sync": true,
             "repo_views_14d": null
           },
@@ -13534,7 +13792,7 @@
           "result": "gold",
           "metrics": {
             "ownership_signal": true,
-            "response_coverage_rate": 95.7,
+            "response_coverage_rate": 92.0,
             "avg_triage_days": 28.0,
             "avg_pr_review_days": 0.8,
             "has_jira_sync": true,
@@ -13577,7 +13835,7 @@
           "metrics": {
             "latest_build_passing": false,
             "integration_test_evidence_present": false,
-            "uses_jubilant": false,
+            "uses_jubilant": true,
             "coverage_pct": null,
             "stability_pct": null
           },
@@ -13638,7 +13896,7 @@
           "result": "gold",
           "metrics": {
             "ownership_signal": true,
-            "response_coverage_rate": 95.7,
+            "response_coverage_rate": 92.0,
             "avg_triage_days": 28.0,
             "avg_pr_review_days": 0.8,
             "has_jira_sync": true,
@@ -13777,15 +14035,15 @@
       ],
       "dimensions": {
         "test_verification": {
-          "medal": "silver",
+          "medal": "gold",
           "target": "silver",
           "applicability": "scored",
           "meets_target": true,
-          "result": "silver",
+          "result": "gold",
           "metrics": {
             "latest_build_passing": true,
             "integration_test_evidence_present": true,
-            "uses_jubilant": false,
+            "uses_jubilant": true,
             "coverage_pct": null,
             "stability_pct": null
           },
@@ -13846,9 +14104,9 @@
           "result": "gold",
           "metrics": {
             "ownership_signal": true,
-            "response_coverage_rate": null,
-            "avg_triage_days": null,
-            "avg_pr_review_days": null,
+            "response_coverage_rate": 80.0,
+            "avg_triage_days": 162.9,
+            "avg_pr_review_days": 2.0,
             "has_jira_sync": true,
             "repo_views_14d": null
           },
@@ -13950,9 +14208,9 @@
           "result": "gold",
           "metrics": {
             "ownership_signal": true,
-            "response_coverage_rate": null,
-            "avg_triage_days": null,
-            "avg_pr_review_days": null,
+            "response_coverage_rate": 80.0,
+            "avg_triage_days": 162.9,
+            "avg_pr_review_days": 2.0,
             "has_jira_sync": true,
             "repo_views_14d": null
           },
@@ -14054,9 +14312,9 @@
           "result": "gold",
           "metrics": {
             "ownership_signal": true,
-            "response_coverage_rate": null,
-            "avg_triage_days": null,
-            "avg_pr_review_days": null,
+            "response_coverage_rate": 80.0,
+            "avg_triage_days": 162.9,
+            "avg_pr_review_days": 2.0,
             "has_jira_sync": true,
             "repo_views_14d": null
           },
@@ -14158,9 +14416,9 @@
           "result": "gold",
           "metrics": {
             "ownership_signal": true,
-            "response_coverage_rate": null,
-            "avg_triage_days": null,
-            "avg_pr_review_days": null,
+            "response_coverage_rate": 80.0,
+            "avg_triage_days": 162.9,
+            "avg_pr_review_days": 2.0,
             "has_jira_sync": true,
             "repo_views_14d": null
           },
@@ -14262,7 +14520,7 @@
           "result": "gold",
           "metrics": {
             "ownership_signal": true,
-            "response_coverage_rate": 95.0,
+            "response_coverage_rate": 95.2,
             "avg_triage_days": 310.5,
             "avg_pr_review_days": 0.0,
             "has_jira_sync": true,
@@ -14470,9 +14728,9 @@
           "result": "gold",
           "metrics": {
             "ownership_signal": true,
-            "response_coverage_rate": 33.7,
+            "response_coverage_rate": 40.9,
             "avg_triage_days": 184.7,
-            "avg_pr_review_days": 0.6,
+            "avg_pr_review_days": 5.5,
             "has_jira_sync": true,
             "repo_views_14d": null
           },
@@ -14678,8 +14936,8 @@
           "result": "gold",
           "metrics": {
             "ownership_signal": true,
-            "response_coverage_rate": 85.3,
-            "avg_triage_days": 157.4,
+            "response_coverage_rate": 84.8,
+            "avg_triage_days": 209.8,
             "avg_pr_review_days": 1.5,
             "has_jira_sync": true,
             "repo_views_14d": null
@@ -14782,7 +15040,7 @@
           "result": "gold",
           "metrics": {
             "ownership_signal": true,
-            "response_coverage_rate": 93.1,
+            "response_coverage_rate": 93.3,
             "avg_triage_days": 0.0,
             "avg_pr_review_days": 0.9,
             "has_jira_sync": true,
@@ -14825,7 +15083,7 @@
           "metrics": {
             "latest_build_passing": false,
             "integration_test_evidence_present": false,
-            "uses_jubilant": true,
+            "uses_jubilant": false,
             "coverage_pct": null,
             "stability_pct": null
           },
@@ -14886,7 +15144,7 @@
           "result": "gold",
           "metrics": {
             "ownership_signal": true,
-            "response_coverage_rate": 93.1,
+            "response_coverage_rate": 93.3,
             "avg_triage_days": 0.0,
             "avg_pr_review_days": 0.9,
             "has_jira_sync": true,
@@ -14990,7 +15248,7 @@
           "result": "gold",
           "metrics": {
             "ownership_signal": true,
-            "response_coverage_rate": 93.1,
+            "response_coverage_rate": 93.3,
             "avg_triage_days": 0.0,
             "avg_pr_review_days": 0.9,
             "has_jira_sync": true,
@@ -15033,7 +15291,7 @@
           "metrics": {
             "latest_build_passing": false,
             "integration_test_evidence_present": false,
-            "uses_jubilant": false,
+            "uses_jubilant": true,
             "coverage_pct": null,
             "stability_pct": null
           },
@@ -15094,7 +15352,7 @@
           "result": "gold",
           "metrics": {
             "ownership_signal": true,
-            "response_coverage_rate": 93.1,
+            "response_coverage_rate": 93.3,
             "avg_triage_days": 0.0,
             "avg_pr_review_days": 0.9,
             "has_jira_sync": true,
@@ -15198,7 +15456,7 @@
           "result": "gold",
           "metrics": {
             "ownership_signal": true,
-            "response_coverage_rate": 93.1,
+            "response_coverage_rate": 93.3,
             "avg_triage_days": 0.0,
             "avg_pr_review_days": 0.9,
             "has_jira_sync": true,
@@ -16238,7 +16496,7 @@
           "result": "gold",
           "metrics": {
             "ownership_signal": true,
-            "response_coverage_rate": 100.0,
+            "response_coverage_rate": 94.4,
             "avg_triage_days": 0.6,
             "avg_pr_review_days": 1.2,
             "has_jira_sync": true,
@@ -16273,15 +16531,15 @@
       ],
       "dimensions": {
         "test_verification": {
-          "medal": "silver",
+          "medal": "gold",
           "target": "bronze",
           "applicability": "scored",
           "meets_target": true,
-          "result": "silver",
+          "result": "gold",
           "metrics": {
             "latest_build_passing": true,
             "integration_test_evidence_present": true,
-            "uses_jubilant": false,
+            "uses_jubilant": true,
             "coverage_pct": null,
             "stability_pct": null
           },
@@ -16446,9 +16704,9 @@
           "result": "gold",
           "metrics": {
             "ownership_signal": true,
-            "response_coverage_rate": 83.3,
+            "response_coverage_rate": 75.0,
             "avg_triage_days": 266.1,
-            "avg_pr_review_days": 0.0,
+            "avg_pr_review_days": 0.2,
             "has_jira_sync": true,
             "repo_views_14d": null
           },
@@ -16862,7 +17120,7 @@
           "result": "gold",
           "metrics": {
             "ownership_signal": true,
-            "response_coverage_rate": 91.7,
+            "response_coverage_rate": 90.9,
             "avg_triage_days": 241.8,
             "avg_pr_review_days": 0.1,
             "has_jira_sync": true,
@@ -17070,9 +17328,9 @@
           "result": "gold",
           "metrics": {
             "ownership_signal": true,
-            "response_coverage_rate": 60.0,
+            "response_coverage_rate": 83.3,
             "avg_triage_days": 613.0,
-            "avg_pr_review_days": 0.6,
+            "avg_pr_review_days": 0.9,
             "has_jira_sync": true,
             "repo_views_14d": null
           },
@@ -17278,8 +17536,8 @@
           "result": "gold",
           "metrics": {
             "ownership_signal": true,
-            "response_coverage_rate": 94.7,
-            "avg_triage_days": 1.4,
+            "response_coverage_rate": 94.9,
+            "avg_triage_days": 0.8,
             "avg_pr_review_days": 0.3,
             "has_jira_sync": true,
             "repo_views_14d": null
@@ -17382,8 +17640,8 @@
           "result": "gold",
           "metrics": {
             "ownership_signal": true,
-            "response_coverage_rate": 94.7,
-            "avg_triage_days": 1.4,
+            "response_coverage_rate": 94.9,
+            "avg_triage_days": 0.8,
             "avg_pr_review_days": 0.3,
             "has_jira_sync": true,
             "repo_views_14d": null
@@ -17486,9 +17744,9 @@
           "result": "gold",
           "metrics": {
             "ownership_signal": true,
-            "response_coverage_rate": 86.7,
+            "response_coverage_rate": 93.8,
             "avg_triage_days": 226.1,
-            "avg_pr_review_days": 0.6,
+            "avg_pr_review_days": 0.9,
             "has_jira_sync": true,
             "repo_views_14d": null
           },
@@ -17529,7 +17787,7 @@
           "metrics": {
             "latest_build_passing": false,
             "integration_test_evidence_present": false,
-            "uses_jubilant": true,
+            "uses_jubilant": false,
             "coverage_pct": null,
             "stability_pct": null
           },
@@ -17590,9 +17848,9 @@
           "result": "gold",
           "metrics": {
             "ownership_signal": true,
-            "response_coverage_rate": 86.8,
-            "avg_triage_days": 184.6,
-            "avg_pr_review_days": 2.1,
+            "response_coverage_rate": 89.1,
+            "avg_triage_days": 196.1,
+            "avg_pr_review_days": 2.0,
             "has_jira_sync": true,
             "repo_views_14d": null
           },
@@ -17625,15 +17883,15 @@
       ],
       "dimensions": {
         "test_verification": {
-          "medal": "gold",
+          "medal": "silver",
           "target": "bronze",
           "applicability": "scored",
           "meets_target": true,
-          "result": "gold",
+          "result": "silver",
           "metrics": {
             "latest_build_passing": true,
             "integration_test_evidence_present": true,
-            "uses_jubilant": true,
+            "uses_jubilant": false,
             "coverage_pct": null,
             "stability_pct": null
           },
@@ -17694,7 +17952,7 @@
           "result": "gold",
           "metrics": {
             "ownership_signal": true,
-            "response_coverage_rate": 93.8,
+            "response_coverage_rate": 100.0,
             "avg_triage_days": 0.0,
             "avg_pr_review_days": 0.0,
             "has_jira_sync": true,
@@ -17833,13 +18091,13 @@
       ],
       "dimensions": {
         "test_verification": {
-          "medal": "silver",
+          "medal": "unrated",
           "target": "silver",
           "applicability": "scored",
-          "meets_target": true,
-          "result": "silver",
+          "meets_target": false,
+          "result": "below_minimum",
           "metrics": {
-            "latest_build_passing": true,
+            "latest_build_passing": false,
             "integration_test_evidence_present": true,
             "uses_jubilant": false,
             "coverage_pct": null,
@@ -17902,7 +18160,7 @@
           "result": "gold",
           "metrics": {
             "ownership_signal": true,
-            "response_coverage_rate": 41.7,
+            "response_coverage_rate": 35.7,
             "avg_triage_days": 0.0,
             "avg_pr_review_days": 1.1,
             "has_jira_sync": true,
@@ -18214,7 +18472,7 @@
           "result": "gold",
           "metrics": {
             "ownership_signal": true,
-            "response_coverage_rate": 56.2,
+            "response_coverage_rate": 57.1,
             "avg_triage_days": 367.6,
             "avg_pr_review_days": 0.5,
             "has_jira_sync": true,
