@@ -177,6 +177,36 @@ def test_classic_effective_protection_checks_and_signature_endpoint():
     assert result["signed_commits_required"] == measured(True)
 
 
+@pytest.mark.parametrize("setting", ["protection", "signatures", "rulesets"])
+@responses.activate
+def test_confirmed_settings_permission_denial_is_insufficient_data(setting):
+    evidence(protection={"required_status_checks": {"contexts": ["CI"]}})
+    urls = {
+        "protection": f"{API}/branches/main/protection",
+        "signatures": f"{API}/branches/main/protection/required_signatures",
+        "rulesets": f"{API}/rulesets?includes_parents=true&per_page=100&page=1",
+    }
+    responses.replace(
+        responses.GET,
+        urls[setting],
+        status=403,
+        json={"message": "Resource not accessible by personal access token"},
+        headers={"X-RateLimit-Remaining": "100"},
+    )
+    result = run()
+    unknown = (
+        ("branch_protection_required_checks", "signed_commits_required")
+        if setting == "protection"
+        else ("signed_commits_required",)
+    )
+    for key in unknown:
+        assert result[key].state == MetricState.INSUFFICIENT_DATA
+        assert "403" in result[key].reason
+        assert "permission" in result[key].reason.lower()
+    if setting != "protection":
+        assert result["branch_protection_required_checks"] == measured(True)
+
+
 @pytest.mark.parametrize(
     "checks",
     [{"contexts": []}, {"contexts": [""]}, {"checks": []}, None],

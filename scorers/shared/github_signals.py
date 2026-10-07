@@ -14,14 +14,42 @@ _LOGGER = logging.getLogger(__name__)
 class GitHubAcquisitionError(RuntimeError):
     """Raised when required GitHub evidence could not be acquired."""
 
-    def __init__(self, status_code: int, url: str):
+    def __init__(self, status_code: int, url: str, detail: str = ""):
         self.status_code = status_code
         self.url = url
-        super().__init__(f"GitHub evidence acquisition failed: status={status_code} url={url}")
+        super().__init__(
+            f"GitHub evidence acquisition failed: status={status_code} url={url}"
+            + (f" ({detail})" if detail else "")
+        )
+
+
+class GitHubPermissionError(GitHubAcquisitionError):
+    """GitHub explicitly denied permission, rather than rate limiting the request."""
 
 
 def raise_for_required_github_evidence(response: requests.Response, url: str) -> None:
     if not response.ok:
+        if (
+            response.status_code == 403
+            and getattr(response, "headers", {}).get("X-RateLimit-Remaining") != "0"
+            and not getattr(response, "headers", {}).get("Retry-After")
+        ):
+            try:
+                payload = response.json()
+            except ValueError:
+                payload = None
+            message = payload.get("message") if isinstance(payload, dict) else None
+            if isinstance(message, str) and any(
+                marker in message.lower()
+                for marker in (
+                    "resource not accessible by personal access token",
+                    "resource not accessible by integration",
+                    "must have admin rights",
+                )
+            ):
+                raise GitHubPermissionError(
+                    response.status_code, url, f"permission denied: {message}"
+                )
         raise GitHubAcquisitionError(response.status_code, url)
 
 

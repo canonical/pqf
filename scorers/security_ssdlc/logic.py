@@ -1,11 +1,13 @@
 import base64
+from collections.abc import Callable
 from typing import Any
 from urllib.parse import urlencode
 
-from engine.metric_outcomes import MetricOutcome, measured, not_applicable
+from engine.metric_outcomes import MetricOutcome, insufficient_data, measured, not_applicable
 from engine.models import EvaluationUnit
 from scorers.security_ssdlc.v0 import compute_v0_metrics as compute_v0_metrics
 from scorers.shared.github_signals import (
+    GitHubPermissionError,
     github_get,
     raise_for_required_github_evidence,
 )
@@ -186,6 +188,15 @@ def _is_registered_in_repo_automation(owner_repo: str, github_token: str) -> boo
     )
 
 
+def _protection_outcome(
+    measure: Callable[[str, str], bool], repo: str, token: str
+) -> MetricOutcome:
+    try:
+        return measured(measure(repo, token))
+    except GitHubPermissionError as exc:
+        return insufficient_data(str(exc))
+
+
 def compute_metrics(unit: EvaluationUnit, github_token: str) -> dict[str, MetricOutcome]:
     """
     Check SSDLC signals for the evaluation unit's repo.
@@ -194,7 +205,6 @@ def compute_metrics(unit: EvaluationUnit, github_token: str) -> dict[str, Metric
     canonical_repo_automation_registered = False
     sast_workflow_present = False
     cve_tracking_process_present = False
-    signed_commits_required = False
 
     if unit.repo:
         renovate_enabled = any(
@@ -215,21 +225,24 @@ def compute_metrics(unit: EvaluationUnit, github_token: str) -> dict[str, Metric
         )
         sast_workflow_present = _has_sast_workflow(unit.repo, github_token)
         cve_tracking_process_present = _has_cve_tracking_process(unit.repo, github_token)
-        signed_commits_required = _has_signed_commits_required(unit.repo, github_token)
-
-    branch_protection = (
-        _has_branch_protection_required_checks(unit.repo, github_token) if unit.repo else False
-    )
 
     values = {
         "renovate_enabled": renovate_enabled,
         "canonical_repo_automation_registered": canonical_repo_automation_registered,
-        "branch_protection_required_checks": branch_protection,
-        "signed_commits_required": signed_commits_required,
         "sast_workflow_present": sast_workflow_present,
         "cve_tracking_process_present": cve_tracking_process_present,
     }
-    return {
+    outcomes = {
         key: measured(value) if unit.repo else not_applicable("Evaluation unit has no repository.")
         for key, value in values.items()
     }
+    for key, measure in (
+        ("signed_commits_required", _has_signed_commits_required),
+        ("branch_protection_required_checks", _has_branch_protection_required_checks),
+    ):
+        outcomes[key] = (
+            _protection_outcome(measure, unit.repo, github_token)
+            if unit.repo
+            else not_applicable("Evaluation unit has no repository.")
+        )
+    return outcomes

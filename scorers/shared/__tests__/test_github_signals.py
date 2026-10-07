@@ -3,14 +3,45 @@ import responses
 
 from scorers.shared import github_signals
 from scorers.shared.github_signals import (
+    GitHubAcquisitionError,
+    GitHubPermissionError,
     build_github_session,
     default_branch_check_runs,
     github_get,
+    raise_for_required_github_evidence,
     repo_file_exists,
     repo_topics,
     search_code_count,
     workflow_files,
 )
+
+
+@pytest.mark.parametrize(
+    ("status", "message", "headers", "permission_denied"),
+    [
+        (403, "Resource not accessible by personal access token", {}, True),
+        (403, "Resource not accessible by integration", {}, True),
+        (403, "Must have admin rights to Repository.", {}, True),
+        (403, "API rate limit exceeded", {"X-RateLimit-Remaining": "0"}, False),
+        (403, "Resource not accessible by integration", {"Retry-After": "60"}, False),
+        (403, "Forbidden", {}, False),
+        (401, "Bad credentials", {}, False),
+        (429, "Too many requests", {}, False),
+        (500, "Internal server error", {}, False),
+    ],
+)
+@responses.activate
+def test_only_explicit_permission_denials_are_classified(
+    status, message, headers, permission_denied
+):
+    url = "https://api.github.com/repos/canonical/example/branches/main/protection"
+    responses.get(url, status=status, json={"message": message}, headers=headers)
+    response = build_github_session("gh-token").get(url)
+
+    with pytest.raises(GitHubAcquisitionError) as error:
+        raise_for_required_github_evidence(response, url)
+
+    assert isinstance(error.value, GitHubPermissionError) is permission_denied
 
 
 @pytest.mark.parametrize("status", [403, 404])

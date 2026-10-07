@@ -190,6 +190,33 @@ def test_returns_defaults_when_repo_empty():
     assert all(outcome.state == MetricState.NOT_APPLICABLE for outcome in result.values())
 
 
+@responses.activate
+def test_v1_confirmed_protection_permission_denial_is_insufficient_data(mocker):
+    mocker.patch("scorers.security_ssdlc.logic.repo_file_exists", return_value=True)
+    mocker.patch("scorers.security_ssdlc.logic._has_sast_workflow", return_value=False)
+    mocker.patch("scorers.security_ssdlc.logic._has_cve_tracking_process", return_value=False)
+    mocker.patch(
+        "scorers.security_ssdlc.logic._is_registered_in_repo_automation", return_value=False
+    )
+    responses.get(
+        "https://api.github.com/repos/canonical/synapse-operator",
+        json={"default_branch": "main"},
+    )
+    responses.get(
+        "https://api.github.com/repos/canonical/synapse-operator/branches/main/protection",
+        status=403,
+        json={"message": "Must have admin rights to Repository."},
+        headers={"X-RateLimit-Remaining": "100"},
+    )
+
+    result = compute_metrics(UNIT, "token")
+
+    assert result["renovate_enabled"] == measured(True)
+    for key in ("branch_protection_required_checks", "signed_commits_required"):
+        assert result[key].state == MetricState.INSUFFICIENT_DATA
+        assert "permission" in result[key].reason.lower()
+
+
 def test_framework_contracts_declare_ssdlc_metrics():
     from pathlib import Path
 

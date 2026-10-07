@@ -87,19 +87,29 @@ PQF distinguishes acquired evidence that measures low from evidence that could n
 | `insufficient_data` | A required metric is unavailable |
 | Acquisition exception | GitHub evidence could not be fetched reliably; the scoring job fails and publishes nothing |
 
-Required acquisition paths that use the shared GitHub evidence helpers fail closed. For public
-evidence, an authenticated request may be retried anonymously when authentication fails or the
-authenticated client is rate-limited; if the required request still fails,
-`GitHubAcquisitionError` stops the compute job. A response is treated as absence only where the
+Required acquisition paths that use the shared GitHub evidence helpers fail closed. Rate limits
+are retried up to three times with the same credentials, honoring the server's retry/reset time
+(at most one hour per wait). Public evidence may be retried anonymously for authentication or
+visibility errors; an unsuccessful fallback preserves the authenticated response. If required
+acquisition still fails, `GitHubAcquisitionError` stops the compute job. A response is treated as absence only where the
 scorer defines that response as valid evidence of absence. Optional signals that an API cannot
 expose reliably, such as repository traffic, report `insufficient_data` with a reason instead.
+
+An explicit permission denial while reading protection/signature settings is a supported
+unmeasurable case: the affected security metric reports `insufficient_data`, including the denied
+endpoint in its reason. Independently acquired positive protection evidence remains valid.
+Unknown required evidence still blocks the medal. Generic 403s, invalid credentials, exhausted
+rate limits and server failures are not covered by this exception.
 
 Production scoring uses the repository secret **`PQF_GITHUB_TOKEN`**, not the workflow's
 repository-scoped `GITHUB_TOKEN`. Classic branch-protection/signature endpoints require
 authenticated access to each tracked repository; anonymous public access is not enough.
 Configure a read-only token for the tracked repositories and authoritative evidence repositories,
-with Contents, Issues, Pull requests, Checks, Actions and Administration read permissions
-(and Metadata read).
+with Contents, Issues, Pull requests, Commit statuses, Actions and Administration read permissions
+(and Metadata read). A fine-grained personal token is a temporary option; it does not offer a
+Checks permission, but public check runs can be read without that permission. The longer-term
+organization-owned GitHub App should also have Checks read access; see
+[issue #46](https://github.com/canonical/pqf/issues/46).
 Do not grant scoring write permissions. The compute job fails explicitly if this secret is missing.
 The ordinary workflow token remains separate and is used for deployment.
 

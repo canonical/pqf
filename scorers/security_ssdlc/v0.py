@@ -10,7 +10,11 @@ from urllib.parse import quote
 
 from engine.metric_outcomes import MetricOutcome, insufficient_data, measured, not_applicable
 from engine.models import EvaluationUnit
-from scorers.shared.github_signals import github_get, raise_for_required_github_evidence
+from scorers.shared.github_signals import (
+    GitHubPermissionError,
+    github_get,
+    raise_for_required_github_evidence,
+)
 
 _API = "https://api.github.com"
 _CONFIG_PATHS = (
@@ -382,9 +386,13 @@ def _protection(repo: str, token: str, metadata: dict[str, Any]) -> dict[str, Me
     if not isinstance(branch, str) or not branch:
         return dict.fromkeys(keys, insufficient_data("Repository default branch is unavailable."))
     url = f"{_API}/repos/{repo}/branches/{quote(branch, safe='')}/protection"
-    classic = _get(url, token, absent_ok=True)
     values = dict.fromkeys(keys, False)
     unknown: dict[str, str] = {}
+    try:
+        classic = _get(url, token, absent_ok=True)
+    except GitHubPermissionError as exc:
+        classic = None
+        unknown.update(dict.fromkeys(keys, str(exc)))
     if classic is not None:
         try:
             if not isinstance(classic, dict):
@@ -395,7 +403,10 @@ def _protection(repo: str, token: str, metadata: dict[str, Any]) -> dict[str, Me
                 unknown[keys[0]] = str(exc)
             signatures = classic.get("required_signatures")
             if signatures is None:
-                signatures = _get(f"{url}/required_signatures", token, absent_ok=True)
+                try:
+                    signatures = _get(f"{url}/required_signatures", token, absent_ok=True)
+                except GitHubPermissionError as exc:
+                    unknown[keys[1]] = str(exc)
             if signatures is not None:
                 if not isinstance(signatures, dict) or not isinstance(
                     signatures.get("enabled"), bool
@@ -407,7 +418,7 @@ def _protection(repo: str, token: str, metadata: dict[str, Any]) -> dict[str, Me
             unknown.update(dict.fromkeys(keys, str(exc)))
     try:
         rulesets = _rulesets(repo, token)
-    except _UnknownEvidence as exc:
+    except (_UnknownEvidence, GitHubPermissionError) as exc:
         rulesets = []
         unknown.update(dict.fromkeys(keys, str(exc)))
     for key, kind in zip(keys, ("required_status_checks", "required_signatures"), strict=True):
