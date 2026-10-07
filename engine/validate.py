@@ -82,6 +82,13 @@ def _validate_dimension_contract(
                     f"framework {framework.id} dimension {dimension_name} "
                     f"required_metrics_for_scoring references undeclared output {metric_key!r}"
                 )
+            elif isinstance(outputs[metric_key], dict) and outputs[metric_key].get(
+                "informational", False
+            ):
+                errors.append(
+                    f"framework {framework.id} dimension {dimension_name} "
+                    f"required_metrics_for_scoring references informational output {metric_key!r}"
+                )
 
     medals = dimension_config.get("medals", {})
     if isinstance(medals, dict):
@@ -103,6 +110,13 @@ def _validate_dimension_contract(
                     errors.append(
                         f"framework {framework.id} dimension {dimension_name} "
                         f"criteria reference undeclared output {metric_key!r}"
+                    )
+                elif isinstance(outputs[metric_key], dict) and outputs[metric_key].get(
+                    "informational", False
+                ):
+                    errors.append(
+                        f"framework {framework.id} dimension {dimension_name} "
+                        f"criteria reference informational output {metric_key!r}"
                     )
 
     for output_key, output_config in outputs.items():

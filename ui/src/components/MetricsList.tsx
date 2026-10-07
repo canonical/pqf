@@ -1,9 +1,10 @@
 import React from 'react'
-import type { MetricValue } from '../types'
+import type { MetricOutcome } from '../types'
+import MetricEvidence from './MetricEvidence'
 
 interface ThresholdInfo {
   operator: string
-  value: number | boolean
+  value: string | number | boolean
   metricLabel?: string
   metricDescription?: string
 }
@@ -18,7 +19,7 @@ interface OutputMetaLocal {
 }
 
 interface Props {
-  metrics: Record<string, MetricValue>
+  metrics: Record<string, MetricOutcome>
   thresholds?: Record<string, ThresholdInfo>
   metaOutputs?: Record<string, OutputMetaLocal>
 }
@@ -47,66 +48,6 @@ function extractUnit(range: string | undefined): string | null {
   if (!range) return null
   const m = range.match(/([a-zA-Z%]+)$/)
   return m ? m[1] : null
-}
-
-function meetsThreshold(val: string | number | boolean, op: string, threshold: number | boolean): boolean {
-  const n = Number(val)
-  const t = Number(threshold)
-
-  switch (op) {
-    case '>=':
-      return n >= t
-    case '<=':
-      return n <= t
-    case '>':
-      return n > t
-    case '<':
-      return n < t
-    case '==':
-      return String(val) === String(threshold)
-    default:
-      return false
-  }
-}
-
-function formatValue(
-  val: MetricValue,
-  threshold?: ThresholdInfo,
-  unit?: string | null,
-): React.ReactNode {
-  if (val === null) {
-    return <span style={{ color: '#999' }}>—</span>
-  }
-
-  if (typeof val === 'boolean') {
-    if (threshold === undefined) {
-      return val
-        ? <span style={{ color: '#2d9e46' }}>✓</span>
-        : <span style={{ color: '#666' }}>✗</span>
-    }
-    const passes = meetsThreshold(val, threshold.operator, threshold.value)
-    return passes
-      ? <span style={{ color: '#2d9e46', fontWeight: 600 }}>✓</span>
-      : <span style={{ color: '#c7162b', fontWeight: 600 }}>✗</span>
-  }
-
-  const label = String(val)
-  const unitSuffix = unit ? <span style={{ color: '#999', fontWeight: 400, fontSize: '0.75rem' }}> {unit}</span> : null
-
-  if (threshold === undefined) {
-    return <span>{label}{unitSuffix}</span>
-  }
-
-  const passes = meetsThreshold(val, threshold.operator, threshold.value)
-  const color = passes ? '#2d9e46' : '#c7162b'
-  const thresholdDisplay = String(threshold.value)
-
-  return (
-    <span style={{ color, fontWeight: 600, fontVariantNumeric: 'tabular-nums' }}>
-      {label}{unitSuffix}
-      <span style={{ color: '#999', fontWeight: 400, fontSize: '0.75rem' }}> / {thresholdDisplay}{unit ? ` ${unit}` : ''}</span>
-    </span>
-  )
 }
 
 export default function MetricsList({ metrics, thresholds, metaOutputs }: Props) {
@@ -144,7 +85,7 @@ export default function MetricsList({ metrics, thresholds, metaOutputs }: Props)
               )}
             </dt>
             <dd style={{ margin: 0, textAlign: 'right' }}>
-              {formatValue(val, isInformational ? undefined : threshold, unit)}
+              <MetricEvidence outcome={val} threshold={isInformational ? undefined : threshold} unit={unit} />
             </dd>
           </React.Fragment>
         )

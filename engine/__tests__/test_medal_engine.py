@@ -1,5 +1,6 @@
 # engine/__tests__/test_medal_engine.py
 from engine.medal_engine import compute_leaf_product, compute_product
+from engine.metric_outcomes import insufficient_data, measured
 from engine.models import ApplicabilityOutcome, Medal, Result
 
 # Minimal two-dimension config for testing (no applies_to → compute_product only)
@@ -51,12 +52,15 @@ _PRODUCT = {"id": "test-product", "target_medal": "gold"}
 def test_current_medal_is_lowest_across_dimensions():
     computed = {
         "metrics": {
-            "test_verification": {"coverage_pct": 95, "latest_build_passing": True},
+            "test_verification": {
+                "coverage_pct": measured(95),
+                "latest_build_passing": measured(True),
+            },
             # documentation only meets bronze
             "documentation": {
-                "has_readme": True,
-                "diataxis_coverage": 2,
-                "style_linter_passing": False,
+                "has_readme": measured(True),
+                "diataxis_coverage": measured(2),
+                "style_linter_passing": measured(False),
             },
         }
     }
@@ -72,11 +76,14 @@ def test_current_medal_is_lowest_across_dimensions():
 def test_all_gold_dimensions_gives_gold_product():
     computed = {
         "metrics": {
-            "test_verification": {"coverage_pct": 95, "latest_build_passing": True},
+            "test_verification": {
+                "coverage_pct": measured(95),
+                "latest_build_passing": measured(True),
+            },
             "documentation": {
-                "has_readme": True,
-                "diataxis_coverage": 4,
-                "style_linter_passing": True,
+                "has_readme": measured(True),
+                "diataxis_coverage": measured(4),
+                "style_linter_passing": measured(True),
             },
         }
     }
@@ -88,11 +95,14 @@ def test_all_gold_dimensions_gives_gold_product():
 def test_all_silver_gives_silver_product():
     computed = {
         "metrics": {
-            "test_verification": {"coverage_pct": 85, "latest_build_passing": True},
+            "test_verification": {
+                "coverage_pct": measured(85),
+                "latest_build_passing": measured(True),
+            },
             "documentation": {
-                "has_readme": True,
-                "diataxis_coverage": 4,
-                "style_linter_passing": False,
+                "has_readme": measured(True),
+                "diataxis_coverage": measured(4),
+                "style_linter_passing": measured(False),
             },
         }
     }
@@ -106,28 +116,31 @@ def test_missing_dimension_in_computed_treated_as_empty_metrics():
     computed = {
         "metrics": {
             "documentation": {
-                "has_readme": True,
-                "diataxis_coverage": 4,
-                "style_linter_passing": True,
+                "has_readme": measured(True),
+                "diataxis_coverage": measured(4),
+                "style_linter_passing": measured(True),
             },
         }
     }
     result = compute_product(_PRODUCT, computed, _DIMENSIONS)
     # test_verification gets empty metrics → bronze conditions fail → unrated
     assert result.dimensions["test_verification"].medal == Medal.UNRATED
-    assert result.dimensions["test_verification"].result == Result.BELOW_MINIMUM
-    assert result.current_medal == Medal.UNRATED
-    assert result.current_result == Result.BELOW_MINIMUM
+    assert result.dimensions["test_verification"].result == Result.INSUFFICIENT_DATA
+    assert result.current_medal == Medal.GOLD
+    assert result.current_result == Result.INSUFFICIENT_DATA
 
 
 def test_compute_product_required_metric_none_keeps_dimension_unrated():
     computed = {
         "metrics": {
-            "test_verification": {"coverage_pct": None, "latest_build_passing": True},
+            "test_verification": {
+                "coverage_pct": insufficient_data("No measurement available."),
+                "latest_build_passing": measured(True),
+            },
             "documentation": {
-                "has_readme": True,
-                "diataxis_coverage": 4,
-                "style_linter_passing": True,
+                "has_readme": measured(True),
+                "diataxis_coverage": measured(4),
+                "style_linter_passing": measured(True),
             },
         }
     }
@@ -138,20 +151,23 @@ def test_compute_product_required_metric_none_keeps_dimension_unrated():
     assert result.dimensions["test_verification"].medal == Medal.UNRATED
     assert result.dimensions["test_verification"].result == Result.INSUFFICIENT_DATA
     assert result.current_medal == Medal.GOLD
-    assert result.current_result == Result.GOLD
+    assert result.current_result == Result.INSUFFICIENT_DATA
 
 
 def test_entirely_empty_computed_gives_unrated():
     result = compute_product(_PRODUCT, {}, _DIMENSIONS)
     assert result.current_medal == Medal.UNRATED
-    assert result.current_result == Result.BELOW_MINIMUM
+    assert result.current_result == Result.INSUFFICIENT_DATA
 
 
 def test_dimension_results_contain_target_medal():
     computed = {
         "metrics": {
-            "test_verification": {"coverage_pct": 85, "latest_build_passing": True},
-            "documentation": {"has_readme": True, "diataxis_coverage": 2},
+            "test_verification": {
+                "coverage_pct": measured(85),
+                "latest_build_passing": measured(True),
+            },
+            "documentation": {"has_readme": measured(True), "diataxis_coverage": measured(2)},
         }
     }
     result = compute_product(_PRODUCT, computed, _DIMENSIONS)
@@ -168,11 +184,14 @@ def test_product_id_and_target_medal_in_result():
 def test_dimension_and_product_meets_target_flags_reflect_compliance():
     computed = {
         "metrics": {
-            "test_verification": {"coverage_pct": 75, "latest_build_passing": True},
+            "test_verification": {
+                "coverage_pct": measured(75),
+                "latest_build_passing": measured(True),
+            },
             "documentation": {
-                "has_readme": True,
-                "diataxis_coverage": 4,
-                "style_linter_passing": True,
+                "has_readme": measured(True),
+                "diataxis_coverage": measured(4),
+                "style_linter_passing": measured(True),
             },
         }
     }
@@ -187,8 +206,12 @@ def test_dimension_and_product_meets_target_flags_reflect_compliance():
 
 def test_leaf_product_all_gold():
     metrics = {
-        "test_verification": {"coverage_pct": 95, "latest_build_passing": True},
-        "documentation": {"has_readme": True, "diataxis_coverage": 4, "style_linter_passing": True},
+        "test_verification": {"coverage_pct": measured(95), "latest_build_passing": measured(True)},
+        "documentation": {
+            "has_readme": measured(True),
+            "diataxis_coverage": measured(4),
+            "style_linter_passing": measured(True),
+        },
     }
     result = compute_leaf_product("p", "charm", metrics, _DIMENSIONS_WITH_APPLICABILITY, "gold")
     assert result.current_medal == Medal.GOLD
@@ -199,8 +222,12 @@ def test_leaf_product_all_gold():
 
 def test_leaf_product_not_applicable_for_wrong_type():
     metrics = {
-        "test_verification": {"coverage_pct": 95, "latest_build_passing": True},
-        "documentation": {"has_readme": True, "diataxis_coverage": 4, "style_linter_passing": True},
+        "test_verification": {"coverage_pct": measured(95), "latest_build_passing": measured(True)},
+        "documentation": {
+            "has_readme": measured(True),
+            "diataxis_coverage": measured(4),
+            "style_linter_passing": measured(True),
+        },
     }
     result = compute_leaf_product("p", "root", metrics, _DIMENSIONS_WITH_APPLICABILITY, "gold")
     # "root" not in applies_to → all NOT_APPLICABLE → current_medal UNRATED
@@ -214,7 +241,11 @@ def test_leaf_product_not_applicable_for_wrong_type():
 def test_leaf_product_insufficient_data_excluded_from_medal():
     # Only documentation has metrics; test_verification is empty → INSUFFICIENT_DATA
     metrics = {
-        "documentation": {"has_readme": True, "diataxis_coverage": 4, "style_linter_passing": True},
+        "documentation": {
+            "has_readme": measured(True),
+            "diataxis_coverage": measured(4),
+            "style_linter_passing": measured(True),
+        },
     }
     result = compute_leaf_product("p", "charm", metrics, _DIMENSIONS_WITH_APPLICABILITY, "gold")
     assert (
@@ -225,14 +256,21 @@ def test_leaf_product_insufficient_data_excluded_from_medal():
     assert result.dimensions["test_verification"].result == Result.INSUFFICIENT_DATA
     # Only scored dimension is documentation (gold) → current_medal is gold
     assert result.current_medal == Medal.GOLD
-    assert result.current_result == Result.GOLD
+    assert result.current_result == Result.INSUFFICIENT_DATA
     assert result.meets_target is False
 
 
 def test_leaf_product_required_metric_none_returns_insufficient_data():
     metrics = {
-        "test_verification": {"coverage_pct": None, "latest_build_passing": True},
-        "documentation": {"has_readme": True, "diataxis_coverage": 4, "style_linter_passing": True},
+        "test_verification": {
+            "coverage_pct": insufficient_data("No measurement available."),
+            "latest_build_passing": measured(True),
+        },
+        "documentation": {
+            "has_readme": measured(True),
+            "diataxis_coverage": measured(4),
+            "style_linter_passing": measured(True),
+        },
     }
     result = compute_leaf_product("p", "charm", metrics, _DIMENSIONS_WITH_APPLICABILITY, "gold")
     assert (
@@ -246,8 +284,12 @@ def test_leaf_product_required_metric_none_returns_insufficient_data():
 
 def test_leaf_product_required_metrics_present_scores_normally():
     metrics = {
-        "test_verification": {"coverage_pct": 75, "latest_build_passing": True},
-        "documentation": {"has_readme": True, "diataxis_coverage": 4, "style_linter_passing": True},
+        "test_verification": {"coverage_pct": measured(75), "latest_build_passing": measured(True)},
+        "documentation": {
+            "has_readme": measured(True),
+            "diataxis_coverage": measured(4),
+            "style_linter_passing": measured(True),
+        },
     }
     result = compute_leaf_product("p", "charm", metrics, _DIMENSIONS_WITH_APPLICABILITY, "gold")
     assert result.dimensions["test_verification"].applicability == ApplicabilityOutcome.SCORED

@@ -1,6 +1,8 @@
 from dataclasses import dataclass
 from enum import StrEnum
 
+from engine.metric_outcomes import MetricOutcome
+
 
 class Medal(StrEnum):
     UNRATED = "unrated"
@@ -49,7 +51,7 @@ class ApplicabilityOutcome(StrEnum):
     INSUFFICIENT_DATA = "insufficient_data"
 
 
-@dataclass
+@dataclass(frozen=True)
 class EvaluationUnit:
     """Single leaf product to score — the fundamental unit of computation."""
 
@@ -60,6 +62,10 @@ class EvaluationUnit:
     allure_report_url: str = ""
     documentation_url: str = ""
     target_medal: str = "bronze"
+    documentation_exemption: str = ""
+    documentation_repo: str = ""
+    documentation_path: str = "docs"
+    has_user_facing_documentation: bool = True
 
 
 @dataclass
@@ -67,7 +73,7 @@ class DimensionResult:
     medal: Medal
     target: Medal
     meets_target: bool
-    metrics: dict
+    metrics: dict[str, MetricOutcome]
     applicability: ApplicabilityOutcome = ApplicabilityOutcome.SCORED
     result: Result = Result.GOLD
     composition: list["LeafDimensionResult"] | None = None
@@ -82,7 +88,7 @@ class LeafDimensionResult:
     medal: Medal
     result: Result
     applicability: ApplicabilityOutcome
-    metrics: dict
+    metrics: dict[str, MetricOutcome]
     excluded_from_parent_medal: bool = False
 
 

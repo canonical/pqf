@@ -3,6 +3,7 @@ from __future__ import annotations
 
 from typing import Any
 
+from engine.metric_outcomes import MetricOutcome, MetricState
 from engine.models import (
     MEDAL_RANK,
     ApplicabilityOutcome,
@@ -11,6 +12,7 @@ from engine.models import (
     Medal,
     Result,
 )
+from engine.rubric import parse_condition
 
 
 def _compute_result(medal: Medal, applicability: ApplicabilityOutcome) -> Result:
@@ -44,7 +46,7 @@ def _meets_target(
 
 def compute_leaf_applicability(
     product_type: str | None,
-    metrics: dict[str, Any],
+    metrics: dict[str, MetricOutcome],
     dim_config: dict[str, Any],
 ) -> ApplicabilityOutcome:
     """Determine if this dimension applies to this product type and has data."""
@@ -55,8 +57,20 @@ def compute_leaf_applicability(
             return ApplicabilityOutcome.NOT_APPLICABLE
     if not metrics:
         return ApplicabilityOutcome.INSUFFICIENT_DATA
+    graded = {
+        parse_condition(condition)[0]
+        for conditions in dim_config.get("medals", {}).values()
+        for condition in conditions
+    }
+    if graded and all(
+        key in metrics and metrics[key].state == MetricState.NOT_APPLICABLE for key in graded
+    ):
+        return ApplicabilityOutcome.NOT_APPLICABLE
     required_metrics = dim_config.get("required_metrics_for_scoring", [])
-    if any(metrics.get(metric_name) is None for metric_name in required_metrics):
+    if any(
+        metric_name not in metrics or metrics[metric_name].state == MetricState.INSUFFICIENT_DATA
+        for metric_name in required_metrics
+    ):
         return ApplicabilityOutcome.INSUFFICIENT_DATA
     return ApplicabilityOutcome.SCORED
 
@@ -73,6 +87,22 @@ def aggregate_root_dimension(
     del dim_config
     target = Medal(target_medal)
 
+    eligible = [
+        r
+        for r in leaf_results
+        if not r.excluded_from_parent_medal
+        and r.applicability != ApplicabilityOutcome.NOT_APPLICABLE
+    ]
+    if any(r.applicability == ApplicabilityOutcome.INSUFFICIENT_DATA for r in eligible):
+        return DimensionResult(
+            medal=Medal.UNRATED,
+            target=target,
+            meets_target=False,
+            applicability=ApplicabilityOutcome.INSUFFICIENT_DATA,
+            result=Result.INSUFFICIENT_DATA,
+            metrics={},
+            composition=list(leaf_results),
+        )
     in_scope = [
         r
         for r in leaf_results
@@ -81,7 +111,8 @@ def aggregate_root_dimension(
 
     if not in_scope:
         all_na = not leaf_results or all(
-            r.applicability == ApplicabilityOutcome.NOT_APPLICABLE for r in leaf_results
+            r.excluded_from_parent_medal or r.applicability == ApplicabilityOutcome.NOT_APPLICABLE
+            for r in leaf_results
         )
         applicability = (
             ApplicabilityOutcome.NOT_APPLICABLE

@@ -1,30 +1,86 @@
+import base64
 from typing import Any
+from urllib.parse import urlencode
 
+from engine.metric_outcomes import MetricOutcome, measured, not_applicable
 from engine.models import EvaluationUnit
+from scorers.security_ssdlc.v0 import compute_v0_metrics as compute_v0_metrics
 from scorers.shared.github_signals import (
     github_get,
-    repo_file_exists,
-    repo_file_text,
-    search_code_count,
-    workflow_files,
+    raise_for_required_github_evidence,
 )
 
 _GITHUB_API = "https://api.github.com"
 _CANONICAL_REPO_AUTOMATION_REPO = "canonical/canonical-repo-automation"
 
 
+def _required_get(url: str, token: str, *, absent_ok: bool = False) -> Any:
+    response = github_get(url, token)
+    if absent_ok and response.status_code == 404:
+        return None
+    raise_for_required_github_evidence(response, url)
+    return response.json()
+
+
+def repo_file_exists(owner_repo: str, path: str, github_token: str) -> bool:
+    return (
+        _required_get(
+            f"{_GITHUB_API}/repos/{owner_repo}/contents/{path}", github_token, absent_ok=True
+        )
+        is not None
+    )
+
+
+def repo_file_text(owner_repo: str, path: str, github_token: str) -> str:
+    payload = _required_get(
+        f"{_GITHUB_API}/repos/{owner_repo}/contents/{path}", github_token, absent_ok=True
+    )
+    if payload is None:
+        return ""
+    content = payload.get("content", "")
+    if payload.get("encoding") == "base64":
+        return base64.b64decode(content).decode("utf-8", errors="replace")
+    return content
+
+
+def workflow_files(owner_repo: str, github_token: str) -> list[tuple[str, str]]:
+    listing = _required_get(
+        f"{_GITHUB_API}/repos/{owner_repo}/contents/.github/workflows",
+        github_token,
+        absent_ok=True,
+    )
+    if listing is None:
+        return []
+    return sorted(
+        (
+            entry["name"],
+            repo_file_text(owner_repo, f".github/workflows/{entry['name']}", github_token),
+        )
+        for entry in listing
+        if entry.get("type") == "file" and entry.get("name", "").endswith((".yml", ".yaml"))
+    )
+
+
+def search_code_count(query: str, github_token: str) -> int:
+    params = urlencode({"q": query, "per_page": 1})
+    payload = _required_get(f"{_GITHUB_API}/search/code?{params}", github_token)
+    return int(payload.get("total_count", 0))
+
+
 def _has_signed_commits_required(owner_repo: str, github_token: str) -> bool:
     """Return True if default branch requires signed commits in protection rules."""
     repo_resp = github_get(f"{_GITHUB_API}/repos/{owner_repo}", github_token)
-    if not repo_resp.ok:
-        return False
+    raise_for_required_github_evidence(repo_resp, f"{_GITHUB_API}/repos/{owner_repo}")
     default_branch = repo_resp.json().get("default_branch", "main")
     prot_resp = github_get(
         f"{_GITHUB_API}/repos/{owner_repo}/branches/{default_branch}/protection",
         github_token,
     )
-    if not prot_resp.ok:
+    if prot_resp.status_code == 404:
         return False
+    raise_for_required_github_evidence(
+        prot_resp, f"{_GITHUB_API}/repos/{owner_repo}/branches/{default_branch}/protection"
+    )
     signatures = prot_resp.json().get("required_signatures", {})
     return bool(signatures.get("enabled", False))
 
@@ -32,15 +88,17 @@ def _has_signed_commits_required(owner_repo: str, github_token: str) -> bool:
 def _has_branch_protection_required_checks(owner_repo: str, github_token: str) -> bool:
     """Return True if the default branch has ≥1 required status check."""
     repo_resp = github_get(f"{_GITHUB_API}/repos/{owner_repo}", github_token)
-    if not repo_resp.ok:
-        return False
+    raise_for_required_github_evidence(repo_resp, f"{_GITHUB_API}/repos/{owner_repo}")
     default_branch = repo_resp.json().get("default_branch", "main")
     prot_resp = github_get(
         f"{_GITHUB_API}/repos/{owner_repo}/branches/{default_branch}/protection",
         github_token,
     )
-    if not prot_resp.ok:
+    if prot_resp.status_code == 404:
         return False
+    raise_for_required_github_evidence(
+        prot_resp, f"{_GITHUB_API}/repos/{owner_repo}/branches/{default_branch}/protection"
+    )
     data = prot_resp.json()
     checks = data.get("required_status_checks", {})
     contexts = checks.get("contexts", [])
@@ -104,15 +162,18 @@ def _is_registered_in_repo_automation(owner_repo: str, github_token: str) -> boo
         f"{_GITHUB_API}/repos/{_CANONICAL_REPO_AUTOMATION_REPO}",
         github_token,
     )
-    if not repo_resp.ok:
-        return False
+    raise_for_required_github_evidence(
+        repo_resp, f"{_GITHUB_API}/repos/{_CANONICAL_REPO_AUTOMATION_REPO}"
+    )
     default_branch = repo_resp.json().get("default_branch", "main")
     tree_resp = github_get(
         f"{_GITHUB_API}/repos/{_CANONICAL_REPO_AUTOMATION_REPO}/git/trees/{default_branch}?recursive=1",
         github_token,
     )
-    if not tree_resp.ok:
-        return False
+    raise_for_required_github_evidence(
+        tree_resp,
+        f"{_GITHUB_API}/repos/{_CANONICAL_REPO_AUTOMATION_REPO}/git/trees/{default_branch}?recursive=1",
+    )
     tree = tree_resp.json().get("tree", [])
     candidate_suffixes = (
         f"repos/{repo_name}/inputs.hcl",
@@ -125,7 +186,7 @@ def _is_registered_in_repo_automation(owner_repo: str, github_token: str) -> boo
     )
 
 
-def compute_metrics(unit: EvaluationUnit, github_token: str) -> dict[str, Any]:
+def compute_metrics(unit: EvaluationUnit, github_token: str) -> dict[str, MetricOutcome]:
     """
     Check SSDLC signals for the evaluation unit's repo.
     """
@@ -160,11 +221,15 @@ def compute_metrics(unit: EvaluationUnit, github_token: str) -> dict[str, Any]:
         _has_branch_protection_required_checks(unit.repo, github_token) if unit.repo else False
     )
 
-    return {
+    values = {
         "renovate_enabled": renovate_enabled,
         "canonical_repo_automation_registered": canonical_repo_automation_registered,
         "branch_protection_required_checks": branch_protection,
         "signed_commits_required": signed_commits_required,
         "sast_workflow_present": sast_workflow_present,
         "cve_tracking_process_present": cve_tracking_process_present,
+    }
+    return {
+        key: measured(value) if unit.repo else not_applicable("Evaluation unit has no repository.")
+        for key, value in values.items()
     }

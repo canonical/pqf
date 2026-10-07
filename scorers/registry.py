@@ -6,12 +6,14 @@ import inspect
 import json
 import textwrap
 from collections.abc import Callable
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from pathlib import Path
 from types import MappingProxyType
 from typing import Any
 
-from engine.models import EvaluationUnit, ProductType
+from engine import metric_outcomes, models
+from engine.metric_outcomes import MetricOutcome, parse_metric_outcome, serialize_metric_outcome
+from engine.models import EvaluationUnit
 from scorers.documentation import logic as documentation_logic
 from scorers.engagement import logic as engagement_logic
 from scorers.security_ssdlc import logic as security_ssdlc_logic
@@ -27,6 +29,8 @@ class ScorerContext:
     github_token: str
     openrouter_api_key: str = ""
     openrouter_model: str = DEFAULT_OPENROUTER_MODEL
+    juju4_track: str = "4/stable"
+    juju_lts_track: str = "3.6/stable"
 
 
 @dataclass(frozen=True)
@@ -40,24 +44,45 @@ class MetricBinding:
 class RunnerCacheKey:
     runner_key: str
     source_digest: str
-    product_id: str
-    product_type: ProductType
-    repo: str
-    subpath: str | None
-    allure_report_url: str
-    documentation_url: str
-    target_medal: str
+    unit: EvaluationUnit
     context: ScorerContext
 
 
-RunnerCache = dict[RunnerCacheKey, dict[str, Any]]
+RunnerCache = dict[RunnerCacheKey, dict[str, MetricOutcome]]
 
 
-def _run_test_verification(unit: EvaluationUnit, context: ScorerContext) -> dict[str, Any]:
+def _run_v0_testing(unit: EvaluationUnit, context: ScorerContext) -> dict[str, MetricOutcome]:
+    return test_verification_logic.compute_v0_metrics(
+        unit,
+        context.github_token,
+        juju4_track=context.juju4_track,
+        juju_lts_track=context.juju_lts_track,
+    )
+
+
+def _run_v0_documentation(unit: EvaluationUnit, context: ScorerContext) -> dict[str, MetricOutcome]:
+    return documentation_logic.compute_v0_metrics(
+        unit,
+        context.github_token,
+        context.openrouter_api_key,
+        model=context.openrouter_model,
+        docs_repo=unit.documentation_repo or None,
+        docs_path=unit.documentation_path,
+        has_user_facing_docs=unit.has_user_facing_documentation,
+    )
+
+
+def _run_v0_security(unit: EvaluationUnit, context: ScorerContext) -> dict[str, MetricOutcome]:
+    return security_ssdlc_logic.compute_v0_metrics(unit, context.github_token)
+
+
+def _run_test_verification(
+    unit: EvaluationUnit, context: ScorerContext
+) -> dict[str, MetricOutcome]:
     return test_verification_logic.compute_metrics(unit, github_token=context.github_token or None)
 
 
-def _run_documentation(unit: EvaluationUnit, context: ScorerContext) -> dict[str, Any]:
+def _run_documentation(unit: EvaluationUnit, context: ScorerContext) -> dict[str, MetricOutcome]:
     return documentation_logic.compute_metrics(
         unit,
         context.github_token,
@@ -66,15 +91,15 @@ def _run_documentation(unit: EvaluationUnit, context: ScorerContext) -> dict[str
     )
 
 
-def _run_substrate_compat(unit: EvaluationUnit, context: ScorerContext) -> dict[str, Any]:
+def _run_substrate_compat(unit: EvaluationUnit, context: ScorerContext) -> dict[str, MetricOutcome]:
     return substrate_compat_logic.compute_metrics(unit, context.github_token)
 
 
-def _run_security_ssdlc(unit: EvaluationUnit, context: ScorerContext) -> dict[str, Any]:
+def _run_security_ssdlc(unit: EvaluationUnit, context: ScorerContext) -> dict[str, MetricOutcome]:
     return security_ssdlc_logic.compute_metrics(unit, context.github_token)
 
 
-def _run_engagement(unit: EvaluationUnit, context: ScorerContext) -> dict[str, Any]:
+def _run_engagement(unit: EvaluationUnit, context: ScorerContext) -> dict[str, MetricOutcome]:
     return engagement_logic.compute_metrics(unit, context.github_token)
 
 
@@ -85,6 +110,9 @@ RUNNERS = MappingProxyType(
         "substrate_compat": _run_substrate_compat,
         "security_ssdlc": _run_security_ssdlc,
         "engagement": _run_engagement,
+        "v0_testing": _run_v0_testing,
+        "v0_documentation": _run_v0_documentation,
+        "v0_security": _run_v0_security,
     }
 )
 
@@ -98,6 +126,9 @@ RUNNER_SOURCE_FILES = MappingProxyType(
             Path(documentation_logic.__file__).resolve(),
             Path(github_signals.__file__).resolve(),
             Path(documentation_logic.__file__).resolve().parent / "prompts" / "diataxis_check.md",
+            Path(documentation_logic.__file__).resolve().parent
+            / "prompts"
+            / "diataxis_v0_check.md",
         ),
         "substrate_compat": (
             Path(substrate_compat_logic.__file__).resolve(),
@@ -110,6 +141,24 @@ RUNNER_SOURCE_FILES = MappingProxyType(
         "engagement": (
             Path(engagement_logic.__file__).resolve(),
             Path(github_signals.__file__).resolve(),
+        ),
+    }
+)
+
+RUNNER_SOURCE_FILES = MappingProxyType(
+    {
+        **RUNNER_SOURCE_FILES,
+        "v0_testing": (
+            *RUNNER_SOURCE_FILES["test_verification"],
+            *(
+                Path(test_verification_logic.__file__).resolve().parent / name
+                for name in ("evidence.py", "v0.py", "terraform.py")
+            ),
+        ),
+        "v0_documentation": RUNNER_SOURCE_FILES["documentation"],
+        "v0_security": (
+            *RUNNER_SOURCE_FILES["security_ssdlc"],
+            Path(security_ssdlc_logic.__file__).resolve().parent / "v0.py",
         ),
     }
 )
@@ -259,6 +308,53 @@ METRIC_BINDINGS = MappingProxyType(
     }
 )
 
+METRIC_BINDINGS = MappingProxyType(
+    {
+        **METRIC_BINDINGS,
+        **{
+            implementation: MetricBinding(dimension, output, runner)
+            for dimension, runner, outputs in (
+                (
+                    "test_verification",
+                    "v0_testing",
+                    {
+                        "ci_passing": "ci-passing/v1",
+                        "uses_ops_testing": "uses-ops-testing/v1",
+                        "uses_gh_runners_unit_testing": "uses-gh-runners-unit-testing/v1",
+                        "uses_jubilant": "uses-jubilant/v2",
+                        "uses_tf_v1_provider": "uses-tf-v1-provider/v1",
+                        "uses_charm_ci": "uses-charm-ci/v1",
+                        "supports_canonical_k8s": "supports-canonical-k8s/v1",
+                        "supports_juju_4": "supports-juju-4/v2",
+                        "supports_juju_lts": "supports-juju-lts/v1",
+                    },
+                ),
+                (
+                    "documentation",
+                    "v0_documentation",
+                    {
+                        "readme_present": "readme-present/v2",
+                        "contributing_present": "contributing-present/v2",
+                        "has_security": "security-file-present/v2",
+                        "uses_sphinx_stack": "uses-sphinx-stack/v1",
+                        "diataxis_coverage_ai": "diataxis-coverage-ai/v2",
+                    },
+                ),
+                (
+                    "security_ssdlc",
+                    "v0_security",
+                    {
+                        "renovate_enabled": "renovate-enabled/v2",
+                        "branch_protection_required_checks": "branch-protection-required-checks/v2",
+                        "signed_commits_required": "signed-commits-required/v2",
+                    },
+                ),
+            )
+            for output, implementation in outputs.items()
+        },
+    }
+)
+
 
 def _selected_bindings(
     dimension_config: dict[str, Any],
@@ -304,9 +400,10 @@ def run_dimension(
     context: ScorerContext,
     *,
     runner_cache: RunnerCache | None = None,
-) -> dict[str, Any]:
+) -> dict[str, MetricOutcome]:
+    context = replace(context, **dimension_config.get("parameters", {}))
     selected = _selected_bindings(dimension_config, dimension_name=dimension_name)
-    runner_results: dict[str, dict[str, Any]] = {}
+    runner_results: dict[str, dict[str, MetricOutcome]] = {}
 
     for _, binding in selected:
         if binding.runner_key in runner_results:
@@ -314,13 +411,7 @@ def run_dimension(
         cache_key = RunnerCacheKey(
             runner_key=binding.runner_key,
             source_digest=_runner_source_digest(binding.runner_key),
-            product_id=unit.product_id,
-            product_type=unit.product_type,
-            repo=unit.repo,
-            subpath=unit.subpath,
-            allure_report_url=unit.allure_report_url,
-            documentation_url=unit.documentation_url,
-            target_medal=unit.target_medal,
+            unit=unit,
             context=context,
         )
         if runner_cache is not None and cache_key in runner_cache:
@@ -331,7 +422,7 @@ def run_dimension(
                 runner_cache[cache_key] = outputs
         runner_results[binding.runner_key] = outputs
 
-    metrics: dict[str, Any] = {}
+    metrics: dict[str, MetricOutcome] = {}
     for implementation_id, binding in selected:
         outputs = runner_results[binding.runner_key]
         if binding.output_key not in outputs:
@@ -339,7 +430,14 @@ def run_dimension(
                 f"metric implementation {implementation_id!r} did not return expected output "
                 f"{binding.output_key!r}"
             )
-        metrics[binding.output_key] = outputs[binding.output_key]
+        outcome = outputs[binding.output_key]
+        if not isinstance(outcome, MetricOutcome):
+            raise ValueError(f"{implementation_id}: expected MetricOutcome.")
+        metrics[binding.output_key] = parse_metric_outcome(
+            serialize_metric_outcome(outcome),
+            dimension_config["outputs"][binding.output_key],
+            metric_key=binding.output_key,
+        )
 
     return metrics
 
@@ -349,6 +447,8 @@ def _runner_source_digest(runner_key: str) -> str:
     for source_path in RUNNER_SOURCE_FILES[runner_key]:
         content = source_path.read_bytes()
         _update_digest(digest, "source", content)
+    for shared_module in (metric_outcomes, models):
+        _update_digest(digest, "result-contract", Path(shared_module.__file__).read_bytes())
     _update_digest(digest, "runner", _normalized_callable_source(RUNNERS[runner_key]))
     _update_digest(digest, "bindings", _runner_binding_metadata(runner_key))
     return digest.hexdigest()

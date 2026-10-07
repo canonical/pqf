@@ -41,6 +41,7 @@ from engine.framework import (
     discover_frameworks,
     get_framework,
 )
+from engine.metric_outcomes import METRIC_SCHEMA_VERSION
 from engine.versioning import is_in_version
 
 CADENCES = ("nightly", "weekly", "manual", "changed")
@@ -207,6 +208,8 @@ def _published_contract_digest(published_dir: Path, version_id: str) -> str | No
     except (OSError, json.JSONDecodeError):
         return None
     if not isinstance(payload, dict):
+        return None
+    if payload.get("metric_schema_version") != METRIC_SCHEMA_VERSION:
         return None
     digest = payload.get("contract_digest")
     return digest if isinstance(digest, str) and digest else None

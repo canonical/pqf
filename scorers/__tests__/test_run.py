@@ -8,6 +8,8 @@ from pathlib import Path
 import pytest
 import yaml
 
+from engine.metric_outcomes import measured, serialize_metric_outcome
+
 REPO_ROOT = Path(__file__).resolve().parents[2]
 if str(REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(REPO_ROOT))
@@ -103,8 +105,8 @@ def test_main_scores_each_leaf_for_selected_dimension(monkeypatch, tmp_path, cap
     def fake_run_dimension(unit, dimension_name, dimension_config, context):
         calls.append((unit.product_id, dimension_name))
         return {
-            "latest_build_passing": unit.product_id == "synapse",
-            "uses_jubilant": unit.product_id == "hive",
+            "latest_build_passing": measured(unit.product_id == "synapse"),
+            "uses_jubilant": measured(unit.product_id == "hive"),
         }
 
     monkeypatch.setattr(run, "run_dimension", fake_run_dimension)
@@ -128,12 +130,12 @@ def test_main_scores_each_leaf_for_selected_dimension(monkeypatch, tmp_path, cap
     assert exit_code == 0
     assert json.loads(capsys.readouterr().out) == {
         "synapse": {
-            "latest_build_passing": True,
-            "uses_jubilant": False,
+            "latest_build_passing": serialize_metric_outcome(measured(True)),
+            "uses_jubilant": serialize_metric_outcome(measured(False)),
         },
         "hive": {
-            "latest_build_passing": False,
-            "uses_jubilant": True,
+            "latest_build_passing": serialize_metric_outcome(measured(False)),
+            "uses_jubilant": serialize_metric_outcome(measured(True)),
         },
     }
     assert calls == [
@@ -243,7 +245,7 @@ def test_main_uses_fixed_dimension_override(monkeypatch, tmp_path, capsys):
     )
 
     def fake_run_dimension(unit, dimension_name, dimension_config, context):
-        return {"latest_build_passing": dimension_name == "test_verification"}
+        return {"latest_build_passing": measured(dimension_name == "test_verification")}
 
     monkeypatch.setattr(run, "run_dimension", fake_run_dimension)
     monkeypatch.setenv("GITHUB_TOKEN", "token")
@@ -263,7 +265,9 @@ def test_main_uses_fixed_dimension_override(monkeypatch, tmp_path, capsys):
     )
 
     assert exit_code == 0
-    assert json.loads(capsys.readouterr().out) == {"synapse": {"latest_build_passing": True}}
+    assert json.loads(capsys.readouterr().out) == {
+        "synapse": {"latest_build_passing": serialize_metric_outcome(measured(True))}
+    }
 
 
 @pytest.mark.parametrize(

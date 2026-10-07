@@ -1,5 +1,8 @@
+import pytest
+import responses
 import yaml
 
+from engine.metric_outcomes import MetricState, measured
 from engine.models import EvaluationUnit, ProductType
 from scorers.security_ssdlc.logic import (
     _has_branch_protection_required_checks,
@@ -11,6 +14,7 @@ from scorers.security_ssdlc.logic import (
 class _Response:
     def __init__(self, ok: bool, payload: dict):
         self.ok = ok
+        self.status_code = 200 if ok else 404
         self._payload = payload
 
     def json(self):
@@ -108,12 +112,15 @@ def test_compute_metrics_detects_new_ssdlc_signals(mocker):
 
     result = compute_metrics(UNIT, "token")
     assert result == {
-        "renovate_enabled": True,
-        "canonical_repo_automation_registered": True,
-        "branch_protection_required_checks": True,
-        "signed_commits_required": True,
-        "sast_workflow_present": True,
-        "cve_tracking_process_present": True,
+        key: measured(value)
+        for key, value in {
+            "renovate_enabled": True,
+            "canonical_repo_automation_registered": True,
+            "branch_protection_required_checks": True,
+            "signed_commits_required": True,
+            "sast_workflow_present": True,
+            "cve_tracking_process_present": True,
+        }.items()
     }
 
 
@@ -139,12 +146,15 @@ def test_compute_metrics_falls_back_to_false_when_signals_absent(mocker):
     )
     result = compute_metrics(UNIT, "token")
     assert result == {
-        "renovate_enabled": False,
-        "canonical_repo_automation_registered": False,
-        "branch_protection_required_checks": False,
-        "signed_commits_required": False,
-        "sast_workflow_present": False,
-        "cve_tracking_process_present": False,
+        key: measured(value)
+        for key, value in {
+            "renovate_enabled": False,
+            "canonical_repo_automation_registered": False,
+            "branch_protection_required_checks": False,
+            "signed_commits_required": False,
+            "sast_workflow_present": False,
+            "cve_tracking_process_present": False,
+        }.items()
     }
 
 
@@ -172,19 +182,12 @@ def test_cve_tracking_detects_non_security_marker(mocker):
         ],
     )
     result = compute_metrics(UNIT, "token")
-    assert result["cve_tracking_process_present"] is True
+    assert result["cve_tracking_process_present"] == measured(True)
 
 
 def test_returns_defaults_when_repo_empty():
     result = compute_metrics(UNIT_EMPTY, "token")
-    assert result == {
-        "renovate_enabled": False,
-        "canonical_repo_automation_registered": False,
-        "branch_protection_required_checks": False,
-        "signed_commits_required": False,
-        "sast_workflow_present": False,
-        "cve_tracking_process_present": False,
-    }
+    assert all(outcome.state == MetricState.NOT_APPLICABLE for outcome in result.values())
 
 
 def test_framework_contracts_declare_ssdlc_metrics():
@@ -212,6 +215,12 @@ def test_framework_contracts_declare_ssdlc_metrics():
 
 def test_signed_commits_required_true(mocker):
     """Signed commits should be True when branch protection requires them."""
+    mocker.patch("scorers.security_ssdlc.logic.repo_file_exists", return_value=False)
+    mocker.patch("scorers.security_ssdlc.logic.search_code_count", return_value=0)
+    mocker.patch("scorers.security_ssdlc.logic.workflow_files", return_value=[])
+    mocker.patch(
+        "scorers.security_ssdlc.logic._is_registered_in_repo_automation", return_value=False
+    )
 
     def fake_github_get(url, token, accept=None):
         if url.endswith("/repos/canonical/synapse-operator"):
@@ -228,11 +237,17 @@ def test_signed_commits_required_true(mocker):
 
     mocker.patch("scorers.security_ssdlc.logic.github_get", side_effect=fake_github_get)
     result = compute_metrics(UNIT, "token")
-    assert result["signed_commits_required"] is True
+    assert result["signed_commits_required"] == measured(True)
 
 
 def test_signed_commits_required_false_when_not_configured(mocker):
     """Signed commits should be False when not configured."""
+    mocker.patch("scorers.security_ssdlc.logic.repo_file_exists", return_value=False)
+    mocker.patch("scorers.security_ssdlc.logic.search_code_count", return_value=0)
+    mocker.patch("scorers.security_ssdlc.logic.workflow_files", return_value=[])
+    mocker.patch(
+        "scorers.security_ssdlc.logic._is_registered_in_repo_automation", return_value=False
+    )
 
     def fake_github_get(url, token, accept=None):
         if url.endswith("/repos/canonical/synapse-operator"):
@@ -243,4 +258,54 @@ def test_signed_commits_required_false_when_not_configured(mocker):
 
     mocker.patch("scorers.security_ssdlc.logic.github_get", side_effect=fake_github_get)
     result = compute_metrics(UNIT, "token")
-    assert result["signed_commits_required"] is False
+    assert result["signed_commits_required"] == measured(False)
+
+
+@pytest.mark.parametrize("status", [401, 403, 429, 500, 503])
+@pytest.mark.parametrize("signal", ["signatures", "checks", "automation"])
+@responses.activate
+def test_immutable_evidence_acquisition_errors_abort(status, signal):
+    from scorers.security_ssdlc.logic import _has_signed_commits_required
+    from scorers.shared.github_signals import GitHubAcquisitionError
+
+    if signal == "automation":
+        repo = "canonical/canonical-repo-automation"
+        helper = _is_registered_in_repo_automation
+        path = "/git/trees/main?recursive=1"
+    else:
+        repo = "canonical/test"
+        helper = (
+            _has_signed_commits_required
+            if signal == "signatures"
+            else _has_branch_protection_required_checks
+        )
+        path = "/branches/main/protection"
+    responses.get(f"https://api.github.com/repos/{repo}", json={"default_branch": "main"})
+    responses.get(f"https://api.github.com/repos/{repo}{path}", status=status)
+    with pytest.raises(GitHubAcquisitionError):
+        helper("canonical/test", "token")
+
+
+@pytest.mark.parametrize("status", [401, 403, 429, 500, 503])
+@pytest.mark.parametrize("signal", ["file_exists", "file_text", "workflows", "search"])
+@responses.activate
+def test_immutable_extra_signals_do_not_use_failure_shaped_fallbacks(status, signal):
+    from scorers.security_ssdlc import logic
+    from scorers.shared.github_signals import GitHubAcquisitionError
+
+    helpers = {
+        "file_exists": (logic.repo_file_exists, ("canonical/test", "SECURITY.md", "token")),
+        "file_text": (logic.repo_file_text, ("canonical/test", "SECURITY.md", "token")),
+        "workflows": (logic.workflow_files, ("canonical/test", "token")),
+        "search": (logic.search_code_count, ("repo:canonical/test renovate", "token")),
+    }
+    paths = {
+        "file_exists": "/repos/canonical/test/contents/SECURITY.md",
+        "file_text": "/repos/canonical/test/contents/SECURITY.md",
+        "workflows": "/repos/canonical/test/contents/.github/workflows",
+        "search": "/search/code",
+    }
+    responses.get(f"https://api.github.com{paths[signal]}", status=status)
+    helper, args = helpers[signal]
+    with pytest.raises(GitHubAcquisitionError):
+        helper(*args)

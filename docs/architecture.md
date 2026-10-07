@@ -81,7 +81,8 @@ PQF distinguishes acquired evidence that measures low from evidence that could n
 | Outcome | Meaning |
 |---------|---------|
 | `false`, `0`, low number | Evidence was acquired and measured low |
-| `null` | A supported metric is genuinely unmeasurable |
+| `insufficient_data` outcome | A supported metric is genuinely unmeasurable, with a reason |
+| `not_applicable` outcome | The metric is outside the product's sanctioned scope, with a reason |
 | `below_minimum` | Required evidence was measured but baseline criteria failed |
 | `insufficient_data` | A required metric is unavailable |
 | Acquisition exception | GitHub evidence could not be fetched reliably; the scoring job fails and publishes nothing |
@@ -91,9 +92,18 @@ evidence, an authenticated request may be retried anonymously when authenticatio
 authenticated client is rate-limited; if the required request still fails,
 `GitHubAcquisitionError` stops the compute job. A response is treated as absence only where the
 scorer defines that response as valid evidence of absence. Optional signals that an API cannot
-expose reliably, such as repository traffic, may explicitly return `null` instead.
+expose reliably, such as repository traffic, report `insufficient_data` with a reason instead.
 
-This behavior is not yet uniform across every scorer, and full product-set runs also need a
+Production scoring uses the repository secret **`PQF_GITHUB_TOKEN`**, not the workflow's
+repository-scoped `GITHUB_TOKEN`. Classic branch-protection/signature endpoints require
+authenticated access to each tracked repository; anonymous public access is not enough.
+Configure a read-only token for the tracked repositories and authoritative evidence repositories,
+with Contents, Issues, Pull requests, Checks, Actions and Administration read permissions
+(and Metadata read).
+Do not grant scoring write permissions. The compute job fails explicitly if this secret is missing.
+The ordinary workflow token remains separate and is used for deployment.
+
+Full product-set runs also need a
 documented GitHub API request-budget strategy. [Issue #34](https://github.com/canonical/pqf/issues/34)
 tracks that reliability work. Until it is complete, new scorer code must not convert API,
 authentication, rate-limit, or server failures into measured `false`, zero, or empty evidence.
@@ -101,6 +111,32 @@ authentication, rate-limit, or server failures into measured `false`, zero, or e
 ---
 
 ## Component Responsibilities
+
+Every producer and reader uses one metric outcome shape:
+
+```json
+{
+  "uses_jubilant": {"state": "measured", "value": true},
+  "uses_tf_v1_provider": {"state": "not_applicable", "value": null, "reason": "No Terraform modules."},
+  "ci_passing": {"state": "insufficient_data", "value": null, "reason": "Track has no mapped branch."}
+}
+```
+
+Scorers construct `MetricOutcome` values with `measured`, `not_applicable` and
+`insufficient_data`. JSON boundaries serialize and validate them against output types; bare
+scalars are rejected. No format switches or scalar adapters exist. Non-measured states require
+a reason; measured false, zero and empty strings are real observations.
+
+Eligibility belongs in the scorer, not a YAML detector language. N/A skips the metric's rubric
+conditions; if every graded metric is N/A, the dimension is N/A, never automatic Gold.
+An unavailable required metric makes the dimension insufficient. Roots exclude explicitly
+excluded/N/A components, take the worst measured result, and propagate any remaining insufficient
+component. Informational metrics cannot gate medals.
+
+Generated envelopes and product sets record `metric_schema_version: 1`. The publish matrix
+forces regeneration of live artifacts without this shape marker, even if their scoring-contract
+digest matches. Reader and data deploy together. Archived measurements are never rescored and
+the frozen `/legacy/` site remains separate.
 
 | Directory | Owner | Responsibility |
 |-----------|-------|---------------|
@@ -382,7 +418,7 @@ require LLM responses to compute results.
 2. `logic.py` creates an OpenAI-compatible client pointed at `https://openrouter.ai/api/v1`.
 3. A prompt file in `scorers/{dim}/prompts/` defines the system prompt. The product's relevant content (e.g. README text) is passed as the user message.
 4. If/when an AI metric is enabled, the LLM returns a structured JSON response parsed into metric values.
-5. If `OPENROUTER_API_KEY` is not set, scorers continue with deterministic metrics so the pipeline never fails in environments without the key.
+5. If `OPENROUTER_API_KEY` is not set, AI outputs report `insufficient_data` with a reason; deterministic gates remain independent.
 
 **Prompt files** live at `scorers/{dim}/prompts/{metric_name}.md` for dimensions that enable AI assistance.
 

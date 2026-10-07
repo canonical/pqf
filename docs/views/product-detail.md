@@ -33,7 +33,20 @@ Each evidence row shows one metric with its current value. If the metric is comp
 - **Green** — value meets or exceeds the threshold for the target tier
 - **Red** — value falls short of the threshold
 
-For boolean metrics, `✓` (pass) or `✗` (fail) is shown.
+For measured boolean metrics, `✓` (true) or `✗` (false) is shown, with accessible text equivalents.
+Informational metrics are not threshold-coloured. Measured string values show the detected version;
+an empty string means **Not adopted**. String adoption criteria such as `uses_sphinx_stack != ""`
+test adoption, not numeric version ordering.
+
+Every metric is a structured outcome: `measured` carries a string, number, or boolean value;
+`not_applicable` and `insufficient_data` carry a null value and a required reason. Unavailable
+evidence appears neutrally as **N/A** or **Insufficient data**, with a visible, accessible reason,
+even when the entire dimension is N/A. Legacy scalar artifacts are rejected at load time rather
+than converted or silently displayed.
+
+Root products summarize in-scope component evidence. Missing or insufficient component evidence
+remains visible and cannot be hidden by another component's measured success. Expanding a metric
+shows each component's outcome and reason; excluded components do not affect the root summary.
 
 ---
 

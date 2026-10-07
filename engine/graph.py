@@ -36,6 +36,10 @@ class ProductNode:
     is_portfolio_entry: bool
     lifecycle: str = "stable"
     description: str = ""
+    documentation_exemption: str = ""
+    documentation_repo: str = ""
+    documentation_path: str = "docs"
+    has_user_facing_documentation: bool = True
     composed_of: list[CompositionEdge] = field(default_factory=list)
     context_refs: list[ContextRef] = field(default_factory=list)
     parent_ids: list[str] = field(default_factory=list)
@@ -62,6 +66,10 @@ def _node_from_product_dict(d: dict[str, Any], target_medal: str) -> ProductNode
         is_portfolio_entry=True,
         lifecycle=d.get("lifecycle", "stable"),
         description=d.get("description", ""),
+        documentation_exemption=d.get("documentation_exemption", ""),
+        documentation_repo=d.get("documentation_repo", ""),
+        documentation_path=d.get("documentation_path", "docs"),
+        has_user_facing_documentation=d.get("has_user_facing_documentation", True),
     )
 
 
@@ -82,6 +90,10 @@ def _node_from_inline(entry: dict[str, Any], parent_id: str, target_medal: str) 
         is_inline=True,
         is_portfolio_entry=False,
         parent_ids=[parent_id],
+        documentation_exemption=entry.get("documentation_exemption", ""),
+        documentation_repo=entry.get("documentation_repo", ""),
+        documentation_path=entry.get("documentation_path", "docs"),
+        has_user_facing_documentation=entry.get("has_user_facing_documentation", True),
     )
 
 
@@ -177,6 +189,10 @@ def resolve_leaf_units(graph: ProductGraph) -> list[EvaluationUnit]:
                 allure_report_url=node.allure_report_url,
                 documentation_url=node.documentation_url,
                 target_medal=node.target_medal,
+                documentation_exemption=node.documentation_exemption,
+                documentation_repo=node.documentation_repo,
+                documentation_path=node.documentation_path,
+                has_user_facing_documentation=node.has_user_facing_documentation,
             )
         )
     return units
@@ -201,6 +217,10 @@ def resolve_leaf_units_for(graph: ProductGraph, root_product_id: str) -> list[Ev
                 allure_report_url=root.allure_report_url,
                 documentation_url=root.documentation_url,
                 target_medal=root.target_medal,
+                documentation_exemption=root.documentation_exemption,
+                documentation_repo=root.documentation_repo,
+                documentation_path=root.documentation_path,
+                has_user_facing_documentation=root.has_user_facing_documentation,
             )
         ]
 
@@ -220,6 +240,10 @@ def resolve_leaf_units_for(graph: ProductGraph, root_product_id: str) -> list[Ev
                 allure_report_url=node.allure_report_url,
                 documentation_url=node.documentation_url,
                 target_medal=node.target_medal,
+                documentation_exemption=node.documentation_exemption,
+                documentation_repo=node.documentation_repo,
+                documentation_path=node.documentation_path,
+                has_user_facing_documentation=node.has_user_facing_documentation,
             )
         )
     return units

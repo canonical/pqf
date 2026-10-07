@@ -80,11 +80,13 @@ contracts.
 | AI metric or prompt | Use the AI variation below |
 
 `make _assemble FRAMEWORK_VERSION=<id>` can reuse existing
-`computed/versions/<id>/*.json` only when scorer output keys and nullability are unchanged.
+`computed/versions/<id>/*.json` only when the contract and implementation fingerprints match.
 
 > **Keep measured-low separate from unmeasurable.** `false`, `0`, or a low percentage is a real
-> result and should be scored. Use `null` only when the signal could not be measured; a required
-> metric with a `null` value makes the dimension `insufficient_data` and `unrated`.
+> result and should be scored. Every metric is an outcome object: `measured(value)`,
+> `insufficient_data(reason)`, or `not_applicable(reason)`. Required unknown evidence blocks the
+> dimension and any root that includes it; informational unknown evidence never blocks medals.
+> N/A skips only that metric's gate. An entirely N/A rubric earns no medal.
 
 ## Include AI-assisted metrics
 

@@ -4,6 +4,7 @@ from engine.aggregation import aggregate_root_dimension, compute_leaf_applicabil
 from engine.framework import FrameworkStatus, FrameworkVersion
 from engine.graph import build_graph
 from engine.medal_engine import compute_leaf_product, compute_root_product
+from engine.metric_outcomes import insufficient_data, measured
 from engine.models import (
     ApplicabilityOutcome,
     LeafDimensionResult,
@@ -127,7 +128,7 @@ def test_composition_included_in_result():
 
 
 def test_leaf_applicability_not_applicable_for_wrong_type():
-    outcome = compute_leaf_applicability("root", {"some_metric": True}, DIM_ROOT_EXCLUDED)
+    outcome = compute_leaf_applicability("root", {"some_metric": measured(True)}, DIM_ROOT_EXCLUDED)
     assert outcome == ApplicabilityOutcome.NOT_APPLICABLE
 
 
@@ -139,28 +140,35 @@ def test_leaf_applicability_insufficient_data_when_no_metrics():
 def test_leaf_applicability_insufficient_data_when_required_metric_is_none():
     outcome = compute_leaf_applicability(
         "charm",
-        {"coverage_pct": None, "latest_build_passing": True},
+        {
+            "coverage_pct": insufficient_data("No measurement available."),
+            "latest_build_passing": measured(True),
+        },
         DIM_WITH_REQUIRED_METRICS,
     )
     assert outcome == ApplicabilityOutcome.INSUFFICIENT_DATA
 
 
 def test_leaf_applicability_scored_when_applicable_with_metrics():
-    outcome = compute_leaf_applicability("charm", {"some_metric": True}, DIM_ROOT_EXCLUDED)
+    outcome = compute_leaf_applicability(
+        "charm", {"some_metric": measured(True)}, DIM_ROOT_EXCLUDED
+    )
     assert outcome == ApplicabilityOutcome.SCORED
 
 
 def test_leaf_applicability_scored_when_required_metrics_are_present():
     outcome = compute_leaf_applicability(
         "charm",
-        {"coverage_pct": 75, "latest_build_passing": True},
+        {"coverage_pct": measured(75), "latest_build_passing": measured(True)},
         DIM_WITH_REQUIRED_METRICS,
     )
     assert outcome == ApplicabilityOutcome.SCORED
 
 
 def test_leaf_applicability_no_applies_to_defaults_to_applicable():
-    outcome = compute_leaf_applicability("charm", {"some_metric": True}, DIM_NO_APPLIES_TO)
+    outcome = compute_leaf_applicability(
+        "charm", {"some_metric": measured(True)}, DIM_NO_APPLIES_TO
+    )
     assert outcome == ApplicabilityOutcome.SCORED
 
 
@@ -182,7 +190,7 @@ ROOT_GRAPH_DICT = {
     ],
 }
 
-LEAF_METRICS = {"test_verification": {"coverage_pct": 75}}
+LEAF_METRICS = {"test_verification": {"coverage_pct": measured(75)}}
 
 DIMS_WITH_APPLICABILITY = {
     "dimensions": {

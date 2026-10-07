@@ -17,6 +17,11 @@ from engine.rubric import evaluate_rubric
 
 def _product_result(dimension_results: dict[str, DimensionResult], current_medal: Medal) -> Result:
     """Compute product result from dimension results and current medal."""
+    if any(
+        dim.applicability == ApplicabilityOutcome.INSUFFICIENT_DATA
+        for dim in dimension_results.values()
+    ):
+        return Result.INSUFFICIENT_DATA
     if current_medal != Medal.UNRATED:
         return Result(current_medal.value)
 
@@ -25,12 +30,6 @@ def _product_result(dimension_results: dict[str, DimensionResult], current_medal
         for dim in dimension_results.values()
     ):
         return Result.BELOW_MINIMUM
-
-    if any(
-        dim.applicability == ApplicabilityOutcome.INSUFFICIENT_DATA
-        for dim in dimension_results.values()
-    ):
-        return Result.INSUFFICIENT_DATA
 
     if any(
         dim.applicability == ApplicabilityOutcome.NOT_APPLICABLE
@@ -140,10 +139,29 @@ def compute_root_product(
         leaf_dim_results: list[LeafDimensionResult] = []
         for edge in root_node.composed_of:
             leaf_result = all_leaf_results.get(edge.product_id)
-            if leaf_result is None:
-                continue
-            leaf_dim = leaf_result.dimensions.get(dim_name)
+            leaf_dim = leaf_result.dimensions.get(dim_name) if leaf_result else None
             if leaf_dim is None:
+                leaf_node = graph.nodes.get(edge.product_id)
+                applicable = dim_config.get("applies_to", {}).get("product_types", [])
+                is_applicable = not applicable or (
+                    leaf_node and leaf_node.product_type.value in applicable
+                )
+                missing = (
+                    ApplicabilityOutcome.INSUFFICIENT_DATA
+                    if is_applicable
+                    else ApplicabilityOutcome.NOT_APPLICABLE
+                )
+                leaf_dim_results.append(
+                    LeafDimensionResult(
+                        product_id=edge.product_id,
+                        repo=leaf_node.source_repo if leaf_node else "",
+                        medal=Medal.UNRATED,
+                        result=_compute_result(Medal.UNRATED, missing),
+                        applicability=missing,
+                        metrics={},
+                        excluded_from_parent_medal=edge.excluded_from_parent_medal,
+                    )
+                )
                 continue
             leaf_node = graph.nodes.get(edge.product_id)
             leaf_dim_results.append(
@@ -190,49 +208,12 @@ def compute_product(
     dimensions_config: dict,
 ) -> ProductResult:
     """
-    Compute medals for one product from the legacy unaggregated computed envelope.
+    Compute medals for one product from an unaggregated metric-outcome mapping.
     """
-    target_medal = Medal(product["target_medal"])
-    dimension_results: dict[str, DimensionResult] = {}
-
-    for dim_name, dim_config in dimensions_config.get("dimensions", {}).items():
-        metrics = computed.get("metrics", {}).get(dim_name, {})
-        required_metrics = dim_config.get("required_metrics_for_scoring", [])
-        applicability = ApplicabilityOutcome.SCORED
-        if required_metrics and any(
-            metrics.get(metric_name) is None for metric_name in required_metrics
-        ):
-            applicability = ApplicabilityOutcome.INSUFFICIENT_DATA
-
-        if applicability != ApplicabilityOutcome.SCORED:
-            dim_medal = Medal.UNRATED
-        else:
-            dim_medal = evaluate_rubric(metrics, dim_config["medals"])
-
-        dimension_results[dim_name] = DimensionResult(
-            medal=dim_medal,
-            target=target_medal,
-            meets_target=_dimension_meets_target(dim_medal, applicability, target_medal),
-            result=_compute_result(dim_medal, applicability),
-            metrics=metrics,
-            applicability=applicability,
-        )
-
-    scored = [
-        result
-        for result in dimension_results.values()
-        if result.applicability == ApplicabilityOutcome.SCORED
-    ]
-    current_medal = (
-        min(scored, key=lambda result: MEDAL_RANK[result.medal]).medal if scored else Medal.UNRATED
-    )
-
-    return ProductResult(
-        product_id=product["id"],
-        current_medal=current_medal,
-        target_medal=target_medal,
-        meets_target=_product_meets_target(dimension_results, current_medal, target_medal),
-        current_result=_product_result(dimension_results, current_medal),
-        target_result=Result(target_medal.value),
-        dimensions=dimension_results,
+    return compute_leaf_product(
+        product["id"],
+        product.get("product_type", "charm"),
+        computed.get("metrics", {}),
+        dimensions_config,
+        product["target_medal"],
     )

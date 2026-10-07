@@ -96,6 +96,7 @@ Each criterion is a string evaluated against the product's computed metrics:
 | `metric <= value` | `avg_triage_days <= 5` |
 | `metric == true` | `has_readme == true` |
 | `metric == false` | `has_violations == false` |
+| `metric != ""` | `uses_sphinx_stack != ""` |
 
 Result tiers are **cumulative** — a product earning silver must also satisfy all bronze criteria.
 
@@ -143,9 +144,8 @@ unmeasurable signals remain distinct from acquisition failure.
 
 ```python
 from __future__ import annotations
-from typing import Any
-
 from engine.models import EvaluationUnit
+from engine.metric_outcomes import MetricOutcome, measured
 from scorers.shared.github_signals import repo_file_exists, workflow_files
 
 
@@ -161,10 +161,10 @@ def _my_number_check(unit: EvaluationUnit, github_token: str | None) -> float:
     return 75.0 if files else 0.0
 
 
-def compute_metrics(unit: EvaluationUnit, github_token: str) -> dict[str, Any]:
+def compute_metrics(unit: EvaluationUnit, github_token: str) -> dict[str, MetricOutcome]:
     return {
-        "some_boolean": _my_boolean_check(unit, github_token),
-        "some_number": _my_number_check(unit, github_token),
+        "some_boolean": measured(_my_boolean_check(unit, github_token)),
+        "some_number": measured(_my_number_check(unit, github_token)),
     }
 ```
 
@@ -181,6 +181,7 @@ network calls in tests.
 
 ```python
 from engine.models import EvaluationUnit, ProductType
+from engine.metric_outcomes import measured
 from scorers.my_dimension.logic import compute_metrics
 
 UNIT = EvaluationUnit(
@@ -197,8 +198,8 @@ def test_returns_defaults_when_signals_missing(mocker):
     result = compute_metrics(UNIT, "test-token")
 
     assert result == {
-        "some_boolean": False,
-        "some_number": 0.0,
+        "some_boolean": measured(False),
+        "some_number": measured(0.0),
     }
 
 
@@ -210,7 +211,7 @@ def test_boolean_true_when_file_exists(mocker):
     mocker.patch("scorers.my_dimension.logic.workflow_files", return_value=[])
 
     result = compute_metrics(UNIT, "test-token")
-    assert result["some_boolean"] is True
+    assert result["some_boolean"] == measured(True)
 ```
 
 > **Why `scorers.my_dimension.logic.repo_file_exists` and not

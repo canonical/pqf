@@ -7,6 +7,7 @@ import MetricsList from '../components/MetricsList'
 import RootMetricsList from '../components/RootMetricsList'
 import LoadingSpinner from '../components/LoadingSpinner'
 import { buildGroupedProducts } from '../lib/groupedPortfolioView'
+import { parseLiteral, type ThresholdInfo } from '../lib/metricOutcome'
 
 const SQUAD_TEAMS: Record<string, { label: string; url: string }> = {
   americas: { label: 'AMER', url: 'https://github.com/orgs/canonical/teams/platform-engineering-amer' },
@@ -14,16 +15,13 @@ const SQUAD_TEAMS: Record<string, { label: string; url: string }> = {
   apac: { label: 'APAC', url: 'https://github.com/orgs/canonical/teams/platform-engineering-apac' },
 }
 
-function parseCriteria(criteria: string[]): Record<string, { operator: string; value: number | boolean }> {
-  const result: Record<string, { operator: string; value: number | boolean }> = {}
+function parseCriteria(criteria: string[]): Record<string, ThresholdInfo> {
+  const result: Record<string, ThresholdInfo> = {}
   for (const criterion of criteria) {
-    const match = criterion.match(/^(\w+)\s*(>=|<=|==|>|<)\s*(.+)$/)
+    const match = criterion.match(/^(\w+)\s*(>=|<=|!=|==|>|<)\s*(.+)$/)
     if (!match) continue
     const [, metric, operator, rawValue] = match
-    let value: number | boolean
-    if (rawValue === 'true') value = true
-    else if (rawValue === 'false') value = false
-    else value = parseFloat(rawValue)
+    const value = parseLiteral(rawValue.trim())
     result[metric] = { operator, value }
   }
   return result
@@ -215,15 +213,13 @@ export default function ProductDetail() {
                       style={{ borderBottom: '1px solid #e5e5e5', background: idx % 2 === 0 ? '#fafafa' : '#fff' }}
                     >
                       <td style={{ padding: '0.75rem', verticalAlign: 'top' }}>
-                        <VersionLink to={`/dimensions/${dim}`} style={{ fontWeight: 500 }}>{dim.replace(/_/g, ' ')}</VersionLink>
+                        <VersionLink to={`/dimensions/${dim}`} style={{ fontWeight: 500 }}>{dimMeta?.label ?? dim.replace(/_/g, ' ')}</VersionLink>
                       </td>
                       <td style={{ padding: '0.75rem', verticalAlign: 'top' }}>
-                        <MedalBadge medal={entry.result as any} size="small" />
+                        <MedalBadge medal={entry.result} size="small" />
                       </td>
                       <td style={{ padding: '0.75rem', verticalAlign: 'top' }}>
-                        {entry.result === 'not_applicable' ? (
-                          <span style={{ color: '#999' }}>—</span>
-                        ) : isRoot && entry.composition && entry.composition.length > 0 ? (
+                        {isRoot && entry.composition && entry.composition.length > 0 ? (
                           <RootMetricsList
                             composition={entry.composition}
                             thresholds={thresholds}
@@ -288,7 +284,7 @@ export default function ProductDetail() {
                         </td>
                         {dependencyDimensions.map(dim => (
                           <td key={dim} style={{ padding: '0.75rem', verticalAlign: 'top' }}>
-                            <MedalBadge medal={leaf.dimensions[dim]?.result as any} size="small" />
+                            <MedalBadge medal={leaf.dimensions[dim]?.result ?? 'insufficient_data'} size="small" />
                           </td>
                         ))}
                       </tr>

@@ -41,6 +41,27 @@ function wrapper({ children }: { children: ReactNode }) {
 }
 
 describe('usePortfolio', () => {
+  it.each([false, 0, '', null, { state: 'measured', value: null }, { state: 'insufficient_data', value: null }])(
+    'rejects malformed metric artifacts at the loader boundary: %j', async outcome => {
+      vi.stubGlobal('fetch', vi.fn().mockResolvedValue({
+        ok: true,
+        json: async () => ({
+          ...basePortfolio,
+          products: [{
+            id: 'test', name: 'Test', product_type: 'charm', lifecycle: 'stable', squad: '',
+            current_result: 'gold', target_result: 'gold', meets_target: true, is_portfolio_entry: false,
+            composed_of: null, context_refs: [], parent_product_ids: [],
+            dimensions: { testing: { result: 'gold', meets_target: true, composition: null, metrics: { signal: outcome } } },
+          }],
+        }),
+      }))
+      const { result } = renderHook(() => usePortfolio(version), { wrapper })
+      await waitFor(() => expect(result.current.isError).toBe(true))
+      expect(result.current.error?.message).toMatch(/Invalid portfolio: products\[0\].dimensions.testing.metrics.signal/)
+      expect(result.current.data).toBeUndefined()
+    },
+  )
+
   beforeEach(() => {
     mockUseFrameworkVersion.mockReturnValue({ current: version, versions: [version] })
     vi.stubGlobal(

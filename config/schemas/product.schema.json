@@ -36,6 +36,14 @@
       }
     },
     "documentation_url": {"type": "string", "format": "uri"},
+    "documentation_exemption": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Reviewed reason the product uses upstream documentation instead of Canonical Sphinx Stack."
+    },
+    "documentation_repo": {"type": "string", "pattern": "^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$"},
+    "documentation_path": {"type": "string", "minLength": 1},
+    "has_user_facing_documentation": {"type": "boolean"},
     "source": {"$ref": "#/definitions/Source"},
     "composed_of": {
       "type": "array",
@@ -122,6 +130,10 @@
               "type": "string",
               "format": "uri"
             },
+            "documentation_exemption": {"type": "string", "minLength": 1},
+            "documentation_repo": {"type": "string", "pattern": "^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$"},
+            "documentation_path": {"type": "string", "minLength": 1},
+            "has_user_facing_documentation": {"type": "boolean"},
             "excluded_from_parent_medal": {"type": "boolean"}
           }
         }

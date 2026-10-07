@@ -109,6 +109,7 @@ def _write_published_portfolio(
         json.dumps(
             {
                 "framework": {"id": version_id},
+                "metric_schema_version": 1,
                 "contract_digest": digest or contract_digest(get_framework(frameworks, version_id)),
                 "generated_at": generated_at or datetime.now(UTC).isoformat(),
             }

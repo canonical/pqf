@@ -3,6 +3,7 @@ import { useParams } from 'react-router'
 import VersionLink from '../components/VersionLink'
 import MedalBadge from '../components/MedalBadge'
 import LoadingSpinner from '../components/LoadingSpinner'
+import MetricEvidence from '../components/MetricEvidence'
 import { usePortfolio } from '../hooks/usePortfolio'
 import {
   buildMetricDistributionRows,
@@ -13,9 +14,8 @@ import {
   type MetricTierStatus,
   type MetricDistributionGroup,
   type MetricDistributionRow,
-  type MetricValue,
 } from '../lib/groupedPortfolioView'
-import type { DimensionMeta, Medal, MetricDefinition, ProductType, Result } from '../types'
+import type { DimensionMeta, Medal, MetricDefinition, MetricOutcome, Portfolio, ProductType, Result } from '../types'
 
 interface DistributionCounts {
   gold: number
@@ -23,21 +23,22 @@ interface DistributionCounts {
   bronze: number
   below_minimum: number
   no_data: number
+  not_applicable: number
+  measured: number
+}
+type MetricStatus = Result | 'measured'
+
+function valueCell(outcome: MetricOutcome) {
+  return <MetricEvidence outcome={outcome} plain />
 }
 
-function valueCell(value: MetricValue) {
-  if (value === undefined || value === null) return '—'
-  if (typeof value === 'boolean') return value ? 'true' : 'false'
-  return String(value)
-}
-
-function metricStatus(row: MetricDistributionRow): Result {
-  if (row.value === undefined || row.value === null) return 'insufficient_data'
+function metricStatus(row: MetricDistributionRow): MetricStatus {
+  if (row.outcome.state !== 'measured') return row.outcome.state
   if (row.gold === 'pass') return 'gold'
   if (row.silver === 'pass') return 'silver'
   if (row.bronze === 'pass') return 'bronze'
   if (row.bronze === 'fail' || row.silver === 'fail' || row.gold === 'fail') return 'below_minimum'
-  return 'insufficient_data'
+  return 'measured'
 }
 
 function computeDistribution(groups: MetricDistributionGroup[]): DistributionCounts {
@@ -47,18 +48,24 @@ function computeDistribution(groups: MetricDistributionGroup[]): DistributionCou
     bronze: 0,
     below_minimum: 0,
     no_data: 0,
+    not_applicable: 0,
+    measured: 0,
   }
 
   for (const group of groups) {
     for (const row of [group.root, ...group.leaves]) {
       const result = metricStatus(row)
-      if (result === 'gold') {
+      if (result === 'measured') {
+        counts.measured += 1
+      } else if (result === 'gold') {
         counts.gold += 1
       } else if (result === 'silver') {
         counts.silver += 1
       } else if (result === 'bronze') {
         counts.bronze += 1
-      } else if (result === 'insufficient_data' || result === 'not_applicable') {
+      } else if (result === 'not_applicable') {
+        counts.not_applicable += 1
+      } else if (result === 'insufficient_data') {
         counts.no_data += 1
       } else {
         counts.below_minimum += 1
@@ -101,6 +108,7 @@ function buildMetricDefinition(
   if (metricType === 'boolean') {
     return { name: metricKey, type: 'boolean', signal_name: metricKey }
   }
+  if (metricType === 'string') return { name: metricKey, type: 'string' }
 
   const bronze = parseMinThreshold(medals.bronze?.criteria ?? [])
   const silver = parseMinThreshold(medals.silver?.criteria ?? [])
@@ -124,7 +132,7 @@ function rowHasFailure(row: MetricDistributionRow) {
 function groupByFilters(
   groups: MetricDistributionGroup[],
   squadFilter: string,
-  medalFilter: 'all' | Result,
+  medalFilter: 'all' | MetricStatus,
   typeFilter: 'all' | ProductType,
   metricDefinition: MetricDefinition | null,
   gapFilter: 'all' | GapClass,
@@ -138,7 +146,7 @@ function groupByFilters(
       if (!metricDefinition) return false
       const target = toGapTarget(row.product.target_result)
       const targetStatus = targetTierStatus(row, target)
-      if (computeGapClass(row.value, target, metricDefinition, targetStatus) !== gapFilter) {
+      if (computeGapClass(row.outcome, target, metricDefinition, targetStatus) !== gapFilter) {
         return false
       }
     }
@@ -158,13 +166,14 @@ function groupByFilters(
   })
 }
 
-function resultLabel(result: Result) {
+function resultLabel(result: MetricStatus) {
+  if (result === 'measured') return <span style={{ color: '#666' }}>Measured</span>
   return <MedalBadge medal={result} size="small" />
 }
 
-function distributionBar({ gold, silver, bronze, below_minimum, no_data }: DistributionCounts) {
-  const total = gold + silver + bronze + below_minimum + no_data
-  if (total === 0) return null
+function distributionBar({ gold, silver, bronze, below_minimum, no_data, not_applicable, measured }: DistributionCounts) {
+  const total = gold + silver + bronze + below_minimum + no_data + measured
+  if (total === 0) return <p>No applicable measurements. N/A: {not_applicable}</p>
 
   const segments: Array<{ key: keyof DistributionCounts; color: string; label: string }> = [
     { key: 'gold', color: '#C7962F', label: 'Gold' },
@@ -172,6 +181,7 @@ function distributionBar({ gold, silver, bronze, below_minimum, no_data }: Distr
     { key: 'bronze', color: '#9E622A', label: 'Bronze' },
     { key: 'below_minimum', color: '#C7162B', label: 'Sub-min' },
     { key: 'no_data', color: '#666', label: 'No data' },
+    { key: 'measured', color: '#666', label: 'Measured' },
   ]
 
   return (
@@ -187,7 +197,7 @@ function distributionBar({ gold, silver, bronze, below_minimum, no_data }: Distr
         }}
       >
         {segments.map((segment) => {
-          const count = { gold, silver, bronze, below_minimum, no_data }[segment.key]
+          const count = { gold, silver, bronze, below_minimum, no_data, not_applicable, measured }[segment.key]
           if (count === 0) return null
           return (
             <div
@@ -207,6 +217,8 @@ function distributionBar({ gold, silver, bronze, below_minimum, no_data }: Distr
         <span><strong>Bronze</strong>: {bronze}</span>
         <span><strong>Sub-min</strong>: {below_minimum}</span>
         <span><strong>No data</strong>: {no_data}</span>
+        {measured > 0 && <span><strong>Measured</strong>: {measured}</span>}
+        <span><strong>N/A</strong>: {not_applicable} (excluded from distribution)</span>
       </div>
     </div>
   )
@@ -226,11 +238,12 @@ function targetTierStatus(row: MetricDistributionRow, target: Medal): MetricTier
 
 function isMetricApplicableToTargetTier(
   metricKey: string,
-  portfolio: any,
+  portfolio: Portfolio,
   dimensionId: string | undefined,
   targetMedal: Medal,
 ): boolean {
   if (!portfolio || !dimensionId) return true
+  if (targetMedal === 'unrated') return false
   const meta = portfolio.dimensions_meta[dimensionId]
   const medalCriteria = meta?.medals?.[targetMedal]
   if (!medalCriteria || !medalCriteria.criteria) return true
@@ -251,7 +264,7 @@ export default function MetricDistribution() {
   const { dimensionId, metricKey } = useParams<{ dimensionId: string; metricKey: string }>()
   const { data: portfolio, isLoading, isError, error } = usePortfolio()
   const [squadFilter, setSquadFilter] = useState('all')
-  const [medalFilter, setMedalFilter] = useState<'all' | Result>('all')
+  const [medalFilter, setMedalFilter] = useState<'all' | MetricStatus>('all')
   const [typeFilter, setTypeFilter] = useState<'all' | ProductType>('all')
   const [gapFilter, setGapFilter] = useState<'all' | GapClass>('all')
   const [showFailuresOnly, setShowFailuresOnly] = useState(false)
@@ -326,7 +339,7 @@ export default function MetricDistribution() {
         <p style={{ marginBottom: '1rem' }}><VersionLink to={`/dimensions/${dimensionId}`}>← {meta.label ?? dimensionId}</VersionLink></p>
 
         <div className="p-card u-sv3">
-          <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr) 320px', gap: '1.5rem', alignItems: 'start' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 320px), 1fr))', gap: '1.5rem', alignItems: 'start' }}>
             <div>
               <h1 className="p-heading--3" style={{ marginBottom: '0.25rem' }}>{metricMeta.label} ({metricKey})</h1>
               {metricMeta.description && <p style={{ marginBottom: '0.75rem' }}>{metricMeta.description}</p>}
@@ -398,25 +411,27 @@ export default function MetricDistribution() {
           </div>
 
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.75rem', alignItems: 'center', marginBottom: '1rem' }}>
-            <select value={squadFilter} onChange={e => setSquadFilter(e.target.value)} className="p-form__control" style={{ width: 'auto', marginBottom: 0 }}>
+            <select aria-label="Squad" value={squadFilter} onChange={e => setSquadFilter(e.target.value)} className="p-form__control" style={{ width: 'auto', marginBottom: 0 }}>
               <option value="all">All squads</option>
               {squads.map(squad => <option key={squad} value={squad}>{squad}</option>)}
             </select>
-            <select value={medalFilter} onChange={e => setMedalFilter(e.target.value as 'all' | Result)} className="p-form__control" style={{ width: 'auto', marginBottom: 0 }}>
+            <select aria-label="Metric result" value={medalFilter} onChange={e => setMedalFilter(e.target.value as 'all' | MetricStatus)} className="p-form__control" style={{ width: 'auto', marginBottom: 0 }}>
               <option value="all">All results</option>
               <option value="gold">Gold</option>
               <option value="silver">Silver</option>
               <option value="bronze">Bronze</option>
               <option value="below_minimum">Sub-min</option>
               <option value="insufficient_data">No data</option>
+              <option value="not_applicable">N/A</option>
+              <option value="measured">Measured (informational)</option>
             </select>
-            <select value={typeFilter} onChange={e => setTypeFilter(e.target.value as 'all' | ProductType)} className="p-form__control" style={{ width: 'auto', marginBottom: 0 }}>
+            <select aria-label="Product type" value={typeFilter} onChange={e => setTypeFilter(e.target.value as 'all' | ProductType)} className="p-form__control" style={{ width: 'auto', marginBottom: 0 }}>
               <option value="all">All types</option>
               <option value="root">Root</option>
               <option value="charm">Charm</option>
               <option value="snap">Snap</option>
             </select>
-            <label style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem', fontSize: '0.875rem', color: '#555' }}>
+            {metricDefinition.type !== 'string' && <label style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem', fontSize: '0.875rem', color: '#555' }}>
               Gap class
               <select value={gapFilter} onChange={e => setGapFilter(e.target.value as 'all' | GapClass)} className="p-form__control" style={{ width: 'auto', marginBottom: 0 }}>
                 <option value="all">All gaps</option>
@@ -425,7 +440,7 @@ export default function MetricDistribution() {
                 <option value="below_target">Below target</option>
                 <option value="not_applicable">Not applicable</option>
               </select>
-            </label>
+            </label>}
             <label style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem', fontSize: '0.875rem', color: '#555' }}>
               <input type="checkbox" checked={showFailuresOnly} onChange={e => setShowFailuresOnly(e.target.checked)} />
               Show failures only
@@ -438,8 +453,8 @@ export default function MetricDistribution() {
             Gap to target uses consistent labels (At target, Exceeds target, Below target, or —) against this product&apos;s target medal.
           </p>
 
-          <div style={{ overflowX: 'auto' }}>
-            <table className="p-table" style={{ tableLayout: 'fixed', width: '100%', borderCollapse: 'collapse' }}>
+          <div role="region" aria-label="Metric evidence table" tabIndex={0} style={{ overflowX: 'auto' }}>
+            <table className="p-table" style={{ tableLayout: 'fixed', width: '100%', minWidth: '720px', borderCollapse: 'collapse' }}>
               <colgroup>
                 <col style={{ width: '40%' }} />
                 <col style={{ width: '18%' }} />
@@ -473,21 +488,21 @@ export default function MetricDistribution() {
                             </div>
                           </td>
                           <td style={{ padding: '0.65rem 0.75rem', verticalAlign: 'top' }}>
-                            {isMetricApplicableToTargetTier(metricKey!, portfolio, dimensionId, toGapTarget(group.root.product.target_result))
+                            {isInformational || isMetricApplicableToTargetTier(metricKey!, portfolio, dimensionId, toGapTarget(group.root.product.target_result))
                               ? resultLabel(metricStatus(group.root))
                               : 'N/A'}
                           </td>
                           <td style={{ padding: '0.65rem 0.75rem', verticalAlign: 'top' }}>
                             {isMetricApplicableToTargetTier(metricKey!, portfolio, dimensionId, toGapTarget(group.root.product.target_result))
                               ? (computeGapToTarget(
-                                  group.root.value,
+                                  group.root.outcome,
                                   toGapTarget(group.root.product.target_result),
                                   metricDefinition,
                                   targetTierStatus(group.root, toGapTarget(group.root.product.target_result)),
                                 ) ?? '—')
                               : '—'}
                           </td>
-                          <td style={{ padding: '0.65rem 0.75rem', verticalAlign: 'top' }}>{valueCell(group.root.value)}</td>
+                          <td style={{ padding: '0.65rem 0.75rem', verticalAlign: 'top' }}>{valueCell(group.root.outcome)}</td>
                         </tr>,
                       )
                     }
@@ -529,21 +544,21 @@ export default function MetricDistribution() {
                             </div>
                           </td>
                           <td style={{ padding: '0.65rem 0.75rem', verticalAlign: 'top' }}>
-                            {isMetricApplicableToTargetTier(metricKey!, portfolio, dimensionId, toGapTarget(leaf.product.target_result))
+                            {isInformational || isMetricApplicableToTargetTier(metricKey!, portfolio, dimensionId, toGapTarget(leaf.product.target_result))
                               ? resultLabel(metricStatus(leaf))
                               : 'N/A'}
                           </td>
                           <td style={{ padding: '0.65rem 0.75rem', verticalAlign: 'top' }}>
                             {isMetricApplicableToTargetTier(metricKey!, portfolio, dimensionId, toGapTarget(leaf.product.target_result))
                               ? (computeGapToTarget(
-                                  leaf.value,
+                                  leaf.outcome,
                                   toGapTarget(leaf.product.target_result),
                                   metricDefinition,
                                   targetTierStatus(leaf, toGapTarget(leaf.product.target_result)),
                                 ) ?? '—')
                               : '—'}
                           </td>
-                          <td style={{ padding: '0.65rem 0.75rem', verticalAlign: 'top' }}>{valueCell(leaf.value)}</td>
+                          <td style={{ padding: '0.65rem 0.75rem', verticalAlign: 'top' }}>{valueCell(leaf.outcome)}</td>
                         </tr>,
                       )
                     }

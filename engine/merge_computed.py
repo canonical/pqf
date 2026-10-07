@@ -14,6 +14,8 @@ from typing import Any
 
 import yaml
 
+from engine.metric_outcomes import METRIC_SCHEMA_VERSION, parse_metrics, serialize_metrics
+
 
 def merge_scorer_outputs(
     *,
@@ -42,10 +44,17 @@ def merge_scorer_outputs(
         for leaf_id, metrics in dim_data.items():
             if not isinstance(metrics, dict):
                 raise ValueError(f"Scorer output {path} entry {leaf_id!r} must be a JSON object")
-            leaf_metrics.setdefault(leaf_id, {})[dim_name] = metrics
+            leaf_metrics.setdefault(leaf_id, {})[dim_name] = serialize_metrics(
+                parse_metrics(
+                    metrics,
+                    dimensions_config["dimensions"][dim_name],
+                    context=f"{path}:{leaf_id}.{dim_name}",
+                )
+            )
 
     return {
         "framework_version": framework_version,
+        "metric_schema_version": METRIC_SCHEMA_VERSION,
         "contract_digest": contract_digest,
         "implementation_fingerprints": implementation_fingerprints,
         "product_id": product_id,

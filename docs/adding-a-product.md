@@ -95,6 +95,24 @@ context_refs:
 Here `wazuh-indexer` is absent from V0's product set entirely — including search, aggregate counts,
 and the parent's roll-up — and joins the product set in V1.
 
+### Documentation scope and reviewed exemptions
+
+README, CONTRIBUTING and SECURITY are checked at the repository root, including monorepos.
+Sphinx Stack and the informational AI assessment default to `docs/` in the component's repository.
+Set these optional fields **on the leaf/component**, not its grouping root, when that differs:
+
+```yaml
+documentation_repo: canonical/example-docs
+documentation_path: docs/component
+has_user_facing_documentation: true
+documentation_exemption: "This upstream fork retains upstream documentation."
+```
+
+The exemption reason is a reviewed Sphinx Stack exclusion; it does not exempt repository-root
+files or security protections. Snaps do not need an explicit Sphinx exclusion. Set
+`has_user_facing_documentation: false` only when no user-facing documentation is expected; this
+makes the informational AI coverage check N/A. Missing expected docs are not exemptions.
+
 ---
 
 ## Version membership and targets

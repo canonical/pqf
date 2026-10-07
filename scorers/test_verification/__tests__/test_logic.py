@@ -1,5 +1,6 @@
 import responses as resp_lib
 
+from engine.metric_outcomes import MetricState, measured
 from engine.models import EvaluationUnit, ProductType
 from scorers.test_verification.logic import _uses_jubilant, _uses_ops_testing, compute_metrics
 
@@ -20,12 +21,14 @@ UNIT_NO_ALLURE = EvaluationUnit(
 
 def test_returns_unmeasurable_when_no_allure_url_and_no_github_token():
     result = compute_metrics(UNIT_NO_ALLURE)
-    assert result["coverage_pct"] is None
-    assert result["stability_pct"] is None
-    assert result["latest_build_passing"] is None
+    assert result["coverage_pct"].state == MetricState.INSUFFICIENT_DATA
+    assert result["stability_pct"].state == MetricState.INSUFFICIENT_DATA
+    assert result["latest_build_passing"].state == MetricState.INSUFFICIENT_DATA
 
 
 def test_latest_build_passing_falls_back_to_default_branch_checks_when_allure_missing(mocker):
+    mocker.patch("scorers.test_verification.logic.search_code_count", return_value=0)
+    mocker.patch("scorers.test_verification.logic.workflow_files", return_value=[])
     mocker.patch(
         "scorers.test_verification.logic.default_branch_check_runs",
         return_value=[
@@ -33,7 +36,7 @@ def test_latest_build_passing_falls_back_to_default_branch_checks_when_allure_mi
         ],
     )
     result = compute_metrics(UNIT_NO_ALLURE, "gh-token")
-    assert result["latest_build_passing"] is True
+    assert result["latest_build_passing"] == measured(True)
 
 
 @resp_lib.activate
@@ -45,8 +48,8 @@ def test_coverage_from_allure_summary():
         status=200,
     )
     result = compute_metrics(UNIT)
-    assert result["coverage_pct"] == 87
-    assert result["latest_build_passing"] is True
+    assert result["coverage_pct"] == measured(87)
+    assert result["latest_build_passing"] == measured(True)
 
 
 @resp_lib.activate
@@ -58,8 +61,8 @@ def test_build_failing_when_failures_present():
         status=200,
     )
     result = compute_metrics(UNIT)
-    assert result["latest_build_passing"] is False
-    assert result["stability_pct"] == 90
+    assert result["latest_build_passing"] == measured(False)
+    assert result["stability_pct"] == measured(90)
 
 
 def test_uses_ops_testing_true_when_no_harness(mocker):
@@ -109,9 +112,9 @@ def test_compute_metrics_detects_integration_test_evidence(mocker):
     mocker.patch("scorers.test_verification.logic.search_code_count", side_effect=[0, 1])
 
     result = compute_metrics(UNIT, "gh-token")
-    assert result["integration_test_evidence_present"] is True
-    assert result["uses_ops_testing"] is True
-    assert result["uses_jubilant"] is True
+    assert result["integration_test_evidence_present"] == measured(True)
+    assert result["uses_ops_testing"] == measured(True)
+    assert result["uses_jubilant"] == measured(True)
 
 
 def test_compute_metrics_defaults_integration_evidence_to_false_without_workflow_match(mocker):
@@ -126,4 +129,4 @@ def test_compute_metrics_defaults_integration_evidence_to_false_without_workflow
     mocker.patch("scorers.test_verification.logic.search_code_count", side_effect=[0, 0])
 
     result = compute_metrics(UNIT, "gh-token")
-    assert result["integration_test_evidence_present"] is False
+    assert result["integration_test_evidence_present"] == measured(False)

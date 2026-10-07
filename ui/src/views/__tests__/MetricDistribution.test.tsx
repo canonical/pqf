@@ -51,7 +51,7 @@ const mockPortfolio: Portfolio = {
               product_id: 'discourse-k8s',
               repo: 'canonical/discourse-k8s-operator',
               result: 'silver',
-              metrics: { coverage_pct: 83, latest_build_passing: true },
+              metrics: { coverage_pct: { state: 'measured', value: 83 }, latest_build_passing: { state: 'measured', value: true } },
               excluded_from_parent_medal: false,
             },
           ],
@@ -81,7 +81,7 @@ const mockPortfolio: Portfolio = {
               product_id: 'aardvark-agent',
               repo: 'canonical/aardvark-agent',
               result: 'bronze',
-              metrics: { coverage_pct: 75, latest_build_passing: false },
+              metrics: { coverage_pct: { state: 'measured', value: 75 }, latest_build_passing: { state: 'measured', value: false } },
               excluded_from_parent_medal: false,
             },
           ],
@@ -106,7 +106,7 @@ const mockPortfolio: Portfolio = {
         test_verification: {
           result: 'bronze',
           meets_target: true,
-          metrics: { coverage_pct: 75, latest_build_passing: false },
+          metrics: { coverage_pct: { state: 'measured', value: 75 }, latest_build_passing: { state: 'measured', value: false } },
           composition: null,
         },
       },
@@ -129,7 +129,7 @@ const mockPortfolio: Portfolio = {
         test_verification: {
           result: 'silver',
           meets_target: true,
-          metrics: { coverage_pct: 83, latest_build_passing: true },
+          metrics: { coverage_pct: { state: 'measured', value: 83 }, latest_build_passing: { state: 'measured', value: true } },
           composition: null,
         },
       },
@@ -157,7 +157,7 @@ const mockPortfolio: Portfolio = {
               product_id: 'landscape-server',
               repo: 'canonical/landscape-server',
               result: 'bronze',
-              metrics: { coverage_pct: 75, latest_build_passing: false },
+              metrics: { coverage_pct: { state: 'measured', value: 75 }, latest_build_passing: { state: 'measured', value: false } },
               excluded_from_parent_medal: false,
             },
           ],
@@ -182,7 +182,7 @@ const mockPortfolio: Portfolio = {
         test_verification: {
           result: 'bronze',
           meets_target: true,
-          metrics: { coverage_pct: 75, latest_build_passing: false },
+          metrics: { coverage_pct: { state: 'measured', value: 75 }, latest_build_passing: { state: 'measured', value: false } },
           composition: null,
         },
       },
@@ -205,7 +205,7 @@ const mockPortfolio: Portfolio = {
         test_verification: {
           result: 'silver',
           meets_target: true,
-          metrics: { coverage_pct: 85, latest_build_passing: true, has_release_notes: true },
+          metrics: { coverage_pct: { state: 'measured', value: 85 }, latest_build_passing: { state: 'measured', value: true }, has_release_notes: { state: 'measured', value: true } },
           composition: null,
         },
       },
@@ -250,10 +250,10 @@ const mockPortfolio: Portfolio = {
   compliance_summary: { total: 3, meeting_target: 3, below_target: 0, insufficient_data: 0 },
 }
 
-function wrap(path: string) {
+function wrap(path: string, portfolio = mockPortfolio) {
   const queryClient = new QueryClient()
   vi.mocked(usePortfolio).mockReturnValue({
-    data: mockPortfolio,
+    data: portfolio,
     isLoading: false,
     isError: false,
     error: null,
@@ -276,6 +276,59 @@ function wrap(path: string) {
 }
 
 describe('MetricDistribution route', () => {
+  it('reports informational measurements without marking them insufficient', async () => {
+    wrap('/dimensions/test_verification/metrics/latest_build_passing')
+    await screen.findByRole('heading', { name: /Latest build passing/i })
+    expect(screen.getByText('Measured', { selector: 'strong' }).parentElement).toHaveTextContent('7')
+    expect(screen.getByText('No data', { selector: 'strong' }).parentElement).toHaveTextContent('0')
+  })
+
+  it('keeps N/A separate from missing data and excludes it from the distribution denominator', async () => {
+    const portfolio = structuredClone(mockPortfolio)
+    const product = portfolio.products[6]
+    portfolio.products = ['measured', 'na', 'unknown'].map((id, index) => ({
+      ...structuredClone(product), id, name: id, parent_product_ids: [],
+      dimensions: { test_verification: {
+        result: index === 0 ? 'gold' : index === 1 ? 'not_applicable' : 'insufficient_data',
+        meets_target: index === 0, composition: null,
+        metrics: { coverage_pct: index === 0 ? { state: 'measured', value: 95 } :
+          { state: index === 1 ? 'not_applicable' : 'insufficient_data', value: null, reason: index === 1 ? 'Snap product' : 'Report missing' } },
+      } },
+    }))
+    wrap('/dimensions/test_verification/metrics/coverage_pct', portfolio)
+    await screen.findByRole('heading', { name: /Coverage/i })
+    expect(screen.getByText('N/A', { selector: 'strong' }).parentElement).toHaveTextContent('1 (excluded from distribution)')
+    expect(screen.getAllByText('Gold', { selector: 'strong' })[0].parentElement).toHaveTextContent('1')
+    expect(screen.getByTitle('Gold: 1')).toHaveStyle({ width: '50%' })
+    expect(screen.getByText('N/A', { selector: '[aria-describedby]' })).toHaveAccessibleDescription('Snap product')
+    expect(screen.getByText('Insufficient data', { selector: '[aria-describedby]' })).toHaveAccessibleDescription('Report missing')
+    fireEvent.click(screen.getByRole('checkbox', { name: 'Show failures only' }))
+    expect(screen.queryByRole('link', { name: 'na' })).not.toBeInTheDocument()
+    expect(screen.queryByRole('link', { name: 'unknown' })).not.toBeInTheDocument()
+  })
+
+  it('compares string adoption and never shows numeric string gaps', async () => {
+    const portfolio = structuredClone(mockPortfolio)
+    portfolio.dimensions_meta.documentation = {
+      label: 'Documentation',
+      outputs: { uses_sphinx_stack: { label: 'Sphinx stack', description: 'Documentation stack version', type: 'string', range: 'version' } },
+      medals: { gold: { criteria: ['uses_sphinx_stack != ""'] } },
+    }
+    portfolio.products = ['', '2.3.0'].map((value, index) => ({
+      ...structuredClone(portfolio.products[6]), id: `docs-${index}`, name: `Docs ${index}`, target_result: 'gold',
+      dimensions: { documentation: { result: index === 0 ? 'below_minimum' : 'gold', meets_target: index !== 0, composition: null,
+        metrics: { uses_sphinx_stack: { state: 'measured', value } } } },
+    }))
+    wrap('/dimensions/documentation/metrics/uses_sphinx_stack', portfolio)
+    await screen.findByRole('heading', { name: /Sphinx stack/i })
+    expect(screen.getByText('uses_sphinx_stack != ""')).toBeInTheDocument()
+    expect(screen.getByText('Not adopted')).toBeInTheDocument()
+    expect(screen.getByText('2.3.0')).toBeInTheDocument()
+    expect(screen.queryByRole('combobox', { name: /gap class/i })).not.toBeInTheDocument()
+    const versionRow = screen.getByRole('link', { name: 'Docs 1' }).closest('tr')!
+    expect(versionRow.querySelectorAll('td')[2]).toHaveTextContent('—')
+  })
+
   it('renders the redesigned metric distribution header and table', async () => {
     wrap('/dimensions/test_verification/metrics/coverage_pct')
     expect(await screen.findByRole('heading', { name: /Coverage \(coverage_pct\)/i })).toBeInTheDocument()

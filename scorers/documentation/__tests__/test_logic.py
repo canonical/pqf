@@ -1,3 +1,6 @@
+import pytest
+
+from engine.metric_outcomes import MetricState, measured
 from engine.models import EvaluationUnit, ProductType
 from scorers.documentation.logic import compute_metrics
 
@@ -7,6 +10,19 @@ UNIT = EvaluationUnit(
     repo="canonical/synapse-operator",
     documentation_url="https://canonical.synapse.readthedocs-hosted.com/",
 )
+
+
+@pytest.fixture(autouse=True)
+def configured_model_is_mocked(mocker):
+    client = mocker.Mock()
+    client.chat.completions.create.return_value = mocker.Mock(
+        choices=[
+            mocker.Mock(
+                message=mocker.Mock(content='{"diataxis_coverage": 0, "reasoning": "No coverage"}')
+            )
+        ]
+    )
+    mocker.patch("scorers.documentation.logic.OpenAI", return_value=client)
 
 
 def test_compute_metrics_detects_documentation_signals(mocker):
@@ -64,8 +80,8 @@ def test_compute_metrics_detects_documentation_signals(mocker):
         ],
     )
     result = compute_metrics(UNIT, "gh-token", "or-key", model="openrouter/test-model")
-    assert result["release_notes_process_implemented"] is True
-    assert result["documentation_workflows_passing"] is True
+    assert result["release_notes_process_implemented"] == measured(True)
+    assert result["documentation_workflows_passing"] == measured(True)
 
 
 def test_compute_metrics_defaults_signals_when_repo_signals_missing(mocker):
@@ -83,16 +99,16 @@ def test_compute_metrics_defaults_signals_when_repo_signals_missing(mocker):
 
     result = compute_metrics(unit, "gh-token", "")
 
-    assert result == {
-        "readme_present": False,
-        "contributing_present": False,
-        "has_security": False,
-        "documentation_workflows_passing": False,
-        "diataxis_coverage_ai": 0,
-        "uses_rtd_hosting": False,
-        "release_notes_process_implemented": False,
-        "has_changelog": False,
+    assert {key: value for key, value in result.items() if key != "diataxis_coverage_ai"} == {
+        "readme_present": measured(False),
+        "contributing_present": measured(False),
+        "has_security": measured(False),
+        "documentation_workflows_passing": measured(False),
+        "uses_rtd_hosting": measured(False),
+        "release_notes_process_implemented": measured(False),
+        "has_changelog": measured(False),
     }
+    assert result["diataxis_coverage_ai"].state == MetricState.INSUFFICIENT_DATA
     # Ensure removed keys are not in result
     assert "tutorial_tested" not in result
     assert "recent_release_notes_present" not in result
@@ -138,7 +154,7 @@ def test_documentation_workflows_use_latest_conclusion(mocker):
     )
 
     result = compute_metrics(UNIT, "gh-token", "or-key")
-    assert result["documentation_workflows_passing"] is False
+    assert result["documentation_workflows_passing"] == measured(False)
 
 
 def test_documentation_workflows_do_not_require_style_check(mocker):
@@ -168,7 +184,7 @@ def test_documentation_workflows_do_not_require_style_check(mocker):
     )
 
     result = compute_metrics(UNIT, "gh-token", "or-key")
-    assert result["documentation_workflows_passing"] is True
+    assert result["documentation_workflows_passing"] == measured(True)
 
 
 def test_docs_workflow_family_names_are_accepted(mocker):
@@ -197,7 +213,7 @@ def test_docs_workflow_family_names_are_accepted(mocker):
     )
 
     result = compute_metrics(UNIT, "gh-token", "or-key")
-    assert result["documentation_workflows_passing"] is True
+    assert result["documentation_workflows_passing"] == measured(True)
 
 
 def test_release_notes_requires_canonical_workflow_and_structure(mocker):
@@ -233,7 +249,7 @@ def test_release_notes_requires_canonical_workflow_and_structure(mocker):
     mocker.patch("scorers.documentation.logic.default_branch_check_runs", return_value=[])
 
     result = compute_metrics(UNIT, "gh-token", "or-key")
-    assert result["release_notes_process_implemented"] is True
+    assert result["release_notes_process_implemented"] == measured(True)
 
 
 def test_release_notes_fails_without_workflow_reference(mocker):
@@ -264,7 +280,7 @@ def test_release_notes_fails_without_workflow_reference(mocker):
     mocker.patch("scorers.documentation.logic.default_branch_check_runs", return_value=[])
 
     result = compute_metrics(UNIT, "gh-token", "or-key")
-    assert result["release_notes_process_implemented"] is False
+    assert result["release_notes_process_implemented"] == measured(False)
 
 
 def test_uses_rtd_hosting_requires_explicit_signal(mocker):
@@ -289,7 +305,7 @@ def test_uses_rtd_hosting_requires_explicit_signal(mocker):
     mocker.patch("scorers.documentation.logic.workflow_files", return_value=[])
 
     result = compute_metrics(unit, "gh-token", "or-key")
-    assert result["uses_rtd_hosting"] is False
+    assert result["uses_rtd_hosting"] == measured(False)
 
 
 def test_uses_rtd_hosting_detects_rtd_hosted_patterns(mocker):
@@ -316,7 +332,7 @@ def test_uses_rtd_hosting_detects_rtd_hosted_patterns(mocker):
     mocker.patch("scorers.documentation.logic.workflow_files", return_value=[])
 
     result = compute_metrics(unit, "gh-token", "or-key")
-    assert result["uses_rtd_hosting"] is True
+    assert result["uses_rtd_hosting"] == measured(True)
 
 
 def test_readme_and_contributing_presence_only_requires_non_empty_files(mocker):
@@ -336,9 +352,9 @@ def test_readme_and_contributing_presence_only_requires_non_empty_files(mocker):
     mocker.patch("scorers.documentation.logic.workflow_files", return_value=[])
 
     result = compute_metrics(UNIT, "gh-token", "or-key")
-    assert result["readme_present"] is True
-    assert result["contributing_present"] is True
-    assert result["has_security"] is False
+    assert result["readme_present"] == measured(True)
+    assert result["contributing_present"] == measured(True)
+    assert result["has_security"] == measured(False)
 
 
 def test_diataxis_ai_metric_uses_openrouter_result(mocker):
@@ -359,11 +375,10 @@ def test_diataxis_ai_metric_uses_openrouter_result(mocker):
     mocker.patch("scorers.documentation.logic.workflow_files", return_value=[])
 
     result = compute_metrics(UNIT, "gh-token", "or-key", model="openrouter/test-model")
-    assert result["diataxis_coverage_ai"] == 3
+    assert result["diataxis_coverage_ai"].value == 3
 
 
-def test_diataxis_ai_metric_falls_back_to_zero_when_api_key_missing(mocker):
-    """AI Diataxis metric should return 0 when API key is missing."""
+def test_diataxis_ai_metric_is_unavailable_when_api_key_missing(mocker):
     mocker.patch("scorers.documentation.logic.repo_file_exists", return_value=False)
     mocker.patch("scorers.documentation.logic.repo_file_text", return_value="")
     mocker.patch("scorers.documentation.logic.repo_releases", return_value=[])
@@ -371,7 +386,7 @@ def test_diataxis_ai_metric_falls_back_to_zero_when_api_key_missing(mocker):
     mocker.patch("scorers.documentation.logic.workflow_files", return_value=[])
 
     result = compute_metrics(UNIT, "gh-token", "", model="openrouter/test-model")
-    assert result["diataxis_coverage_ai"] == 0
+    assert result["diataxis_coverage_ai"].state == MetricState.INSUFFICIENT_DATA
 
 
 def test_diataxis_ai_metric_clamps_to_0_4_range(mocker):
@@ -391,7 +406,7 @@ def test_diataxis_ai_metric_clamps_to_0_4_range(mocker):
     mocker.patch("scorers.documentation.logic.workflow_files", return_value=[])
 
     result = compute_metrics(UNIT, "gh-token", "or-key", model="openrouter/test-model")
-    assert result["diataxis_coverage_ai"] == 4
+    assert result["diataxis_coverage_ai"].value == 4
 
 
 def test_has_changelog_true_when_file_exists(mocker):
@@ -405,7 +420,7 @@ def test_has_changelog_true_when_file_exists(mocker):
     mocker.patch("scorers.documentation.logic.workflow_files", return_value=[])
 
     result = compute_metrics(UNIT, "gh-token", "")
-    assert result["has_changelog"] is True
+    assert result["has_changelog"] == measured(True)
 
 
 def test_has_changelog_false_when_file_missing(mocker):
@@ -416,4 +431,4 @@ def test_has_changelog_false_when_file_missing(mocker):
     mocker.patch("scorers.documentation.logic.workflow_files", return_value=[])
 
     result = compute_metrics(UNIT, "gh-token", "")
-    assert result["has_changelog"] is False
+    assert result["has_changelog"] == measured(False)

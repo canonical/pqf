@@ -40,7 +40,7 @@ const mockPortfolio: Portfolio = {
         test_verification: {
           result: 'silver',
           meets_target: true,
-          metrics: { coverage_pct: 87, stability_pct: 94, latest_build_passing: true },
+          metrics: { coverage_pct: { state: 'measured', value: 87 }, stability_pct: { state: 'measured', value: 94 }, latest_build_passing: { state: 'measured', value: true } },
           composition: null,
         },
       },
@@ -63,13 +63,13 @@ const mockPortfolio: Portfolio = {
         test_verification: {
           result: 'bronze',
           meets_target: false,
-          metrics: { coverage_pct: 65, latest_build_passing: true },
+          metrics: { coverage_pct: { state: 'measured', value: 65 }, latest_build_passing: { state: 'measured', value: true } },
           composition: null,
         },
         substrate_compat: {
           result: 'not_applicable',
           meets_target: false,
-          metrics: { supports_juju_3: false, supports_juju_4: false, supports_ck8s: false },
+          metrics: { supports_juju_3: { state: 'not_applicable', value: null, reason: 'Snap product' }, supports_juju_4: { state: 'not_applicable', value: null, reason: 'Snap product' }, supports_ck8s: { state: 'not_applicable', value: null, reason: 'Snap product' } },
           composition: null,
         },
       },
@@ -114,13 +114,13 @@ function portfolioWithComposition(overrides?: { composition: LeafDimensionResult
           test_verification: {
             result: 'silver',
             meets_target: true,
-            metrics: { coverage_pct: 87, stability_pct: 94, latest_build_passing: true },
+            metrics: { coverage_pct: { state: 'measured', value: 87 }, stability_pct: { state: 'measured', value: 94 }, latest_build_passing: { state: 'measured', value: true } },
             composition: overrides?.composition ?? [
               {
                 product_id: 'synapse',
                 repo: 'canonical/synapse-operator',
                 result: 'bronze',
-                metrics: { coverage_pct: 65, latest_build_passing: true },
+                metrics: { coverage_pct: { state: 'measured', value: 65 }, latest_build_passing: { state: 'measured', value: true } },
                 excluded_from_parent_medal: false,
               },
             ],
@@ -193,9 +193,9 @@ describe('ProductDetail', () => {
               result: 'below_minimum',
               meets_target: false,
               metrics: {
-                readme_present: true,
-                contributing_present: false,
-                has_security: true,
+                readme_present: { state: 'measured', value: true },
+                contributing_present: { state: 'measured', value: false },
+                has_security: { state: 'measured', value: true },
               },
               composition: null,
             },
@@ -241,9 +241,9 @@ describe('ProductDetail', () => {
               result: 'below_minimum',
               meets_target: false,
               metrics: {
-                readme_present: true,
-                contributing_present: false,
-                has_security: true,
+                readme_present: { state: 'measured', value: true },
+                contributing_present: { state: 'measured', value: false },
+                has_security: { state: 'measured', value: true },
               },
               composition: null,
             },
@@ -273,15 +273,17 @@ describe('ProductDetail', () => {
     expect(within(currentBlock as HTMLElement).getByText('Sub-min')).toBeInTheDocument()
   })
 
-  it('N/A dimension evidence column shows dash instead of metric values', () => {
+  it('N/A dimension preserves metric states and accessible reasons', () => {
     wrap('synapse')
     const row = screen.getByRole('link', { name: 'substrate compat' }).closest('tr')!
     const cells = within(row).getAllByRole('cell')
     // Evidence column is the 3rd cell (index 2): Dimension, Current, Evidence
-    expect(cells[2]).toHaveTextContent('—')
-    // Should NOT render the metric keys from the (non-empty) metrics dict
-    expect(cells[2]).not.toHaveTextContent('Juju 3')
-    expect(cells[2]).not.toHaveTextContent('Juju 4')
+    expect(cells[2]).toHaveTextContent('Juju 3')
+    expect(cells[2]).toHaveTextContent('Juju 4')
+    expect(within(cells[2]).getAllByText('N/A')).toHaveLength(3)
+    for (const label of within(cells[2]).getAllByText('N/A')) {
+      expect(label).toHaveAccessibleDescription('Snap product')
+    }
   })
 
   it('leaf product evidence column shows threshold-colored metrics', () => {
@@ -396,7 +398,7 @@ describe('ProductDetail', () => {
             product_id: 'synapse',
             repo: 'canonical/synapse-operator',
             result: 'bronze',
-            metrics: { coverage_pct: 65, latest_build_passing: true },
+            metrics: { coverage_pct: { state: 'measured', value: 65 }, latest_build_passing: { state: 'measured', value: true } },
             excluded_from_parent_medal: false,
           },
         ],
@@ -417,14 +419,14 @@ describe('ProductDetail', () => {
             product_id: 'synapse',
             repo: 'canonical/synapse-operator',
             result: 'bronze',
-            metrics: { coverage_pct: 65, latest_build_passing: true },
+            metrics: { coverage_pct: { state: 'measured', value: 65 }, latest_build_passing: { state: 'measured', value: true } },
             excluded_from_parent_medal: false,
           },
           {
             product_id: 'saml',
             repo: 'canonical/saml-operator',
             result: 'gold',
-            metrics: { coverage_pct: 90, latest_build_passing: false },
+            metrics: { coverage_pct: { state: 'measured', value: 90 }, latest_build_passing: { state: 'measured', value: false } },
             excluded_from_parent_medal: false,
           },
         ],
@@ -442,7 +444,7 @@ describe('ProductDetail', () => {
             product_id: 'synapse',
             repo: 'canonical/synapse-operator',
             result: 'bronze',
-            metrics: { coverage_pct: 65 },
+            metrics: { coverage_pct: { state: 'measured', value: 65 } },
             excluded_from_parent_medal: false,
           },
           {

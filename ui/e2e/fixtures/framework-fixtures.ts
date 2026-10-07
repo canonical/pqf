@@ -70,8 +70,8 @@ function matrixProduct(overrides: Partial<Product> = {}): Product {
     parent_product_ids: [],
     meets_target: false,
     dimensions: {
-      documentation: { result: 'bronze', meets_target: false, metrics: { diataxis_coverage: 2 }, composition: null },
-      test_verification: { result: 'silver', meets_target: true, metrics: { coverage_pct: 82 }, composition: null },
+      documentation: { result: 'bronze', meets_target: false, metrics: { diataxis_coverage: { state: 'measured', value: 2 } }, composition: null },
+      test_verification: { result: 'silver', meets_target: true, metrics: { coverage_pct: { state: 'measured', value: 82 } }, composition: null },
     },
     ...overrides,
   }

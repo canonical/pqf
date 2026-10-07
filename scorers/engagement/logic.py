@@ -5,6 +5,7 @@ from typing import Any
 
 import requests
 
+from engine.metric_outcomes import MetricOutcome, insufficient_data, measured
 from engine.models import EvaluationUnit
 from scorers.shared.github_signals import (
     github_session_get,
@@ -172,7 +173,7 @@ def _compute_pr_review_stats(
     return avg, responded_prs, eligible_prs
 
 
-def compute_metrics(unit: EvaluationUnit, github_token: str) -> dict[str, Any]:
+def compute_metrics(unit: EvaluationUnit, github_token: str) -> dict[str, MetricOutcome]:
     """
     Compute engagement metrics from GitHub issues and PRs
     for the evaluation unit's repo, looking back 90 days.
@@ -180,12 +181,12 @@ def compute_metrics(unit: EvaluationUnit, github_token: str) -> dict[str, Any]:
     repo = unit.repo
     if not repo:
         return {
-            "avg_triage_days": 0.0,
-            "avg_pr_review_days": 0.0,
-            "response_coverage_rate": 0,
-            "ownership_signal": False,
-            "has_jira_sync": False,
-            "repo_views_14d": None,
+            "avg_triage_days": measured(0.0),
+            "avg_pr_review_days": measured(0.0),
+            "response_coverage_rate": measured(0),
+            "ownership_signal": measured(False),
+            "has_jira_sync": measured(False),
+            "repo_views_14d": insufficient_data("Repository traffic is unavailable."),
         }
 
     session = _make_github_session(github_token)
@@ -240,12 +241,20 @@ def compute_metrics(unit: EvaluationUnit, github_token: str) -> dict[str, Any]:
     repo_views = _fetch_repo_views_14d(repo, session)
 
     return {
-        "avg_triage_days": avg_triage,
-        "avg_pr_review_days": avg_pr,
-        "response_coverage_rate": response_coverage_rate,
-        "ownership_signal": squad_topic,
-        "has_jira_sync": jira_sync,
-        "repo_views_14d": repo_views,
+        "avg_triage_days": measured(avg_triage)
+        if avg_triage is not None
+        else insufficient_data("Too few issues and pull requests in the measurement window."),
+        "avg_pr_review_days": measured(avg_pr)
+        if avg_pr is not None
+        else insufficient_data("Too few issues and pull requests in the measurement window."),
+        "response_coverage_rate": measured(response_coverage_rate)
+        if response_coverage_rate is not None
+        else insufficient_data("Too few issues and pull requests in the measurement window."),
+        "ownership_signal": measured(squad_topic),
+        "has_jira_sync": measured(jira_sync),
+        "repo_views_14d": measured(repo_views)
+        if repo_views is not None
+        else insufficient_data("Repository traffic is unavailable."),
     }
 
 

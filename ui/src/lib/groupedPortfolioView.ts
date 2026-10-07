@@ -5,10 +5,11 @@ import type {
   Portfolio,
   Product,
   Result,
+  MetricOutcome,
 } from '../types'
+import { aggregateMetric, meetsThreshold, missingMetric, parseLiteral } from './metricOutcome'
 
 export type MetricTierStatus = 'pass' | 'fail' | 'na'
-export type MetricValue = string | number | boolean | null | undefined
 export type GapClass = 'at_target' | 'exceeds_target' | 'below_target' | 'not_applicable'
 
 export interface GroupedRootRow {
@@ -29,7 +30,7 @@ export interface GroupedDimensionRow {
 export interface MetricDistributionRow {
   product: Product
   entry: DimensionEntry
-  value: MetricValue
+  outcome: MetricOutcome
   bronze: MetricTierStatus
   silver: MetricTierStatus
   gold: MetricTierStatus
@@ -89,49 +90,20 @@ export function buildDimensionGroupedRows(
   return [...grouped, ...ungrouped]
 }
 
-function coerceRight(raw: string, left: MetricValue): string | number | boolean {
-  if (raw === 'true') return true
-  if (raw === 'false') return false
-  if (typeof left === 'number') {
-    const parsed = Number(raw)
-    return Number.isNaN(parsed) ? raw : parsed
-  }
-  const parsed = Number(raw)
-  if (!Number.isNaN(parsed) && raw.trim() !== '') return parsed
-  return raw
-}
-
 export function evaluateMetricAgainstTier(
   criteria: string[],
   metricKey: string,
-  value: MetricValue,
+  outcome: MetricOutcome,
 ): MetricTierStatus {
   const criterion = criteria.find((item) => item.startsWith(`${metricKey} `))
   if (!criterion) return 'na'
-  if (value === undefined) return 'fail'
+  if (outcome.state !== 'measured') return 'na'
 
   const match = CONDITION_RE.exec(criterion)
   if (!match) return 'fail'
 
   const [, , operator, rightRaw] = match
-  const right = coerceRight(rightRaw, value)
-
-  switch (operator) {
-    case '==':
-      return value === right ? 'pass' : 'fail'
-    case '!=':
-      return value !== right ? 'pass' : 'fail'
-    case '>=':
-      return typeof value === 'number' && typeof right === 'number' && value >= right ? 'pass' : 'fail'
-    case '<=':
-      return typeof value === 'number' && typeof right === 'number' && value <= right ? 'pass' : 'fail'
-    case '>':
-      return typeof value === 'number' && typeof right === 'number' && value > right ? 'pass' : 'fail'
-    case '<':
-      return typeof value === 'number' && typeof right === 'number' && value < right ? 'pass' : 'fail'
-    default:
-      return 'fail'
-  }
+  return meetsThreshold(outcome.value, { operator, value: parseLiteral(rightRaw.trim()) }) ? 'pass' : 'fail'
 }
 
 function formatGap(gap: number): string {
@@ -146,16 +118,15 @@ function isAtTarget(result: number, target: number): boolean {
 }
 
 export function computeGapClass(
-  result: MetricValue,
+  outcome: MetricOutcome,
   targetMedal: Medal,
   metric: MetricDefinition,
   targetTierStatus?: MetricTierStatus,
 ): GapClass {
   if (targetTierStatus === 'na') return 'not_applicable'
 
-  if (result === null || result === undefined) {
-    return metric.type === 'boolean' ? 'below_target' : 'not_applicable'
-  }
+  if (outcome.state !== 'measured' || metric.type === 'string') return 'not_applicable'
+  const result = outcome.value
 
   if (metric.type === 'boolean') {
     return result === true ? 'at_target' : 'below_target'
@@ -164,8 +135,8 @@ export function computeGapClass(
   const targetThreshold = metric.medals[targetMedal]?.min
   if (targetThreshold === undefined) return 'not_applicable'
 
-  const numericResult = typeof result === 'number' ? result : Number(result)
-  if (Number.isNaN(numericResult)) return 'not_applicable'
+  if (typeof result !== 'number') return 'not_applicable'
+  const numericResult = result
 
   if (isAtTarget(numericResult, targetThreshold)) return 'at_target'
   if (numericResult > targetThreshold) return 'exceeds_target'
@@ -173,20 +144,19 @@ export function computeGapClass(
 }
 
 export function computeGapToTarget(
-  result: MetricValue,
+  outcome: MetricOutcome,
   targetMedal: Medal,
   metric: MetricDefinition,
   targetTierStatus?: MetricTierStatus,
 ): string | null {
-  const gapClass = computeGapClass(result, targetMedal, metric, targetTierStatus)
+  const gapClass = computeGapClass(outcome, targetMedal, metric, targetTierStatus)
 
   if (gapClass === 'not_applicable') return null
   if (gapClass === 'at_target') return 'At target'
   if (gapClass === 'exceeds_target') return 'Exceeds target'
 
-  if (result === null || result === undefined) {
-    return 'Below target (requires true)'
-  }
+  if (outcome.state !== 'measured' || metric.type === 'string') return null
+  const result = outcome.value
 
   if (metric.type === 'boolean') {
     return 'Below target (requires true)'
@@ -195,8 +165,8 @@ export function computeGapToTarget(
   const targetThreshold = metric.medals[targetMedal]?.min
   if (targetThreshold === undefined) return null
 
-  const numericResult = typeof result === 'number' ? result : Number(result)
-  if (Number.isNaN(numericResult)) return null
+  if (typeof result !== 'number') return null
+  const numericResult = result
   return `Below target (+${formatGap(targetThreshold - numericResult)}% to ${targetMedal})`
 }
 
@@ -217,11 +187,11 @@ export function isMetricApplicableToTier(
   return Object.keys(criteria).some((criterion) => criterion.startsWith(`${metricKey} `))
 }
 
-function getCompositionMetricValue(
+function getCompositionMetricOutcome(
   rootEntry: DimensionEntry,
   leafProductId: string,
   metricKey: string,
-): MetricValue {
+): MetricOutcome | undefined {
   const compositionEntry = (rootEntry.composition ?? []).find((leaf) => leaf.product_id === leafProductId)
   return compositionEntry?.metrics?.[metricKey]
 }
@@ -231,27 +201,27 @@ function buildMetricRow(
   entry: DimensionEntry,
   dimensionCriteria: { bronze: string[]; silver: string[]; gold: string[] },
   metricKey: string,
-  value: MetricValue,
+  outcome: MetricOutcome,
 ): MetricDistributionRow {
   return {
     product,
     entry,
-    value,
-    bronze: evaluateMetricAgainstTier(dimensionCriteria.bronze, metricKey, value),
-    silver: evaluateMetricAgainstTier(dimensionCriteria.silver, metricKey, value),
-    gold: evaluateMetricAgainstTier(dimensionCriteria.gold, metricKey, value),
+    outcome,
+    bronze: evaluateMetricAgainstTier(dimensionCriteria.bronze, metricKey, outcome),
+    silver: evaluateMetricAgainstTier(dimensionCriteria.silver, metricKey, outcome),
+    gold: evaluateMetricAgainstTier(dimensionCriteria.gold, metricKey, outcome),
   }
 }
 
-function metricResultFromValue(
+function metricResultFromOutcome(
   criteria: { bronze: string[]; silver: string[]; gold: string[] },
   metricKey: string,
-  value: MetricValue,
+  outcome: MetricOutcome,
 ): Result {
-  if (value === undefined || value === null) return 'insufficient_data'
-  const gold = evaluateMetricAgainstTier(criteria.gold, metricKey, value)
-  const silver = evaluateMetricAgainstTier(criteria.silver, metricKey, value)
-  const bronze = evaluateMetricAgainstTier(criteria.bronze, metricKey, value)
+  if (outcome.state !== 'measured') return outcome.state
+  const gold = evaluateMetricAgainstTier(criteria.gold, metricKey, outcome)
+  const silver = evaluateMetricAgainstTier(criteria.silver, metricKey, outcome)
+  const bronze = evaluateMetricAgainstTier(criteria.bronze, metricKey, outcome)
   if (gold === 'pass') return 'gold'
   if (silver === 'pass') return 'silver'
   if (bronze === 'pass') return 'bronze'
@@ -268,17 +238,21 @@ const METRIC_RESULT_WORST_TO_BEST: Record<Result, number> = {
   not_applicable: 5,
 }
 
-function deriveRootMetricValue(
+function deriveRootMetricOutcome(
   criteria: { bronze: string[]; silver: string[]; gold: string[] },
   metricKey: string,
-  leafValues: MetricValue[],
-): MetricValue {
-  const candidates = leafValues.filter((value): value is Exclude<MetricValue, null | undefined> => value !== null && value !== undefined)
-  if (candidates.length === 0) return undefined
-
+  leafValues: MetricOutcome[],
+): MetricOutcome {
+  if (![...criteria.bronze, ...criteria.silver, ...criteria.gold].some(criterion => criterion.startsWith(`${metricKey} `))) {
+    return aggregateMetric(leafValues)
+  }
+  const unknown = leafValues.find(value => value.state === 'insufficient_data')
+  if (unknown) return unknown
+  const candidates = leafValues.filter(value => value.state === 'measured')
+  if (candidates.length === 0) return aggregateMetric(leafValues)
   return candidates.reduce((worst, candidate) => (
-    METRIC_RESULT_WORST_TO_BEST[metricResultFromValue(criteria, metricKey, candidate)]
-      < METRIC_RESULT_WORST_TO_BEST[metricResultFromValue(criteria, metricKey, worst)]
+    METRIC_RESULT_WORST_TO_BEST[metricResultFromOutcome(criteria, metricKey, candidate)]
+      < METRIC_RESULT_WORST_TO_BEST[metricResultFromOutcome(criteria, metricKey, worst)]
       ? candidate
       : worst
   ))
@@ -291,19 +265,31 @@ export function buildMetricDistributionRows(
 ): MetricDistributionGroup[] {
   const groupedRows = buildDimensionGroupedRows(portfolio, dimensionId)
   const meta = portfolio.dimensions_meta[dimensionId]
+  const informational = meta?.outputs?.[metricKey]?.informational === true
   const criteria = {
-    bronze: meta?.medals?.bronze?.criteria ?? [],
-    silver: meta?.medals?.silver?.criteria ?? [],
-    gold: meta?.medals?.gold?.criteria ?? [],
+    bronze: informational ? [] : meta?.medals?.bronze?.criteria ?? [],
+    silver: informational ? [] : meta?.medals?.silver?.criteria ?? [],
+    gold: informational ? [] : meta?.medals?.gold?.criteria ?? [],
   }
   return groupedRows.map((group) => {
     const leafValues = group.leaves.map((leaf) => (
-      getCompositionMetricValue(group.root.entry, leaf.product.id, metricKey)
-      ?? leaf.entry.metrics[metricKey]
+      getCompositionMetricOutcome(group.root.entry, leaf.product.id, metricKey)
+      ?? leaf.entry.metrics[metricKey] ?? missingMetric()
     ))
-    const rootValue = group.root.entry.metrics[metricKey] ?? deriveRootMetricValue(criteria, metricKey, leafValues)
+    const composition = group.root.entry.composition
+    const inScopeValues = composition && composition.length > 0
+      ? composition.filter(leaf => !leaf.excluded_from_parent_medal).map(leaf => leaf.metrics[metricKey] ?? missingMetric())
+      : leafValues.filter((_, index) => {
+        const leafId = group.leaves[index].product.id
+        return !(group.root.product.composed_of ?? []).find(leaf => leaf.product_id === leafId)?.excluded_from_parent_medal
+      })
+    const unknown = inScopeValues.find(outcome => outcome.state === 'insufficient_data')
+    const noScope = group.root.entry.result === 'not_applicable' && inScopeValues.length === 0
+      ? { state: 'not_applicable', value: null, reason: 'No applicable component evidence for this dimension.' } as const
+      : undefined
+    const rootOutcome = unknown ?? group.root.entry.metrics[metricKey] ?? noScope ?? deriveRootMetricOutcome(criteria, metricKey, inScopeValues)
     return {
-      root: buildMetricRow(group.root.product, group.root.entry, criteria, metricKey, rootValue),
+      root: buildMetricRow(group.root.product, group.root.entry, criteria, metricKey, rootOutcome),
       leaves: group.leaves.map((leaf, index) => buildMetricRow(leaf.product, leaf.entry, criteria, metricKey, leafValues[index])),
     }
   })

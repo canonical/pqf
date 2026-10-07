@@ -1,7 +1,9 @@
+import json
 import operator as op_module
 import re
 from typing import Any
 
+from engine.metric_outcomes import MetricOutcome, MetricState
 from engine.models import Medal
 
 _OPS: dict[str, Any] = {
@@ -32,7 +34,7 @@ def parse_condition(condition: str) -> tuple[str, str, str]:
     return key, op_str, raw_value.strip()
 
 
-def eval_condition(metrics: dict[str, Any], condition: str) -> bool:
+def eval_condition(metrics: dict[str, MetricOutcome], condition: str) -> bool:
     """
     Evaluate a single condition string against a metrics dict.
 
@@ -45,28 +47,36 @@ def eval_condition(metrics: dict[str, Any], condition: str) -> bool:
     """
     key, op_str, raw_value = parse_condition(condition)
 
-    left = metrics.get(key)
-    if left is None:
+    outcome = metrics.get(key)
+    if outcome is None:
         return False
+    if not isinstance(outcome, MetricOutcome):
+        raise ValueError(f"Metric {key!r} must be a MetricOutcome.")
+    if outcome.state == MetricState.NOT_APPLICABLE:
+        return True
+    if outcome.state == MetricState.INSUFFICIENT_DATA:
+        return False
+    left = outcome.value
 
     # Parse right-hand side to a Python value
     if raw_value.lower() == "true":
         right: Any = True
     elif raw_value.lower() == "false":
         right = False
+    elif raw_value.startswith('"'):
+        right = json.loads(raw_value)
+        if not isinstance(right, str):
+            raise ValueError(f"Invalid string criterion: {condition!r}")
     else:
         try:
-            # Parse as number; preserve int vs float based on left
             right = float(raw_value)
-            if isinstance(left, int) and not isinstance(left, bool):
-                right = int(right)
         except ValueError:
             right = raw_value
 
     return _OPS[op_str](left, right)
 
 
-def evaluate_rubric(metrics: dict[str, Any], rubric: dict) -> Medal:
+def evaluate_rubric(metrics: dict[str, MetricOutcome], rubric: dict) -> Medal:
     """
     Determine the highest medal tier a product achieves for one dimension.
 
@@ -80,6 +90,13 @@ def evaluate_rubric(metrics: dict[str, Any], rubric: dict) -> Medal:
     - If no `bronze` key: bronze is the implicit fallback minimum. A
       product that fails silver and gold still gets Medal.BRONZE.
     """
+    graded_keys = {
+        parse_condition(cond)[0] for conditions in rubric.values() for cond in conditions
+    }
+    if graded_keys and all(
+        key in metrics and metrics[key].state == MetricState.NOT_APPLICABLE for key in graded_keys
+    ):
+        return Medal.UNRATED
     for tier in ("gold", "silver"):
         if tier in rubric and all(eval_condition(metrics, cond) for cond in rubric[tier]):
             return Medal(tier)
