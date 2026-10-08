@@ -23,42 +23,42 @@ dimensions:
         implementation: "uses-ops-testing/v1"
         type: boolean
         label: "Uses Ops Testing"
-        description: "Unit tests use ops.testing without legacy Harness."
+        description: "The charm's unit tests use the current ops.testing framework and no longer use the legacy Harness."
       uses_gh_runners_unit_testing:
         implementation: "uses-gh-runners-unit-testing/v1"
         type: boolean
         label: "GitHub-hosted unit testing"
-        description: "Unit-test jobs run on GitHub-hosted runners."
+        description: "Every CI job that runs the charm's unit tests uses a GitHub-hosted runner (for example ubuntu-latest). Any self-hosted unit-test job, including coverage jobs, fails this check."
       uses_jubilant:
         implementation: "uses-jubilant/v2"
         type: boolean
         label: "Uses Jubilant"
-        description: "Component integration tests use Jubilant."
+        description: "The charm's integration tests use Jubilant to drive Juju."
       uses_tf_v1_provider:
         implementation: "uses-tf-v1-provider/v1"
         type: boolean
         label: "Terraform Juju provider v1"
-        description: "Component Terraform modules constrain the Juju provider to major version 1."
+        description: "The charm's Terraform module requires version 1.x of the Juju Terraform provider."
       uses_charm_ci:
         implementation: "uses-charm-ci/v1"
         type: boolean
         label: "Uses charm-ci"
-        description: "Integration jobs use Canonical charm-ci instead of operator-workflows."
+        description: "Integration tests run in CI through Canonical's charm-ci workflows rather than operator-workflows."
       supports_canonical_k8s:
         implementation: "supports-canonical-k8s/v1"
         type: boolean
         label: "Canonical Kubernetes configured"
-        description: "Kubernetes charm-ci tests configure Canonical Kubernetes through linked Concierge configuration."
+        description: "Kubernetes charms run their charm-ci integration tests on Canonical Kubernetes. Not applicable to machine charms."
       supports_juju_4:
         implementation: "supports-juju-4/v2"
         type: boolean
         label: "Juju 4 configured"
-        description: "Linked charm-ci configuration targets the cycle-pinned Juju 4 stable track."
+        description: "charm-ci integration tests run against Juju 4 (the stable track set for the cycle)."
       supports_juju_lts:
         implementation: "supports-juju-lts/v1"
         type: boolean
         label: "Juju LTS configured"
-        description: "Linked charm-ci configuration targets the cycle-pinned Juju LTS stable track."
+        description: "charm-ci integration tests run against the current Juju LTS (the stable track set for the cycle)."
     medals:
       bronze:
         - "uses_ops_testing == true"
@@ -95,28 +95,28 @@ dimensions:
         implementation: "readme-present/v2"
         type: boolean
         label: "README customized"
-        description: "Repository-root README.md has content beyond headings and differs from the pinned template."
+        description: "README.md exists at the repository root and has real content, not just headings or the unchanged charm template."
       contributing_present:
         implementation: "contributing-present/v2"
         type: boolean
         label: "CONTRIBUTING customized"
-        description: "Repository-root CONTRIBUTING.md has content beyond headings and differs from the pinned template."
+        description: "CONTRIBUTING.md exists at the repository root and has real content, not just headings or the unchanged charm template."
       has_security:
         implementation: "security-file-present/v2"
         type: boolean
         label: "SECURITY customized"
-        description: "Repository-root SECURITY.md has content beyond headings; the complete PFE template policy qualifies."
+        description: "SECURITY.md exists at the repository root and has real content. The standard PFE security policy template counts."
       uses_sphinx_stack:
         implementation: "uses-sphinx-stack/v1"
         type: string
         label: "Sphinx Stack version"
-        description: "Declared Canonical Sphinx Stack version; an empty string means no adoption. Snaps and reviewed upstream-docs exemptions are not applicable."
+        description: "Version of the Canonical Sphinx Stack used for the documentation; blank means it is not used. Not applicable to snaps or to products whose documentation is maintained upstream."
       diataxis_coverage_ai:
         implementation: "diataxis-coverage-ai/v2"
         type: number
         range: "0-4"
         label: "Diataxis coverage (AI)"
-        description: "AI-assisted coverage assessment of authoritative documentation; informational only."
+        description: "AI estimate (0-4) of how many Diataxis modes (tutorial, how-to, reference, explanation) the documentation covers. Informational only; does not affect medals."
         informational: true
         ai_assisted: true
     medals:
@@ -144,17 +144,17 @@ dimensions:
         implementation: "renovate-enabled/v2"
         type: boolean
         label: "Renovate onboarded"
-        description: "Enabled onboarding configuration and an open Dependency Dashboard authored by the verified Renovate bot; not a runtime heartbeat."
+        description: "Renovate is set up and active: the repository has a Renovate configuration and an open Dependency Dashboard issue created by the Renovate bot. A configuration file alone does not count."
       branch_protection_required_checks:
         implementation: "branch-protection-required-checks/v2"
         type: boolean
         label: "Required checks enforced"
-        description: "Effective classic protection or active rulesets enforce status checks on the default branch."
+        description: "The default branch requires status checks to pass before merging, set through branch protection or an active repository or organization ruleset. Protection without required checks, or rulesets in Evaluate mode, do not count."
       signed_commits_required:
         implementation: "signed-commits-required/v2"
         type: boolean
         label: "Signed commits required"
-        description: "Effective classic protection or active rulesets require signed commits on the default branch."
+        description: "The default branch requires signed commits, set through branch protection or an active repository or organization ruleset. Rulesets in Evaluate mode do not count."
     # The team chose one security baseline, without artificial intermediate tiers.
     medals:
       bronze: ["renovate_enabled == true", "branch_protection_required_checks == true", "signed_commits_required == true"]
