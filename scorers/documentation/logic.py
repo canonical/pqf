@@ -3,6 +3,7 @@ from __future__ import annotations
 import base64
 import binascii
 import json
+import logging
 import re
 from pathlib import Path
 from typing import Any
@@ -23,6 +24,8 @@ from scorers.shared.github_signals import (
 )
 
 _PROMPTS_DIR = Path(__file__).parent / "prompts"
+_LOG = logging.getLogger(__name__)
+_FENCE = re.compile(r"^```(?:json)?\s*(.*?)\s*```$", re.DOTALL)
 TEMPLATE_REPO = "canonical/platform-engineering-charm-template"
 TEMPLATE_REF = "8299de3ec4a264c853d48c6bb09903677e38cbd7"
 
@@ -277,10 +280,17 @@ def _assess_diataxis(
             model=model,
             messages=[{"role": "user", "content": f"{prompt}\n\nDocumentation:\n{documentation}"}],
         )
-    except APIError:
+    except APIError as exc:
+        _LOG.warning(
+            "AI documentation assessment failed: %s (status %s)",
+            type(exc).__name__,
+            getattr(exc, "status_code", "n/a"),
+        )
         return insufficient_data("AI documentation assessment is unavailable.")
     try:
-        parsed = json.loads(response.choices[0].message.content or "")
+        content = (response.choices[0].message.content or "").strip()
+        fenced = _FENCE.fullmatch(content)
+        parsed = json.loads(fenced.group(1) if fenced else content)
         value = parsed["diataxis_coverage"]
         reason = parsed.get("reasoning", "")
         if type(value) is not int or (not legacy_clamp and not 0 <= value <= 4):

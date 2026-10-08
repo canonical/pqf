@@ -281,6 +281,15 @@ def test_invalid_ai_evidence_is_unavailable_not_zero(mocker, raw):
 
 
 @responses.activate
+def test_json_wrapped_in_markdown_fence_is_measured(mocker):
+    evidence()
+    docs_evidence(UNIT.repo, "docs", "Meaningful documentation content. " * 10)
+    model_response(mocker, '```json\n{"diataxis_coverage": 3, "reasoning": "Three modes"}\n```')
+    outcome = logic.compute_v0_metrics(UNIT, "", "key")["diataxis_coverage_ai"]
+    assert (outcome.value, outcome.reason) == (3, "Three modes")
+
+
+@responses.activate
 def test_absent_docs_are_unavailable_without_model_call(mocker):
     evidence()
     responses.get(f"{API}/{UNIT.repo}/contents/docs", status=404)
@@ -303,6 +312,19 @@ def test_model_failure_is_unavailable_without_exposing_error(mocker):
     outcome = logic.compute_v0_metrics(UNIT, "", "key")["diataxis_coverage_ai"]
     assert outcome.state == MetricState.INSUFFICIENT_DATA
     assert "sensitive" not in outcome.reason
+
+
+@responses.activate
+def test_model_failure_is_logged_for_operators(mocker, caplog):
+    evidence()
+    docs_evidence(UNIT.repo, "docs", "Meaningful documentation content. " * 10)
+    client = model_response(mocker, "")
+    client.chat.completions.create.side_effect = APIError(
+        "sensitive provider detail", request=mocker.Mock(), body=None
+    )
+    logic.compute_v0_metrics(UNIT, "", "key")
+    assert "APIError" in caplog.text
+    assert "sensitive" not in caplog.text
 
 
 @responses.activate
