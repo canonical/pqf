@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-08T16:18:59.204167+00:00",
+  "generated_at": "2026-10-08T18:39:52.712360+00:00",
   "metric_schema_version": 1,
   "framework": {
     "id": "v0",
@@ -9,14 +9,14 @@
     "description": "The dependable minimum PQF quality baseline."
   },
   "contract_digest": "40d58548af81d4ee7f7ace00eb8d8317b1868d7bcf48eae03851ab81dd06ac52",
-  "source_revision": "c17c5a1fb7b26b233bd85809fca2f0d03ddac674",
+  "source_revision": "056bb603c95e6505c6538743d00e3c555fe50353",
   "implementation_fingerprints": {
     "branch-protection-required-checks/v2": "51eab91fbf01eb8dd848206b01b2a3ae726459ff93be98ca12e89a25e5673788",
-    "contributing-present/v2": "c55ea445259761676ee3daa10c7edbb54cee7c7d3a074a71e2ef943c032a45a5",
-    "diataxis-coverage-ai/v2": "737e7765ab306be6ac325213ba14990f68b8cc675623d0661e3489b1521db919",
-    "readme-present/v2": "b0152ca3152f0d7f6af2aa169c374290231c3feecbf817d56ab210e7a96c2098",
+    "contributing-present/v2": "f8f758a76eb06c661f8a0afb559c5589aefb502a23d615389506e5f5f6ef4d9d",
+    "diataxis-coverage-ai/v2": "044e05a7fee2f44d9abebae5a1fe3f1d45969160096810fb9bd00c717af0e2f5",
+    "readme-present/v2": "de722aff04f63a8a3933818136c9f6fd6f97445c4d98f53a9440537c351af1a2",
     "renovate-enabled/v2": "53204be9632b3d6db2859a552734b2cf885f22de55f7b563f3b3e1a5cbc30cc5",
-    "security-file-present/v2": "0d7e605a1b8c8324b335c278d06f458cfd4bbd7eb3c8263ff31fdd56ec9773af",
+    "security-file-present/v2": "b3eb84c2f08cf800310eb6869f564e05de2f278d0779906e24be557e7d6c5eba",
     "signed-commits-required/v2": "dea296bf2c35f44894de4b6ff914efcfcddac743f8e4baa734fe9a4b5d9671c7",
     "supports-canonical-k8s/v1": "5d728aa706c421f423184a7c7510885f2b1dc2b2a30cf3e27e210964c266fe44",
     "supports-juju-4/v2": "ea22e0488dff17b9440689154748aa9343e50d493a77ce1806698902fea5706a",
@@ -25,7 +25,7 @@
     "uses-gh-runners-unit-testing/v1": "6d894fba5b3271f0e7655ed7582a9a757a5d555c738145ef95250c2a6f513b64",
     "uses-jubilant/v2": "95c31df72cadf6c9c2a2dac8642a6971620fec79cb51be05f2878bc5267bf1ab",
     "uses-ops-testing/v1": "51801274aa8ea45e88047cdb5eb6fb3b82a7f3b98cf12e9ccfda2a02c1a7ba55",
-    "uses-sphinx-stack/v1": "77f92c236dee944e6a107dcca8a1fac373934c9003e61d232528cc49f336dbd7",
+    "uses-sphinx-stack/v1": "91a02a2f9e92fbc5a9f0529ddbe5078306c390a7c3ee4cc2a8ea138160d45b8b",
     "uses-tf-v1-provider/v1": "a97323d71b606c829f1260ef7263908b71a545ff28b9d8e628670c7bcb089bd9"
   },
   "compliance_summary": {
@@ -19317,7 +19317,7 @@
       "outputs": {
         "uses_ops_testing": {
           "label": "Uses Ops Testing",
-          "description": "Unit tests use ops.testing without legacy Harness.",
+          "description": "The charm's unit tests use the current ops.testing framework and no longer use the legacy Harness.",
           "type": "boolean",
           "range": "",
           "ai_assisted": false,
@@ -19325,7 +19325,7 @@
         },
         "uses_gh_runners_unit_testing": {
           "label": "GitHub-hosted unit testing",
-          "description": "Unit-test jobs run on GitHub-hosted runners.",
+          "description": "Every CI job that runs the charm's unit tests uses a GitHub-hosted runner (for example ubuntu-latest). Any self-hosted unit-test job, including coverage jobs, fails this check.",
           "type": "boolean",
           "range": "",
           "ai_assisted": false,
@@ -19333,7 +19333,7 @@
         },
         "uses_jubilant": {
           "label": "Uses Jubilant",
-          "description": "Component integration tests use Jubilant.",
+          "description": "The charm's integration tests use Jubilant to drive Juju.",
           "type": "boolean",
           "range": "",
           "ai_assisted": false,
@@ -19341,7 +19341,7 @@
         },
         "uses_tf_v1_provider": {
           "label": "Terraform Juju provider v1",
-          "description": "Component Terraform modules constrain the Juju provider to major version 1.",
+          "description": "The charm's Terraform module requires version 1.x of the Juju Terraform provider.",
           "type": "boolean",
           "range": "",
           "ai_assisted": false,
@@ -19349,7 +19349,7 @@
         },
         "uses_charm_ci": {
           "label": "Uses charm-ci",
-          "description": "Integration jobs use Canonical charm-ci instead of operator-workflows.",
+          "description": "Integration tests run in CI through Canonical's charm-ci workflows rather than operator-workflows.",
           "type": "boolean",
           "range": "",
           "ai_assisted": false,
@@ -19357,7 +19357,7 @@
         },
         "supports_canonical_k8s": {
           "label": "Canonical Kubernetes configured",
-          "description": "Kubernetes charm-ci tests configure Canonical Kubernetes through linked Concierge configuration.",
+          "description": "Kubernetes charms run their charm-ci integration tests on Canonical Kubernetes. Not applicable to machine charms.",
           "type": "boolean",
           "range": "",
           "ai_assisted": false,
@@ -19365,7 +19365,7 @@
         },
         "supports_juju_4": {
           "label": "Juju 4 configured",
-          "description": "Linked charm-ci configuration targets the cycle-pinned Juju 4 stable track.",
+          "description": "charm-ci integration tests run against Juju 4 (the stable track set for the cycle).",
           "type": "boolean",
           "range": "",
           "ai_assisted": false,
@@ -19373,7 +19373,7 @@
         },
         "supports_juju_lts": {
           "label": "Juju LTS configured",
-          "description": "Linked charm-ci configuration targets the cycle-pinned Juju LTS stable track.",
+          "description": "charm-ci integration tests run against the current Juju LTS (the stable track set for the cycle).",
           "type": "boolean",
           "range": "",
           "ai_assisted": false,
@@ -19420,7 +19420,7 @@
       "outputs": {
         "readme_present": {
           "label": "README customized",
-          "description": "Repository-root README.md has content beyond headings and differs from the pinned template.",
+          "description": "README.md exists at the repository root and has real content, not just headings or the unchanged charm template.",
           "type": "boolean",
           "range": "",
           "ai_assisted": false,
@@ -19428,7 +19428,7 @@
         },
         "contributing_present": {
           "label": "CONTRIBUTING customized",
-          "description": "Repository-root CONTRIBUTING.md has content beyond headings and differs from the pinned template.",
+          "description": "CONTRIBUTING.md exists at the repository root and has real content, not just headings or the unchanged charm template.",
           "type": "boolean",
           "range": "",
           "ai_assisted": false,
@@ -19436,7 +19436,7 @@
         },
         "has_security": {
           "label": "SECURITY customized",
-          "description": "Repository-root SECURITY.md has content beyond headings; the complete PFE template policy qualifies.",
+          "description": "SECURITY.md exists at the repository root and has real content. The standard PFE security policy template counts.",
           "type": "boolean",
           "range": "",
           "ai_assisted": false,
@@ -19444,7 +19444,7 @@
         },
         "uses_sphinx_stack": {
           "label": "Sphinx Stack version",
-          "description": "Declared Canonical Sphinx Stack version; an empty string means no adoption. Snaps and reviewed upstream-docs exemptions are not applicable.",
+          "description": "Version of the Canonical Sphinx Stack used for the documentation; blank means it is not used. Not applicable to snaps or to products whose documentation is maintained upstream.",
           "type": "string",
           "range": "",
           "ai_assisted": false,
@@ -19452,7 +19452,7 @@
         },
         "diataxis_coverage_ai": {
           "label": "Diataxis coverage (AI)",
-          "description": "AI-assisted coverage assessment of authoritative documentation; informational only.",
+          "description": "AI estimate (0-4) of how many Diataxis modes (tutorial, how-to, reference, explanation) the documentation covers. Informational only; does not affect medals.",
           "type": "number",
           "range": "0-4",
           "ai_assisted": true,
@@ -19493,7 +19493,7 @@
       "outputs": {
         "renovate_enabled": {
           "label": "Renovate onboarded",
-          "description": "Enabled onboarding configuration and an open Dependency Dashboard authored by the verified Renovate bot; not a runtime heartbeat.",
+          "description": "Renovate is set up and active: the repository has a Renovate configuration and an open Dependency Dashboard issue created by the Renovate bot. A configuration file alone does not count.",
           "type": "boolean",
           "range": "",
           "ai_assisted": false,
@@ -19501,7 +19501,7 @@
         },
         "branch_protection_required_checks": {
           "label": "Required checks enforced",
-          "description": "Effective classic protection or active rulesets enforce status checks on the default branch.",
+          "description": "The default branch requires status checks to pass before merging, set through branch protection or an active repository or organization ruleset. Protection without required checks, or rulesets in Evaluate mode, do not count.",
           "type": "boolean",
           "range": "",
           "ai_assisted": false,
@@ -19509,7 +19509,7 @@
         },
         "signed_commits_required": {
           "label": "Signed commits required",
-          "description": "Effective classic protection or active rulesets require signed commits on the default branch.",
+          "description": "The default branch requires signed commits, set through branch protection or an active repository or organization ruleset. Rulesets in Evaluate mode do not count.",
           "type": "boolean",
           "range": "",
           "ai_assisted": false,
