@@ -22,6 +22,17 @@ gh auth login
 
 The Makefile reads `GITHUB_TOKEN` from `gh auth token`, so you do not need to export it.
 
+GitHub evidence requests retry rate limits up to three times with the same credentials, honoring
+`Retry-After` or the primary rate-limit reset time (at most one hour per wait). Retry waits are
+logged. Connection interruptions/timeouts retry with 1, 2 and 4 second backoff.
+Exhausted retries and acquisition failures still fail scoring; they are never converted
+into missing files, disabled protections, or zero-valued metrics. An unsuccessful anonymous
+fallback preserves the original authenticated response. The narrow exception is an explicit
+GitHub permission denial when reading protection/signature settings: that metric becomes
+`insufficient_data` with the denied endpoint in its reason. This lets products outside the
+credential owner's administration scope participate without pretending their protections are
+disabled. Required unknown security evidence still blocks the medal.
+
 ## Choose a framework version
 
 Local scoring now runs against an explicit framework contract under `framework/versions/<id>/`.
@@ -80,11 +91,13 @@ contracts.
 | AI metric or prompt | Use the AI variation below |
 
 `make _assemble FRAMEWORK_VERSION=<id>` can reuse existing
-`computed/versions/<id>/*.json` only when scorer output keys and nullability are unchanged.
+`computed/versions/<id>/*.json` only when the contract and implementation fingerprints match.
 
 > **Keep measured-low separate from unmeasurable.** `false`, `0`, or a low percentage is a real
-> result and should be scored. Use `null` only when the signal could not be measured; a required
-> metric with a `null` value makes the dimension `insufficient_data` and `unrated`.
+> result and should be scored. Every metric is an outcome object: `measured(value)`,
+> `insufficient_data(reason)`, or `not_applicable(reason)`. Required unknown evidence blocks the
+> dimension and any root that includes it; informational unknown evidence never blocks medals.
+> N/A skips only that metric's gate. An entirely N/A rubric earns no medal.
 
 ## Include AI-assisted metrics
 

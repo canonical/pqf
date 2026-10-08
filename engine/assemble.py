@@ -10,6 +10,7 @@ import yaml
 from engine.framework import FrameworkVersion, contract_digest, discover_frameworks, get_framework
 from engine.graph import build_graph
 from engine.medal_engine import compute_leaf_product, compute_root_product
+from engine.metric_outcomes import METRIC_SCHEMA_VERSION, parse_metrics, serialize_metrics
 from engine.models import ApplicabilityOutcome, ProductType
 
 
@@ -52,7 +53,7 @@ def _dim_to_dict(dim_result) -> dict[str, Any]:
                 "medal": leaf_result.medal.value,
                 "result": leaf_result.result.value,
                 "applicability": leaf_result.applicability.value,
-                "metrics": leaf_result.metrics,
+                "metrics": serialize_metrics(leaf_result.metrics),
                 "excluded_from_parent_medal": leaf_result.excluded_from_parent_medal,
             }
             for leaf_result in dim_result.composition
@@ -63,7 +64,7 @@ def _dim_to_dict(dim_result) -> dict[str, Any]:
         "applicability": dim_result.applicability.value,
         "meets_target": dim_result.meets_target,
         "result": dim_result.result.value,
-        "metrics": dim_result.metrics,
+        "metrics": serialize_metrics(dim_result.metrics),
         "composition": composition,
     }
 
@@ -128,6 +129,8 @@ def _validate_envelope(
     selected_framework: FrameworkVersion,
     expected_contract_digest: str,
 ) -> dict[str, str]:
+    if not isinstance(payload, dict):
+        raise ValueError(f"{path}: computed envelope must be an object.")
     if payload.get("framework_version") != selected_framework.id:
         raise ValueError(
             f"{path} targets framework version {payload.get('framework_version')!r}, "
@@ -179,11 +182,18 @@ def _load_leaf_metrics(
             raise ValueError(f"{path} has mismatched implementation fingerprints")
 
         for leaf_id, leaf_data in payload.get("leaf_metrics", {}).items():
+            if not isinstance(leaf_data, dict):
+                raise ValueError(f"{path}:{leaf_id}: dimensions must be an object.")
             if leaf_id not in leaf_computed:
                 leaf_computed[leaf_id] = {}
             for dimension_name, metrics in leaf_data.items():
-                if isinstance(metrics, dict):
-                    leaf_computed[leaf_id][dimension_name] = metrics
+                if dimension_name not in selected_framework.dimensions["dimensions"]:
+                    raise ValueError(f"{path}: undeclared dimension {dimension_name!r}")
+                leaf_computed[leaf_id][dimension_name] = parse_metrics(
+                    metrics,
+                    selected_framework.dimensions["dimensions"][dimension_name],
+                    context=f"{path}:{leaf_id}.{dimension_name}",
+                )
 
     return leaf_computed, implementation_fingerprints or {}
 
@@ -263,6 +273,7 @@ def assemble_portfolio(
 
     return {
         "generated_at": now.isoformat(),
+        "metric_schema_version": METRIC_SCHEMA_VERSION,
         "framework": _framework_to_dict(selected_framework),
         "contract_digest": contract_digest(selected_framework),
         "source_revision": source_revision,

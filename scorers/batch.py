@@ -12,6 +12,7 @@ import yaml
 
 from engine.framework import FrameworkStatus, discover_frameworks, get_framework
 from engine.graph import build_graph, resolve_leaf_units_for
+from engine.metric_outcomes import serialize_metrics
 from scorers import registry
 
 
@@ -88,12 +89,14 @@ def main(argv: list[str] | None = None) -> int:
         units = resolve_leaf_units_for(graph, product_id)
         for dimension_name, dimension_config in framework.dimensions["dimensions"].items():
             results = {
-                unit.product_id: registry.run_dimension(
-                    unit,
-                    dimension_name,
-                    dimension_config,
-                    context,
-                    runner_cache=runner_cache,
+                unit.product_id: serialize_metrics(
+                    registry.run_dimension(
+                        unit,
+                        dimension_name,
+                        dimension_config,
+                        context,
+                        runner_cache=runner_cache,
+                    )
                 )
                 for unit in units
             }

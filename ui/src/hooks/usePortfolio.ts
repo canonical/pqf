@@ -1,12 +1,14 @@
 import { useQuery } from '@tanstack/react-query'
 import type { FrameworkVersionSummary, Portfolio } from '../types'
 import { useFrameworkVersion } from '../providers/FrameworkVersionProvider'
+import { validatePortfolio } from '../lib/portfolioValidation'
 
 async function fetchPortfolio(version: FrameworkVersionSummary): Promise<Portfolio> {
   // Use BASE_URL so the path resolves correctly on GH Pages subpath (/pqf/)
   const res = await fetch(`${import.meta.env.BASE_URL}${version.portfolio_url}`)
   if (!res.ok) throw new Error(`Failed to fetch product data: ${res.status}`)
-  const portfolio: Portfolio = await res.json()
+  const portfolio: unknown = await res.json()
+  validatePortfolio(portfolio)
 
   // framework-versions.json is the source of truth; a portfolio that doesn't match the index
   // entry it was published under is a broken artifact, not a version we can silently accept.

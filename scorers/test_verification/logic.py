@@ -1,7 +1,6 @@
-from typing import Any
-
 import requests
 
+from engine.metric_outcomes import MetricOutcome, insufficient_data, measured
 from engine.models import EvaluationUnit
 
 # Reuse shared helpers for GitHub interactions
@@ -60,7 +59,9 @@ def _latest_default_branch_check_success(owner_repo: str, github_token: str | No
     return (latest.get("conclusion") or "").lower() == "success"
 
 
-def compute_metrics(unit: EvaluationUnit, github_token: str | None = None) -> dict[str, Any]:
+def compute_metrics(
+    unit: EvaluationUnit, github_token: str | None = None
+) -> dict[str, MetricOutcome]:
     """
     Fetch test metrics from the evaluation unit's Allure report URL.
     Checks uses_ops_testing and uses_jubilant against unit.repo.
@@ -96,7 +97,7 @@ def compute_metrics(unit: EvaluationUnit, github_token: str | None = None) -> di
         # Integration evidence combines workflow markers and code-search signals.
         integration_evidence = _integration_test_evidence_present(unit.repo, github_token)
 
-    return {
+    raw = {
         "coverage_pct": coverage_pct,
         "stability_pct": stability_pct,
         "latest_build_passing": latest_build_passing,
@@ -104,3 +105,30 @@ def compute_metrics(unit: EvaluationUnit, github_token: str | None = None) -> di
         "uses_ops_testing": uses_ops,
         "uses_jubilant": uses_jub,
     }
+    return {
+        key: measured(value)
+        if value is not None
+        else insufficient_data("The legacy measurement has no evidence.")
+        for key, value in raw.items()
+    }
+
+
+def compute_v0_metrics(
+    unit: EvaluationUnit,
+    github_token: str | None = None,
+    *,
+    juju4_track: str = "4/stable",
+    juju_lts_track: str = "3.6/stable",
+) -> dict[str, MetricOutcome]:
+    """Measure the target V0 contract; acquisition failures propagate to the runner."""
+    from scorers.test_verification.evidence import UninterpretableRepository, acquire
+    from scorers.test_verification.v0 import CHARM_METRICS, evaluate_files
+
+    try:
+        files = acquire(unit, github_token)
+    except UninterpretableRepository as exc:
+        result = evaluate_files(unit, {})
+        if unit.product_type.value == "charm":
+            result = {key: insufficient_data(str(exc)) for key in CHARM_METRICS}
+        return result
+    return evaluate_files(unit, files, juju4_track=juju4_track, juju_lts_track=juju_lts_track)

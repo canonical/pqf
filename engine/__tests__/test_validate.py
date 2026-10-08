@@ -406,6 +406,26 @@ def _minimal_dimension(
     }
 
 
+@pytest.mark.parametrize("use", ["criterion", "required"])
+def test_informational_metric_cannot_gate_scoring(tmp_path, use):
+    from engine.framework import discover_frameworks
+    from engine.validate import _validate_dimension_contract
+
+    dimensions = _minimal_dimension()
+    dimension = dimensions["test_verification"]
+    dimension["outputs"]["latest_build_passing"]["informational"] = True
+    if use == "criterion":
+        dimension["required_metrics_for_scoring"] = []
+    else:
+        dimension["medals"] = {}
+    _write_framework_version(
+        tmp_path, version_id="v0", sequence=0, status="active", dimensions=dimensions
+    )
+    framework = discover_frameworks(tmp_path)[0]
+    errors = _validate_dimension_contract(framework, "test_verification", dimension)
+    assert any("informational" in error and "latest_build_passing" in error for error in errors)
+
+
 def _minimal_leaf_product(
     *,
     product_id: str = "test-charm",
@@ -488,7 +508,7 @@ class TestRepositoryValidation:
         errors = validate_repository(REPO_ROOT / "framework" / "versions", REPO_ROOT / "products")
         assert errors == []
 
-    @pytest.mark.parametrize("version", ["v0", "v1"])
+    @pytest.mark.parametrize("version", ["v1"])
     def test_live_engagement_contract_scores_medals_from_ownership_only(self, version):
         dimensions_path = REPO_ROOT / "framework" / "versions" / version / "dimensions.yaml"
         engagement = yaml.safe_load(dimensions_path.read_text())["dimensions"]["engagement"]
@@ -497,6 +517,14 @@ class TestRepositoryValidation:
         assert engagement["medals"] == {
             medal: ["ownership_signal == true"] for medal in ("bronze", "silver", "gold")
         }
+
+    def test_v0_keeps_only_cycle_commitment_dimensions(self):
+        dimensions = yaml.safe_load(
+            (REPO_ROOT / "framework/versions/v0/dimensions.yaml").read_text()
+        )["dimensions"]
+        assert set(dimensions) == {"test_verification", "documentation", "security_ssdlc"}
+        assert "ci_passing" not in dimensions["test_verification"]["outputs"]
+        assert "uses_rtd_hosting" not in dimensions["documentation"]["outputs"]
 
     def test_reports_missing_framework_dimensions_snapshot_file(self, tmp_path):
         framework_root = tmp_path / "framework" / "versions"

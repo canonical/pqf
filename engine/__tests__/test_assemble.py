@@ -7,6 +7,7 @@ import yaml
 
 from engine import assemble
 from engine.framework import contract_digest, discover_frameworks, get_framework
+from engine.metric_outcomes import measured, serialize_metric_outcome
 
 DIMS_CONFIG = {
     "dimensions": {
@@ -112,14 +113,17 @@ def _write_computed_file(
     version_dir.mkdir(parents=True, exist_ok=True)
     payload = {
         "framework_version": framework_version,
+        "metric_schema_version": 1,
         "contract_digest": contract_digest_override or contract_digest(selected_framework),
         "implementation_fingerprints": IMPLEMENTATION_FINGERPRINTS,
         "product_id": product_id,
         "computed_at": "2026-01-01T00:00:00+00:00",
         "leaf_metrics": {
             "synapse": {
-                "test_verification": {"coverage_pct": test_coverage},
-                "documentation": {"has_readme": has_readme},
+                "test_verification": {
+                    "coverage_pct": serialize_metric_outcome(measured(test_coverage))
+                },
+                "documentation": {"has_readme": serialize_metric_outcome(measured(has_readme))},
             }
         },
     }
@@ -180,6 +184,25 @@ def test_portfolio_embeds_framework_and_compliance_metadata(portfolio, repo_fixt
         "below_target": 1,
         "insufficient_data": 0,
     }
+
+
+@pytest.mark.parametrize("bad_leaf_data", [None, [], {"test_verification": 42}])
+def test_assembly_rejects_malformed_leaf_measurements(repo_fixture, bad_leaf_data):
+    _write_computed_file(
+        repo_fixture["computed_dir"], framework_version="v0", selected_framework=repo_fixture["v0"]
+    )
+    path = repo_fixture["computed_dir"] / "versions/v0/matrix.json"
+    payload = json.loads(path.read_text())
+    payload["leaf_metrics"]["synapse"] = bad_leaf_data
+    path.write_text(json.dumps(payload))
+    with pytest.raises(ValueError, match="synapse"):
+        assemble.assemble_portfolio(
+            repo_fixture["products_dir"],
+            repo_fixture["computed_dir"],
+            repo_fixture["frameworks"],
+            repo_fixture["v0"],
+            "revision",
+        )
 
 
 def test_portfolio_contains_root_product(portfolio):

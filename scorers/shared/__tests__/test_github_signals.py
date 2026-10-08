@@ -1,14 +1,149 @@
+import pytest
+import requests
 import responses
 
 from scorers.shared import github_signals
 from scorers.shared.github_signals import (
+    GitHubAcquisitionError,
+    GitHubPermissionError,
     build_github_session,
     default_branch_check_runs,
+    github_get,
+    raise_for_required_github_evidence,
     repo_file_exists,
     repo_topics,
     search_code_count,
     workflow_files,
 )
+
+
+@pytest.mark.parametrize(
+    ("status", "message", "headers", "permission_denied"),
+    [
+        (403, "Resource not accessible by personal access token", {}, True),
+        (403, "Resource not accessible by integration", {}, True),
+        (403, "Must have admin rights to Repository.", {}, True),
+        (403, "API rate limit exceeded", {"X-RateLimit-Remaining": "0"}, False),
+        (403, "Resource not accessible by integration", {"Retry-After": "60"}, False),
+        (403, "Forbidden", {}, False),
+        (401, "Bad credentials", {}, False),
+        (429, "Too many requests", {}, False),
+        (500, "Internal server error", {}, False),
+    ],
+)
+@responses.activate
+def test_only_explicit_permission_denials_are_classified(
+    status, message, headers, permission_denied
+):
+    url = "https://api.github.com/repos/canonical/example/branches/main/protection"
+    responses.get(url, status=status, json={"message": message}, headers=headers)
+    response = build_github_session("gh-token").get(url)
+
+    with pytest.raises(GitHubAcquisitionError) as error:
+        raise_for_required_github_evidence(response, url)
+
+    assert isinstance(error.value, GitHubPermissionError) is permission_denied
+
+
+@pytest.mark.parametrize("status", [403, 404])
+@responses.activate
+def test_github_get_preserves_authenticated_error_when_anonymous_access_fails(status):
+    url = "https://api.github.com/repos/canonical/example/branches/main/protection"
+    responses.get(url, status=status, json={"message": "Authenticated result"})
+    responses.get(url, status=401, json={"message": "Requires authentication"})
+
+    response = github_get(url, "gh-token")
+
+    assert response.status_code == status
+    assert response.json()["message"] == "Authenticated result"
+
+
+@responses.activate
+def test_github_get_can_still_read_public_evidence_outside_token_repository_scope():
+    url = "https://api.github.com/repos/canonical/example/contents/README.md"
+    responses.get(url, status=404)
+    responses.get(url, json={"name": "README.md"})
+
+    assert github_get(url, "gh-token").json() == {"name": "README.md"}
+
+
+@pytest.mark.parametrize("use_session", [False, True])
+@responses.activate
+def test_rate_limit_retries_keep_authentication_and_honor_retry_after(mocker, use_session):
+    url = "https://api.github.com/search/code"
+    sleep = mocker.patch("time.sleep")
+    responses.get(url, status=403, headers={"Retry-After": "60"})
+    responses.get(url, json={"total_count": 1})
+
+    response = (
+        github_signals.github_session_get(build_github_session("gh-token"), url)
+        if use_session
+        else github_get(url, "gh-token")
+    )
+
+    assert response.json() == {"total_count": 1}
+    sleep.assert_called_once_with(60)
+    assert all(
+        call.request.headers["Authorization"] == "token gh-token" for call in responses.calls
+    )
+
+
+@responses.activate
+def test_primary_rate_limit_waits_until_reset(mocker):
+    url = "https://api.github.com/repos/canonical/example/issues"
+    mocker.patch("time.time", return_value=1000)
+    sleep = mocker.patch("time.sleep")
+    responses.get(
+        url, status=403, headers={"X-RateLimit-Remaining": "0", "X-RateLimit-Reset": "1060"}
+    )
+    responses.get(url, json=[])
+
+    assert github_get(url, "gh-token").json() == []
+    sleep.assert_called_once_with(61)
+
+
+@responses.activate
+def test_rate_limit_retries_are_bounded_and_preserve_error(mocker):
+    url = "https://api.github.com/search/code"
+    sleep = mocker.patch("time.sleep")
+    responses.get(url, status=429, headers={"Retry-After": "60"})
+
+    response = github_get(url, "gh-token")
+
+    assert response.status_code == 429
+    assert len(responses.calls) == 4
+    assert sleep.call_count == 3
+    assert all(
+        call.request.headers["Authorization"] == "token gh-token" for call in responses.calls
+    )
+
+
+@pytest.mark.parametrize("error", [requests.ConnectionError, requests.Timeout])
+@responses.activate
+def test_transient_connection_failures_retry_authenticated_request(mocker, error):
+    url = "https://api.github.com/repos/canonical/example/contents/.github/workflows/ci.yml"
+    sleep = mocker.patch("time.sleep")
+    responses.get(url, body=error("Connection interrupted"))
+    responses.get(url, json={"name": "ci.yml"})
+
+    assert github_get(url, "gh-token").json() == {"name": "ci.yml"}
+    sleep.assert_called_once_with(1)
+    assert all(
+        call.request.headers["Authorization"] == "token gh-token" for call in responses.calls
+    )
+
+
+@responses.activate
+def test_exhausted_connection_retries_still_fail(mocker):
+    url = "https://api.github.com/repos/canonical/example"
+    sleep = mocker.patch("time.sleep")
+    responses.get(url, body=requests.ConnectionError("Connection interrupted"))
+
+    with pytest.raises(requests.ConnectionError, match="Connection interrupted"):
+        github_get(url, "gh-token")
+
+    assert len(responses.calls) == 4
+    assert [call.args[0] for call in sleep.call_args_list] == [1, 2, 4]
 
 
 @responses.activate

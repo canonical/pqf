@@ -2,7 +2,7 @@ import { render, screen, fireEvent } from '@testing-library/react'
 import { describe, it, expect, vi } from 'vitest'
 import { MemoryRouter } from 'react-router'
 import RootMetricsList from './RootMetricsList'
-import type { LeafDimensionResult, OutputMeta } from '../types'
+import type { LeafDimensionResult, MetricOutcome, OutputMeta } from '../types'
 
 vi.mock('../providers/FrameworkVersionProvider', () => ({
   useFrameworkVersion: () => ({
@@ -23,7 +23,7 @@ const THRESHOLDS = {
 
 function leaf(
   id: string,
-  metrics: Record<string, string | number | boolean | null>,
+  metrics: Record<string, MetricOutcome>,
   excluded = false,
 ): LeafDimensionResult {
   return {
@@ -35,8 +35,8 @@ function leaf(
   }
 }
 
-const LOW_LEAF = leaf('synapse', { coverage_pct: 0, latest_build_passing: true })
-const HIGH_LEAF = leaf('saml', { coverage_pct: 70, latest_build_passing: false })
+const LOW_LEAF = leaf('synapse', { coverage_pct: { state: 'measured', value: 0 }, latest_build_passing: { state: 'measured', value: true } })
+const HIGH_LEAF = leaf('saml', { coverage_pct: { state: 'measured', value: 70 }, latest_build_passing: { state: 'measured', value: false } })
 
 describe('RootMetricsList', () => {
   it('renders metric labels from metaOutputs', () => {
@@ -57,8 +57,8 @@ describe('RootMetricsList', () => {
     expect(container).toHaveTextContent('/ 70')
   })
 
-  it('ignores null values when selecting the worst component metric', () => {
-    const missing = leaf('missing', { coverage_pct: null, latest_build_passing: true })
+  it('preserves unknown evidence instead of showing measured success', () => {
+    const missing = leaf('missing', { coverage_pct: { state: 'insufficient_data', value: null, reason: 'No coverage report' }, latest_build_passing: { state: 'measured', value: true } })
     render(
       <RootMetricsList
         composition={[missing, HIGH_LEAF]}
@@ -68,12 +68,12 @@ describe('RootMetricsList', () => {
     )
 
     const container = screen.getByText('Coverage').closest('div[style]')!.parentElement!
-    expect(container).toHaveTextContent('70')
+    expect(container).toHaveTextContent('Insufficient data')
     expect(container).not.toHaveTextContent('null')
   })
 
   it('renders null component values as missing data in the expanded breakdown', () => {
-    const missing = leaf('missing', { coverage_pct: null, latest_build_passing: true })
+    const missing = leaf('missing', { coverage_pct: { state: 'insufficient_data', value: null, reason: 'No coverage report' }, latest_build_passing: { state: 'measured', value: true } })
     render(
       <MemoryRouter>
         <RootMetricsList
@@ -85,7 +85,8 @@ describe('RootMetricsList', () => {
     )
 
     fireEvent.click(screen.getAllByRole('button', { name: /2 components/i })[0])
-    expect(screen.getByText('—')).toHaveStyle({ color: '#999' })
+    expect(screen.getAllByText('Insufficient data')).toHaveLength(2)
+    expect(screen.getAllByText('No coverage report')).toHaveLength(2)
   })
 
   it('shows expand button when leaves disagree on a metric', () => {
@@ -98,8 +99,8 @@ describe('RootMetricsList', () => {
 
   it('does not show expand button when all leaves agree on a metric', () => {
     const agreed = [
-      leaf('a', { coverage_pct: 90, latest_build_passing: true }),
-      leaf('b', { coverage_pct: 90, latest_build_passing: true }),
+      leaf('a', { coverage_pct: { state: 'measured', value: 90 }, latest_build_passing: { state: 'measured', value: true } }),
+      leaf('b', { coverage_pct: { state: 'measured', value: 90 }, latest_build_passing: { state: 'measured', value: true } }),
     ]
     render(
       <RootMetricsList composition={agreed} thresholds={THRESHOLDS} metaOutputs={OUTPUTS} />,
@@ -131,7 +132,7 @@ describe('RootMetricsList', () => {
   })
 
   it('excludes leaves with excluded_from_parent_medal=true from in-scope count', () => {
-    const excluded = leaf('saml', { coverage_pct: 70, latest_build_passing: false }, true)
+    const excluded = leaf('saml', { coverage_pct: { state: 'measured', value: 70 }, latest_build_passing: { state: 'measured', value: false } }, true)
     render(
       <RootMetricsList composition={[LOW_LEAF, excluded]} thresholds={THRESHOLDS} metaOutputs={OUTPUTS} />,
     )
@@ -140,7 +141,7 @@ describe('RootMetricsList', () => {
   })
 
   it('renders nothing when no in-scope leaves', () => {
-    const allExcluded = [leaf('synapse', { coverage_pct: 0 }, true)]
+    const allExcluded = [leaf('synapse', { coverage_pct: { state: 'measured', value: 0 } }, true)]
     const { container } = render(
       <RootMetricsList composition={allExcluded} thresholds={THRESHOLDS} metaOutputs={OUTPUTS} />,
     )

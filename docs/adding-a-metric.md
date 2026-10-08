@@ -240,6 +240,13 @@ file's content.
 
 ## Step 5 — Return the new key from `compute_metrics`
 
+Every output is a `MetricOutcome`, not a scalar. Import the helpers from
+`engine.metric_outcomes`: use `measured(value)` after successful acquisition,
+`not_applicable(reason)` for sanctioned exclusions, and `insufficient_data(reason)` for genuinely
+unmeasurable or optional evidence. Required API acquisition failures still raise. YAML needs no
+extra format/applicability flags; `type` describes the measured value. Informational outputs cannot
+appear in medal criteria or `required_metrics_for_scoring`.
+
 The `compute_metrics` function is a single `return` dict at the bottom of `logic.py`. Add your new
 key to it:
 
@@ -249,25 +256,17 @@ key to it:
      github_token: str,
      openrouter_api_key: str,
      model: str = "anthropic/claude-sonnet-4.5",
- ) -> dict[str, Any]:
+ ) -> dict[str, MetricOutcome]:
      check_runs = default_branch_check_runs(unit.repo, github_token)
      return {
-         "readme_present": _readme_present(unit, github_token),
-         "contributing_present": _contributing_present(unit, github_token),
-         "has_security": _file_exists(unit, "SECURITY.md", github_token),
-         "documentation_workflows_passing": _documentation_workflows_passing(check_runs),
-         "diataxis_coverage_ai": _diataxis_coverage_ai(
-             unit, github_token, openrouter_api_key, model=model
-         ),
-         "uses_rtd_hosting": _uses_rtd_hosting(unit, github_token),
-         "release_notes_process_implemented": _release_notes_process_implemented(unit, github_token),
-         "has_changelog": _has_changelog(unit, github_token),
-+        "has_runbook": _has_runbook(unit, github_token),
+         # Existing outputs also return MetricOutcome objects.
+         ...
++        "has_runbook": measured(_has_runbook(unit, github_token)),
      }
 ```
 
 > **The key in this dict must exactly match the output key declared in the framework contract.** A
-> mismatch causes a `KeyError` in `engine/assemble.py` when the pipeline runs.
+> mismatch is rejected by the registry before scorer output is published.
 
 ---
 
@@ -284,15 +283,8 @@ Look for the existing test that covers default (all-false) outputs and add your 
      result = compute_metrics(unit, "gh-token", "")
 
      assert result == {
-         "readme_present": False,
-         "contributing_present": False,
-         "has_security": False,
-         "documentation_workflows_passing": False,
-         "diataxis_coverage_ai": 0,
-         "uses_rtd_hosting": False,
-         "release_notes_process_implemented": False,
-         "has_changelog": False,
-+        "has_runbook": False,
+         ...  # existing structured outcomes
++        "has_runbook": measured(False),
      }
 ```
 
@@ -311,7 +303,7 @@ def test_has_runbook_true_when_file_exists(mocker):
     mocker.patch("scorers.documentation.logic.workflow_files", return_value=[])
 
     result = compute_metrics(UNIT, "gh-token", "")
-    assert result["has_runbook"] is True
+    assert result["has_runbook"] == measured(True)
 
 
 def test_has_runbook_false_when_file_missing(mocker):
@@ -325,7 +317,7 @@ def test_has_runbook_false_when_file_missing(mocker):
     mocker.patch("scorers.documentation.logic.workflow_files", return_value=[])
 
     result = compute_metrics(UNIT, "gh-token", "")
-    assert result["has_runbook"] is False
+    assert result["has_runbook"] == measured(False)
 ```
 
 > **Why patch `logic.repo_file_exists` and not `shared.github_signals.repo_file_exists`?**
@@ -338,7 +330,7 @@ def test_has_runbook_false_when_file_missing(mocker):
 
 ```bash
 # Run only the documentation scorer tests:
-python3 -m pytest scorers/documentation/ -v
+PYTEST_ADDOPTS='scorers/documentation/ -v' make test
 
 # Run the full test suite (takes ~30 seconds):
 make test
@@ -409,11 +401,13 @@ all bronze criteria.
 > | `metric >= value` | `coverage_pct >= 80` | Number — at or above threshold |
 > | `metric <= value` | `avg_triage_days <= 5` | Number — at or below threshold |
 
-After a criteria-only change you can regenerate results from existing scorer output without
-re-running the scorer:
+After a criteria change, regenerate against the new contract. Assembly rejects envelopes whose
+contract digest does not match; do not relabel stale measurements:
 
 ```bash
 make validate
+make score-no-llm PRODUCT=<id> FRAMEWORK_VERSION=<version>
+make _merge PRODUCT=<id> FRAMEWORK_VERSION=<version>
 make _assemble FRAMEWORK_VERSION=<version>  # re-evaluates current computed/versions/<version>/
 make dev
 ```

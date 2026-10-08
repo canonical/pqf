@@ -91,14 +91,17 @@ validate:
 	$(PYTHON) -m engine.validate
 
 # ── Python: lint & format ────────────────────────────────────────────────────
+RUFF_PATHS ?= .
+RUFF_FLAGS ?=
+
 lint:
-	ruff check .
+	ruff check $(RUFF_FLAGS) $(RUFF_PATHS)
 
 format:
-	ruff format .
+	ruff format $(RUFF_PATHS)
 
 format-check:
-	ruff format --check .
+	ruff format --check $(RUFF_PATHS)
 
 ci-check: lint format-check test test-ui
 
@@ -140,7 +143,7 @@ score: SCORE_MESSAGE = Scoring product: $(PRODUCT) for framework $(FRAMEWORK_VER
 score: _require-github-token _require-openrouter-key _score-product
 
 score-no-llm: SCORE_RUNNER_ENV = OPENROUTER_API_KEY=
-score-no-llm: SCORE_MESSAGE = Scoring product: $(PRODUCT) for framework $(FRAMEWORK_VERSION) (LLM checks skipped — diataxis/style will be 0/false)
+score-no-llm: SCORE_MESSAGE = Scoring product: $(PRODUCT) for framework $(FRAMEWORK_VERSION) (LLM checks skipped — AI metrics report insufficient_data)
 score-no-llm: _require-github-token _score-product
 
 _score-product:
@@ -184,7 +187,7 @@ _PRODUCTS := $(patsubst products/%.yaml,%,$(wildcard products/*.yaml))
 
 score-all: _require-github-token _require-openrouter-key
 	@echo "Scoring all products for framework $(FRAMEWORK_VERSION): $(_PRODUCTS)"
-	@for p in $(_PRODUCTS); do \
+	@set -e; for p in $(_PRODUCTS); do \
 		echo ""; \
 		echo "── $$p ──────────────────────────────────────────────"; \
 		$(MAKE) --no-print-directory score PRODUCT=$$p FRAMEWORK_VERSION=$(FRAMEWORK_VERSION); \
@@ -196,7 +199,7 @@ score-all: _require-github-token _require-openrouter-key
 
 score-all-no-llm: _require-github-token
 	@echo "Scoring all products for framework $(FRAMEWORK_VERSION) (no LLM): $(_PRODUCTS)"
-	@for p in $(_PRODUCTS); do \
+	@set -e; for p in $(_PRODUCTS); do \
 		echo ""; \
 		echo "── $$p ──────────────────────────────────────────────"; \
 		$(MAKE) --no-print-directory score-no-llm PRODUCT=$$p FRAMEWORK_VERSION=$(FRAMEWORK_VERSION); \

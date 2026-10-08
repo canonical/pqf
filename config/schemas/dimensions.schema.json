@@ -80,6 +80,14 @@
             "type": "string",
             "pattern": "^[a-z][a-z0-9_]*$"
           }
+        },
+        "parameters": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "juju4_track": {"type": "string", "pattern": "^4/stable$"},
+            "juju_lts_track": {"type": "string", "pattern": "^3\\.[0-9]+/stable$"}
+          }
         }
       }
     },

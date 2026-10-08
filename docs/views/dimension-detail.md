@@ -14,7 +14,7 @@ The **Metrics** card lists every output metric for this dimension.
 |--------|-------------|
 | **Metric** | Human-readable name of the metric |
 | **Description** | What it measures and how |
-| **Type / Range** | `boolean` (true/false) or `number` with the value range |
+| **Type / Range** | `boolean` (true/false), `number` with the value range, or `string` (for example, a detected version) |
 | **Method** | How the metric is computed |
 
 ### AI badge
@@ -38,3 +38,14 @@ Result tiers are cumulative — to earn gold, a product must also meet all bronz
 ## Product Scores
 
 The bottom table shows every tracked product's current result for this dimension, sorted by result (best first). Click any product name to jump to its [Product Detail](product-detail.md) page.
+
+## Metric Distribution
+
+Click a metric to compare root and component evidence. Every row retains its structured measured,
+N/A, or insufficient-data state and any unavailable-evidence reason. N/A has a separate count and
+is excluded from the distribution denominator; neither N/A nor insufficient data is a measured
+failure. Informational measurements are counted as **Measured**, not as missing data.
+
+Numeric metrics retain gap-to-target analysis. String metrics use exact equality/inequality
+criteria (including `uses_sphinx_stack != ""` for adoption) and have no numeric gap or version
+ordering. An empty measured string displays **Not adopted**.

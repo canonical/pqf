@@ -4,6 +4,7 @@ import pytest
 import requests
 import responses
 
+from engine.metric_outcomes import insufficient_data, measured
 from engine.models import EvaluationUnit, ProductType
 from scorers.engagement.logic import (
     _compute_issue_triage_stats,
@@ -163,12 +164,12 @@ def test_avg_triage_days_computed_correctly(mocker):
         views_14d=1250,
     )
     result = compute_metrics(UNIT, "token")
-    assert result["avg_triage_days"] == 3.0  # (2 + 4) / 2
-    assert result["avg_pr_review_days"] == 1.0
-    assert result["response_coverage_rate"] == 100.0
-    assert result["ownership_signal"] is True
-    assert result["has_jira_sync"] is True
-    assert result["repo_views_14d"] == 1250
+    assert result["avg_triage_days"].value == 3.0  # (2 + 4) / 2
+    assert result["avg_pr_review_days"].value == 1.0
+    assert result["response_coverage_rate"].value == 100.0
+    assert result["ownership_signal"].value is True
+    assert result["has_jira_sync"].value is True
+    assert result["repo_views_14d"].value == 1250
 
 
 @pytest.mark.parametrize("status", [400, 401, 403, 404, 405, 422, 429, 500])
@@ -223,12 +224,12 @@ def test_returns_none_when_insufficient_activity():
     )
     _mock_repo_metadata("canonical/synapse-operator", views_14d=500)
     result = compute_metrics(UNIT, "token")
-    assert result["avg_triage_days"] is None
-    assert result["avg_pr_review_days"] is None
-    assert result["response_coverage_rate"] is None
-    assert result["ownership_signal"] is False
-    assert result["has_jira_sync"] is False
-    assert result["repo_views_14d"] == 500
+    assert result["avg_triage_days"].value is None
+    assert result["avg_pr_review_days"].value is None
+    assert result["response_coverage_rate"].value is None
+    assert result["ownership_signal"].value is False
+    assert result["has_jira_sync"].value is False
+    assert result["repo_views_14d"].value == 500
 
 
 @responses.activate
@@ -258,11 +259,11 @@ def test_skips_pr_issues_in_issue_list():
     )
     _mock_repo_metadata("canonical/synapse-operator", views_14d=0)
     result = compute_metrics(UNIT, "token")
-    assert result["avg_triage_days"] is None
-    assert result["response_coverage_rate"] is None
-    assert result["ownership_signal"] is False
-    assert result["has_jira_sync"] is False
-    assert result["repo_views_14d"] == 0
+    assert result["avg_triage_days"].value is None
+    assert result["response_coverage_rate"].value is None
+    assert result["ownership_signal"].value is False
+    assert result["has_jira_sync"].value is False
+    assert result["repo_views_14d"].value == 0
 
 
 @responses.activate
@@ -297,11 +298,11 @@ def test_zero_when_issue_has_no_comments():
     )
     _mock_repo_metadata("canonical/synapse-operator")
     result = compute_metrics(UNIT, "token")
-    assert result["avg_triage_days"] is None
-    assert result["response_coverage_rate"] is None
-    assert result["ownership_signal"] is False
-    assert result["has_jira_sync"] is False
-    assert result["repo_views_14d"] is None
+    assert result["avg_triage_days"].value is None
+    assert result["response_coverage_rate"].value is None
+    assert result["ownership_signal"].value is False
+    assert result["has_jira_sync"].value is False
+    assert result["repo_views_14d"].value is None
 
 
 @responses.activate
@@ -440,12 +441,12 @@ def test_has_jira_sync_true():
 def test_returns_zeros_when_no_repo():
     result = compute_metrics(UNIT_EMPTY, "token")
     assert result == {
-        "avg_triage_days": 0.0,
-        "avg_pr_review_days": 0.0,
-        "response_coverage_rate": 0,
-        "ownership_signal": False,
-        "has_jira_sync": False,
-        "repo_views_14d": None,
+        "avg_triage_days": measured(0.0),
+        "avg_pr_review_days": measured(0.0),
+        "response_coverage_rate": measured(0),
+        "ownership_signal": measured(False),
+        "has_jira_sync": measured(False),
+        "repo_views_14d": insufficient_data("Repository traffic is unavailable."),
     }
 
 
@@ -473,11 +474,11 @@ def test_pr_review_zero_when_no_reviews():
     )
     _mock_repo_metadata("canonical/synapse-operator", views_14d=100)
     result = compute_metrics(UNIT, "token")
-    assert result["avg_pr_review_days"] is None
-    assert result["response_coverage_rate"] is None
-    assert result["ownership_signal"] is False
-    assert result["has_jira_sync"] is False
-    assert result["repo_views_14d"] == 100
+    assert result["avg_pr_review_days"].value is None
+    assert result["response_coverage_rate"].value is None
+    assert result["ownership_signal"].value is False
+    assert result["has_jira_sync"].value is False
+    assert result["repo_views_14d"].value == 100
 
 
 @responses.activate
@@ -512,11 +513,11 @@ def test_single_repo_triage_days():
     )
     _mock_repo_metadata("canonical/synapse-operator")
     result = compute_metrics(UNIT, "token")
-    assert result["avg_triage_days"] is None
-    assert result["response_coverage_rate"] is None
-    assert result["ownership_signal"] is False
-    assert result["has_jira_sync"] is False
-    assert result["repo_views_14d"] is None
+    assert result["avg_triage_days"].value is None
+    assert result["response_coverage_rate"].value is None
+    assert result["ownership_signal"].value is False
+    assert result["has_jira_sync"].value is False
+    assert result["repo_views_14d"].value is None
 
 
 @responses.activate
@@ -550,11 +551,11 @@ def test_excludes_prs_outside_90day_window():
     _mock_repo_metadata("canonical/synapse-operator")
     result = compute_metrics(UNIT, "token")
     # Only PR #2 should be considered, leaving an insufficient sample.
-    assert result["avg_pr_review_days"] is None
-    assert result["response_coverage_rate"] is None
-    assert result["ownership_signal"] is False
-    assert result["has_jira_sync"] is False
-    assert result["repo_views_14d"] is None
+    assert result["avg_pr_review_days"].value is None
+    assert result["response_coverage_rate"].value is None
+    assert result["ownership_signal"].value is False
+    assert result["has_jira_sync"].value is False
+    assert result["repo_views_14d"].value is None
 
 
 @responses.activate
@@ -581,9 +582,9 @@ def test_pr_reviews_ignore_null_submitted_at():
     )
     _mock_repo_metadata("canonical/synapse-operator")
     result = compute_metrics(UNIT, "token")
-    assert result["avg_pr_review_days"] is None
-    assert result["response_coverage_rate"] is None
-    assert result["repo_views_14d"] is None
+    assert result["avg_pr_review_days"].value is None
+    assert result["response_coverage_rate"].value is None
+    assert result["repo_views_14d"].value is None
 
 
 def test_paginate_json_array_fetches_all_pages():

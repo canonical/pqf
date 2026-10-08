@@ -43,13 +43,15 @@ export interface ComplianceSummary {
   insufficient_data: number
 }
 
-export type MetricValue = string | number | boolean | null
+export type MetricOutcome =
+  | { state: 'measured'; value: string | number | boolean; reason?: string }
+  | { state: 'not_applicable' | 'insufficient_data'; value: null; reason: string }
 
 export interface LeafDimensionResult {
   product_id: string
-  repo: string
+  repo: string | null
   result: Result
-  metrics: Record<string, MetricValue>
+  metrics: Record<string, MetricOutcome>
   excluded_from_parent_medal: boolean
 }
 
@@ -57,7 +59,7 @@ export interface DimensionEntry {
   result: Result
   /** Whether this dimension's result is at or above its target tier. Always present on version-scoped portfolios. */
   meets_target: boolean
-  metrics: Record<string, MetricValue>
+  metrics: Record<string, MetricOutcome>
   composition: LeafDimensionResult[] | null
 }
 
@@ -116,7 +118,10 @@ export interface BooleanMetricDefinition {
   description?: string
 }
 
-export type MetricDefinition = NumericMetricDefinition | BooleanMetricDefinition
+export type MetricDefinition = NumericMetricDefinition | BooleanMetricDefinition | {
+  name: string
+  type: 'string'
+}
 
 export interface OutputMeta {
   label: string

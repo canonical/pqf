@@ -1,32 +1,86 @@
 dimensions:
   test_verification:
-    label: "Test verification"
-    description: "Automated test health using a minimal deterministic baseline."
+    label: "Testing"
+    description: "Standard testing tools and configuration for the 27.04 cycle."
     scorer: "scorers/test_verification/scorer.py"
     applies_to:
       product_types: ["charm", "snap"]
     aggregation: "worst_in_scope"
+    parameters:
+      juju4_track: "4/stable"
+      juju_lts_track: "3.6/stable"
     required_metrics_for_scoring:
-      - latest_build_passing
+      - uses_ops_testing
+      - uses_gh_runners_unit_testing
       - uses_jubilant
+      - uses_tf_v1_provider
+      - uses_charm_ci
+      - supports_canonical_k8s
+      - supports_juju_4
+      - supports_juju_lts
     outputs:
-      latest_build_passing:
-        implementation: "latest-build-passing/v1"
+      uses_ops_testing:
+        implementation: "uses-ops-testing/v1"
         type: boolean
-        label: "Latest build passing"
-        description: "Whether the latest published test summary has zero failed and broken checks."
+        label: "Uses Ops Testing"
+        description: "The charm's unit tests use the current ops.testing framework and no longer use the legacy Harness."
+      uses_gh_runners_unit_testing:
+        implementation: "uses-gh-runners-unit-testing/v1"
+        type: boolean
+        label: "GitHub-hosted unit testing"
+        description: "Every CI job that runs the charm's unit tests uses a GitHub-hosted runner (for example ubuntu-latest). Any self-hosted unit-test job, including coverage jobs, fails this check."
       uses_jubilant:
-        implementation: "uses-jubilant/v1"
+        implementation: "uses-jubilant/v2"
         type: boolean
         label: "Uses Jubilant"
-        description: "Integration tests import Jubilant."
+        description: "The charm's integration tests use Jubilant to drive Juju."
+      uses_tf_v1_provider:
+        implementation: "uses-tf-v1-provider/v1"
+        type: boolean
+        label: "Terraform Juju provider v1"
+        description: "The charm's Terraform module requires version 1.x of the Juju Terraform provider."
+      uses_charm_ci:
+        implementation: "uses-charm-ci/v1"
+        type: boolean
+        label: "Uses charm-ci"
+        description: "Integration tests run in CI through Canonical's charm-ci workflows rather than operator-workflows."
+      supports_canonical_k8s:
+        implementation: "supports-canonical-k8s/v1"
+        type: boolean
+        label: "Canonical Kubernetes configured"
+        description: "Kubernetes charms run their charm-ci integration tests on Canonical Kubernetes. Not applicable to machine charms."
+      supports_juju_4:
+        implementation: "supports-juju-4/v2"
+        type: boolean
+        label: "Juju 4 configured"
+        description: "charm-ci integration tests run against Juju 4 (the stable track set for the cycle)."
+      supports_juju_lts:
+        implementation: "supports-juju-lts/v1"
+        type: boolean
+        label: "Juju LTS configured"
+        description: "charm-ci integration tests run against the current Juju LTS (the stable track set for the cycle)."
     medals:
-      bronze: ["latest_build_passing == true"]
-      gold: ["latest_build_passing == true", "uses_jubilant == true"]
+      bronze:
+        - "uses_ops_testing == true"
+        - "uses_gh_runners_unit_testing == true"
+      silver:
+        - "uses_ops_testing == true"
+        - "uses_gh_runners_unit_testing == true"
+        - "uses_jubilant == true"
+        - "uses_tf_v1_provider == true"
+      gold:
+        - "uses_ops_testing == true"
+        - "uses_gh_runners_unit_testing == true"
+        - "uses_jubilant == true"
+        - "uses_tf_v1_provider == true"
+        - "uses_charm_ci == true"
+        - "supports_canonical_k8s == true"
+        - "supports_juju_4 == true"
+        - "supports_juju_lts == true"
 
   documentation:
     label: "Documentation"
-    description: "Repository documentation baseline presence and visibility signals."
+    description: "Customized repository documentation and Canonical Sphinx Stack adoption."
     scorer: "scorers/documentation/scorer.py"
     applies_to:
       product_types: ["charm", "snap"]
@@ -35,44 +89,48 @@ dimensions:
       - readme_present
       - contributing_present
       - has_security
+      - uses_sphinx_stack
     outputs:
       readme_present:
-        implementation: "readme-present/v1"
+        implementation: "readme-present/v2"
         type: boolean
-        label: "README present"
-        description: "README.md exists and is non-empty."
+        label: "README customized"
+        description: "README.md exists at the repository root and has real content, not just headings or the unchanged charm template."
       contributing_present:
-        implementation: "contributing-present/v1"
+        implementation: "contributing-present/v2"
         type: boolean
-        label: "CONTRIBUTING present"
-        description: "CONTRIBUTING.md exists and is non-empty."
+        label: "CONTRIBUTING customized"
+        description: "CONTRIBUTING.md exists at the repository root and has real content, not just headings or the unchanged charm template."
       has_security:
-        implementation: "security-file-present/v1"
+        implementation: "security-file-present/v2"
         type: boolean
-        label: "SECURITY present"
-        description: "SECURITY.md exists in the primary repository."
+        label: "SECURITY customized"
+        description: "SECURITY.md exists at the repository root and has real content. The standard PFE security policy template counts."
+      uses_sphinx_stack:
+        implementation: "uses-sphinx-stack/v1"
+        type: string
+        label: "Sphinx Stack version"
+        description: "Version of the Canonical Sphinx Stack used for the documentation; blank means it is not used. Not applicable to snaps or to products whose documentation is maintained upstream."
       diataxis_coverage_ai:
-        implementation: "diataxis-coverage-ai/v1"
+        implementation: "diataxis-coverage-ai/v2"
         type: number
-        range: "0–4"
-        label: "Diátaxis coverage (AI)"
-        description: "AI-assisted Diátaxis assessment (informational)."
+        range: "0-4"
+        label: "Diataxis coverage (AI)"
+        description: "AI estimate (0-4) of how many Diataxis modes (tutorial, how-to, reference, explanation) the documentation covers. Informational only; does not affect medals."
         informational: true
         ai_assisted: true
-      uses_rtd_hosting:
-        implementation: "uses-rtd-hosting/v1"
-        type: boolean
-        label: "Uses RTD hosting"
-        description: "Documentation points at a Read the Docs host."
-        informational: true
     medals:
       bronze: ["readme_present == true"]
-      silver: ["readme_present == true", "contributing_present == true"]
-      gold: ["readme_present == true", "contributing_present == true", "has_security == true"]
+      silver: ["readme_present == true", "contributing_present == true", "has_security == true"]
+      gold:
+        - "readme_present == true"
+        - "contributing_present == true"
+        - "has_security == true"
+        - 'uses_sphinx_stack != ""'
 
   security_ssdlc:
-    label: "Security (SSDLC)"
-    description: "Security baseline checks for update automation and repository protections."
+    label: "Security"
+    description: "Dependency updates and effective default-branch protections."
     scorer: "scorers/security_ssdlc/scorer.py"
     applies_to:
       product_types: ["charm", "snap"]
@@ -83,52 +141,22 @@ dimensions:
       - signed_commits_required
     outputs:
       renovate_enabled:
-        implementation: "renovate-enabled/v1"
+        implementation: "renovate-enabled/v2"
         type: boolean
-        label: "Renovate enabled"
-        description: "Repository is configured for Renovate updates."
+        label: "Renovate onboarded"
+        description: "Renovate is set up and active: the repository has a Renovate configuration and an open Dependency Dashboard issue created by the Renovate bot. A configuration file alone does not count."
       branch_protection_required_checks:
-        implementation: "branch-protection-required-checks/v1"
+        implementation: "branch-protection-required-checks/v2"
         type: boolean
-        label: "Branch protection with required checks"
-        description: "Default branch has required checks configured."
+        label: "Required checks enforced"
+        description: "The default branch requires status checks to pass before merging, set through branch protection or an active repository or organization ruleset. Protection without required checks, or rulesets in Evaluate mode, do not count."
       signed_commits_required:
-        implementation: "signed-commits-required/v1"
+        implementation: "signed-commits-required/v2"
         type: boolean
         label: "Signed commits required"
-        description: "Default branch requires commit signatures (GPG or SSH)."
+        description: "The default branch requires signed commits, set through branch protection or an active repository or organization ruleset. Rulesets in Evaluate mode do not count."
+    # The team chose one security baseline, without artificial intermediate tiers.
     medals:
-      bronze: ["renovate_enabled == true"]
-      silver: ["renovate_enabled == true", "branch_protection_required_checks == true"]
-      gold:
-        [
-          "renovate_enabled == true",
-          "branch_protection_required_checks == true",
-          "signed_commits_required == true",
-        ]
-
-  engagement:
-    label: "Engagement"
-    description: "Ownership and recent response coverage signals."
-    scorer: "scorers/engagement/scorer.py"
-    applies_to:
-      product_types: ["root", "charm", "snap"]
-    aggregation: "worst_in_scope"
-    required_metrics_for_scoring:
-      - ownership_signal
-    outputs:
-      ownership_signal:
-        implementation: "ownership-signal/v1"
-        type: boolean
-        label: "Ownership signal"
-        description: "Repository exposes clear ownership through a squad topic."
-      response_coverage_rate:
-        implementation: "response-coverage-rate/v1"
-        type: number
-        range: "0–100"
-        label: "Response coverage"
-        description: "Percentage of recent issues and PRs that received a first response within the measurement window."
-    medals:
-      bronze: ["ownership_signal == true"]
-      silver: ["ownership_signal == true"]
-      gold: ["ownership_signal == true"]
+      bronze: ["renovate_enabled == true", "branch_protection_required_checks == true", "signed_commits_required == true"]
+      silver: ["renovate_enabled == true", "branch_protection_required_checks == true", "signed_commits_required == true"]
+      gold: ["renovate_enabled == true", "branch_protection_required_checks == true", "signed_commits_required == true"]

@@ -5,6 +5,7 @@ from pathlib import Path
 
 import yaml
 
+from engine.metric_outcomes import measured, serialize_metric_outcome
 from scorers import batch, registry
 
 
@@ -91,8 +92,8 @@ def test_batch_scores_versions_with_shared_cache_and_preserves_artifact_names(
         nonlocal calls
         calls += 1
         return {
-            "latest_build_passing": True,
-            "integration_test_evidence_present": False,
+            "latest_build_passing": measured(True),
+            "integration_test_evidence_present": measured(False),
         }
 
     monkeypatch.setattr(
@@ -124,11 +125,11 @@ def test_batch_scores_versions_with_shared_cache_and_preserves_artifact_names(
         "v2__demo__test_verification.json",
     ]
     assert json.loads((output_dir / "v1__demo__test_verification.json").read_text()) == {
-        "demo": {"latest_build_passing": True}
+        "demo": {"latest_build_passing": serialize_metric_outcome(measured(True))}
     }
     assert json.loads((output_dir / "v2__demo__test_verification.json").read_text()) == {
         "demo": {
-            "integration_test_evidence_present": False,
-            "latest_build_passing": True,
+            "integration_test_evidence_present": serialize_metric_outcome(measured(False)),
+            "latest_build_passing": serialize_metric_outcome(measured(True)),
         }
     }

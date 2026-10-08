@@ -16,6 +16,7 @@ if str(REPO_ROOT) not in sys.path:
 
 from engine.framework import FrameworkStatus, discover_frameworks, get_framework  # noqa: E402
 from engine.graph import build_graph, resolve_leaf_units_for  # noqa: E402
+from engine.metric_outcomes import serialize_metrics  # noqa: E402
 from scorers.registry import DEFAULT_OPENROUTER_MODEL, ScorerContext, run_dimension  # noqa: E402
 
 
@@ -97,7 +98,9 @@ def main(argv: list[str] | None = None, *, fixed_dimension: str | None = None) -
     )
 
     results = {
-        unit.product_id: run_dimension(unit, dimension_name, dimension_config, context)
+        unit.product_id: serialize_metrics(
+            run_dimension(unit, dimension_name, dimension_config, context)
+        )
         for unit in units
     }
     print(json.dumps(results, indent=2))

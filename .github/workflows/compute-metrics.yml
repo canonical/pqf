@@ -221,12 +221,16 @@ jobs:
 
       - name: Run every dimension for selected framework versions
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.PQF_GITHUB_TOKEN }}
           OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
           FRAMEWORK_VERSIONS: ${{ toJson(matrix.framework_versions) }}
           PRODUCT: ${{ matrix.product }}
         run: |
           set -euo pipefail
+          if [ -z "$GITHUB_TOKEN" ]; then
+            echo "::error::Configure PQF_GITHUB_TOKEN with read access to tracked repositories and their branch protections."
+            exit 1
+          fi
           python3 -m scorers.batch \
             --framework-root framework/versions \
             --framework-versions-json "$FRAMEWORK_VERSIONS" \

@@ -1,10 +1,10 @@
 # scorers/substrate_compat/logic.py
 import base64
 import re
-from typing import Any
 
 import requests
 
+from engine.metric_outcomes import MetricOutcome, measured
 from engine.models import EvaluationUnit
 from scorers.shared.github_signals import (
     github_session_get,
@@ -348,7 +348,7 @@ def _fetch_workflow_contents(owner_repo: str, github_token: str) -> list[str]:
     return contents
 
 
-def compute_metrics(unit: EvaluationUnit, github_token: str) -> dict[str, Any]:
+def compute_metrics(unit: EvaluationUnit, github_token: str) -> dict[str, MetricOutcome]:
     """
     Determine substrate compatibility by scanning GitHub workflow files.
 
@@ -378,8 +378,8 @@ def compute_metrics(unit: EvaluationUnit, github_token: str) -> dict[str, Any]:
                 substrate_test_evidence_present = True
 
     return {
-        "supports_juju_3": supports_juju_3,
-        "supports_juju_4": supports_juju_4,
-        "substrate_test_evidence_present": substrate_test_evidence_present,
-        "uses_canonical_k8s": uses_canonical_k8s,
+        "supports_juju_3": measured(supports_juju_3),
+        "supports_juju_4": measured(supports_juju_4),
+        "substrate_test_evidence_present": measured(substrate_test_evidence_present),
+        "uses_canonical_k8s": measured(uses_canonical_k8s),
     }

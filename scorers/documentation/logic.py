@@ -1,15 +1,22 @@
 from __future__ import annotations
 
+import base64
+import binascii
 import json
+import logging
 import re
 from pathlib import Path
 from typing import Any
 
-from openai import OpenAI
+from openai import APIError, OpenAI
+from packaging.version import InvalidVersion, Version
 
-from engine.models import EvaluationUnit
+from engine.metric_outcomes import MetricOutcome, insufficient_data, measured, not_applicable
+from engine.models import EvaluationUnit, ProductType
 from scorers.shared.github_signals import (
     default_branch_check_runs,
+    github_get,
+    raise_for_required_github_evidence,
     repo_file_exists,
     repo_file_text,
     repo_releases,
@@ -17,6 +24,10 @@ from scorers.shared.github_signals import (
 )
 
 _PROMPTS_DIR = Path(__file__).parent / "prompts"
+_LOG = logging.getLogger(__name__)
+_FENCE = re.compile(r"^```(?:json)?\s*(.*?)\s*```$", re.DOTALL)
+TEMPLATE_REPO = "canonical/platform-engineering-charm-template"
+TEMPLATE_REF = "8299de3ec4a264c853d48c6bb09903677e38cbd7"
 
 
 def _scoped_path(unit: EvaluationUnit, path: str) -> str:
@@ -244,32 +255,52 @@ def _diataxis_coverage_ai(
     github_token: str | None,
     openrouter_api_key: str,
     model: str,
-) -> int:
-    """AI-assisted diataxis coverage assessment via OpenRouter.
+) -> MetricOutcome:
+    if not openrouter_api_key or not model:
+        return insufficient_data("AI assessment is not configured.")
 
-    Returns 0-4 score indicating Diataxis coverage (tutorials, how-tos, reference, explanation).
-    Falls back to 0 if API key is missing or request fails.
-    """
-    if not openrouter_api_key:
-        return 0
-
-    prompt = (_PROMPTS_DIR / "diataxis_check.md").read_text()
     readme = _file_text(unit, "README.md", github_token)
     docs_index = _file_text(unit, "docs/index.md", github_token)
-    payload = f"{prompt}\n\nRepository context:\nREADME:\n{readme}\n\ndocs/index.md:\n{docs_index}"
+    return _assess_diataxis(
+        f"README:\n{readme}\n\ndocs/index.md:\n{docs_index}",
+        openrouter_api_key,
+        model,
+        legacy_clamp=True,
+    )
 
+
+def _assess_diataxis(
+    documentation: str, api_key: str, model: str, *, legacy_clamp: bool = False
+) -> MetricOutcome:
+    prompt_file = "diataxis_check.md" if legacy_clamp else "diataxis_v0_check.md"
+    prompt = (_PROMPTS_DIR / prompt_file).read_text()
     try:
-        client = OpenAI(api_key=openrouter_api_key, base_url="https://openrouter.ai/api/v1")
+        client = OpenAI(api_key=api_key, base_url="https://openrouter.ai/api/v1")
         response = client.chat.completions.create(
             model=model,
-            messages=[{"role": "user", "content": payload}],
+            messages=[{"role": "user", "content": f"{prompt}\n\nDocumentation:\n{documentation}"}],
         )
-        raw = response.choices[0].message.content or "{}"
-        parsed = json.loads(raw)
-        value = int(parsed.get("diataxis_coverage", 0))
-        return max(0, min(4, value))
-    except Exception:
-        return 0
+    except APIError as exc:
+        _LOG.warning(
+            "AI documentation assessment failed: %s (status %s)",
+            type(exc).__name__,
+            getattr(exc, "status_code", "n/a"),
+        )
+        return insufficient_data("AI documentation assessment is unavailable.")
+    try:
+        content = (response.choices[0].message.content or "").strip()
+        fenced = _FENCE.fullmatch(content)
+        parsed = json.loads(fenced.group(1) if fenced else content)
+        value = parsed["diataxis_coverage"]
+        reason = parsed.get("reasoning", "")
+        if type(value) is not int or (not legacy_clamp and not 0 <= value <= 4):
+            raise ValueError
+        if not isinstance(reason, str) or (not legacy_clamp and not reason.strip()):
+            raise ValueError
+    except (ValueError, KeyError, IndexError, TypeError):
+        return insufficient_data("AI documentation assessment returned invalid evidence.")
+    outcome = measured(max(0, min(4, value)))
+    return MetricOutcome(outcome.state, outcome.value, reason.strip() or None)
 
 
 def compute_metrics(
@@ -277,17 +308,160 @@ def compute_metrics(
     github_token: str,
     openrouter_api_key: str,
     model: str = "anthropic/claude-sonnet-4.5",
-) -> dict[str, Any]:
+) -> dict[str, MetricOutcome]:
     check_runs = default_branch_check_runs(unit.repo, github_token)
     return {
-        "readme_present": _readme_present(unit, github_token),
-        "contributing_present": _contributing_present(unit, github_token),
-        "has_security": _file_exists(unit, "SECURITY.md", github_token),
-        "documentation_workflows_passing": _documentation_workflows_passing(check_runs),
+        "readme_present": measured(_readme_present(unit, github_token)),
+        "contributing_present": measured(_contributing_present(unit, github_token)),
+        "has_security": measured(_file_exists(unit, "SECURITY.md", github_token)),
+        "documentation_workflows_passing": measured(_documentation_workflows_passing(check_runs)),
         "diataxis_coverage_ai": _diataxis_coverage_ai(
             unit, github_token, openrouter_api_key, model=model
         ),
-        "uses_rtd_hosting": _uses_rtd_hosting(unit, github_token),
-        "release_notes_process_implemented": _release_notes_process_implemented(unit, github_token),
-        "has_changelog": _has_changelog(unit, github_token),
+        "uses_rtd_hosting": measured(_uses_rtd_hosting(unit, github_token)),
+        "release_notes_process_implemented": measured(
+            _release_notes_process_implemented(unit, github_token)
+        ),
+        "has_changelog": measured(_has_changelog(unit, github_token)),
     }
+
+
+def _required_file_text(repo: str, path: str, token: str | None, *, ref: str | None = None) -> str:
+    url = f"https://api.github.com/repos/{repo}/contents/{path}"
+    if ref is not None:
+        url += f"?ref={ref}"
+    response = github_get(url, token)
+    if response.status_code == 404 and ref is None:
+        return ""
+    raise_for_required_github_evidence(response, url)
+    try:
+        payload = response.json()
+        if not isinstance(payload, dict) or payload.get("encoding") != "base64":
+            raise ValueError
+        content = payload["content"]
+        if not isinstance(content, str):
+            raise ValueError
+        return base64.b64decode("".join(content.split()), validate=True).decode("utf-8")
+    except (ValueError, KeyError, UnicodeError, binascii.Error):
+        raise RuntimeError("GitHub documentation file evidence is invalid.") from None
+
+
+def _normalized_text(text: str) -> str:
+    return " ".join(re.sub(r"<!--.*?-->", "", text, flags=re.DOTALL).split())
+
+
+def _has_body(text: str) -> bool:
+    lines = re.sub(r"<!--.*?-->", "", text, flags=re.DOTALL).splitlines()
+    for index, line in enumerate(lines):
+        if not line.strip() or re.match(r"^\s{0,3}#{1,6}(?:\s|$)", line):
+            continue
+        if re.fullmatch(r"\s*[=-]+\s*", line):
+            continue
+        if index + 1 < len(lines) and re.fullmatch(r"\s*[=-]+\s*", lines[index + 1]):
+            continue
+        return True
+    return False
+
+
+def _root_file_adopted(unit: EvaluationUnit, path: str, token: str | None) -> MetricOutcome:
+    content = _required_file_text(unit.repo, path, token)
+    template = _required_file_text(TEMPLATE_REPO, path, token, ref=TEMPLATE_REF)
+    if not template.strip():
+        raise RuntimeError("Pinned documentation template evidence is empty.")
+    return measured(_has_body(content) and _normalized_text(content) != _normalized_text(template))
+
+
+def _sphinx_stack_version(
+    unit: EvaluationUnit,
+    token: str | None,
+    docs_path: str,
+    has_user_facing_docs: bool,
+) -> MetricOutcome:
+    if unit.product_type == ProductType.SNAP:
+        return not_applicable("Snap-only repositories are exempt from Sphinx Stack adoption.")
+    if unit.documentation_exemption.strip():
+        return not_applicable(unit.documentation_exemption.strip())
+    if not has_user_facing_docs:
+        return not_applicable("Product has no user-facing documentation.")
+    text = _required_file_text(unit.repo, f"{docs_path}/_dev/version", token).strip()
+    try:
+        Version(text)
+    except InvalidVersion:
+        return measured("")
+    return measured(text)
+
+
+def _authoritative_docs(repo: str, path: str, token: str | None) -> str | None:
+    pending = [path]
+    documents: list[str] = []
+    size = 0
+    visited = 0
+    while pending:
+        current = pending.pop()
+        url = f"https://api.github.com/repos/{repo}/contents/{current}"
+        response = github_get(url, token)
+        if response.status_code == 404:
+            return None
+        raise_for_required_github_evidence(response, url)
+        entries = response.json()
+        if not isinstance(entries, list):
+            raise RuntimeError("GitHub documentation directory evidence is invalid.")
+        for entry in sorted(entries, key=lambda item: item["path"]):
+            child = entry["path"]
+            if entry["type"] == "dir" and not entry["name"].startswith(("_", ".")):
+                pending.append(child)
+            elif entry["type"] == "file" and child.endswith((".md", ".rst")):
+                content = _required_file_text(repo, child, token)
+                if _has_body(content):
+                    documents.append(f"{child}:\n{content}")
+                    size += len(content)
+            visited += 1
+            if visited > 500 or size > 200_000:
+                return None
+    return "\n\n".join(documents) if size >= 200 else None
+
+
+def compute_v0_metrics(
+    unit: EvaluationUnit,
+    github_token: str,
+    openrouter_api_key: str,
+    model: str = "anthropic/claude-sonnet-4.5",
+    *,
+    docs_repo: str | None = None,
+    docs_path: str = "docs",
+    has_user_facing_docs: bool = True,
+) -> dict[str, MetricOutcome]:
+    """Measure V0 with deterministic root file adoption and informational AI coverage.
+
+    docs_path is repository-relative, defaulting to root docs/ even in monorepos.
+    Set it explicitly for an agreed component documentation scope. docs_repo selects
+    an authoritative linked documentation repository for the informational assessment;
+    Sphinx adoption is checked in unit.repo. unit.documentation_exemption supplies
+    the reviewed product-metadata exemption reason, never inferred from a name.
+    Without 200 characters of authoritative documentation, coverage is unavailable.
+    """
+    docs_path = docs_path.strip("/")
+    result = {
+        "readme_present": _root_file_adopted(unit, "README.md", github_token),
+        "contributing_present": _root_file_adopted(unit, "CONTRIBUTING.md", github_token),
+        # The template SECURITY.md is a complete policy, so verbatim adoption qualifies.
+        "has_security": measured(
+            _has_body(_required_file_text(unit.repo, "SECURITY.md", github_token))
+        ),
+        "uses_sphinx_stack": _sphinx_stack_version(
+            unit, github_token, docs_path, has_user_facing_docs
+        ),
+    }
+    if not has_user_facing_docs:
+        coverage = not_applicable("Product has no user-facing documentation.")
+    elif not openrouter_api_key or not model:
+        coverage = insufficient_data("AI assessment is not configured.")
+    else:
+        documentation = _authoritative_docs(docs_repo or unit.repo, docs_path, github_token)
+        coverage = (
+            _assess_diataxis(documentation, openrouter_api_key, model)
+            if documentation
+            else insufficient_data("Authoritative documentation is absent or insufficient.")
+        )
+    result["diataxis_coverage_ai"] = coverage
+    return result

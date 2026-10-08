@@ -4,6 +4,7 @@ import base64
 import pytest
 import responses
 
+from engine.metric_outcomes import measured
 from engine.models import EvaluationUnit, ProductType
 from scorers.shared.github_signals import GitHubAcquisitionError
 from scorers.substrate_compat.logic import _make_github_session, compute_metrics
@@ -276,10 +277,10 @@ def test_detects_juju3_from_workflow():
     _mock_workflows_dir("canonical/synapse-operator", ["integration.yaml"])
     _mock_workflow_file("canonical/synapse-operator", "integration.yaml", _JUJU3_WORKFLOW)
     result = compute_metrics(UNIT, "token")
-    assert result["supports_juju_3"] is True
-    assert result["supports_juju_4"] is False
-    assert result["substrate_test_evidence_present"] is True
-    assert result["uses_canonical_k8s"] is False
+    assert result["supports_juju_3"].value is True
+    assert result["supports_juju_4"].value is False
+    assert result["substrate_test_evidence_present"].value is True
+    assert result["uses_canonical_k8s"].value is False
 
 
 @responses.activate
@@ -287,8 +288,8 @@ def test_detects_juju4_from_workflow():
     _mock_workflows_dir("canonical/synapse-operator", ["integration.yaml"])
     _mock_workflow_file("canonical/synapse-operator", "integration.yaml", _JUJU4_CK8S_WORKFLOW)
     result = compute_metrics(UNIT, "token")
-    assert result["supports_juju_3"] is False
-    assert result["supports_juju_4"] is True
+    assert result["supports_juju_3"].value is False
+    assert result["supports_juju_4"].value is True
 
 
 @responses.activate
@@ -296,9 +297,9 @@ def test_does_not_treat_juju24_as_juju4():
     _mock_workflows_dir("canonical/synapse-operator", ["integration.yaml"])
     _mock_workflow_file("canonical/synapse-operator", "integration.yaml", _JUJU24_WORKFLOW)
     result = compute_metrics(UNIT, "token")
-    assert result["supports_juju_3"] is False
-    assert result["supports_juju_4"] is False
-    assert result["substrate_test_evidence_present"] is False
+    assert result["supports_juju_3"].value is False
+    assert result["supports_juju_4"].value is False
+    assert result["substrate_test_evidence_present"].value is False
 
 
 @responses.activate
@@ -306,8 +307,8 @@ def test_detects_ck8s_from_workflow():
     _mock_workflows_dir("canonical/synapse-operator", ["integration.yaml"])
     _mock_workflow_file("canonical/synapse-operator", "integration.yaml", _JUJU4_CK8S_WORKFLOW)
     result = compute_metrics(UNIT, "token")
-    assert result["uses_canonical_k8s"] is True
-    assert result["substrate_test_evidence_present"] is True
+    assert result["uses_canonical_k8s"].value is True
+    assert result["substrate_test_evidence_present"].value is True
 
 
 @responses.activate
@@ -315,9 +316,9 @@ def test_detects_juju4_from_matrix_values():
     _mock_workflows_dir("canonical/synapse-operator", ["integration.yaml"])
     _mock_workflow_file("canonical/synapse-operator", "integration.yaml", _MATRIX_JUJU4_WORKFLOW)
     result = compute_metrics(UNIT, "token")
-    assert result["supports_juju_3"] is True
-    assert result["supports_juju_4"] is True
-    assert result["substrate_test_evidence_present"] is True
+    assert result["supports_juju_3"].value is True
+    assert result["supports_juju_4"].value is True
+    assert result["substrate_test_evidence_present"].value is True
 
 
 @responses.activate
@@ -325,9 +326,9 @@ def test_detects_juju3_and_juju4_from_matrix_include_entries():
     _mock_workflows_dir("canonical/synapse-operator", ["integration.yaml"])
     _mock_workflow_file("canonical/synapse-operator", "integration.yaml", _MATRIX_INCLUDE_WORKFLOW)
     result = compute_metrics(UNIT, "token")
-    assert result["supports_juju_3"] is True
-    assert result["supports_juju_4"] is True
-    assert result["substrate_test_evidence_present"] is True
+    assert result["supports_juju_3"].value is True
+    assert result["supports_juju_4"].value is True
+    assert result["substrate_test_evidence_present"].value is True
 
 
 @responses.activate
@@ -335,10 +336,10 @@ def test_detects_inline_comments_on_juju_channel_and_ck8s():
     _mock_workflows_dir("canonical/synapse-operator", ["integration.yaml"])
     _mock_workflow_file("canonical/synapse-operator", "integration.yaml", _INLINE_COMMENTS_WORKFLOW)
     result = compute_metrics(UNIT, "token")
-    assert result["supports_juju_3"] is False
-    assert result["supports_juju_4"] is True
-    assert result["substrate_test_evidence_present"] is True
-    assert result["uses_canonical_k8s"] is True
+    assert result["supports_juju_3"].value is False
+    assert result["supports_juju_4"].value is True
+    assert result["substrate_test_evidence_present"].value is True
+    assert result["uses_canonical_k8s"].value is True
 
 
 @responses.activate
@@ -348,10 +349,10 @@ def test_detects_block_scalar_run_commands():
         "canonical/synapse-operator", "integration.yaml", _BLOCK_SCALAR_RUN_WORKFLOW
     )
     result = compute_metrics(UNIT, "token")
-    assert result["supports_juju_3"] is False
-    assert result["supports_juju_4"] is False
-    assert result["uses_canonical_k8s"] is True
-    assert result["substrate_test_evidence_present"] is True
+    assert result["supports_juju_3"].value is False
+    assert result["supports_juju_4"].value is False
+    assert result["uses_canonical_k8s"].value is True
+    assert result["substrate_test_evidence_present"].value is True
 
 
 @responses.activate
@@ -361,10 +362,10 @@ def test_detects_canonical_k8s_alias_from_bootstrap_command():
         "canonical/synapse-operator", "integration.yaml", _CANONICAL_K8S_ALIAS_WORKFLOW
     )
     result = compute_metrics(UNIT, "token")
-    assert result["supports_juju_3"] is False
-    assert result["supports_juju_4"] is False
-    assert result["uses_canonical_k8s"] is True
-    assert result["substrate_test_evidence_present"] is True
+    assert result["supports_juju_3"].value is False
+    assert result["supports_juju_4"].value is False
+    assert result["uses_canonical_k8s"].value is True
+    assert result["substrate_test_evidence_present"].value is True
 
 
 @responses.activate
@@ -372,10 +373,10 @@ def test_detects_canonical_k8s_from_folded_run_block():
     _mock_workflows_dir("canonical/synapse-operator", ["integration.yaml"])
     _mock_workflow_file("canonical/synapse-operator", "integration.yaml", _FOLDED_CK8S_WORKFLOW)
     result = compute_metrics(UNIT, "token")
-    assert result["supports_juju_3"] is False
-    assert result["supports_juju_4"] is False
-    assert result["uses_canonical_k8s"] is True
-    assert result["substrate_test_evidence_present"] is True
+    assert result["supports_juju_3"].value is False
+    assert result["supports_juju_4"].value is False
+    assert result["uses_canonical_k8s"].value is True
+    assert result["substrate_test_evidence_present"].value is True
 
 
 @responses.activate
@@ -385,10 +386,10 @@ def test_detects_integration_from_folded_run_block():
         "canonical/synapse-operator", "integration.yaml", _FOLDED_INTEGRATION_WORKFLOW
     )
     result = compute_metrics(UNIT, "token")
-    assert result["supports_juju_3"] is False
-    assert result["supports_juju_4"] is False
-    assert result["uses_canonical_k8s"] is True
-    assert result["substrate_test_evidence_present"] is True
+    assert result["supports_juju_3"].value is False
+    assert result["supports_juju_4"].value is False
+    assert result["uses_canonical_k8s"].value is True
+    assert result["substrate_test_evidence_present"].value is True
 
 
 @responses.activate
@@ -396,10 +397,10 @@ def test_detects_canonical_k8s_from_quoted_run_scalar():
     _mock_workflows_dir("canonical/synapse-operator", ["integration.yaml"])
     _mock_workflow_file("canonical/synapse-operator", "integration.yaml", _QUOTED_CK8S_RUN_WORKFLOW)
     result = compute_metrics(UNIT, "token")
-    assert result["supports_juju_3"] is False
-    assert result["supports_juju_4"] is False
-    assert result["uses_canonical_k8s"] is True
-    assert result["substrate_test_evidence_present"] is True
+    assert result["supports_juju_3"].value is False
+    assert result["supports_juju_4"].value is False
+    assert result["uses_canonical_k8s"].value is True
+    assert result["substrate_test_evidence_present"].value is True
 
 
 @responses.activate
@@ -411,10 +412,10 @@ def test_detects_integration_from_quoted_run_scalar():
         _QUOTED_INTEGRATION_RUN_WORKFLOW,
     )
     result = compute_metrics(UNIT, "token")
-    assert result["supports_juju_3"] is False
-    assert result["supports_juju_4"] is False
-    assert result["uses_canonical_k8s"] is True
-    assert result["substrate_test_evidence_present"] is True
+    assert result["supports_juju_3"].value is False
+    assert result["supports_juju_4"].value is False
+    assert result["uses_canonical_k8s"].value is True
+    assert result["substrate_test_evidence_present"].value is True
 
 
 @responses.activate
@@ -424,10 +425,10 @@ def test_quoted_heredoc_text_does_not_hide_following_integration_command():
         "canonical/synapse-operator", "integration.yaml", _QUOTED_HEREDOC_TEXT_WORKFLOW
     )
     result = compute_metrics(UNIT, "token")
-    assert result["supports_juju_3"] is False
-    assert result["supports_juju_4"] is False
-    assert result["uses_canonical_k8s"] is True
-    assert result["substrate_test_evidence_present"] is True
+    assert result["supports_juju_3"].value is False
+    assert result["supports_juju_4"].value is False
+    assert result["uses_canonical_k8s"].value is True
+    assert result["substrate_test_evidence_present"].value is True
 
 
 @responses.activate
@@ -439,10 +440,10 @@ def test_comment_does_not_set_canonical_k8s():
         _COMMENTED_CANONICAL_K8S_WORKFLOW,
     )
     result = compute_metrics(UNIT, "token")
-    assert result["supports_juju_3"] is False
-    assert result["supports_juju_4"] is False
-    assert result["uses_canonical_k8s"] is False
-    assert result["substrate_test_evidence_present"] is False
+    assert result["supports_juju_3"].value is False
+    assert result["supports_juju_4"].value is False
+    assert result["uses_canonical_k8s"].value is False
+    assert result["substrate_test_evidence_present"].value is False
 
 
 @responses.activate
@@ -454,10 +455,10 @@ def test_echo_does_not_set_canonical_k8s():
         _ECHOED_CANONICAL_K8S_WORKFLOW,
     )
     result = compute_metrics(UNIT, "token")
-    assert result["supports_juju_3"] is False
-    assert result["supports_juju_4"] is False
-    assert result["uses_canonical_k8s"] is False
-    assert result["substrate_test_evidence_present"] is False
+    assert result["supports_juju_3"].value is False
+    assert result["supports_juju_4"].value is False
+    assert result["uses_canonical_k8s"].value is False
+    assert result["substrate_test_evidence_present"].value is False
 
 
 @responses.activate
@@ -469,10 +470,10 @@ def test_script_text_does_not_set_juju_channel():
         _SCRIPT_TEXT_JUJU4_WORKFLOW,
     )
     result = compute_metrics(UNIT, "token")
-    assert result["supports_juju_3"] is False
-    assert result["supports_juju_4"] is False
-    assert result["substrate_test_evidence_present"] is False
-    assert result["uses_canonical_k8s"] is False
+    assert result["supports_juju_3"].value is False
+    assert result["supports_juju_4"].value is False
+    assert result["substrate_test_evidence_present"].value is False
+    assert result["uses_canonical_k8s"].value is False
 
 
 @responses.activate
@@ -484,10 +485,10 @@ def test_note_text_does_not_set_integration_evidence():
         _NOTE_TEXT_INTEGRATION_WORKFLOW,
     )
     result = compute_metrics(UNIT, "token")
-    assert result["supports_juju_3"] is True
-    assert result["supports_juju_4"] is False
-    assert result["substrate_test_evidence_present"] is False
-    assert result["uses_canonical_k8s"] is False
+    assert result["supports_juju_3"].value is True
+    assert result["supports_juju_4"].value is False
+    assert result["substrate_test_evidence_present"].value is False
+    assert result["uses_canonical_k8s"].value is False
 
 
 @responses.activate
@@ -496,10 +497,10 @@ def test_generic_workflow_sets_no_flags():
     _mock_workflow_file("canonical/synapse-operator", "ci.yaml", _GENERIC_WORKFLOW)
     result = compute_metrics(UNIT, "token")
     assert result == {
-        "supports_juju_3": False,
-        "supports_juju_4": False,
-        "substrate_test_evidence_present": False,
-        "uses_canonical_k8s": False,
+        "supports_juju_3": measured(False),
+        "supports_juju_4": measured(False),
+        "substrate_test_evidence_present": measured(False),
+        "uses_canonical_k8s": measured(False),
     }
 
 
@@ -512,10 +513,10 @@ def test_missing_workflows_dir_returns_false():
     )
     result = compute_metrics(UNIT, "token")
     assert result == {
-        "supports_juju_3": False,
-        "supports_juju_4": False,
-        "substrate_test_evidence_present": False,
-        "uses_canonical_k8s": False,
+        "supports_juju_3": measured(False),
+        "supports_juju_4": measured(False),
+        "substrate_test_evidence_present": measured(False),
+        "uses_canonical_k8s": measured(False),
     }
 
 
@@ -582,10 +583,10 @@ def test_workflow_file_failure_raises_acquisition_error(status):
 def test_returns_defaults_when_repo_empty():
     result = compute_metrics(UNIT_EMPTY, "token")
     assert result == {
-        "supports_juju_3": False,
-        "supports_juju_4": False,
-        "substrate_test_evidence_present": False,
-        "uses_canonical_k8s": False,
+        "supports_juju_3": measured(False),
+        "supports_juju_4": measured(False),
+        "substrate_test_evidence_present": measured(False),
+        "uses_canonical_k8s": measured(False),
     }
 
 
@@ -628,11 +629,11 @@ def test_heredoc_with_hyphenated_delimiter_skips_payload():
     _mock_workflow_file("canonical/synapse-operator", "ci.yaml", _EOF_HYPHEN_HEREDOC_WORKFLOW)
     result = compute_metrics(UNIT, "token")
     # juju-channel 3/stable is real config → juju3 true
-    assert result["supports_juju_3"] is True
+    assert result["supports_juju_3"].value is True
     # heredoc payload must NOT produce ck8s or integration evidence
-    assert result["uses_canonical_k8s"] is False
+    assert result["uses_canonical_k8s"].value is False
     # tox -e lint (not integration) is the only real run command → no integration evidence
-    assert result["substrate_test_evidence_present"] is False
+    assert result["substrate_test_evidence_present"].value is False
 
 
 @responses.activate
@@ -641,9 +642,9 @@ def test_shell_comment_heredoc_token_does_not_suppress_real_commands():
     _mock_workflows_dir("canonical/synapse-operator", ["ci.yaml"])
     _mock_workflow_file("canonical/synapse-operator", "ci.yaml", _COMMENT_HEREDOC_WORKFLOW)
     result = compute_metrics(UNIT, "token")
-    assert result["supports_juju_3"] is True
+    assert result["supports_juju_3"].value is True
     # pytest -m integration following the comment line must be detected
-    assert result["substrate_test_evidence_present"] is True
+    assert result["substrate_test_evidence_present"].value is True
 
 
 _DEFAULTS_RUN_WORKFLOW = """\
@@ -669,5 +670,5 @@ def test_defaults_run_mapping_does_not_crash():
     _mock_workflows_dir("canonical/synapse-operator", ["ci.yaml"])
     _mock_workflow_file("canonical/synapse-operator", "ci.yaml", _DEFAULTS_RUN_WORKFLOW)
     result = compute_metrics(UNIT, "token")
-    assert result["supports_juju_3"] is True
-    assert result["substrate_test_evidence_present"] is True
+    assert result["supports_juju_3"].value is True
+    assert result["substrate_test_evidence_present"].value is True

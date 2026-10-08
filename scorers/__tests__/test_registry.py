@@ -6,6 +6,8 @@ from pathlib import Path
 
 import pytest
 
+from engine.metric_outcomes import measured
+
 REPO_ROOT = Path(__file__).resolve().parents[2]
 if str(REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(REPO_ROOT))
@@ -33,25 +35,28 @@ def test_run_dimension_executes_shared_runner_once_and_filters_selected_outputs(
     def fake_runner(unit: EvaluationUnit, context: registry.ScorerContext) -> dict[str, object]:
         calls.append((unit, context))
         return {
-            "latest_build_passing": True,
-            "uses_jubilant": False,
-            "coverage_pct": 93,
+            "latest_build_passing": measured(True),
+            "uses_jubilant": measured(False),
+            "coverage_pct": measured(93),
         }
 
     monkeypatch.setattr(registry, "RUNNERS", {**registry.RUNNERS, "test_verification": fake_runner})
     context = registry.ScorerContext(github_token="token")
     config = {
         "outputs": {
-            "latest_build_passing": {"implementation": "latest-build-passing/v1"},
-            "uses_jubilant": {"implementation": "uses-jubilant/v1"},
+            "latest_build_passing": {
+                "implementation": "latest-build-passing/v1",
+                "type": "boolean",
+            },
+            "uses_jubilant": {"implementation": "uses-jubilant/v1", "type": "boolean"},
         }
     }
 
     metrics = registry.run_dimension(UNIT, "test_verification", config, context)
 
     assert metrics == {
-        "latest_build_passing": True,
-        "uses_jubilant": False,
+        "latest_build_passing": measured(True),
+        "uses_jubilant": measured(False),
     }
     assert calls == [(UNIT, context)]
 
@@ -62,11 +67,11 @@ def test_run_dimension_reuses_cached_runner_across_contracts_and_filters_outputs
     def fake_runner(unit: EvaluationUnit, context: registry.ScorerContext) -> dict[str, object]:
         calls.append((unit, context))
         return {
-            "latest_build_passing": True,
-            "integration_test_evidence_present": False,
-            "uses_jubilant": False,
-            "coverage_pct": 93,
-            "stability_pct": 99,
+            "latest_build_passing": measured(True),
+            "integration_test_evidence_present": measured(False),
+            "uses_jubilant": measured(False),
+            "coverage_pct": measured(93),
+            "stability_pct": measured(99),
         }
 
     monkeypatch.setattr(registry, "RUNNERS", {**registry.RUNNERS, "test_verification": fake_runner})
@@ -76,7 +81,13 @@ def test_run_dimension_reuses_cached_runner_across_contracts_and_filters_outputs
     v0_metrics = registry.run_dimension(
         UNIT,
         "test_verification",
-        _dimension_config("v0", "test_verification"),
+        {
+            "outputs": {
+                key: value
+                for key, value in _dimension_config("v1", "test_verification")["outputs"].items()
+                if key != "integration_test_evidence_present"
+            }
+        },
         context,
         runner_cache=runner_cache,
     )
@@ -90,7 +101,7 @@ def test_run_dimension_reuses_cached_runner_across_contracts_and_filters_outputs
 
     assert len(calls) == 1
     assert "integration_test_evidence_present" not in v0_metrics
-    assert v1_metrics["integration_test_evidence_present"] is False
+    assert v1_metrics["integration_test_evidence_present"].value is False
 
 
 @pytest.mark.parametrize(
@@ -103,6 +114,10 @@ def test_run_dimension_reuses_cached_runner_across_contracts_and_filters_outputs
         ("allure_report_url", "https://example.test/allure"),
         ("documentation_url", "https://example.test/docs"),
         ("target_medal", "gold"),
+        ("documentation_exemption", "Uses upstream documentation."),
+        ("documentation_repo", "canonical/demo-docs"),
+        ("documentation_path", "components/demo/docs"),
+        ("has_user_facing_documentation", False),
     ],
 )
 def test_run_dimension_cache_separates_every_evaluation_unit_field(
@@ -113,12 +128,15 @@ def test_run_dimension_cache_separates_every_evaluation_unit_field(
     def fake_runner(unit: EvaluationUnit, context: registry.ScorerContext) -> dict[str, object]:
         nonlocal calls
         calls += 1
-        return {"latest_build_passing": True}
+        return {"latest_build_passing": measured(True)}
 
     monkeypatch.setattr(registry, "RUNNERS", {**registry.RUNNERS, "test_verification": fake_runner})
     config = {
         "outputs": {
-            "latest_build_passing": {"implementation": "latest-build-passing/v1"},
+            "latest_build_passing": {
+                "implementation": "latest-build-passing/v1",
+                "type": "boolean",
+            },
         }
     }
     context = registry.ScorerContext(github_token="token")
@@ -142,6 +160,7 @@ def test_run_dimension_cache_separates_every_evaluation_unit_field(
         registry.ScorerContext(github_token="different-token"),
         registry.ScorerContext(github_token="token", openrouter_api_key="different-key"),
         registry.ScorerContext(github_token="token", openrouter_model="different-model"),
+        registry.ScorerContext(github_token="token", juju_lts_track="3.7/stable"),
     ],
 )
 def test_run_dimension_cache_separates_every_context_field(changed_context, monkeypatch):
@@ -150,12 +169,15 @@ def test_run_dimension_cache_separates_every_context_field(changed_context, monk
     def fake_runner(unit: EvaluationUnit, context: registry.ScorerContext) -> dict[str, object]:
         nonlocal calls
         calls += 1
-        return {"latest_build_passing": True}
+        return {"latest_build_passing": measured(True)}
 
     monkeypatch.setattr(registry, "RUNNERS", {**registry.RUNNERS, "test_verification": fake_runner})
     config = {
         "outputs": {
-            "latest_build_passing": {"implementation": "latest-build-passing/v1"},
+            "latest_build_passing": {
+                "implementation": "latest-build-passing/v1",
+                "type": "boolean",
+            },
         }
     }
     runner_cache: registry.RunnerCache = {}
@@ -183,11 +205,11 @@ def test_run_dimension_cache_separates_runner_keys(monkeypatch):
 
     def first_runner(unit: EvaluationUnit, context: registry.ScorerContext) -> dict[str, object]:
         calls.append("first")
-        return {"latest_build_passing": True}
+        return {"latest_build_passing": measured(True)}
 
     def second_runner(unit: EvaluationUnit, context: registry.ScorerContext) -> dict[str, object]:
         calls.append("second")
-        return {"latest_build_passing": False}
+        return {"latest_build_passing": measured(False)}
 
     monkeypatch.setattr(
         registry,
@@ -219,20 +241,34 @@ def test_run_dimension_cache_separates_runner_keys(monkeypatch):
     first = registry.run_dimension(
         UNIT,
         "test_verification",
-        {"outputs": {"latest_build_passing": {"implementation": "latest-build-passing/v1"}}},
+        {
+            "outputs": {
+                "latest_build_passing": {
+                    "implementation": "latest-build-passing/v1",
+                    "type": "boolean",
+                }
+            }
+        },
         registry.ScorerContext(github_token="token"),
         runner_cache=runner_cache,
     )
     second = registry.run_dimension(
         UNIT,
         "test_verification",
-        {"outputs": {"latest_build_passing": {"implementation": "latest-build-passing/alternate"}}},
+        {
+            "outputs": {
+                "latest_build_passing": {
+                    "implementation": "latest-build-passing/alternate",
+                    "type": "boolean",
+                }
+            }
+        },
         registry.ScorerContext(github_token="token"),
         runner_cache=runner_cache,
     )
 
-    assert first == {"latest_build_passing": True}
-    assert second == {"latest_build_passing": False}
+    assert first == {"latest_build_passing": measured(True)}
+    assert second == {"latest_build_passing": measured(False)}
     assert calls == ["first", "second"]
 
 
@@ -250,12 +286,15 @@ def test_run_dimension_cache_separates_changes_to_each_registered_source(tmp_pat
     def fake_runner(unit: EvaluationUnit, context: registry.ScorerContext) -> dict[str, object]:
         nonlocal calls
         calls += 1
-        return {"latest_build_passing": True}
+        return {"latest_build_passing": measured(True)}
 
     monkeypatch.setattr(registry, "RUNNERS", {**registry.RUNNERS, "test_verification": fake_runner})
     config = {
         "outputs": {
-            "latest_build_passing": {"implementation": "latest-build-passing/v1"},
+            "latest_build_passing": {
+                "implementation": "latest-build-passing/v1",
+                "type": "boolean",
+            },
         }
     }
     context = registry.ScorerContext(github_token="token")
@@ -279,15 +318,18 @@ def test_run_dimension_cache_separates_runner_wrapper_changes(monkeypatch):
 
     def first_runner(unit: EvaluationUnit, context: registry.ScorerContext) -> dict[str, object]:
         calls.append("first")
-        return {"latest_build_passing": True}
+        return {"latest_build_passing": measured(True)}
 
     def second_runner(unit: EvaluationUnit, context: registry.ScorerContext) -> dict[str, object]:
         calls.append("second")
-        return {"latest_build_passing": False}
+        return {"latest_build_passing": measured(False)}
 
     config = {
         "outputs": {
-            "latest_build_passing": {"implementation": "latest-build-passing/v1"},
+            "latest_build_passing": {
+                "implementation": "latest-build-passing/v1",
+                "type": "boolean",
+            },
         }
     }
     context = registry.ScorerContext(github_token="token")
@@ -306,8 +348,8 @@ def test_run_dimension_cache_separates_runner_wrapper_changes(monkeypatch):
         UNIT, "test_verification", config, context, runner_cache=runner_cache
     )
 
-    assert first == {"latest_build_passing": True}
-    assert second == {"latest_build_passing": False}
+    assert first == {"latest_build_passing": measured(True)}
+    assert second == {"latest_build_passing": measured(False)}
     assert calls == ["first", "second"]
 
 
@@ -317,7 +359,7 @@ def test_run_dimension_cache_separates_metric_binding_changes(monkeypatch):
     def fake_runner(unit: EvaluationUnit, context: registry.ScorerContext) -> dict[str, object]:
         nonlocal calls
         calls += 1
-        return {"latest_build_passing": True}
+        return {"latest_build_passing": measured(True)}
 
     monkeypatch.setattr(registry, "RUNNERS", {**registry.RUNNERS, "test_verification": fake_runner})
     context = registry.ScorerContext(github_token="token")
@@ -325,7 +367,14 @@ def test_run_dimension_cache_separates_metric_binding_changes(monkeypatch):
     registry.run_dimension(
         UNIT,
         "test_verification",
-        {"outputs": {"latest_build_passing": {"implementation": "latest-build-passing/v1"}}},
+        {
+            "outputs": {
+                "latest_build_passing": {
+                    "implementation": "latest-build-passing/v1",
+                    "type": "boolean",
+                }
+            }
+        },
         context,
         runner_cache=runner_cache,
     )
@@ -342,7 +391,14 @@ def test_run_dimension_cache_separates_metric_binding_changes(monkeypatch):
     registry.run_dimension(
         UNIT,
         "test_verification",
-        {"outputs": {"latest_build_passing": {"implementation": alternate_implementation}}},
+        {
+            "outputs": {
+                "latest_build_passing": {
+                    "implementation": alternate_implementation,
+                    "type": "boolean",
+                }
+            }
+        },
         context,
         runner_cache=runner_cache,
     )
@@ -355,7 +411,11 @@ def test_run_dimension_rejects_unknown_implementation_id():
         registry.run_dimension(
             UNIT,
             "test_verification",
-            {"outputs": {"latest_build_passing": {"implementation": "missing/v1"}}},
+            {
+                "outputs": {
+                    "latest_build_passing": {"implementation": "missing/v1", "type": "boolean"}
+                }
+            },
             registry.ScorerContext(github_token="token"),
         )
 
@@ -365,14 +425,21 @@ def test_run_dimension_rejects_wrong_dimension_binding():
         registry.run_dimension(
             UNIT,
             "documentation",
-            {"outputs": {"readme_present": {"implementation": "latest-build-passing/v1"}}},
+            {
+                "outputs": {
+                    "readme_present": {
+                        "implementation": "latest-build-passing/v1",
+                        "type": "boolean",
+                    }
+                }
+            },
             registry.ScorerContext(github_token="token"),
         )
 
 
 def test_run_dimension_rejects_missing_output_from_runner(monkeypatch):
     def fake_runner(unit: EvaluationUnit, context: registry.ScorerContext) -> dict[str, object]:
-        return {"latest_build_passing": True}
+        return {"latest_build_passing": measured(True)}
 
     monkeypatch.setattr(registry, "RUNNERS", {**registry.RUNNERS, "test_verification": fake_runner})
 
@@ -382,8 +449,11 @@ def test_run_dimension_rejects_missing_output_from_runner(monkeypatch):
             "test_verification",
             {
                 "outputs": {
-                    "latest_build_passing": {"implementation": "latest-build-passing/v1"},
-                    "uses_jubilant": {"implementation": "uses-jubilant/v1"},
+                    "latest_build_passing": {
+                        "implementation": "latest-build-passing/v1",
+                        "type": "boolean",
+                    },
+                    "uses_jubilant": {"implementation": "uses-jubilant/v1", "type": "boolean"},
                 }
             },
             registry.ScorerContext(github_token="token"),
@@ -406,8 +476,11 @@ def test_implementation_fingerprints_hash_complete_runner_sources(tmp_path, monk
     fingerprints = registry.implementation_fingerprints(
         {
             "outputs": {
-                "latest_build_passing": {"implementation": "latest-build-passing/v1"},
-                "uses_jubilant": {"implementation": "uses-jubilant/v1"},
+                "latest_build_passing": {
+                    "implementation": "latest-build-passing/v1",
+                    "type": "boolean",
+                },
+                "uses_jubilant": {"implementation": "uses-jubilant/v1", "type": "boolean"},
             }
         }
     )
@@ -424,7 +497,10 @@ def test_implementation_fingerprints_hash_complete_runner_sources(tmp_path, monk
     helper_changed = registry.implementation_fingerprints(
         {
             "outputs": {
-                "latest_build_passing": {"implementation": "latest-build-passing/v1"},
+                "latest_build_passing": {
+                    "implementation": "latest-build-passing/v1",
+                    "type": "boolean",
+                },
             }
         }
     )
@@ -435,7 +511,10 @@ def test_implementation_fingerprints_hash_complete_runner_sources(tmp_path, monk
     prompt_changed = registry.implementation_fingerprints(
         {
             "outputs": {
-                "latest_build_passing": {"implementation": "latest-build-passing/v1"},
+                "latest_build_passing": {
+                    "implementation": "latest-build-passing/v1",
+                    "type": "boolean",
+                },
             }
         }
     )
@@ -445,7 +524,10 @@ def test_implementation_fingerprints_hash_complete_runner_sources(tmp_path, monk
 def test_implementation_fingerprints_hash_runner_wrapper_source(monkeypatch):
     config = {
         "outputs": {
-            "latest_build_passing": {"implementation": "latest-build-passing/v1"},
+            "latest_build_passing": {
+                "implementation": "latest-build-passing/v1",
+                "type": "boolean",
+            },
         }
     }
     initial = registry.implementation_fingerprints(config)["latest-build-passing/v1"]
@@ -453,7 +535,7 @@ def test_implementation_fingerprints_hash_runner_wrapper_source(monkeypatch):
     def replacement_runner(
         unit: EvaluationUnit, context: registry.ScorerContext
     ) -> dict[str, object]:
-        return {"latest_build_passing": False}
+        return {"latest_build_passing": measured(False)}
 
     monkeypatch.setattr(
         registry,
@@ -470,7 +552,10 @@ def test_implementation_fingerprints_hash_metric_binding_metadata(monkeypatch):
     original = registry.implementation_fingerprints(
         {
             "outputs": {
-                "latest_build_passing": {"implementation": "latest-build-passing/v1"},
+                "latest_build_passing": {
+                    "implementation": "latest-build-passing/v1",
+                    "type": "boolean",
+                },
             }
         }
     )["latest-build-passing/v1"]
@@ -487,7 +572,10 @@ def test_implementation_fingerprints_hash_metric_binding_metadata(monkeypatch):
     changed = registry.implementation_fingerprints(
         {
             "outputs": {
-                "latest_build_passing": {"implementation": alternate_implementation},
+                "latest_build_passing": {
+                    "implementation": alternate_implementation,
+                    "type": "boolean",
+                },
             }
         }
     )[alternate_implementation]

@@ -34,7 +34,7 @@ const mockPortfolio: Portfolio = {
               product_id: 'discourse-k8s',
               repo: 'canonical/discourse-k8s-operator',
               result: 'silver',
-              metrics: { coverage_pct: 83, latest_build_passing: true },
+              metrics: { coverage_pct: { state: 'measured', value: 83 }, latest_build_passing: { state: 'measured', value: true } },
               excluded_from_parent_medal: false,
             },
           ],
@@ -59,7 +59,7 @@ const mockPortfolio: Portfolio = {
         test_verification: {
           result: 'silver',
           meets_target: true,
-          metrics: { coverage_pct: 83, latest_build_passing: true },
+          metrics: { coverage_pct: { state: 'measured', value: 83 }, latest_build_passing: { state: 'measured', value: true } },
           composition: null,
         },
       },
@@ -82,6 +82,30 @@ const mockPortfolio: Portfolio = {
 }
 
 describe('groupedPortfolioView', () => {
+  it('compares quoted version strings as adoption, not numeric ordering', () => {
+    expect(evaluateMetricAgainstTier(['uses_sphinx_stack != ""'], 'uses_sphinx_stack', { state: 'measured', value: '' })).toBe('fail')
+    expect(evaluateMetricAgainstTier(['uses_sphinx_stack != ""'], 'uses_sphinx_stack', { state: 'measured', value: '2.3.0' })).toBe('pass')
+    expect(computeGapToTarget({ state: 'measured', value: '2.3.0' }, 'gold', { name: 'uses_sphinx_stack', type: 'string' })).toBeNull()
+  })
+
+  it('keeps unavailable states out of tier failures and numeric gaps', () => {
+    for (const state of ['not_applicable', 'insufficient_data'] as const) {
+      const outcome = { state, value: null, reason: 'No relevant report' } as const
+      expect(evaluateMetricAgainstTier(['coverage_pct >= 80'], 'coverage_pct', outcome)).toBe('na')
+      expect(computeGapToTarget(outcome, 'gold', { name: 'coverage_pct', type: 'numeric', medals: { gold: { min: 90 } } })).toBeNull()
+    }
+  })
+
+  it('does not hide an unknown component behind a measured root value', () => {
+    const portfolio = structuredClone(mockPortfolio)
+    const entry = portfolio.products[0].dimensions.test_verification
+    entry.metrics.coverage_pct = { state: 'measured', value: 95 }
+    entry.composition![0].metrics.coverage_pct = { state: 'insufficient_data', value: null, reason: 'Report missing' }
+    const group = buildMetricDistributionRows(portfolio, 'test_verification', 'coverage_pct')[0]
+    expect(group.root.outcome).toEqual({ state: 'insufficient_data', value: null, reason: 'Report missing' })
+    expect(group.leaves[0].outcome.state).toBe('insufficient_data')
+  })
+
   it('builds root -> leaf grouped rows', () => {
     const rows = buildGroupedProducts(mockPortfolio)
     expect(rows).toHaveLength(1)
@@ -90,12 +114,12 @@ describe('groupedPortfolioView', () => {
   })
 
   it('evaluates a numeric metric against tier condition', () => {
-    const result = evaluateMetricAgainstTier(['coverage_pct >= 80'], 'coverage_pct', 83)
+    const result = evaluateMetricAgainstTier(['coverage_pct >= 80'], 'coverage_pct', { state: 'measured', value: 83 })
     expect(result).toBe('pass')
   })
 
   it('returns na when tier does not reference metric', () => {
-    const result = evaluateMetricAgainstTier(['latest_build_passing == true'], 'coverage_pct', 83)
+    const result = evaluateMetricAgainstTier(['latest_build_passing == true'], 'coverage_pct', { state: 'measured', value: 83 })
     expect(result).toBe('na')
   })
 
@@ -103,7 +127,7 @@ describe('groupedPortfolioView', () => {
     const groups = buildMetricDistributionRows(mockPortfolio, 'test_verification', 'coverage_pct')
     expect(groups).toHaveLength(1)
     expect(groups[0].root.product.id).toBe('discourse')
-    expect(groups[0].leaves[0].value).toBe(83)
+    expect(groups[0].leaves[0].outcome).toEqual({ state: 'measured', value: 83 })
   })
 })
 
@@ -119,7 +143,7 @@ describe('computeGapToTarget', () => {
       },
     } satisfies MetricDefinition
 
-    expect(computeGapToTarget(80, 'silver', metric)).toBe('At target')
+    expect(computeGapToTarget({ state: 'measured', value: 80 }, 'silver', metric)).toBe('At target')
   })
 
   it('returns "At target" when numeric result is equal within floating point epsilon', () => {
@@ -133,7 +157,7 @@ describe('computeGapToTarget', () => {
       },
     } satisfies MetricDefinition
 
-    expect(computeGapToTarget(0.1 + 0.2, 'bronze', { ...metric, medals: { bronze: { min: 0.3 } } })).toBe(
+    expect(computeGapToTarget({ state: 'measured', value: 0.1 + 0.2 }, 'bronze', { ...metric, medals: { bronze: { min: 0.3 } } })).toBe(
       'At target',
     )
   })
@@ -149,7 +173,7 @@ describe('computeGapToTarget', () => {
       },
     } satisfies MetricDefinition
 
-    expect(computeGapToTarget(75, 'silver', metric)).toBe('Below target (+5% to silver)')
+    expect(computeGapToTarget({ state: 'measured', value: 75 }, 'silver', metric)).toBe('Below target (+5% to silver)')
   })
 
   it('returns "Exceeds target" when numeric result exceeds the target threshold', () => {
@@ -163,7 +187,7 @@ describe('computeGapToTarget', () => {
       },
     } satisfies MetricDefinition
 
-    expect(computeGapToTarget(95, 'gold', metric)).toBe('Exceeds target')
+    expect(computeGapToTarget({ state: 'measured', value: 95 }, 'gold', metric)).toBe('Exceeds target')
   })
 
   it('returns "At target" for a boolean metric with value true', () => {
@@ -173,7 +197,7 @@ describe('computeGapToTarget', () => {
       signal_name: 'SECURITY.md',
     } satisfies MetricDefinition
 
-    expect(computeGapToTarget(true, 'bronze', metric)).toBe('At target')
+    expect(computeGapToTarget({ state: 'measured', value: true }, 'bronze', metric)).toBe('At target')
   })
 
   it('returns "Below target (requires true)" for a boolean metric with value false', () => {
@@ -183,17 +207,17 @@ describe('computeGapToTarget', () => {
       signal_name: 'SECURITY.md',
     } satisfies MetricDefinition
 
-    expect(computeGapToTarget(false, 'bronze', metric)).toBe('Below target (requires true)')
+    expect(computeGapToTarget({ state: 'measured', value: false }, 'bronze', metric)).toBe('Below target (requires true)')
   })
 
-  it('returns "Below target (requires true)" when boolean metric has no data', () => {
+  it('does not label unknown boolean evidence as a measured failure', () => {
     const metric = {
       name: 'has_security_md',
       type: 'boolean',
       signal_name: 'SECURITY.md',
     } satisfies MetricDefinition
 
-    expect(computeGapToTarget(null, 'bronze', metric)).toBe('Below target (requires true)')
+    expect(computeGapToTarget({ state: 'insufficient_data', value: null, reason: 'No evidence' }, 'bronze', metric)).toBeNull()
   })
 
   it('returns null when target medal does not include this boolean metric', () => {
@@ -202,7 +226,7 @@ describe('computeGapToTarget', () => {
       type: 'boolean',
     } satisfies MetricDefinition
 
-    expect(computeGapToTarget(true, 'bronze', metric, 'na')).toBeNull()
+    expect(computeGapToTarget({ state: 'measured', value: true }, 'bronze', metric, 'na')).toBeNull()
   })
 
   it('returns null when a numeric metric has no target threshold', () => {
@@ -212,7 +236,7 @@ describe('computeGapToTarget', () => {
       medals: {},
     } satisfies MetricDefinition
 
-    expect(computeGapToTarget(50, 'silver', metric)).toBeNull()
+    expect(computeGapToTarget({ state: 'measured', value: 50 }, 'silver', metric)).toBeNull()
   })
 
   it('rounds numeric gaps to one decimal place for below-target messages', () => {
@@ -226,7 +250,7 @@ describe('computeGapToTarget', () => {
       },
     } satisfies MetricDefinition
 
-    expect(computeGapToTarget(76.3, 'silver', metric)).toBe('Below target (+3.7% to silver)')
+    expect(computeGapToTarget({ state: 'measured', value: 76.3 }, 'silver', metric)).toBe('Below target (+3.7% to silver)')
   })
 })
 
@@ -242,10 +266,10 @@ describe('computeGapClass', () => {
   } satisfies MetricDefinition
 
   it('returns below_target when a numeric result is below the target threshold', () => {
-    expect(computeGapClass(75, 'silver', metric)).toBe('below_target')
+    expect(computeGapClass({ state: 'measured', value: 75 }, 'silver', metric)).toBe('below_target')
   })
 
   it('returns not_applicable when the metric is not part of the target criteria', () => {
-    expect(computeGapClass(75, 'silver', metric, 'na')).toBe('not_applicable')
+    expect(computeGapClass({ state: 'measured', value: 75 }, 'silver', metric, 'na')).toBe('not_applicable')
   })
 })

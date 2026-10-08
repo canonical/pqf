@@ -145,14 +145,13 @@ Always use `make` targets. CI uses the same targets.
 Dimensions are declared **per framework version** — always read the contract you are changing
 (`framework/versions/<version>/dimensions.yaml`) rather than trusting a summary. Current state:
 
-**V0 contract** — four dimensions:
+**V0 contract** (27.04 cycle commitment; spec: `docs/proposals/framework-v0.md`) — three dimensions:
 
 | Dimension | Result criteria |
 |-----------|-----------------|
-| `test_verification` | Bronze: `latest_build_passing`. Gold: + `uses_jubilant`. (No silver tier — intentional.) |
-| `documentation` | Bronze: `readme_present`. Silver: + `contributing_present`. Gold: + `has_security`. |
-| `security_ssdlc` | Bronze: `renovate_enabled`. Silver: + `branch_protection_required_checks`. Gold: + `signed_commits_required`. |
-| `engagement` | Bronze: `ownership_signal`. Silver: + `response_coverage_rate >= 80`. Gold: + `response_coverage_rate >= 90`. |
+| `test_verification` (Testing) | Bronze: `uses_ops_testing` + `uses_gh_runners_unit_testing`. Silver: + `uses_jubilant` + `uses_tf_v1_provider`. Gold: + `uses_charm_ci` + `supports_canonical_k8s` + `supports_juju_4` + `supports_juju_lts`. |
+| `documentation` | Bronze: `readme_present`. Silver: + `contributing_present` + `has_security`. Gold: + `uses_sphinx_stack`. `diataxis_coverage_ai` is informational. |
+| `security_ssdlc` | Bronze = Silver = Gold: `renovate_enabled` + `branch_protection_required_checks` + `signed_commits_required`. |
 
 **V1 contract** — adds `substrate_compat` and promotes further signals:
 
