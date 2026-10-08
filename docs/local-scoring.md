@@ -24,7 +24,8 @@ The Makefile reads `GITHUB_TOKEN` from `gh auth token`, so you do not need to ex
 
 GitHub evidence requests retry rate limits up to three times with the same credentials, honoring
 `Retry-After` or the primary rate-limit reset time (at most one hour per wait). Retry waits are
-logged. Exhausted retries and acquisition failures still fail scoring; they are never converted
+logged. Connection interruptions/timeouts retry with 1, 2 and 4 second backoff.
+Exhausted retries and acquisition failures still fail scoring; they are never converted
 into missing files, disabled protections, or zero-valued metrics. An unsuccessful anonymous
 fallback preserves the original authenticated response. The narrow exception is an explicit
 GitHub permission denial when reading protection/signature settings: that metric becomes

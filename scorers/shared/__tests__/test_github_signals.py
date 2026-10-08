@@ -1,4 +1,5 @@
 import pytest
+import requests
 import responses
 
 from scorers.shared import github_signals
@@ -115,6 +116,34 @@ def test_rate_limit_retries_are_bounded_and_preserve_error(mocker):
     assert all(
         call.request.headers["Authorization"] == "token gh-token" for call in responses.calls
     )
+
+
+@pytest.mark.parametrize("error", [requests.ConnectionError, requests.Timeout])
+@responses.activate
+def test_transient_connection_failures_retry_authenticated_request(mocker, error):
+    url = "https://api.github.com/repos/canonical/example/contents/.github/workflows/ci.yml"
+    sleep = mocker.patch("time.sleep")
+    responses.get(url, body=error("Connection interrupted"))
+    responses.get(url, json={"name": "ci.yml"})
+
+    assert github_get(url, "gh-token").json() == {"name": "ci.yml"}
+    sleep.assert_called_once_with(1)
+    assert all(
+        call.request.headers["Authorization"] == "token gh-token" for call in responses.calls
+    )
+
+
+@responses.activate
+def test_exhausted_connection_retries_still_fail(mocker):
+    url = "https://api.github.com/repos/canonical/example"
+    sleep = mocker.patch("time.sleep")
+    responses.get(url, body=requests.ConnectionError("Connection interrupted"))
+
+    with pytest.raises(requests.ConnectionError, match="Connection interrupted"):
+        github_get(url, "gh-token")
+
+    assert len(responses.calls) == 4
+    assert [call.args[0] for call in sleep.call_args_list] == [1, 2, 4]
 
 
 @responses.activate
