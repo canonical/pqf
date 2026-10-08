@@ -28,7 +28,32 @@ _CONFIG_PATHS = (
 )
 _KEYS = ("renovate_enabled", "branch_protection_required_checks", "signed_commits_required")
 _PRESET_REPOS = {"canonical/renovate-apps", "canonical/renovate-websites"}
-_BUILTIN_CONFIGS = {"config:base", "config:recommended", "config:best-practices"}
+# Renovate's bundled preset namespaces; only `:disableRenovate` among them turns Renovate off.
+_BUILTIN_NAMESPACES = {
+    "",
+    "abandonments",
+    "config",
+    "customManagers",
+    "default",
+    "docker",
+    "group",
+    "helpers",
+    "mergeConfidence",
+    "monorepo",
+    "npm",
+    "packages",
+    "preview",
+    "regexManagers",
+    "replacements",
+    "schedule",
+    "security",
+    "workarounds",
+}
+
+
+def _is_builtin_preset(preset: str) -> bool:
+    namespace, separator, name = preset.partition(":")
+    return bool(separator and name) and ">" not in preset and namespace in _BUILTIN_NAMESPACES
 
 
 class _UnknownEvidence(ValueError):
@@ -104,24 +129,7 @@ def _renovate_config_enabled(
     for preset in extends:
         if preset == ":disableRenovate":
             result = False
-        elif preset in _BUILTIN_CONFIGS:
-            continue
-        elif preset in {
-            ":autodetectPinVersions",
-            ":combinePatchMinorReleases",
-            ":separateMajorReleases",
-            ":ignoreModulesAndTests",
-            ":ignoreUnstable",
-            ":prImmediately",
-            ":prHourlyLimitNone",
-            ":prConcurrentLimit20",
-            ":updateNotScheduled",
-            ":automergeDisabled",
-            ":automergeMinor",
-            "schedule:monthly",
-            "helpers:disableTypesNodeMajor",
-            "group:allNonMajor",
-        }:
+        elif _is_builtin_preset(preset):
             continue
         elif preset.startswith("github>") and preset[7:] in _PRESET_REPOS:
             if preset in seen or len(seen) >= 4:

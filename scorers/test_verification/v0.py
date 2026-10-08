@@ -404,9 +404,9 @@ def _configurations(
             if not isinstance(suite, dict):
                 raise ValueError("Invalid spread suite")
             working = _resolve(directory, suite.get("working-dir", "."))
-            if working != scope or not scoped(
-                _resolve(directory, path), normalize(posixpath.join(scope, "tests/integration"))
-            ):
+            # Suite keys are free-form names; discover-path locates the tests when set.
+            location = _resolve(directory, suite.get("discover-path") or path)
+            if working != scope or not scoped(location, scope):
                 continue
             backends = suite.get("backends", [])
             known = spread.get("backends", {})

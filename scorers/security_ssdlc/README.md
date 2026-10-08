@@ -20,7 +20,8 @@ V0 implementation and emits only `renovate_enabled`,
   rules disable it. Selective package disabling does not disable onboarding.
   Unrelated configuration options are not conformance gates. Follow the approved
   `canonical/renovate-apps` and `canonical/renovate-websites` preset inheritance,
-  with bounded cycle detection. Unknown presets or nonliteral configuration
+  with bounded cycle detection. Renovate built-in presets (for example `config:*`,
+  `group:*`, `:semanticCommits`) are accepted; other external presets or nonliteral configuration
   produce `insufficient_data`, not a positive result. Missing an open dashboard
   is measured false even when configuration is enabled. Enumerate open issues
   with bounded pagination, exclude PRs, and require the exact title

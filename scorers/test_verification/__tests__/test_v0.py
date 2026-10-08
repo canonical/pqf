@@ -227,6 +227,76 @@ integration-suites:
     assert result["supports_juju_lts"] == measured(False)
 
 
+def test_root_spread_suite_names_are_not_test_locations():
+    # Mirrors gateway-api-integrator-operator: suite keys are arbitrary names, and
+    # working-dir/discover-path tie each suite to its charm.
+    source = files(
+        {
+            ".github/workflows/integration.yaml": """
+jobs:
+  integration:
+    uses: canonical/charm-ci/.github/workflows/integration-test.yml@v1.0.1
+    with:
+      working-directory: .
+""",
+            "spread.yaml": """
+backends:
+  integration-test:
+    type: integration-test
+    systems: [ubuntu-24.04]
+integration-suites:
+  charm/tests/integration-k8s-juju4/:
+    working-dir: charm/
+    discover-path: charm/tests/integration/k8s/
+    backends: [integration-test]
+    environment:
+      CONCIERGE: concierge-juju4.yaml
+  tests/e2e-juju3/:
+    working-dir: ./
+    discover-path: tests/e2e/
+    backends: [integration-test]
+    environment:
+      CONCIERGE: concierge-juju3.yaml
+""",
+            "concierge-juju4.yaml": "juju:\n  channel: 4.0/stable\nproviders:\n  k8s: {}\n",
+            "concierge-juju3.yaml": "juju:\n  channel: 3.6/stable\nproviders:\n  k8s: {}\n",
+        }
+    )
+    result = evaluate_files(UNIT, source)
+    assert result["uses_charm_ci"] == measured(True)
+    assert result["supports_juju_4"] == measured(True)
+    assert result["supports_canonical_k8s"] == measured(True)
+    assert result["supports_juju_lts"] == measured(False)
+
+
+def test_suite_discovering_outside_the_charm_does_not_count():
+    source = files(
+        {
+            ".github/workflows/integration.yaml": """
+jobs:
+  integration:
+    uses: canonical/charm-ci/.github/workflows/integration-test.yml@v1.0.1
+""",
+            "spread.yaml": """
+backends:
+  integration-test:
+    type: integration-test
+integration-suites:
+  charm/tests/integration/:
+    working-dir: charm/
+    discover-path: other/tests/integration/
+    backends: [integration-test]
+    environment:
+      CONCIERGE: concierge.yaml
+""",
+            "concierge.yaml": "juju:\n  channel: 4/stable\n",
+        }
+    )
+    result = evaluate_files(UNIT, source)
+    assert result["uses_charm_ci"] == measured(False)
+    assert result["supports_juju_4"] == measured(False)
+
+
 def test_unused_concierge_and_incidental_mentions_do_not_count():
     result = evaluate_files(
         UNIT,

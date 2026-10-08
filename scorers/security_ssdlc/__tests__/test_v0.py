@@ -113,6 +113,29 @@ def test_renovate_valid_onboarding_configuration(config):
     assert run()["renovate_enabled"] == measured(True)
 
 
+@pytest.mark.parametrize(
+    "extends",
+    [
+        ["config:base", "group:all"],
+        ["config:recommended", ":semanticCommits", "docker:pinDigests"],
+        ["helpers:pinGitHubActionDigests", "schedule:weekends", ":dependencyDashboard"],
+    ],
+)
+@responses.activate
+def test_renovate_builtin_presets_do_not_block_measurement(extends):
+    evidence(config={"extends": extends})
+    assert run()["renovate_enabled"] == measured(True)
+
+
+@pytest.mark.parametrize(
+    "preset", ["local>canonical/config", "gitlab>canonical/config", "some-npm-preset"]
+)
+@responses.activate
+def test_renovate_external_presets_are_not_assumed_enabled(preset):
+    evidence(config={"extends": ["config:base", preset]})
+    assert run()["renovate_enabled"].state == MetricState.INSUFFICIENT_DATA
+
+
 @pytest.mark.parametrize("config", [{"enabled": False}, {"extends": [":disableRenovate"]}])
 @responses.activate
 def test_renovate_disabled_configuration_is_measured_false(config):
