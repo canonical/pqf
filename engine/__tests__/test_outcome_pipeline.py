@@ -42,14 +42,11 @@ def test_v0_outcomes_survive_complete_generation_pipeline(tmp_path, monkeypatch,
 
     def testing(unit, context):
         outputs = {key: measured(True) for key in dimensions["test_verification"]["outputs"]}
-        outputs["ci_passing"] = insufficient_data("No attributable run.")
         outputs["uses_tf_v1_provider"] = not_applicable("No Terraform modules.")
         if unit.product_id == "machine":
             outputs["supports_canonical_k8s"] = not_applicable("Machine charm.")
         if unit.product_type == ProductType.SNAP:
-            outputs = {
-                key: not_applicable("Not a charm.") for key in outputs if key != "ci_passing"
-            } | {"ci_passing": measured(False)}
+            outputs = {key: not_applicable("Not a charm.") for key in outputs}
         if unknown_required and unit.product_id == "k8s":
             outputs["uses_jubilant"] = insufficient_data("Tests could not be interpreted.")
         return outputs
@@ -124,9 +121,5 @@ def test_v0_outcomes_survive_complete_generation_pipeline(tmp_path, monkeypatch,
         "state": "not_applicable",
         "value": None,
         "reason": "Machine charm.",
-    }
-    assert products["snap"]["dimensions"]["test_verification"]["metrics"]["ci_passing"] == {
-        "state": "measured",
-        "value": False,
     }
     assert published["metric_schema_version"] == 1

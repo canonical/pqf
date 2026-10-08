@@ -21,6 +21,20 @@ Distinct from V0's `uses_charm_ci`, which measures adoption of a particular pipe
 
 **Decision needed:** does this add useful coverage beyond the V0 tool-adoption checks?
 
+### Latest CI passing
+
+**Previous ID:** `ci_passing` (moved out of V0 while informational)\
+**Proposed status:** informational
+
+Check whether the latest code on each published branch (default branch plus `track/<track>`
+for non-`latest` Charmhub tracks) passed its **test** jobs. Use check runs on the branch tip,
+or merged-PR evidence only when the tested head is provably that tip.
+
+The V0 prototype counted every check run, including non-test jobs such as library updates and
+publishing, so most repositories reported `false`. It also used many API calls per product.
+
+**Decision needed:** how to identify test jobs reliably across shared and repository workflows.
+
 ### Test pass rate and stability
 
 **Existing IDs:** `coverage_pct`, `stability_pct`\
@@ -70,7 +84,7 @@ Check for a maintained changelog at an agreed location. The current detector che
 **Proposed status:** informational
 
 Check the latest relevant documentation lint, link-check and build jobs, including shared
-workflows. Reuse the branch/run attribution rules agreed for V0's `ci_passing`.
+workflows. Reuse the branch/run attribution rules agreed for Latest CI passing.
 
 ### License present
 

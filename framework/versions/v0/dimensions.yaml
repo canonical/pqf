@@ -19,12 +19,6 @@ dimensions:
       - supports_juju_4
       - supports_juju_lts
     outputs:
-      ci_passing:
-        implementation: "ci-passing/v1"
-        type: boolean
-        label: "CI passing"
-        description: "Latest required checks pass on the default branch and each published non-latest Charmhub track branch."
-        informational: true
       uses_ops_testing:
         implementation: "uses-ops-testing/v1"
         type: boolean

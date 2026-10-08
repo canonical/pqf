@@ -5,7 +5,7 @@ import responses
 
 from engine.metric_outcomes import MetricState, measured
 from engine.models import EvaluationUnit, ProductType
-from scorers.test_verification.v0 import evaluate_checks, evaluate_files
+from scorers.test_verification.v0 import evaluate_files
 
 UNIT = EvaluationUnit("example", ProductType.CHARM, "canonical/example", subpath="charm")
 
@@ -276,8 +276,20 @@ jobs:
     assert (result.state, result.value) == (state, value)
 
 
-@pytest.mark.parametrize("track", ["4/edge", "4.1/stable", "3/stable", "4/stable/foo"])
-def test_exact_juju_track_is_required(track):
+@pytest.mark.parametrize(
+    ("track", "value"),
+    [
+        ("4/stable", True),
+        ("4.0/stable", True),
+        ("4.1/stable", True),
+        ("4/edge", False),
+        ("4.1/beta", False),
+        ("40/stable", False),
+        ("3/stable", False),
+        ("4/stable/foo", False),
+    ],
+)
+def test_major_juju_track_accepts_any_stable_release_in_the_line(track, value):
     result = evaluate_files(
         UNIT,
         files(
@@ -294,7 +306,28 @@ jobs:
             }
         ),
     )
-    assert result["supports_juju_4"] == measured(False)
+    assert result["supports_juju_4"] == measured(value)
+
+
+@pytest.mark.parametrize(("track", "value"), [("3.6/stable", True), ("3/stable", False)])
+def test_pinned_lts_track_requires_exact_release(track, value):
+    result = evaluate_files(
+        UNIT,
+        files(
+            {
+                ".github/workflows/integration.yml": """
+jobs:
+  integration:
+    uses: canonical/charm-ci/.github/workflows/integration-test.yml@main
+    with:
+      working-directory: charm
+""",
+                "charm/spread.yaml": spread(),
+                "charm/concierge.yaml": f"juju:\n  channel: {track}",
+            }
+        ),
+    )
+    assert result["supports_juju_lts"] == measured(value)
 
 
 def test_snaps_all_charm_checks_not_applicable():
@@ -340,20 +373,6 @@ def test_terraform_all_modules_must_use_v1():
         ),
     )
     assert result["uses_tf_v1_provider"] == measured(False)
-
-
-def check(name, conclusion="success", *, id=1, status="completed"):
-    return {"name": name, "conclusion": conclusion, "id": id, "status": status, "app": {"id": 1}}
-
-
-def test_ci_does_not_ignore_failed_jobs_or_pending_reruns():
-    assert evaluate_checks([check("unit"), check("integration", "failure")]) == measured(False)
-    pending = check("unit", None, id=2, status="in_progress")
-    assert evaluate_checks([check("unit"), pending]).state == MetricState.INSUFFICIENT_DATA
-    assert evaluate_checks([check("unit", "failure"), check("unit", id=2)]) == measured(True)
-    assert evaluate_checks([check("unit")], required={"integration"}).state == (
-        MetricState.INSUFFICIENT_DATA
-    )
 
 
 def test_other_component_root_workflow_does_not_prove_component_juju():
@@ -424,6 +443,79 @@ jobs:
     assert result["supports_canonical_k8s"] == measured(False)
 
 
+def test_matrix_object_properties_resolve_unit_job_scope():
+    result = evaluate_files(
+        UNIT,
+        files(
+            {
+                ".github/workflows/test.yml": """
+jobs:
+  test:
+    strategy:
+      matrix:
+        charm:
+          - {name: example, working-directory: ./charm}
+          - {name: other, working-directory: ./other}
+    uses: canonical/operator-workflows/.github/workflows/test.yaml@main
+    with:
+      working-directory: ${{ matrix.charm.working-directory }}
+"""
+            }
+        ),
+    )
+    assert result["uses_gh_runners_unit_testing"] == measured(True)
+
+
+def test_unresolvable_non_test_steps_job_does_not_hide_unit_runner_evidence():
+    result = evaluate_files(
+        UNIT,
+        files(
+            {
+                ".github/workflows/test.yml": """
+jobs:
+  unit:
+    uses: canonical/operator-workflows/.github/workflows/test.yaml@main
+    with:
+      working-directory: ./charm
+""",
+                ".github/workflows/publish.yml": """
+jobs:
+  publish:
+    strategy:
+      matrix:
+        charm-dir: ${{ fromJSON(needs.find.outputs.dirs) }}
+    runs-on: ubuntu-latest
+    steps:
+      - run: charmcraft upload ${{ matrix.charm-dir }}
+""",
+            }
+        ),
+    )
+    assert result["uses_gh_runners_unit_testing"] == measured(True)
+
+
+def test_unresolvable_test_steps_job_remains_insufficient():
+    result = evaluate_files(
+        UNIT,
+        files(
+            {
+                ".github/workflows/test.yml": """
+jobs:
+  unit:
+    strategy:
+      matrix:
+        dir: ${{ fromJSON(needs.find.outputs.dirs) }}
+    runs-on: ${{ matrix.runner }}
+    steps:
+      - run: tox -e unit
+        working-directory: ${{ matrix.dir }}
+""",
+            }
+        ),
+    )
+    assert result["uses_gh_runners_unit_testing"].state == MetricState.INSUFFICIENT_DATA
+
+
 def test_terraform_uninterpretable_constraint_is_insufficient_not_false():
     result = evaluate_files(
         UNIT,
@@ -467,6 +559,19 @@ jobs:
     )
     assert result["supports_juju_4"] == measured(False)
     assert result["supports_canonical_k8s"] == measured(False)
+
+
+def test_charm_without_metadata_at_scope_is_insufficient_not_noncompliant():
+    result = evaluate_files(
+        EvaluationUnit("example", ProductType.CHARM, "canonical/example"),
+        files({"charm/tests/unit/test_charm.py": "from ops import testing\n"}),
+    )
+    assert result
+    assert all(
+        outcome.state == MetricState.INSUFFICIENT_DATA
+        and "No charm metadata" in (outcome.reason or "")
+        for outcome in result.values()
+    )
 
 
 def test_missing_repository_is_insufficient_not_adoption():
@@ -621,33 +726,7 @@ resource "juju_model" "model" { count = 1 + 2 }
     assert result["uses_tf_v1_provider"] == measured(True)
 
 
-def test_ci_checks_are_deduplicated_by_app_not_just_name():
-    passing = check("unit", id=2)
-    failing = check("unit", "failure")
-    failing["app"] = {"id": 2}
-    assert evaluate_checks([passing, failing]) == measured(False)
-
-
-def test_ci_statuses_are_latest_per_context():
-    assert evaluate_checks(
-        [],
-        statuses=[
-            {"context": "unit", "state": "failure", "id": 1},
-            {"context": "unit", "state": "success", "id": 2},
-        ],
-    ) == measured(True)
-    assert (
-        evaluate_checks(
-            [check("unit")],
-            statuses=[
-                {"context": "integration", "state": "pending", "id": 1},
-            ],
-        ).state
-        == MetricState.INSUFFICIENT_DATA
-    )
-
-
-def github_snapshot(*, charm=True, tracks=("latest",), tip_checks=None, associated=None):
+def github_snapshot(*, charm=True):
     base = "https://api.github.com/repos/canonical/example"
     responses.get(base, json={"default_branch": "main"})
     responses.get(base + "/branches/main", json={"commit": {"sha": "tip"}})
@@ -662,56 +741,40 @@ def github_snapshot(*, charm=True, tracks=("latest",), tip_checks=None, associat
                 "content": base64.b64encode(source.encode()).decode(),
             },
         )
-        responses.get(
-            "https://api.charmhub.io/v2/charms/info/example",
-            json={"channel-map": [{"channel": {"track": track}} for track in tracks]},
-        )
-    responses.get(base + "/rules/branches/main", json=[])
-    responses.get(base + "/commits/tip/check-runs", json={"check_runs": tip_checks or []})
-    responses.get(base + "/commits/tip/statuses", json=[])
-    if not tip_checks:
-        responses.get(base + "/commits/tip/pulls", json=associated or [])
     return base
 
 
+@pytest.mark.parametrize("charm", [True, False])
 @responses.activate
-def test_runner_checks_default_and_all_published_tracks():
+def test_runner_returns_contract_outputs_without_ci_or_charmhub_calls(charm):
     from scorers.test_verification.logic import compute_v0_metrics
 
-    base = github_snapshot(tracks=("latest", "1", "2"), tip_checks=[check("test")])
-    for track, conclusion in [("1", "success"), ("2", "failure")]:
-        responses.get(base + f"/branches/track%2F{track}", json={"commit": {"sha": track}})
-        responses.get(base + f"/rules/branches/track%2F{track}", json=[])
-        responses.get(
-            base + f"/commits/{track}/check-runs",
-            json={
-                "check_runs": [check("test", conclusion)],
-            },
-        )
-        responses.get(base + f"/commits/{track}/statuses", json=[])
-    result = compute_v0_metrics(UNIT)
-    assert result["ci_passing"] == measured(False)
-    assert len(result) == 9
-    assert all(isinstance(value, type(measured(True))) for value in result.values())
-
-
-@responses.activate
-def test_allure_success_is_not_used_for_ci():
-    from dataclasses import replace
-
-    from scorers.test_verification.logic import compute_v0_metrics
-
-    github_snapshot(tip_checks=[check("unit", "failure")])
-    unit = replace(UNIT, allure_report_url="https://example.com/_latest")
-    assert compute_v0_metrics(unit)["ci_passing"] == measured(False)
-    assert not any("example.com" in call.request.url for call in responses.calls)
+    github_snapshot(charm=charm)
+    product_type = ProductType.CHARM if charm else ProductType.SNAP
+    result = compute_v0_metrics(EvaluationUnit("example", product_type, "canonical/example"))
+    assert set(result) == {
+        "uses_ops_testing",
+        "uses_gh_runners_unit_testing",
+        "uses_jubilant",
+        "uses_tf_v1_provider",
+        "uses_charm_ci",
+        "supports_canonical_k8s",
+        "supports_juju_4",
+        "supports_juju_lts",
+    }
+    if not charm:
+        assert all(value.state == MetricState.NOT_APPLICABLE for value in result.values())
+    assert not any(
+        "charmhub" in call.request.url or "/commits/" in call.request.url
+        for call in responses.calls
+    )
 
 
 @responses.activate
 def test_arbitrary_linked_config_is_acquired_and_api_failure_propagates():
     from scorers.test_verification.logic import compute_v0_metrics
 
-    base = github_snapshot(tip_checks=[check("unit")])
+    base = github_snapshot()
     contents = {
         "charm/charmcraft.yaml": "name: example\ncontainers: {app: {}}",
         ".github/workflows/test.yml": """
@@ -749,73 +812,7 @@ jobs:
         compute_v0_metrics(UNIT)
 
 
-@responses.activate
-def test_snaps_do_not_call_charmhub():
-    from scorers.test_verification.logic import compute_v0_metrics
-
-    github_snapshot(charm=False, tip_checks=[check("test")])
-    result = compute_v0_metrics(EvaluationUnit("example", ProductType.SNAP, "canonical/example"))
-    assert result["ci_passing"] == measured(True)
-    assert all(
-        result[key].state == MetricState.NOT_APPLICABLE for key in result if key != "ci_passing"
-    )
-
-
-@pytest.mark.parametrize("merge_sha,base_branch", [("old-tip", "main"), ("tip", "other")])
-@responses.activate
-def test_ci_rejects_wrong_merged_pr_association(merge_sha, base_branch):
-    from scorers.test_verification.logic import compute_v0_metrics
-
-    github_snapshot(
-        associated=[
-            {
-                "merged_at": "2026-01-01",
-                "merge_commit_sha": merge_sha,
-                "base": {"ref": base_branch, "repo": {"full_name": "canonical/example"}},
-                "head": {"sha": "pr-head"},
-            }
-        ]
-    )
-    assert compute_v0_metrics(UNIT)["ci_passing"].state == MetricState.INSUFFICIENT_DATA
-
-
-@responses.activate
-def test_ci_uses_exact_merged_pr_head_when_tip_has_no_checks():
-    from scorers.test_verification.logic import compute_v0_metrics
-
-    base = github_snapshot(
-        associated=[
-            {
-                "merged_at": "2026-01-01",
-                "merge_commit_sha": "tip",
-                "base": {"ref": "main", "repo": {"full_name": "canonical/example"}},
-                "head": {"sha": "tip"},
-            }
-        ]
-    )
-    responses.get(base + "/commits/tip/check-runs", json={"check_runs": [check("test")]})
-    responses.get(base + "/commits/tip/statuses", json=[])
-    assert compute_v0_metrics(UNIT)["ci_passing"] == measured(True)
-
-
-@responses.activate
-def test_traefik_issue_42_squash_pr_checks_do_not_prove_current_branch_commit():
-    from scorers.test_verification.logic import compute_v0_metrics
-
-    github_snapshot(
-        associated=[
-            {
-                "merged_at": "2026-01-01",
-                "merge_commit_sha": "tip",
-                "base": {"ref": "main", "repo": {"full_name": "canonical/example"}},
-                "head": {"sha": "tested-before-squash"},
-            }
-        ]
-    )
-    assert compute_v0_metrics(UNIT)["ci_passing"].state == MetricState.INSUFFICIENT_DATA
-
-
-def test_traefik_issue_42_linked_concierge_and_exact_configured_tracks():
+def test_traefik_issue_42_linked_concierge_and_configured_tracks():
     unit = EvaluationUnit("traefik", ProductType.CHARM, "canonical/traefik-k8s-operator")
     result = evaluate_files(
         unit,
@@ -848,7 +845,135 @@ integration-suites:
     assert result["uses_charm_ci"] == measured(True)
     assert result["supports_juju_lts"] == measured(True)
     assert result["supports_canonical_k8s"] == measured(True)
+    assert result["supports_juju_4"] == measured(True)
+
+
+GOPKG_SPREAD = """
+backends:
+  integration-test:
+    type: integration-test
+    systems: [ubuntu-24.04]
+  integration-test-juju4:
+    type: integration-test
+    systems: [ubuntu-24.04]
+    environment:
+      CONCIERGE: concierge-juju4.yaml
+  docs:
+    type: opcli-minimal
+environment:
+  CONCIERGE: concierge-lxd.yaml
+integration-suites:
+  app/charm/tests/integration/:
+    working-dir: app/charm/
+    backends: [integration-test, integration-test-juju4]
+"""
+
+
+def gopkg_files(include):
+    with_include = f'\n      spread-jobs-include: "{include}"' if include else ""
+    return {
+        "app/charm/charmcraft.yaml": "name: gopkg-k8s\ncontainers: {app: {}}",
+        ".github/workflows/integration-test.yaml": f"""
+jobs:
+  integration-test:
+    uses: canonical/charm-ci/.github/workflows/integration-test.yml@v1.0.1
+    with:
+      working-directory: .{with_include}
+""",
+        "spread.yaml": GOPKG_SPREAD,
+        "concierge-lxd.yaml": "juju: {channel: 3.6/stable}\nproviders: {k8s: {}}",
+        "concierge-juju4.yaml": "juju: {channel: 4/stable}\nproviders: {k8s: {}}",
+    }
+
+
+GOPKG = EvaluationUnit("gopkg-k8s", ProductType.CHARM, "canonical/gopkg-charmed", "app/charm")
+
+
+@pytest.mark.parametrize("include", ["", "integration-test*-ci:*", "*:*"])
+def test_backend_environment_selects_concierge_per_backend(include):
+    result = evaluate_files(GOPKG, gopkg_files(include))
+    assert result["uses_charm_ci"] == measured(True)
+    assert result["supports_juju_4"] == measured(True)
+    assert result["supports_juju_lts"] == measured(True)
+    assert result["supports_canonical_k8s"] == measured(True)
+
+
+def test_literal_include_filter_excludes_unselected_backends():
+    result = evaluate_files(GOPKG, gopkg_files("integration-test-ci:*"))
+    assert result["supports_juju_lts"] == measured(True)
     assert result["supports_juju_4"] == measured(False)
+
+
+@pytest.mark.parametrize(
+    "include", ["*tests/integration*", "*-ci:ubuntu-24.04:*", "*:build/app/charm/*"]
+)
+def test_include_filter_is_matched_against_generated_selectors(include):
+    result = evaluate_files(GOPKG, gopkg_files(include))
+    assert result["supports_juju_4"] == measured(True)
+    assert result["supports_juju_lts"] == measured(True)
+
+
+def test_include_filter_matching_no_selector_excludes_suite():
+    result = evaluate_files(GOPKG, gopkg_files("*:ubuntu-22.04:*"))
+    assert result["supports_juju_4"] == measured(False)
+
+
+def test_aproxy_explicit_module_variants_with_default_concierge_expression():
+    result = evaluate_files(
+        EvaluationUnit("aproxy", ProductType.CHARM, "canonical/aproxy-operator"),
+        {
+            "charmcraft.yaml": "name: aproxy\n",
+            ".github/workflows/integration_test.yaml": """
+jobs:
+  integration-test:
+    uses: canonical/charm-ci/.github/workflows/integration-test.yml@v1.0.1
+    with:
+      working-directory: .
+      spread-jobs-include: "*tests/integration*"
+""",
+            "spread.yaml": """
+backends:
+  integration-test:
+    type: integration-test
+    systems:
+      - ubuntu-24.04: {runner: [ubuntu-24.04]}
+environment:
+  CONCIERGE: '$(HOST: echo "${CONCIERGE:-concierge.yaml}")'
+integration-suites:
+  tests/integration/:
+    working-dir: ./
+    auto-discover: false
+    backends: [integration-test]
+    environment:
+      MODULE/focal: tests/integration/test_charm.py
+""",
+            "concierge.yaml": "juju: {channel: 3.6/stable}\nproviders: {lxd: {}}",
+        },
+    )
+    assert result["supports_juju_lts"] == measured(True)
+    assert result["supports_juju_4"] == measured(False)
+
+
+def test_include_filter_selecting_some_variants_is_insufficient():
+    source = gopkg_files("*:*:*:legacy")
+    source["spread.yaml"] = GOPKG_SPREAD.replace(
+        "backends: [integration-test, integration-test-juju4]",
+        "backends: [integration-test, integration-test-juju4]\n"
+        "    auto-discover: false\n"
+        "    environment:\n"
+        "      MODULE/legacy: tests/integration/test_legacy.py\n"
+        "      MODULE/current: tests/integration/test_current.py",
+    )
+    result = evaluate_files(GOPKG, source)
+    assert result["supports_juju_4"].state == MetricState.INSUFFICIENT_DATA
+
+
+def test_backend_linked_concierge_paths_are_acquired():
+    from scorers.test_verification.evidence import _linked_paths
+
+    source = gopkg_files("")
+    source["spread.yaml"] = GOPKG_SPREAD.replace("concierge-juju4.yaml", "env/four.yaml")
+    assert "env/four.yaml" in _linked_paths(source)
 
 
 def test_machine_and_k8s_siblings_keep_metadata_and_test_configuration_scoped():
@@ -881,61 +1006,6 @@ integration-suites:
         assert machine[key] == measured(False)
         assert kubernetes[key] == measured(True)
     assert kubernetes["supports_canonical_k8s"] == measured(True)
-
-
-@responses.activate
-def test_charmhub_error_fails_the_runner():
-    from scorers.test_verification.logic import compute_v0_metrics
-
-    github_snapshot(tip_checks=[check("test")])
-    responses.replace(
-        responses.GET,
-        "https://api.charmhub.io/v2/charms/info/example",
-        status=503,
-    )
-    with pytest.raises(Exception, match="503"):
-        compute_v0_metrics(UNIT)
-
-
-@responses.activate
-def test_missing_published_branch_is_insufficient():
-    from scorers.test_verification.logic import compute_v0_metrics
-
-    base = github_snapshot(tracks=("latest", "1"), tip_checks=[check("unit")])
-    responses.get(base + "/branches/track%2F1", status=404)
-    assert compute_v0_metrics(UNIT)["ci_passing"].state == MetricState.INSUFFICIENT_DATA
-
-
-@responses.activate
-def test_ruleset_required_missing_job_is_insufficient():
-    from scorers.test_verification.logic import compute_v0_metrics
-
-    base = github_snapshot(tip_checks=[check("unit")])
-    responses.replace(
-        responses.GET,
-        base + "/rules/branches/main",
-        json=[
-            {
-                "type": "required_status_checks",
-                "parameters": {"required_status_checks": [{"context": "integration"}]},
-            }
-        ],
-    )
-    assert compute_v0_metrics(UNIT)["ci_passing"].state == MetricState.INSUFFICIENT_DATA
-
-
-@responses.activate
-def test_check_pages_do_not_discard_later_failures():
-    from scorers.test_verification.logic import compute_v0_metrics
-
-    base = github_snapshot(tip_checks=[check("unit")])
-    responses.replace(
-        responses.GET,
-        base + "/commits/tip/check-runs",
-        json={"check_runs": [check(f"unit-{i}") for i in range(100)]},
-    )
-    responses.get(base + "/commits/tip/check-runs", json={"check_runs": [check("last", "failure")]})
-    assert compute_v0_metrics(UNIT)["ci_passing"] == measured(False)
 
 
 @responses.activate

@@ -523,7 +523,7 @@ class TestRepositoryValidation:
             (REPO_ROOT / "framework/versions/v0/dimensions.yaml").read_text()
         )["dimensions"]
         assert set(dimensions) == {"test_verification", "documentation", "security_ssdlc"}
-        assert dimensions["test_verification"]["outputs"]["ci_passing"]["informational"] is True
+        assert "ci_passing" not in dimensions["test_verification"]["outputs"]
         assert "uses_rtd_hosting" not in dimensions["documentation"]["outputs"]
 
     def test_reports_missing_framework_dimensions_snapshot_file(self, tmp_path):

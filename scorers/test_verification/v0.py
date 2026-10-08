@@ -1,6 +1,7 @@
 """Pure V0 testing measurements over a pinned repository evidence snapshot."""
 
 import ast
+import fnmatch
 import itertools
 import posixpath
 import re
@@ -23,7 +24,7 @@ CHARM_METRICS = (
     "supports_juju_4",
     "supports_juju_lts",
 )
-_MATRIX = re.compile(r"\$\{\{\s*matrix\.([\w-]+)\s*\}\}")
+_MATRIX = re.compile(r"\$\{\{\s*matrix\.([\w-]+(?:\.[\w-]+)*)\s*\}\}")
 _HOSTED = re.compile(r"^(ubuntu|windows|macos)-(latest|\d+(?:\.\d+)*(?:-[a-z0-9-]+)?)$")
 _INTEGRATION = re.compile(
     r"^canonical/charm-ci/\.github/workflows/integration[-_]tests?\.(yml|yaml)@[^@\s]+$"
@@ -140,12 +141,20 @@ def _expand(job: dict[str, Any]) -> list[dict[str, Any]]:
         if not matched:
             combinations.append(item)
 
+    def lookup(variables: dict[str, Any], path: str, default: Any) -> Any:
+        value: Any = variables
+        for part in path.split("."):
+            if not isinstance(value, dict) or part not in value:
+                return default
+            value = value[part]
+        return value
+
     def replace(value: Any, variables: dict[str, Any]) -> Any:
         if isinstance(value, str):
             match = _MATRIX.fullmatch(value)
             if match:
-                return variables.get(match.group(1), value)
-            return _MATRIX.sub(lambda m: str(variables.get(m.group(1), m.group())), value)
+                return lookup(variables, match.group(1), value)
+            return _MATRIX.sub(lambda m: str(lookup(variables, m.group(1), m.group())), value)
         if isinstance(value, list):
             return [replace(v, variables) for v in value]
         if isinstance(value, dict):
@@ -314,6 +323,69 @@ def _resolve(directory: str, path: object) -> str:
     return resolved
 
 
+def _track_matches(channel: str, track: str) -> bool:
+    """A major-only track (``4/stable``) covers every stable release in that line."""
+    required, _, risk = track.partition("/")
+    actual, _, actual_risk = channel.partition("/")
+    if actual_risk != risk:
+        return False
+    return actual == required or ("." not in required and actual.startswith(f"{required}."))
+
+
+_UNKNOWN_MODULES = ("test_a", "zz_unknown_module_9")
+
+
+def _systems(*sources: object) -> list[str] | None:
+    for source in sources:
+        if source is None:
+            continue
+        if not isinstance(source, list):
+            return None
+        names = []
+        for item in source:
+            if isinstance(item, str):
+                names.append(item)
+            elif isinstance(item, dict) and len(item) == 1:
+                names.append(next(iter(item)))
+            else:
+                return None
+        return names
+    return None
+
+
+def _included(
+    backend: str,
+    pattern: object,
+    *,
+    path: str,
+    systems: list[str] | None,
+    variants: set[str],
+    discovers: bool,
+) -> bool | None:
+    """Decide whether charm-ci's ``spread-jobs-include`` selects a suite's jobs on a backend.
+
+    opcli fnmatches the pattern against ``<backend>-ci:<system>:build/<suite>/run:<variant>``
+    selectors. Auto-discovered module variants are unknown, so representative names stand in;
+    a filter selecting only some variants cannot be decided.
+    """
+    if not pattern:
+        return True
+    if not isinstance(pattern, str) or "${{" in pattern or not systems:
+        return None
+    task = f"build/{path.rstrip('/')}/run"
+    names = set(variants) | (set(_UNKNOWN_MODULES) if discovers else set())
+    selected = {
+        any(
+            fnmatch.fnmatchcase(
+                f"{backend}-ci:{system}:{task}" + (f":{name}" if name else ""), pattern
+            )
+            for system in systems
+        )
+        for name in names or {""}
+    }
+    return selected.pop() if len(selected) == 1 else None
+
+
 def _configurations(
     job: dict[str, Any], directory: str, scope: str, files: dict[str, str]
 ) -> tuple[list[dict[str, Any]], bool, bool]:
@@ -340,34 +412,57 @@ def _configurations(
             known = spread.get("backends", {})
             if not isinstance(backends, list) or not isinstance(known, dict):
                 raise ValueError("Invalid spread backends")
-            if not any(
-                backend == "integration-test"
+            selected = [
+                backend
+                for backend in backends
+                if backend == "integration-test"
                 or isinstance(known.get(backend), dict)
                 and known[backend].get("type") == "integration-test"
-                for backend in backends
-            ):
+            ]
+            if not selected:
                 continue
             applies = True
-            if inputs.get("spread-jobs-include"):
-                # Arbitrary fnmatch selection can omit a suite/system/variant.
-                unknown = True
-                continue
-            environment = {
-                **spread.get("environment", {}),
-                **suite.get("environment", {}),
-            }
-            suite_paths = [
-                value
-                for key, value in environment.items()
-                if key == "CONCIERGE" or key.startswith("CONCIERGE/")
-            ]
-            if not suite_paths:
-                suite_paths = ["concierge.yaml"]
-            for value in suite_paths:
-                try:
-                    paths.append(_resolve(directory, concierge_path(value)))
-                except ValueError:
+            for backend in selected:
+                definition = known.get(backend)
+                definition = definition if isinstance(definition, dict) else {}
+                environments = [
+                    spread.get("environment", {}),
+                    definition.get("environment", {}),
+                    suite.get("environment", {}),
+                ]
+                if not all(isinstance(item, dict) for item in environments):
+                    raise ValueError("Invalid spread environment")
+                # Spread cascades environment from project to backend to suite.
+                environment = {key: value for item in environments for key, value in item.items()}
+                included = _included(
+                    backend,
+                    inputs.get("spread-jobs-include"),
+                    path=path,
+                    systems=_systems(suite.get("systems"), definition.get("systems")),
+                    variants={
+                        key.partition("/")[2]
+                        for key in environment
+                        if isinstance(key, str) and "/" in key
+                    },
+                    discovers=suite.get("auto-discover", True) is not False,
+                )
+                if included is None:
                     unknown = True
+                    continue
+                if not included:
+                    continue
+                suite_paths = [
+                    value
+                    for key, value in environment.items()
+                    if key == "CONCIERGE" or key.startswith("CONCIERGE/")
+                ]
+                if not suite_paths:
+                    suite_paths = ["concierge.yaml"]
+                for value in suite_paths:
+                    try:
+                        paths.append(_resolve(directory, concierge_path(value)))
+                    except ValueError:
+                        unknown = True
     for path in paths:
         if path not in files:
             continue
@@ -388,6 +483,12 @@ def evaluate_files(
     if unit.product_type != ProductType.CHARM:
         return {key: not_applicable("This is not a charm.") for key in CHARM_METRICS}
     scope = normalize(unit.subpath or ".")
+    if not any(
+        posixpath.join(scope, name).removeprefix("./") in files
+        for name in ("charmcraft.yaml", "metadata.yaml")
+    ):
+        reason = "No charm metadata at the configured path; check the product subpath."
+        return {key: insufficient_data(reason) for key in CHARM_METRICS}
     other_charms = [
         normalize(posixpath.dirname(path))
         for path in files
@@ -455,7 +556,11 @@ def evaluate_files(
                     if _INTEGRATION.fullmatch(str(job.get("uses", ""))):
                         charm_ci.append(insufficient_data("Cannot resolve charm-ci job scope."))
                         configuration_unknown = True
-                    elif _UNIT.fullmatch(str(job.get("uses", ""))) or job.get("steps"):
+                    elif _UNIT.fullmatch(str(job.get("uses", ""))) or any(
+                        isinstance(step, dict)
+                        and re.search(r"\b(tox|tox-uv|pytest)\b", str(step.get("run", "")))
+                        for step in job.get("steps") or []
+                    ):
                         unit_runners.append(
                             insufficient_data("Cannot resolve unit-test job scope.")
                         )
@@ -476,7 +581,7 @@ def evaluate_files(
                 outcomes.append(
                     insufficient_data("Dynamic Juju channel.")
                     if not isinstance(channel, str) or "${{" in channel
-                    else measured(channel == track)
+                    else measured(_track_matches(channel.strip(), track))
                 )
         if configuration_unknown:
             outcomes.append(insufficient_data("Cannot resolve linked charm-ci configuration."))
@@ -509,67 +614,3 @@ def evaluate_files(
             outcomes.append(insufficient_data("Cannot resolve linked charm-ci configuration."))
         result["supports_canonical_k8s"] = _any(outcomes)
     return result
-
-
-def evaluate_checks(
-    checks: list[dict[str, Any]],
-    *,
-    statuses: list[dict[str, Any]] | None = None,
-    required: set[str] | None = None,
-) -> MetricOutcome:
-    def rank(item: dict[str, Any]) -> tuple[str, int]:
-        return (
-            str(item.get("started_at") or item.get("created_at") or ""),
-            int(item.get("id", 0)),
-        )
-
-    latest: dict[tuple[object, str], dict[str, Any]] = {}
-    for check in checks:
-        key = (check.get("app", {}).get("id"), check.get("name", ""))
-        if not key[1]:
-            return insufficient_data("Check identity is absent.")
-        if key not in latest or rank(check) > rank(latest[key]):
-            latest[key] = check
-    latest_statuses: dict[str, dict[str, Any]] = {}
-    for status in statuses or []:
-        context = status.get("context", "")
-        if not context:
-            return insufficient_data("Commit status identity is absent.")
-        if context not in latest_statuses or (
-            str(status.get("created_at") or ""),
-            int(status.get("id", 0)),
-        ) > (
-            str(latest_statuses[context].get("created_at") or ""),
-            int(latest_statuses[context].get("id", 0)),
-        ):
-            latest_statuses[context] = status
-    outcomes = []
-    for check in latest.values():
-        conclusion = check.get("conclusion")
-        if conclusion in {
-            "failure",
-            "cancelled",
-            "timed_out",
-            "action_required",
-            "startup_failure",
-        }:
-            outcomes.append(measured(False))
-        elif check.get("status") == "completed" and conclusion == "success":
-            outcomes.append(measured(True))
-        else:
-            outcomes.append(
-                insufficient_data("A relevant check is pending, skipped or inconclusive.")
-            )
-    for status in latest_statuses.values():
-        state = status.get("state")
-        outcomes.append(
-            measured(state == "success")
-            if state in {"success", "failure", "error"}
-            else insufficient_data("A relevant commit status is pending or inconclusive.")
-        )
-    names = {key[1] for key in latest} | set(latest_statuses)
-    if required and not required.issubset(names):
-        outcomes.append(insufficient_data("Required jobs are missing from the branch tip checks."))
-    return (
-        _all(outcomes) if outcomes else insufficient_data("No branch-tip CI jobs were identified.")
-    )

@@ -318,7 +318,6 @@ METRIC_BINDINGS = MappingProxyType(
                     "test_verification",
                     "v0_testing",
                     {
-                        "ci_passing": "ci-passing/v1",
                         "uses_ops_testing": "uses-ops-testing/v1",
                         "uses_gh_runners_unit_testing": "uses-gh-runners-unit-testing/v1",
                         "uses_jubilant": "uses-jubilant/v2",

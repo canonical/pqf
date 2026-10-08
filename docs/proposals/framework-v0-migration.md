@@ -97,7 +97,7 @@ Required issue/config acquisition errors fail the job.
 Canonical K8s, Juju 4 and Juju LTS grade the required integration-test `charm-ci`
 configuration only. Configuration must be linked to the actual integration job; unused
 Concierge files do not count. Missing required configuration is a measured failure.
-Successful or failing runs belong to informational `ci_passing`, not these medal gates.
+Successful or failing runs are not graded in V0.
 
 ### Resolved: Sphinx Stack adoption
 
@@ -166,8 +166,8 @@ supported retries; absence of a rule can be measured false. Do not conflate eith
 
 - **Move Engagement out of V0:** `ownership_signal` and `response_coverage_rate` leave the active
   contract. V1 keeps ownership, counts and responsiveness candidates.
-- **Replace rather than duplicate CI health:** `latest_build_passing` leaves V0's graded outputs;
-  `ci_passing` is informational.
+- **Move CI health to V1:** `latest_build_passing` leaves V0. Its informational replacement,
+  `ci_passing`, counted non-test jobs and was costly in API calls, so it moved to the V1 backlog.
 - **Replace RTD in the V0 proposal:** `uses_rtd_hosting` leaves V0; Sphinx Stack is the new Gold gate.
 - **Consolidate platform checks into Testing:** no separate V0 substrate dimension. V1's older
   Juju 3 signal is superseded in intent by V0's explicit LTS check, not deferred as a new feature.

@@ -128,7 +128,7 @@ Every producer and reader uses one metric outcome shape:
 {
   "uses_jubilant": {"state": "measured", "value": true},
   "uses_tf_v1_provider": {"state": "not_applicable", "value": null, "reason": "No Terraform modules."},
-  "ci_passing": {"state": "insufficient_data", "value": null, "reason": "Track has no mapped branch."}
+  "supports_juju_4": {"state": "insufficient_data", "value": null, "reason": "Dynamic Juju channel."}
 }
 ```
 

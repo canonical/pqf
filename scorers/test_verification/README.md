@@ -18,34 +18,26 @@ compute_v0_metrics(
 ) -> dict[str, MetricOutcome]
 ```
 
-It returns exactly `ci_passing`, `uses_ops_testing`, `uses_jubilant`,
+It returns exactly `uses_ops_testing`, `uses_jubilant`,
 `uses_charm_ci`, `uses_gh_runners_unit_testing`, `uses_tf_v1_provider`,
 `supports_canonical_k8s`, `supports_juju_4`, and `supports_juju_lts`.
-All values are structured outcomes. Contract parameters should pin the two
-stable Juju tracks rather than resolving moving releases inside the scorer.
+All values are structured outcomes. Contract parameters pin the two
+stable Juju tracks rather than resolving moving releases inside the scorer. A
+major-only track (`4/stable`) accepts any stable release in that line
+(`4.0/stable`, `4.1/stable`); a pinned track (`3.6/stable`) must match exactly.
 
 ## Evidence and boundaries
 
 * `evidence.py` acquires a GitHub default-branch tip, its recursive tree and
-  immutable blobs. Truncated trees and failed GitHub/Charmhub requests fail the
+  immutable blobs. Truncated trees and failed GitHub requests fail the
   runner. GitHub helpers perform their existing supported authentication retry.
-* CI checks the default branch and each non-`latest` track published in the
-  public Charmhub channel map, using the **scoped** `charmcraft.yaml` name.
-  Snaps check only the default branch. There is no Allure fallback.
-* All acquired check identities (application plus name) and commit status
-  contexts are evaluated, selecting the latest rerun for each. Classic
-  protection contexts and branch ruleset contexts must also be present.
-  Failed jobs cannot be hidden by a later unrelated successful job. Pending,
-  skipped, neutral or missing checks are insufficient evidence.
-* Only when the tip has no checks/statuses can a merged PR supply evidence.
-  Its merge SHA must equal the branch tip, its base branch/repository must
-  match, its association must be unambiguous, and its tested head SHA must equal
-  the current tip SHA. Squash/merge associations alone do not prove that the
-  current commit was tested and return insufficient data.
 * `v0.py` is pure. Ops Testing positive imports and deprecated Harness
   references are scoped exclusively to the component's `tests/unit`;
   Jubilant imports are independently scoped to `tests/integration`.
   Nested charms cannot supply another charm's tests or Terraform modules.
+* A charm unit with no `charmcraft.yaml`/`metadata.yaml` at its configured
+  path makes every charm metric insufficient, surfacing a wrong product
+  `subpath` instead of reporting false non-compliance.
 * Workflows require parsed job-level reusable calls. Supported integration
   names are `canonical/charm-ci/.github/workflows/integration-test.yml` and
   equivalent underscore/plural/YAML spellings. Build-only calls and incidental
@@ -54,14 +46,20 @@ stable Juju tracks rather than resolving moving releases inside the scorer.
   `tox -e unit`/`unit-tests` or `pytest tests/unit` invocation, including
   `python -m` and `uv run` wrappers. `working-directory`, not
   `charm-directory`, controls operator-workflows unit-test scope.
-  Literal matrices are expanded; dynamic directories/runners are insufficient.
+  Literal matrices (including `matrix.<axis>.<property>` objects) are
+  expanded; dynamic directories/runners are insufficient. An unresolvable job
+  only blocks the metric when it calls the unit workflow or runs `tox`/`pytest`.
   Every identified unit-test job must use a known GitHub-hosted label.
 * Configuration evidence comes only from matching charm-ci calls and
   active Spread integration suites whose
   `working-dir` and test path match the component. Root Spread configuration
   can link shared configuration to an explicit component suite. Unused
   Concierge files and sibling suites do not count. Spread `CONCIERGE` and
-  `CONCIERGE/<variant>` environment paths are supported. Invented inputs such
+  `CONCIERGE/<variant>` environment paths are supported, cascading project →
+  backend → suite. A `spread-jobs-include` filter is fnmatched, as opcli does,
+  against `<backend>-ci:<system>:build/<suite>/run:<variant>` selectors.
+  Auto-discovered module variants are represented by sentinel names; a filter
+  selecting only some variants is insufficient. Invented inputs such
   as `juju-channel` or `concierge-config` do not count: the reusable workflow
   does not consume them. An unresolved dynamic path/filter is insufficient.
   The canonical `$(HOST: echo "${CONCIERGE:-path.yaml}")` spelling is parsed

@@ -50,27 +50,6 @@ Any additional variation should be agreed as a supported practice before it is a
 | Silver | Bronze + `uses_jubilant` + `uses_tf_v1_provider` |
 | Gold | Silver + `uses_charm_ci` + `supports_canonical_k8s` + `supports_juju_4` + `supports_juju_lts` |
 
-### Latest CI passing
-
-**ID:** `ci_passing` (formerly `latest_build_passing`)\
-**Implementation:** `ci-passing/v1`\
-**Applies to:** all repositories\
-**What it measures:** whether the latest code merged to the published branches passed its tests. This is an informational metric only and is not taken into account in the medal criterias.
-
-**Measurement**
-
-1. Find the tracks published from the charmhub api ([https\://api.charmhub.io/v2/charms/info/synapse?fields=channel-map](https://api.charmhub.io/v2/charms/info/synapse?fields=channel-map)).\
-2. Include the default branch and `track/<track>` for each published non-`latest` Charmhub track. A published track without that branch is insufficient data. Snaps currently check only the default branch.
-3. Find the CI run that validated the code for the respective target branches:\
-   - use check runs attached directly to the target branch’s latest commit; or\
-   - for PR-only workflows, use merged-PR evidence only when its tested head is provably the target branch commit. Unattributable squash-merge evidence is insufficient data.
-4. Return `true` only when all jobs are completed successfully.\
-5. Return *insufficient data* when no relevant run or required job can be identified.
-
-**Accepted variations**
-
-- It should pass on all "published" branches. If we have track 1 and track 2 published from 2 branches, both should be green.
-
 ### Uses Jubilant
 
 **ID:** `uses_jubilant`\
@@ -161,7 +140,7 @@ Any additional variation should be agreed as a supported practice before it is a
 **ID:** `supports_canonical_k8s`\
 **Implementation:** `supports-canonical-k8s/v1`\
 **Applies to:** K8s charms\
-**What it measures:** whether the charm's integration-test `charm-ci` configuration targets Canonical Kubernetes rather than only MicroK8s. Successful runs are reported separately by `ci_passing`.
+**What it measures:** whether the charm's integration-test `charm-ci` configuration targets Canonical Kubernetes rather than only MicroK8s. Whether those runs pass is not measured in V0.
 
 **Measurement**
 
@@ -180,13 +159,13 @@ Any additional variation should be agreed as a supported practice before it is a
 **ID:** `supports_juju_4`\
 **Implementation:** `supports-juju-4/v2`\
 **Applies to:** charms\
-**What it measures:** whether the charm's integration-test `charm-ci` configuration targets the required stable Juju 4 release. Successful runs are reported separately by `ci_passing`.
+**What it measures:** whether the charm's integration-test `charm-ci` configuration targets the required stable Juju 4 release. Whether those runs pass is not measured in V0.
 
 **Measurement**
 
-1. Read the cycle contract's pinned Juju 4 track: `4/stable`. Patch-release currency is not a V0 requirement.
+1. Read the cycle contract's Juju 4 track: `4/stable`. A major-only track covers the whole stable line, so `4/stable`, `4.0/stable`, `4.1/stable`, … all count. Patch-release currency is not a V0 requirement.
 2. Inspect the integration-test charm-ci configuration used by the repository.\
-3. Return `true` when at least one integration-test job targets `4/stable` through `charm-ci`. An unused Concierge file does not count.
+3. Return `true` when at least one integration-test job targets a stable Juju 4 track through `charm-ci`. An unused Concierge file does not count.
 4. Return `false` when the required configuration is absent.
 5. Return *insufficient data* when evidence cannot be acquired or interpreted confidently. Do not inspect run success for this metric.
 
@@ -199,11 +178,11 @@ Any additional variation should be agreed as a supported practice before it is a
 **ID:** `supports_juju_lts`\
 **Implementation:** `supports-juju-lts/v1`\
 **Applies to:** charms\
-**What it measures:** whether the charm's integration-test `charm-ci` configuration targets the current Juju LTS, currently Juju 3. Successful runs are reported separately by `ci_passing`.
+**What it measures:** whether the charm's integration-test `charm-ci` configuration targets the current Juju LTS, currently Juju 3. Whether those runs pass is not measured in V0.
 
 **Measurement**
 
-1. Read the cycle contract's pinned LTS track: `3.6/stable`. Patch-release currency is not a V0 requirement.
+1. Read the cycle contract's pinned LTS track: `3.6/stable`. It must match exactly; `3/stable` floats and is not the pinned LTS. Patch-release currency is not a V0 requirement.
 2. Inspect the integration-test charm-ci configuration used by the repository.\
 3. Return `true` when at least one integration-test job targets `3.6/stable` through `charm-ci`. An unused Concierge file does not count.
 4. Return `false` when the required configuration is absent.

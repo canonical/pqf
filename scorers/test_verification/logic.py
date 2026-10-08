@@ -125,14 +125,10 @@ def compute_v0_metrics(
     from scorers.test_verification.v0 import CHARM_METRICS, evaluate_files
 
     try:
-        files, ci = acquire(unit, github_token)
+        files = acquire(unit, github_token)
     except UninterpretableRepository as exc:
-        unavailable = insufficient_data(str(exc))
         result = evaluate_files(unit, {})
         if unit.product_type.value == "charm":
-            result = {key: unavailable for key in CHARM_METRICS}
-        return {"ci_passing": unavailable, **result}
-    return {
-        "ci_passing": ci,
-        **evaluate_files(unit, files, juju4_track=juju4_track, juju_lts_track=juju_lts_track),
-    }
+            result = {key: insufficient_data(str(exc)) for key in CHARM_METRICS}
+        return result
+    return evaluate_files(unit, files, juju4_track=juju4_track, juju_lts_track=juju_lts_track)
