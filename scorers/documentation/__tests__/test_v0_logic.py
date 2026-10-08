@@ -85,8 +85,15 @@ def test_root_file_rejects_empty_headings_and_normalized_template(content):
 
 
 @responses.activate
-def test_security_uses_exact_same_deterministic_criterion():
+def test_security_accepts_the_complete_template_policy():
     evidence(security="# SECURITY.md\n\nDefault template text.")
+    assert logic.compute_v0_metrics(UNIT, "", "")["has_security"] == measured(True)
+
+
+@pytest.mark.parametrize("content", ["", " \r\n", "# Security policy\n\n## Reporting"])
+@responses.activate
+def test_security_still_requires_a_body(content):
+    evidence(security=content)
     assert logic.compute_v0_metrics(UNIT, "", "")["has_security"] == measured(False)
 
 
@@ -95,7 +102,6 @@ def test_security_uses_exact_same_deterministic_criterion():
     [
         ("README.md", "readme_present"),
         ("CONTRIBUTING.md", "contributing_present"),
-        ("SECURITY.md", "has_security"),
     ],
 )
 @pytest.mark.parametrize("customized", [False, True])

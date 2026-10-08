@@ -250,7 +250,7 @@ Any additional variation should be agreed as a supported practice before it is a
 **Measurement**
 
 1. Check for a non-empty `SECURITY.md` at the repository root.\
-2. Apply the same pinned-template comparison and body-content rule as README and CONTRIBUTING. Do not infer the quality of reporting guidance.
+2. Require body content beyond headings and comments. Unlike README and CONTRIBUTING, a verbatim copy of the PFE template qualifies: it is a complete reporting policy, not a placeholder. Do not infer the quality of reporting guidance.
 
 **Accepted variations**
 

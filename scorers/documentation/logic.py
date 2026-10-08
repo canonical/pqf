@@ -434,7 +434,10 @@ def compute_v0_metrics(
     result = {
         "readme_present": _root_file_adopted(unit, "README.md", github_token),
         "contributing_present": _root_file_adopted(unit, "CONTRIBUTING.md", github_token),
-        "has_security": _root_file_adopted(unit, "SECURITY.md", github_token),
+        # The template SECURITY.md is a complete policy, so verbatim adoption qualifies.
+        "has_security": measured(
+            _has_body(_required_file_text(unit.repo, "SECURITY.md", github_token))
+        ),
         "uses_sphinx_stack": _sphinx_stack_version(
             unit, github_token, docs_path, has_user_facing_docs
         ),
