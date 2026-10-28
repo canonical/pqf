@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-27T02:41:28.966928+00:00",
+  "generated_at": "2026-10-28T05:39:49.573861+00:00",
   "metric_schema_version": 1,
   "framework": {
     "id": "v0",
@@ -9,7 +9,7 @@
     "description": "The dependable minimum PQF quality baseline."
   },
   "contract_digest": "40d58548af81d4ee7f7ace00eb8d8317b1868d7bcf48eae03851ab81dd06ac52",
-  "source_revision": "d82172d3ed20d3794cc2e94b3af527d4e4b9d0c2",
+  "source_revision": "aa0132bcb315defbe01aa7c1bb315293412b00a8",
   "implementation_fingerprints": {
     "branch-protection-required-checks/v2": "51eab91fbf01eb8dd848206b01b2a3ae726459ff93be98ca12e89a25e5673788",
     "contributing-present/v2": "f8f758a76eb06c661f8a0afb559c5589aefb502a23d615389506e5f5f6ef4d9d",
@@ -29,9 +29,9 @@
     "uses-tf-v1-provider/v1": "a97323d71b606c829f1260ef7263908b71a545ff28b9d8e628670c7bcb089bd9"
   },
   "compliance_summary": {
-    "total": 35,
+    "total": 36,
     "meeting_target": 3,
-    "below_target": 30,
+    "below_target": 31,
     "insufficient_data": 2
   },
   "products": [
@@ -901,6 +901,158 @@
                 "renovate_enabled": {
                   "state": "measured",
                   "value": true
+                },
+                "branch_protection_required_checks": {
+                  "state": "measured",
+                  "value": true
+                },
+                "signed_commits_required": {
+                  "state": "measured",
+                  "value": true
+                }
+              },
+              "excluded_from_parent_medal": false
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "bingo",
+      "product_type": "root",
+      "name": "bingo",
+      "description": "bingo - Go/React pastebin app and its Juju charm for Kubernetes deployment.",
+      "lifecycle": "beta",
+      "current_medal": "unrated",
+      "target_medal": "bronze",
+      "current_result": "below_minimum",
+      "target_result": "bronze",
+      "meets_target": false,
+      "squad": "amer",
+      "is_portfolio_entry": true,
+      "documentation_url": "https://canonical.com/juju/docs/bingo-charm/latest/",
+      "source": null,
+      "composed_of": [
+        {
+          "product_id": "bingo-charm",
+          "excluded_from_parent_medal": false
+        }
+      ],
+      "context_refs": [],
+      "parent_product_ids": [],
+      "dimensions": {
+        "test_verification": {
+          "medal": "unrated",
+          "target": "bronze",
+          "applicability": "scored",
+          "meets_target": false,
+          "result": "below_minimum",
+          "metrics": {},
+          "composition": [
+            {
+              "product_id": "bingo-charm",
+              "repo": "canonical/bingo",
+              "medal": "unrated",
+              "result": "below_minimum",
+              "applicability": "scored",
+              "metrics": {
+                "uses_ops_testing": {
+                  "state": "measured",
+                  "value": true
+                },
+                "uses_gh_runners_unit_testing": {
+                  "state": "measured",
+                  "value": false
+                },
+                "uses_jubilant": {
+                  "state": "measured",
+                  "value": true
+                },
+                "uses_tf_v1_provider": {
+                  "state": "not_applicable",
+                  "value": null,
+                  "reason": "No Terraform modules in the component."
+                },
+                "uses_charm_ci": {
+                  "state": "measured",
+                  "value": false
+                },
+                "supports_canonical_k8s": {
+                  "state": "measured",
+                  "value": false
+                },
+                "supports_juju_4": {
+                  "state": "measured",
+                  "value": false
+                },
+                "supports_juju_lts": {
+                  "state": "measured",
+                  "value": false
+                }
+              },
+              "excluded_from_parent_medal": false
+            }
+          ]
+        },
+        "documentation": {
+          "medal": "gold",
+          "target": "bronze",
+          "applicability": "scored",
+          "meets_target": true,
+          "result": "gold",
+          "metrics": {},
+          "composition": [
+            {
+              "product_id": "bingo-charm",
+              "repo": "canonical/bingo",
+              "medal": "gold",
+              "result": "gold",
+              "applicability": "scored",
+              "metrics": {
+                "readme_present": {
+                  "state": "measured",
+                  "value": true
+                },
+                "contributing_present": {
+                  "state": "measured",
+                  "value": true
+                },
+                "has_security": {
+                  "state": "measured",
+                  "value": true
+                },
+                "uses_sphinx_stack": {
+                  "state": "measured",
+                  "value": "2.0"
+                },
+                "diataxis_coverage_ai": {
+                  "state": "insufficient_data",
+                  "value": null,
+                  "reason": "Authoritative documentation is absent or insufficient."
+                }
+              },
+              "excluded_from_parent_medal": false
+            }
+          ]
+        },
+        "security_ssdlc": {
+          "medal": "unrated",
+          "target": "bronze",
+          "applicability": "scored",
+          "meets_target": false,
+          "result": "below_minimum",
+          "metrics": {},
+          "composition": [
+            {
+              "product_id": "bingo-charm",
+              "repo": "canonical/bingo",
+              "medal": "unrated",
+              "result": "below_minimum",
+              "applicability": "scored",
+              "metrics": {
+                "renovate_enabled": {
+                  "state": "measured",
+                  "value": false
                 },
                 "branch_protection_required_checks": {
                   "state": "measured",
@@ -10784,6 +10936,128 @@
             "renovate_enabled": {
               "state": "measured",
               "value": true
+            },
+            "branch_protection_required_checks": {
+              "state": "measured",
+              "value": true
+            },
+            "signed_commits_required": {
+              "state": "measured",
+              "value": true
+            }
+          },
+          "composition": null
+        }
+      }
+    },
+    {
+      "id": "bingo-charm",
+      "product_type": "charm",
+      "name": "bingo-charm",
+      "description": "",
+      "lifecycle": "stable",
+      "current_medal": "unrated",
+      "target_medal": "bronze",
+      "current_result": "below_minimum",
+      "target_result": "bronze",
+      "meets_target": false,
+      "squad": "",
+      "is_portfolio_entry": false,
+      "documentation_url": "",
+      "source": {
+        "repo": "canonical/bingo",
+        "subpath": "charm"
+      },
+      "composed_of": null,
+      "context_refs": [],
+      "parent_product_ids": [
+        "bingo"
+      ],
+      "dimensions": {
+        "test_verification": {
+          "medal": "unrated",
+          "target": "bronze",
+          "applicability": "scored",
+          "meets_target": false,
+          "result": "below_minimum",
+          "metrics": {
+            "uses_ops_testing": {
+              "state": "measured",
+              "value": true
+            },
+            "uses_gh_runners_unit_testing": {
+              "state": "measured",
+              "value": false
+            },
+            "uses_jubilant": {
+              "state": "measured",
+              "value": true
+            },
+            "uses_tf_v1_provider": {
+              "state": "not_applicable",
+              "value": null,
+              "reason": "No Terraform modules in the component."
+            },
+            "uses_charm_ci": {
+              "state": "measured",
+              "value": false
+            },
+            "supports_canonical_k8s": {
+              "state": "measured",
+              "value": false
+            },
+            "supports_juju_4": {
+              "state": "measured",
+              "value": false
+            },
+            "supports_juju_lts": {
+              "state": "measured",
+              "value": false
+            }
+          },
+          "composition": null
+        },
+        "documentation": {
+          "medal": "gold",
+          "target": "bronze",
+          "applicability": "scored",
+          "meets_target": true,
+          "result": "gold",
+          "metrics": {
+            "readme_present": {
+              "state": "measured",
+              "value": true
+            },
+            "contributing_present": {
+              "state": "measured",
+              "value": true
+            },
+            "has_security": {
+              "state": "measured",
+              "value": true
+            },
+            "uses_sphinx_stack": {
+              "state": "measured",
+              "value": "2.0"
+            },
+            "diataxis_coverage_ai": {
+              "state": "insufficient_data",
+              "value": null,
+              "reason": "Authoritative documentation is absent or insufficient."
+            }
+          },
+          "composition": null
+        },
+        "security_ssdlc": {
+          "medal": "unrated",
+          "target": "bronze",
+          "applicability": "scored",
+          "meets_target": false,
+          "result": "below_minimum",
+          "metrics": {
+            "renovate_enabled": {
+              "state": "measured",
+              "value": false
             },
             "branch_protection_required_checks": {
               "state": "measured",
