@@ -51,11 +51,11 @@ major-only track (`4/stable`) accepts any stable release in that line
   only blocks the metric when it calls the unit workflow or runs `tox`/`pytest`.
   Every identified unit-test job must use a known GitHub-hosted label.
 * Configuration evidence comes only from matching charm-ci calls and
-  active Spread integration suites whose
-  `working-dir` and test location (`discover-path`, else the suite path) match
-  the component; suite keys are free-form names. Root Spread configuration
-  can link shared configuration to an explicit component suite. Unused
-  Concierge files and sibling suites do not count. Spread `CONCIERGE` and
+  active Spread integration suites whose test location (`discover-path`, else
+  the suite path) is within the component; `working-dir` may be the repository
+  root. Suite keys are free-form names. Root Spread configuration can link
+  shared configuration to an explicit component suite. Unused Concierge files
+  and sibling suites do not count. Spread `CONCIERGE` and
   `CONCIERGE/<variant>` environment paths are supported, cascading project →
   backend → suite. A `spread-jobs-include` filter is fnmatched, as opcli does,
   against `<backend>-ci:<system>:build/<suite>/run:<variant>` selectors.

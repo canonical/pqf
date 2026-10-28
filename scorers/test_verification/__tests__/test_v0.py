@@ -227,6 +227,31 @@ integration-suites:
     assert result["supports_juju_lts"] == measured(False)
 
 
+def test_root_spread_suite_under_charm_scope_counts_when_working_dir_is_repo_root():
+    source = files(
+        {
+            ".github/workflows/charms_integration.yaml": """
+jobs:
+  integration-test:
+    uses: canonical/charm-ci/.github/workflows/integration-test.yml@v1.0.0
+    with:
+      working-directory: .
+""",
+            "spread.yaml": """
+backends:
+  integration-test:
+    type: integration-test
+integration-suites:
+  charm/tests/integration/:
+    working-dir: ./
+    backends: [integration-test]
+""",
+        }
+    )
+    result = evaluate_files(UNIT, source)
+    assert result["uses_charm_ci"] == measured(True)
+
+
 def test_root_spread_suite_names_are_not_test_locations():
     # Mirrors gateway-api-integrator-operator: suite keys are arbitrary names, and
     # working-dir/discover-path tie each suite to its charm.
