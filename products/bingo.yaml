@@ -1,0 +1,21 @@
+id: bingo
+product_type: root
+name: bingo
+description: bingo - Go/React pastebin app and its Juju charm for Kubernetes deployment.
+lifecycle: beta
+introduced_in: v0
+targets:
+  v0: bronze
+  v1: bronze
+ownership:
+  squad: amer
+  stakeholders:
+  - IS
+documentation_url: https://canonical.com/juju/docs/bingo-charm/latest/
+composed_of:
+- id: bingo-charm
+  product_type: charm
+  introduced_in: v0
+  source:
+    repo: canonical/bingo
+    subpath: charm
