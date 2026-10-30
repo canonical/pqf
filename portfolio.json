@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-29T05:13:18.656063+00:00",
+  "generated_at": "2026-10-30T03:22:02.782244+00:00",
   "metric_schema_version": 1,
   "framework": {
     "id": "v0",
@@ -359,7 +359,7 @@
                 "diataxis_coverage_ai": {
                   "state": "measured",
                   "value": 4,
-                  "reason": "Tutorial: tutorial.md provides a complete step-by-step guided exercise deploying aproxy with a principal charm, verifying integration, and testing configuration. How-to: Multiple how-to guides exist with task-oriented instructions including configure.md (setting proxy-address, exclude-addresses, intercept-ports), upgrade.md (refresh procedures), back-up-restore.md (backup/restore procedures), and contribute.md (contribution workflow). Reference: Multiple reference documents provide factual technical information including integrations.md (juju-info interface details), configurations.md (configuration options reference), actions.md (actions reference), and charm-architecture.md (architectural specifications with diagrams, event handling, code structure). Explanation: security.md provides conceptual discussion of security risks, good practices, and design considerations around privileged operations, proxy reachability, traffic interception, and information security concerns."
+                  "reason": "Tutorial: tutorial.md provides a complete step-by-step guided exercise deploying aproxy with a principal charm, verifying integration, and testing configuration. How-to: configure.md contains task-oriented instructions for setting proxy-address, exclude-addresses-from-proxy, and intercept-ports with concrete examples. Reference: charm-architecture.md provides factual technical descriptions including component diagrams, event handling, and code structure; integrations.md documents the juju-info interface; actions.md and configurations.md link to technical specifications. Explanation: security.md discusses security risks, good practices, and design considerations around privileged operations and traffic interception."
                 }
               },
               "excluded_from_parent_medal": false
@@ -716,7 +716,7 @@
                 "diataxis_coverage_ai": {
                   "state": "measured",
                   "value": 4,
-                  "reason": "Tutorial: tutorial.md contains a complete guided exercise deploying bacula-server with step-by-step instructions. How-to: Multiple task-oriented guides exist (integrate-with-backup-integrator-charm.md, use-baculum.md, upgrade.md) with specific procedures. Reference: Extensive factual descriptions including actions.md, configurations.md, integrations.md, and detailed architecture documents describing interfaces, relations, and technical specifications. Explanation: security.md provides conceptual discussion of security design choices and the architecture documents contain understanding-oriented discussion of design decisions and component relationships."
+                  "reason": "Tutorial: Complete guided exercise deploying bacula-server with S3 storage, PostgreSQL database, creating credentials, and accessing Baculum. How-to: Multiple task-oriented guides for using Baculum interface, integrating backup-integrator, and upgrading charms with specific commands. Reference: Extensive factual documentation of actions, configurations, integrations (with interface details and example commands), and detailed architecture descriptions with component diagrams. Explanation: Security overview discussing Bacula security issues and protection mechanisms, providing conceptual understanding of security design choices."
                 }
               },
               "excluded_from_parent_medal": false
@@ -747,7 +747,7 @@
                 "diataxis_coverage_ai": {
                   "state": "measured",
                   "value": 4,
-                  "reason": "Tutorial: tutorial.md provides a complete learning-oriented guided exercise deploying Bacula server from scratch with step-by-step instructions. How-to: Multiple task-oriented guides exist (use-baculum.md for managing backups, integrate-with-backup-integrator-charm.md for integration, upgrade.md for upgrading charms). Reference: Extensive factual descriptions of interfaces, commands and configuration across actions.md, configurations.md, integrations.md, and architecture documentation. Explanation: security.md provides conceptual discussion of security design choices and the architecture documentation contains explanatory context about design decisions."
+                  "reason": "Tutorial: docs/tutorial.md contains a complete guided exercise walking users through deploying Bacula server with S3 storage and PostgreSQL, accessing the web interface, and cleanup. How-to: Multiple guides exist for specific tasks including integrating with backup-integrator, using Baculum web interface, and upgrading charms. Reference: Extensive factual material covers actions, configurations, integrations/relations, and detailed architecture documentation for all three charms. Explanation: docs/explanation/security.md provides conceptual discussion of security considerations, design choices, and current limitations in the Bacula implementation."
                 }
               },
               "excluded_from_parent_medal": false
@@ -778,7 +778,7 @@
                 "diataxis_coverage_ai": {
                   "state": "measured",
                   "value": 4,
-                  "reason": "Tutorial: docs/tutorial.md contains a complete learning-oriented walkthrough deploying bacula-server with PostgreSQL and S3, creating credentials, and accessing Baculum. How-to: Multiple task-oriented guides exist including integrate-with-backup-integrator-charm.md (configuring backup-integrator), use-baculum.md (manual backup/restore procedures), and upgrade.md (upgrade procedures). Reference: Extensive factual documentation of actions, configurations, integrations (relations), and architecture across multiple files. Explanation: docs/explanation/security.md provides conceptual discussion of security considerations and design choices around Bacula protections."
+                  "reason": "Tutorial: tutorial.md contains a complete step-by-step guided exercise deploying Bacula server, integrating components, and accessing the web interface. How-to: Multiple how-to guides cover task-oriented instructions (using Baculum, integrating with backup-integrator, upgrading). Reference: Multiple reference documents provide factual descriptions of actions, configurations, integrations, and architecture details. Explanation: security.md provides conceptual discussion of security issues and design choices in the Bacula charms implementation."
                 }
               },
               "excluded_from_parent_medal": false
@@ -810,7 +810,7 @@
                 "diataxis_coverage_ai": {
                   "state": "measured",
                   "value": 4,
-                  "reason": "Tutorial: docs/tutorial.md contains a complete learning-oriented walkthrough deploying bacula-server with hands-on steps. How-to: Multiple guides exist (use-baculum.md, integrate-with-backup-integrator-charm.md, upgrade.md) with task-oriented instructions for specific outcomes. Reference: Extensive factual descriptions exist covering actions, configurations, integrations, and architecture diagrams across multiple files. Explanation: docs/explanation/security.md provides conceptual discussion building understanding of security design choices and considerations."
+                  "reason": "Tutorial: docs/tutorial.md contains a complete step-by-step guided exercise deploying Bacula server with S3 and PostgreSQL integration. How-to: docs/how-to/ contains task-oriented instructions for using Baculum, integrating with backup-integrator, and upgrading. Reference: docs/reference/ provides factual descriptions of actions, configurations, integrations, and architecture details. Explanation: docs/explanation/security.md discusses security concepts and design choices for the Bacula charms."
                 }
               },
               "excluded_from_parent_medal": false
@@ -1228,7 +1228,7 @@
                 "diataxis_coverage_ai": {
                   "state": "measured",
                   "value": 4,
-                  "reason": "Tutorial: getting-started.md provides a complete hands-on walkthrough deploying Chrony, configuring time sources, and enabling NTS with step-by-step commands. How-to: Multiple task-oriented guides exist - enabling NTS, setting up time sources, and upgrading - with specific instructions for each task. Reference: charm-architecture.md contains factual technical information about the charm's structure, how it works, component diagrams, and code organization. Explanation: charm-architecture.md also includes conceptual discussion explaining what Chrony is, how the charm operates as a machine charm, and how metrics collection works."
+                  "reason": "Tutorial (1 point): getting-started.md provides a complete learning-oriented guided exercise with deployment, configuration, NTS setup, and cleanup. How-to (1 point): Multiple task-oriented guides exist including enable-nts.md, setup-time-sources.md, and upgrade.md with specific instructions for achieving outcomes. Reference (1 point): charm-architecture.md contains factual descriptions of the charm's structure, components, systemd service, ports, metrics, and code overview with technical specifications. Explanation (1 point): charm-architecture.md includes conceptual discussion explaining what Chrony is, how the charm operates as a machine charm, the relationship between Juju machines and units, and how metrics collection works with COS."
                 }
               },
               "excluded_from_parent_medal": false
@@ -1259,7 +1259,7 @@
                 "diataxis_coverage_ai": {
                   "state": "measured",
                   "value": 4,
-                  "reason": "Tutorial: docs/tutorial.md provides a complete learning-oriented walkthrough deploying the charm with step-by-step instructions. How-to: docs/how-to/integrate-with-cos.md and upgrade.md contain task-oriented guides for specific operations. Reference: docs/reference/ contains factual technical information including configurations.md (links to config specs), integrations.md (interface specifications), metrics.md (metric definitions), and charm-architecture.md (system architecture and event descriptions). Explanation: docs/explanation/security.md discusses security concepts including risks and patch management approach."
+                  "reason": "Tutorial: docs/tutorial.md provides a complete learning-oriented walkthrough deploying the Chrony client charm with prerequisites, step-by-step commands, and environment setup/teardown. How-to: docs/how-to/integrate-with-cos.md and upgrade.md contain task-oriented instructions for specific goals (COS integration, upgrading). Reference: docs/reference/ contains factual descriptions of architecture, configurations, integrations, and metrics including interface specifications, event handling, and metric definitions. Explanation: docs/explanation/security.md discusses security concepts including risks and patch delivery, building understanding of design choices around attack surface and maintenance approach."
                 }
               },
               "excluded_from_parent_medal": false
@@ -1536,7 +1536,7 @@
                 "diataxis_coverage_ai": {
                   "state": "measured",
                   "value": 2,
-                  "reason": "How-to mode (1 point): The upgrade guide provides task-oriented instructions for upgrading the cloudflared charm with specific commands and verification steps. Reference mode (1 point): The upgrade guide includes factual descriptions of the juju refresh command and status output format. No tutorial content (no learning-oriented guided exercise), and no explanation content (no conceptual discussion or design rationale). The changelog is project metadata, not documentation content."
+                  "reason": "How-to: The upgrade.md provides task-oriented instructions for upgrading the cloudflared charm with specific commands and verification steps. Reference: The upgrade.md references the juju refresh command with a link to its documentation and shows expected command outputs. No Tutorial (no learning-oriented guided exercise present) or Explanation (no conceptual discussion or design rationale provided). The changelog contains only metadata about documentation changes, not meaningful content in any mode."
                 }
               },
               "excluded_from_parent_medal": false
@@ -1794,7 +1794,7 @@
                 "diataxis_coverage_ai": {
                   "state": "measured",
                   "value": 4,
-                  "reason": "Tutorial: getting-started.md provides a complete learning-oriented guided exercise deploying the charm, integrating it with a backend, and testing it. How-to: Multiple guides cover specific tasks including caching with OpenStack Swift and upgrading the charm. Reference: Multiple pages contain factual descriptions including actions (links to Charmhub), configurations (links to Charmhub), integrations (detailed interface documentation with commands), charm-architecture.md (technical architecture details with containers, events, code structure), and external-access.md (configuration requirements). Explanation: security.md provides conceptual discussion of security design, risks like machine-in-the-middle attacks and caching sensitive data, with explanations of design choices and good practices."
+                  "reason": "Tutorial: getting-started.md provides a complete guided exercise deploying the charm, integrating with backend-app, and testing. How-to: Multiple task-oriented guides exist including cache-content-with-openstack-swift.md with specific steps for Swift integration, and upgrade.md with upgrade instructions. Reference: Multiple factual descriptions exist including charm-architecture.md detailing containers and components, integrations.md describing relation endpoints with interface details, and links to actions/configurations on Charmhub. Explanation: security.md provides conceptual discussion of security design, risks like machine-in-the-middle attacks, and good practices for TLS and cache control."
                 }
               },
               "excluded_from_parent_medal": false
@@ -1995,7 +1995,7 @@
                 "diataxis_coverage_ai": {
                   "state": "measured",
                   "value": 4,
-                  "reason": "Tutorial: The 'Deploy with ingress-configurator and haproxy' tutorial provides a complete learning-oriented guided exercise with setup, deployment, configuration, and verification steps. How-to: Multiple task-oriented guides exist including 'Enable COS', 'Enable HTTPS', 'Hash client IP addresses', and 'Upgrade', each with concrete instructions for specific outcomes. Reference: Extensive factual descriptions of components, deployment architecture, configuration options, and relations exist across multiple reference pages. Explanation: Detailed discussion building understanding of caching behavior, charm design decisions, and security considerations is present across multiple explanation pages."
+                  "reason": "Tutorial: 'deploy-with-ingress-configurator-and-haproxy.md' provides a complete learning-oriented walkthrough with hands-on steps to deploy Content Cache behind ingress-configurator and HAProxy, including environment setup, deployment, and verification. How-to: Multiple task-oriented guides exist (enable-cos.md, enable-https.md, hash-client-ip-addresses-in-logs.md, upgrade.md) with specific instructions for achieving concrete outcomes. Reference: 'components.md' and 'deployment-architecture.md' provide factual descriptions of the charm components, relations, and supported configurations. Explanation: Multiple discussion documents exist (caching-behavior.md, charm-design.md, security.md) that build understanding of concepts like cache expiry, design decisions, and security considerations."
                 }
               },
               "excluded_from_parent_medal": false
@@ -2026,7 +2026,7 @@
                 "diataxis_coverage_ai": {
                   "state": "measured",
                   "value": 4,
-                  "reason": "Tutorial: deploy-with-ingress-configurator-and-haproxy.md is a complete learning-oriented walkthrough with step-by-step deployment instructions and verification steps. How-to: Multiple guides provide task-oriented instructions (enable-cos.md, enable-https.md, hash-client-ip-addresses-in-logs.md, upgrade.md). Reference: components.md describes charms and their interfaces; deployment-architecture.md documents relations, endpoints, and required components in detail. Explanation: caching-behavior.md, charm-design.md, and security.md all provide conceptual discussion building understanding of design decisions, behavior, and architecture."
+                  "reason": "Tutorial: deploy-with-ingress-configurator-and-haproxy.md provides a complete learning-oriented walkthrough with step-by-step instructions for deploying the charm. How-to: multiple guides (enable-cos.md, enable-https.md, hash-client-ip-addresses-in-logs.md, upgrade.md) provide task-oriented instructions for specific operations. Reference: components.md describes the charms/components, deployment-architecture.md documents relation endpoints and integration patterns. Explanation: caching-behavior.md, charm-design.md, and security.md provide conceptual discussion of design choices, caching mechanisms, and security considerations."
                 }
               },
               "excluded_from_parent_medal": false
@@ -2200,7 +2200,7 @@
                 "diataxis_coverage_ai": {
                   "state": "measured",
                   "value": 3,
-                  "reason": "Tutorial (1 point): getting-started.md provides a learning-oriented guided exercise deploying the charm with step-by-step instructions. How-to (1 point): manage-users.md and upgrade.md contain task-oriented instructions for specific outcomes like creating/removing users and upgrading. Reference (0 points): No factual interface/API/configuration documentation found. Explanation (1 point): index.md contains conceptual discussion explaining what the charm does, its relationship to Squid, and the forward proxy use case context."
+                  "reason": "Tutorial (1 point): getting-started.md provides a guided learning exercise with setup steps and deployment commands. How-to (1 point): manage-users.md and upgrade.md contain task-oriented instructions for user management and upgrading. Reference (0 points): No factual interface/API/configuration reference documentation present; changelog describes changes but not interfaces. Explanation (1 point): index.md contains conceptual discussion explaining what the charm does, its subordinate nature, authentication support, and forward proxy use case context."
                 }
               },
               "excluded_from_parent_medal": false
@@ -2373,7 +2373,7 @@
                 "diataxis_coverage_ai": {
                   "state": "measured",
                   "value": 4,
-                  "reason": "Tutorial: docs/tutorial.md provides a complete step-by-step guided exercise deploying Discourse from scratch with concrete commands and validation steps. How-to: Multiple how-to guides exist with task-oriented instructions (configure hostname, S3, SMTP, SAML, backup/restore, upgrade). Reference: Substantial factual descriptions cover actions, configurations, integrations, charm architecture with technical specifications and interface details. Explanation: docs/explanation/security.md provides conceptual discussion of security risks, best practices, and design rationale around security topics."
+                  "reason": "Tutorial: docs/tutorial.md contains a complete learning-oriented guided exercise for deploying Discourse for the first time with step-by-step instructions. How-to: Multiple how-to guides exist covering task-oriented instructions (configure hostname, S3, SMTP, SAML, backup/restore, upgrade, access Rails console). Reference: Extensive reference documentation includes actions, configurations, integrations, plugins, charm architecture diagrams and code structure, versioning, and external access requirements. Explanation: docs/explanation/security.md provides conceptual discussion building understanding of security concepts, risks, and design choices with explanations of DOS attacks, CORS policies, encryption, and best practices."
                 }
               },
               "excluded_from_parent_medal": false
@@ -2840,7 +2840,7 @@
                 "diataxis_coverage_ai": {
                   "state": "measured",
                   "value": 4,
-                  "reason": "Tutorial: Two substantial step-by-step tutorials walk through deploying DNS infrastructure (simple-deployment.md and secondary-and-resolver.md with concrete commands and expected outputs). How-to: Task-oriented upgrade instructions exist in upgrade.rst with specific refresh commands for each charm. Reference: Multiple pages provide factual technical descriptions including components.md (lists charms and snaps), bind-charm-architecture.md and dns-policy-charm-architecture.md (architecture diagrams and module descriptions), and project-architecture.md (deployment patterns and integration details). Explanation: project-overview.md explains design choices around the dns_record interface, request merging, and the policy layer; security.md discusses security concepts and best practices. All four modes have meaningful actual content beyond headings."
+                  "reason": "Tutorial: Two complete guided exercises walk through deploying DNS servers with specific outcomes (simple-deployment.md and secondary-and-resolver.md). How-to: Task-oriented instructions for upgrading and contributing (upgrade.rst, contribute.rst). Reference: Factual descriptions of components, architectures, and commands (components.md, bind-charm-architecture.md, dns-policy-charm-architecture.md, project-architecture.md). Explanation: Discussion building understanding of concepts like dns_record interface, request merging, policy layers, security considerations, and project overview (project-overview.md, security.md)."
                 }
               },
               "excluded_from_parent_medal": false
@@ -2871,7 +2871,7 @@
                 "diataxis_coverage_ai": {
                   "state": "measured",
                   "value": 4,
-                  "reason": "Tutorial: Two complete step-by-step guided exercises exist (simple-deployment.md and secondary-and-resolver.md) with actual deployment commands and verification steps. How-to: upgrade.rst contains task-oriented instructions for upgrading charms. Reference: Multiple reference documents exist with factual descriptions including components.md (listing charms and snaps), bind-charm-architecture.md (component diagram and descriptions), dns-policy-charm-architecture.md (component diagram), and project-architecture.md (deployment patterns and integration details). Explanation: Multiple explanation documents exist including project-overview.md (discusses dns_record interface design, conflict handling decisions, policy layer rationale) and security.md (discusses security concepts and considerations). The changelog does not count as it only lists changes without substantial content in any mode."
+                  "reason": "Tutorial: Two complete guided exercises (simple-deployment and secondary-and-resolver) walk through deploying DNS infrastructure. How-to: Upgrade instructions with actual commands for each charm variant. Reference: Components list with descriptions, architecture diagrams for bind and dns-policy charms showing internal modules and relationships, project architecture with integration diagrams. Explanation: Project overview discusses dns_record interface design, request merging, policy layer rationale, and deployment patterns; security page discusses configuration risks and best practices."
                 }
               },
               "excluded_from_parent_medal": false
@@ -2902,7 +2902,7 @@
                 "diataxis_coverage_ai": {
                   "state": "measured",
                   "value": 4,
-                  "reason": "Tutorial: Two complete guided exercises (simple-deployment.md and secondary-and-resolver.md) walk users through deploying DNS servers step-by-step with commands and expected outputs. How-to: upgrade.rst provides task-oriented instructions for upgrading charms. Reference: Multiple documents (components.md, bind-charm-architecture.md, dns-policy-charm-architecture.md, project-architecture.md) contain factual descriptions of interfaces, components, and architecture with diagrams. Explanation: project-overview.md and security.md provide conceptual discussion about dns_record interface design, request merging decisions, policy layers, and security considerations."
+                  "reason": "Tutorial: Two complete step-by-step tutorials guide users through deploying DNS servers with clear exercises and verification steps. How-to: Task-oriented upgrade instructions exist in docs/how-to/upgrade.rst with specific commands for each charm. Reference: Multiple reference documents describe charm architectures, components, and project structure with technical details and diagrams. Explanation: Several explanation documents discuss project design, the dns_record interface concept, request merging philosophy, and security considerations."
                 }
               },
               "excluded_from_parent_medal": false
@@ -2933,7 +2933,7 @@
                 "diataxis_coverage_ai": {
                   "state": "measured",
                   "value": 4,
-                  "reason": "Tutorial: Two complete step-by-step tutorials guide users through deploying DNS servers with actual commands and verification steps. How-to: Upgrade procedures with specific commands for each charm, plus contribution guidelines. Reference: Detailed component descriptions, architecture diagrams with module relationships, and charm code structure for bind and dns-policy. Explanation: Project design rationale covering dns_record interface design, conflict handling philosophy, policy layer architecture, and security considerations with concrete examples."
+                  "reason": "Tutorial: Two complete guided exercises walk users through deploying DNS servers step-by-step (simple-deployment.md and secondary-and-resolver.md). How-to: Task-oriented instructions for upgrading charms are provided (upgrade.rst). Reference: Multiple pages document architecture, components, and technical details (bind-charm-architecture.md, dns-policy-charm-architecture.md, components.md, project-architecture.md). Explanation: project-overview.md discusses design choices like the dns_record interface and request merging strategy, and security.md explains security concepts and best practices."
                 }
               },
               "excluded_from_parent_medal": false
@@ -2964,7 +2964,7 @@
                 "diataxis_coverage_ai": {
                   "state": "measured",
                   "value": 4,
-                  "reason": "Tutorial: Two complete step-by-step guided exercises exist (simple-deployment.md and secondary-and-resolver.md) with actual deployment instructions, commands, and verification steps. How-to: The upgrade.rst guide provides task-oriented instructions for upgrading charms with specific commands. Reference: Multiple pages contain factual descriptions including components.md (list of charms and snaps), bind-charm-architecture.md and dns-policy-charm-architecture.md (architectural diagrams and module descriptions), and project-architecture.md (system architecture with diagrams). Explanation: project-overview.md discusses design concepts like the dns_record interface and handling merge conflicts, while security.md provides conceptual security guidance - both build understanding of concepts and design choices."
+                  "reason": "Tutorial: Two step-by-step guided exercises present (simple deployment and secondary/resolver deployment with concrete commands and verification steps). How-to: Upgrade instructions with specific commands for each charm component. Reference: Multiple architectural diagrams and factual descriptions of components, charm architectures (bind, dns-policy), and project architecture. Explanation: Discussion of design choices including dns_record interface design, conflict handling philosophy, policy layer rationale, and security considerations."
                 }
               },
               "excluded_from_parent_medal": false
@@ -2996,7 +2996,7 @@
                 "diataxis_coverage_ai": {
                   "state": "measured",
                   "value": 4,
-                  "reason": "Tutorial: Two detailed step-by-step tutorials with complete commands and verification steps for deploying DNS servers. How-to: Upgrade instructions with tab-set examples for multiple charms, and contribution guidelines. Reference: Multiple architecture documents with mermaid diagrams describing charm components, modules, and interactions; components list with descriptions of all charms and snaps. Explanation: Project overview discussing design decisions and concepts (dns_record interface, conflict handling, policy layer); security document covering risks and best practices."
+                  "reason": "Tutorial: Two complete step-by-step tutorials (simple-deployment.md and secondary-and-resolver.md) guide users through deploying DNS servers with actual commands and verification steps. How-to: upgrade.rst provides task-oriented instructions for upgrading charms with specific commands. Reference: Multiple documents describe technical details - components.md lists all charms and snaps, bind-charm-architecture.md and dns-policy-charm-architecture.md show module structures with diagrams, project-architecture.md describes system architecture. Explanation: project-overview.md discusses design choices and concepts (dns_record interface, conflict handling, policy layer), and security.md explains security considerations and best practices."
                 }
               },
               "excluded_from_parent_medal": false
@@ -3028,7 +3028,7 @@
                 "diataxis_coverage_ai": {
                   "state": "measured",
                   "value": 4,
-                  "reason": "Tutorial: Two complete guided exercises deploy DNS servers with step-by-step instructions (simple-deployment.md and secondary-and-resolver.md). How-to: Task-oriented upgrade instructions are provided (upgrade.rst). Reference: Extensive factual descriptions of components, architectures, and project structure appear across multiple files (components.md, bind-charm-architecture.md, dns-policy-charm-architecture.md, project-architecture.md). Explanation: Conceptual discussion of DNS record interface design, request merging decisions, and security considerations exists (project-overview.md, security.md)."
+                  "reason": "Tutorial: Two complete step-by-step guided exercises exist (simple-deployment.md and secondary-and-resolver.md) with commands, expected outputs, and progressive learning objectives. How-to: The upgrade.rst file provides task-oriented instructions for upgrading charms using juju refresh commands. Reference: Multiple files contain factual technical descriptions including components.md (listing charms and snaps), bind-charm-architecture.md and dns-policy-charm-architecture.md (showing module structures with diagrams), and project-architecture.md (describing integration patterns and deployment outputs). Explanation: project-overview.md discusses design concepts like the dns_record interface, conflict handling, and policy layer rationale, while security.md covers security considerations and best practices."
                 }
               },
               "excluded_from_parent_medal": false
@@ -3358,7 +3358,7 @@
                 "diataxis_coverage_ai": {
                   "state": "measured",
                   "value": 4,
-                  "reason": "All four Di\u00e1taxis modes have meaningful content: (1) Tutorial mode is covered by three step-by-step guided exercises deploying Falco, Falcosidekick, and connecting them (tutorial/getting-started.md, tutorial/deploy-falcosidekick.md, tutorial/end-to-end-deployment.md). (2) How-to mode contains task-oriented guides for configuring custom repositories, TLS termination with ingress, COS integration, troubleshooting, and upgrading (how-to/*.md files). (3) Reference mode provides factual technical details on actions, configurations, integrations, architecture diagrams, and metrics (reference/*.md files). (4) Explanation mode discusses design patterns and architecture in charm-design.md with detailed module responsibilities and data flow diagrams."
+                  "reason": "All four Di\u00e1taxis modes have meaningful content: (1) Tutorial: Three detailed guided exercises walking through Falco deployment, Falcosidekick deployment, and end-to-end integration with commands and verification steps. (2) How-to: Multiple task-oriented guides covering custom repository configuration, TLS setup, COS integration, troubleshooting, and upgrades. (3) Reference: Technical documentation on actions, configurations, integrations, architecture diagrams, and metrics endpoints. (4) Explanation: Discussion of charm design patterns with architectural diagrams and security overview."
                 }
               },
               "excluded_from_parent_medal": false
@@ -3389,7 +3389,7 @@
                 "diataxis_coverage_ai": {
                   "state": "measured",
                   "value": 4,
-                  "reason": "All four Di\u00e1taxis modes contain meaningful content. Tutorials include step-by-step guided exercises for deploying Falco, Falcosidekick, and connecting them. How-to guides provide task-oriented instructions for operations like configuring custom repositories, TLS with ingress, COS integration, troubleshooting, and upgrading. Reference sections document configurations, actions, integrations, architecture diagrams, and metrics. Explanations discuss charm design patterns, module organization, and security considerations."
+                  "reason": "Tutorial: Three complete guided exercises walk through deploying Falco, Falcosidekick, and connecting them end-to-end with actual commands and verification steps. How-to: Multiple task-oriented guides cover configuring custom repositories, TLS termination, COS integration, troubleshooting, and upgrades with concrete steps. Reference: Extensive factual documentation of actions, configurations, integrations, architecture diagrams, and metrics with technical specifications. Explanation: Two discussion documents explain charm design patterns/architecture and security concepts (though security.md contains only placeholder text, it represents explanatory intent)."
                 }
               },
               "excluded_from_parent_medal": false
@@ -3562,8 +3562,8 @@
                 },
                 "diataxis_coverage_ai": {
                   "state": "measured",
-                  "value": 4,
-                  "reason": "Tutorial: getting-started.md contains a complete step-by-step guided exercise deploying the charm with Flask (1 point). How-to: Multiple how-to guides with task-oriented instructions exist (configure-external-hostname.md, configure-hsts.md, enforce-https.md, provide-certificate.md, select-gateway-class.md, etc.) (1 point). Reference: actions.md links to reference content, charm-architecture.md and deployment-architecture.md contain detailed technical descriptions of architecture, components, events, and Kubernetes resources (1 point). Explanation: workflow.md describes the charm's operational workflow, design.md discusses design choices like TLS termination and ingress-configurator pairing, and security-overview.md provides conceptual understanding of security considerations (1 point)."
+                  "value": 3,
+                  "reason": "Tutorial (1 point): docs/tutorial/getting-started.md provides a complete learning-oriented guided exercise deploying the charm with Flask. How-to (1 point): Multiple how-to guides provide task-oriented instructions (select-gateway-class.md, configure-external-hostname.md, provide-certificate.md, enforce-https.md, configure-hsts.md, get-proxied-endpoints.md, upgrade.md). Reference (1 point): docs/reference/ contains factual descriptions including charm-architecture.md (charm structure, events, code overview), deployment-architecture.md (deployment patterns), and actions.md (links to action documentation). Explanation (0 points): While docs/explanation/ exists with workflow.md, design.md, and security-overview.md, these are brief and lack the depth of discussion that builds understanding of concepts or design choices - they are more descriptive overviews than explanatory discussions."
                 }
               },
               "excluded_from_parent_medal": false
@@ -3715,7 +3715,7 @@
                 "diataxis_coverage_ai": {
                   "state": "measured",
                   "value": 4,
-                  "reason": "Tutorial: deploy-and-verify-on-kubernetes provides a complete learning exercise deploying the charm, publishing under a hostname, and verifying with Go tool. How-to: multiple guides cover configure-ingress, hostname, integrate-with-cos, upgrade, and troubleshoot-deployment. Reference: charm-configuration documents the hostname option, integrations documents endpoints and metrics, platforms-and-prerequisites lists required tools. Explanation: gopkg-service explains what gopkg.in does for Go programs and why, ingress explains how requests reach the workload through the controller architecture."
+                  "reason": "Tutorial: deploy-and-verify-on-kubernetes.rst contains a complete guided exercise with prerequisites, steps to deploy the charm, publish under hostname, verify deployment, switch hostname, fetch a module with Go tool, and clean up. How-to: Multiple task-oriented guides exist (configure-ingress.rst, configure-hostname-and-check-go-import.rst, integrate-with-cos.rst, upgrade-the-charm.rst, troubleshoot-deployment.rst) with specific procedures for achieving outcomes like enabling HTTPS and integrating with observability. Reference: charm-configuration.rst describes the hostname option and its mapping, integrations.rst documents endpoints/metrics/logs/alert rules, platforms-and-prerequisites.rst lists architectures/tooling/channels. Explanation: gopkg-service.rst explains why gopkg.in exists and what the service does conceptually, ingress.rst discusses how request routing works and design choices around TLS termination and hostname settings."
                 }
               },
               "excluded_from_parent_medal": false
@@ -4017,7 +4017,7 @@
                 "diataxis_coverage_ai": {
                   "state": "measured",
                   "value": 4,
-                  "reason": "1. Tutorial: 'docs/tutorial/getting-started.md' provides a complete hands-on guided exercise deploying HAProxy, configuring TLS, integrating with a backend, and verifying traffic flow. 2. How-to: Multiple substantial task-oriented guides exist, including 'configure-high-availability.md', 'integrate-with-non-charm-workload.md', 'enable-ddos-protection.md', etc., with concrete steps to achieve specific outcomes. 3. Reference: 'docs/reference/relation-endpoints.md' provides factual descriptions of all relation interfaces; 'docs/reference/ftp-support.md', 'grpc-support.md', and 'http2-support.md' describe protocol capabilities; 'docs/reference/terraform.md' documents the Terraform module. 4. Explanation: 'docs/explanation/high-availability.md' discusses active/active and active/passive cluster concepts; 'docs/explanation/security.md' explains security design choices including DoS mitigation and privacy considerations; 'docs/explanation/project-architecture.md' provides architectural context of charm components."
+                  "reason": "1. Tutorial: The getting-started.md guide provides step-by-step instructions for deploying HAProxy and integrating it with a backend application (Pollen charm), including verification steps. 2. How-to: Multiple task-oriented guides exist, such as configuring high availability, setting backend protocols, enabling DDoS protection, and hashing client IPs. 3. Reference: Technical specifications are provided for relation endpoints, supported protocols (FTP, gRPC, HTTP/2), Terraform module parameters, and SPOE authentication constraints. 4. Explanation: Conceptual discussion is present covering security practices (DoS mitigation, privacy compliance), high availability architectures (active/active vs active/passive), and project architecture overview."
                 }
               },
               "excluded_from_parent_medal": false
@@ -4048,7 +4048,7 @@
                 "diataxis_coverage_ai": {
                   "state": "measured",
                   "value": 4,
-                  "reason": "Tutorial: getting-started.md provides a complete step-by-step guided exercise deploying ingress-configurator with Gateway API. How-to: Multiple task-oriented guides exist (upgrade.md, integrate-non-charm-workload.md, integrate-tcp-non-charm-workload.md, add-features-to-ingress-requirer.md, loadbalancing-grpc.md, route-multiple-workloads.md) with specific deployment and configuration instructions. Reference: cache-config.md and gateway-route.md provide factual descriptions of relation interfaces including databag fields and configuration values. Explanation: modes-of-operation.md, gateway-route.md, and haproxy-route-tcp.md contain conceptual discussion of architecture, design choices, and how components work together."
+                  "reason": "Tutorial: getting-started.md provides a complete guided deployment exercise with step-by-step commands. How-to: Multiple task-oriented guides exist (upgrade.md, integrate-non-charm-workload.md, add-features-to-ingress-requirer.md, etc.) with specific deployment and configuration instructions. Reference: cache-config.md and gateway-route.md document databag fields and interface specifications factually. Explanation: modes-of-operation.md, gateway-route.md, and haproxy-route-tcp.md discuss architectural concepts, design choices, and how components work together conceptually."
                 }
               },
               "excluded_from_parent_medal": false
@@ -4079,7 +4079,7 @@
                 "diataxis_coverage_ai": {
                   "state": "measured",
                   "value": 4,
-                  "reason": "Tutorial: getting-started.md provides a complete hands-on deployment walkthrough with verification steps. How-to: Multiple task-oriented guides exist (configure-high-availability.md, configure-backend-protocol.md, enable-ddos-protection.md, etc.) with concrete instructions for specific outcomes. Reference: Multiple pages provide factual technical specifications including relation-endpoints.md (interface definitions), ftp-support.md, grpc-support.md, http2-support.md (protocol capabilities), spoe-auth-support.md (authentication architecture), terraform.md (module parameters), and changelog.md (version history). Explanation: security.md and high-availability.md discuss conceptual understanding of design choices and operational patterns."
+                  "reason": "Tutorial: getting-started.md contains a complete step-by-step deployment exercise with concrete commands and verification steps. How-to: Multiple task-oriented guides exist (configure-high-availability.md, enable-ddos-protection.md, hash-client-ip-addresses-in-logs.md, etc.) with specific operational procedures. Reference: relation-endpoints.md lists interface specifications, ftp-support.md and grpc-support.md describe protocol capabilities, terraform.md documents module parameters. Explanation: security.md discusses threat models and protection concepts, high-availability.md explains HA architectures, project-architecture.md describes system design."
                 }
               },
               "excluded_from_parent_medal": false
@@ -4111,7 +4111,7 @@
                 "diataxis_coverage_ai": {
                   "state": "measured",
                   "value": 4,
-                  "reason": "Tutorial: 'getting-started.md' provides a complete guided exercise deploying HAProxy with Pollen, including setup, TLS configuration, and verification steps. How-to: Multiple task-oriented guides exist (configure-backend-protocol.md, configure-high-availability.md, enable-ddos-protection.md, etc.) with concrete instructions for specific outcomes. Reference: Technical descriptions exist for protocols (ftp-support.md, grpc-support.md, http2-support.md), relation-endpoints.md documents interfaces, and terraform.md covers module parameters. Explanation: security.md discusses design choices around attacks and compliance; high-availability.md explains HA concepts and configurations; project-architecture.md provides conceptual understanding of system design."
+                  "reason": "Tutorial: 'docs/tutorial/getting-started.md' provides a complete hands-on guided exercise deploying HAProxy, configuring TLS, integrating with Pollen backend, and verifying operation. How-to: Multiple task-oriented guides exist (e.g. 'configure-high-availability.md', 'enable-ddos-protection.md', 'hash-client-ip-addresses-in-logs.md') with concrete procedural steps for achieving specific outcomes. Reference: 'docs/reference/relation-endpoints.md' documents interfaces and endpoints; 'ftp-support.md', 'grpc-support.md', and 'http2-support.md' describe protocol capabilities and constraints; 'terraform.md' covers module inputs/outputs; changelog provides version history. Explanation: 'docs/explanation/security.md' discusses attack vectors and mitigation rationale; 'high-availability.md' explains active/active vs active/passive topologies and design tradeoffs; 'project-architecture.md' describes component relationships and integration patterns."
                 }
               },
               "excluded_from_parent_medal": false
@@ -4328,7 +4328,7 @@
                 "diataxis_coverage_ai": {
                   "state": "measured",
                   "value": 4,
-                  "reason": "Tutorial: getting-started.md provides a complete guided exercise deploying Hockeypuck with step-by-step instructions and expected outcomes. How-to: Multiple task-oriented guides exist (backup-and-restore, integrate-with-cos, manage-gpg-keys, manage-admin-keys, reconcile-between-two-keyservers, upgrade) with concrete commands for specific outcomes. Reference: Multiple factual technical documents exist including actions.md, charm-architecture.md (detailed architecture with diagrams and technical specifications), configurations.md, integrations.md (interface specifications), metrics.md (metric definitions), and ports.md. Explanation: security.md discusses concepts around risks and best practices with reasoning about design choices and trade-offs."
+                  "reason": "Tutorial: 'getting-started.md' provides a complete hands-on exercise deploying Hockeypuck with PostgreSQL and Traefik, including setup, deployment commands, and verification steps. How-to: Multiple guides cover specific tasks like 'backup-and-restore-hockeypuck.md', 'manage-gpg-keys.md', 'integrate-with-cos.md', and 'reconcile-between-two-keyservers.md' with concrete procedural instructions. Reference: Technical specifications in 'actions.md', 'configurations.md', 'integrations.md', 'metrics.md', 'ports.md', and especially 'charm-architecture.md' which details the architecture with diagrams, container structure, OCI images, Juju events, and code organization. Explanation: 'charm-architecture.md' explains design choices (sidecar pattern, Pebble usage, 12-factor framework) and 'security.md' discusses security risks and best practices with conceptual understanding of trade-offs."
                 }
               },
               "excluded_from_parent_medal": false
@@ -4631,7 +4631,7 @@
                 "diataxis_coverage_ai": {
                   "state": "measured",
                   "value": 4,
-                  "reason": "Tutorial: getting-started.md contains a complete hands-on walkthrough deploying and configuring the charm with specific commands and verification steps. How-to: upgrade.md provides task-oriented instructions for upgrading different proxy charms with specific commands. Reference: Multiple files contain factual technical information - integrations.md describes interfaces and supported charms, charm-architecture.md describes technical aspects, actions.md and configurations.md reference specifications (though links only, the integrations file has actual content). Explanation: modes.md explains the two operational modes (integrator and pass-through) with conceptual discussion, and security.md discusses security concepts and best practices."
+                  "reason": "Tutorial (1 point): tutorial/getting-started.md provides a complete hands-on guided exercise with prerequisites, step-by-step deployment, integration, testing, and cleanup. How-to (1 point): how-to/upgrade.md contains task-oriented instructions for upgrading three different charms with specific commands and verification steps. Reference (1 point): reference/integrations.md provides factual descriptions of the http-proxy and delegate-http-proxy interfaces with supported charms and example commands; actions.md and configurations.md link to external references. Explanation (1 point): explanation/modes.md discusses the two operating modes (integrator and pass-through) with conceptual descriptions; explanation/security.md provides discussion of security best practices and principles."
                 }
               },
               "excluded_from_parent_medal": false
@@ -4662,7 +4662,7 @@
                 "diataxis_coverage_ai": {
                   "state": "measured",
                   "value": 4,
-                  "reason": "Tutorial (1): getting-started.md contains a complete hands-on walkthrough deploying and configuring the charm with step-by-step commands and verification steps. How-to (1): upgrade.md provides task-oriented instructions for upgrading the charms with specific commands. Reference (1): integrations.md documents interface specifications with supported charms and example commands; actions.md and configurations.md reference external specifications. Explanation (1): modes.md explains the two operational modes (integrator and pass-through) with conceptual discussion; security.md discusses security best practices and principles."
+                  "reason": "Tutorial: getting-started.md contains a complete hands-on walkthrough deploying and testing the charm with multiple steps and verification commands. How-to: upgrade.md provides task-oriented instructions for upgrading different proxy charms with specific commands. Reference: Multiple files contain factual technical specifications including actions, configurations, integrations with interface names and supported charms, and external access requirements. Explanation: modes.md explains two operational modes (integrator vs pass-through) with conceptual discussion, and security.md discusses security principles and best practices."
                 }
               },
               "excluded_from_parent_medal": false
@@ -4693,7 +4693,7 @@
                 "diataxis_coverage_ai": {
                   "state": "measured",
                   "value": 4,
-                  "reason": "Tutorial: getting-started.md provides a complete hands-on walkthrough deploying the charm with specific commands and verification steps. How-to: upgrade.md contains task-oriented instructions for upgrading the charm with specific commands and verification. Reference: actions.md, configurations.md, integrations.md provide factual descriptions of interfaces and commands; charm-architecture.md describes the charm structure. Explanation: modes.md discusses the two operational modes with conceptual explanations; security.md discusses best practices and security concepts."
+                  "reason": "Tutorial: 'getting-started.md' provides a complete hands-on walkthrough deploying and configuring the charm with step-by-step commands and expected outcomes. How-to: 'upgrade.md' contains task-oriented instructions for upgrading different proxy charms with specific commands and verification steps. Reference: 'integrations.md' documents the http-proxy and delegate-http-proxy interfaces with supported charms and example commands; 'actions.md' and 'configurations.md' point to technical specifications. Explanation: 'modes.md' explains the two operational modes (integrator and pass-through) with conceptual differences; 'security.md' discusses security best practices and design considerations."
                 }
               },
               "excluded_from_parent_medal": false
@@ -4725,7 +4725,7 @@
                 "diataxis_coverage_ai": {
                   "state": "measured",
                   "value": 4,
-                  "reason": "Tutorial: getting-started.md provides a complete hands-on walkthrough deploying and testing the charm with step-by-step commands. How-to: upgrade.md contains task-oriented instructions for upgrading three different charms with specific procedures. Reference: integrations.md describes interfaces and supported charms, and actions.md/configurations.md reference external specifications (though minimal). Explanation: modes.md explains two operational modes with conceptual differences, and security.md discusses security principles and best practices."
+                  "reason": "1. Tutorial: getting-started.md contains a complete hands-on walkthrough deploying the charm with concrete steps and commands. 2. How-to: upgrade.md provides task-oriented instructions for upgrading different proxy charms. 3. Reference: Multiple files contain factual technical information - actions.md, configurations.md, integrations.md describe interfaces and endpoints, and charm-architecture.md describes technical structure. 4. Explanation: modes.md explains the two operational modes with conceptual discussion, and security.md discusses security concepts and best practices."
                 }
               },
               "excluded_from_parent_medal": false
@@ -5151,7 +5151,7 @@
                 "diataxis_coverage_ai": {
                   "state": "measured",
                   "value": 3,
-                  "reason": "Tutorial: docs/tutorial.md provides a complete step-by-step guided exercise deploying Indico with integrations and verification. How-to: Multiple task-oriented guides exist (configure-s3.md, configure-saml.md, install-plugins.md, customize-theme.md, redeploy.md, etc.) with specific procedural instructions. Reference: Multiple reference documents provide factual technical information including actions.md, configurations.md, integrations.md, plugins.md, charm-architecture.md with architecture diagrams, component descriptions, and specifications. Explanation: No meaningful conceptual discussion or design rationale content found\u2014charm-architecture.md is descriptive/factual (reference) rather than explanatory about why design choices were made."
+                  "reason": "Tutorial: docs/tutorial.md contains a complete learning-oriented guided exercise walking users through deployment with requirements, setup, and verification. How-to: Multiple how-to guides provide task-oriented instructions (configure-s3.md, configure-saml.md, install-plugins.md, etc.). Reference: Multiple reference documents contain factual descriptions including actions.md, configurations.md, integrations.md, charm-architecture.md, and plugins.md. Explanation: No meaningful explanatory content that builds understanding of concepts or design choices; charm-architecture.md was moved from Explanation to Reference per the changelog and contains factual descriptions rather than conceptual discussion."
                 }
               },
               "excluded_from_parent_medal": false
@@ -5395,7 +5395,7 @@
                 "diataxis_coverage_ai": {
                   "state": "measured",
                   "value": 4,
-                  "reason": "Tutorial: 'getting-started.md' provides a complete hands-on guide with concrete deployment steps, prerequisites, and commands for deploying Jenkins, exposing it via ingress, and integrating agents. How-to: Multiple how-to guides exist with task-oriented instructions (e.g., 'configure-installable-plugins.md', 'get-admin-password.md', 'backup-and-restore-jenkins.md', 'upgrade.md') covering specific operational tasks with concrete commands. Reference: 'actions.md', 'configurations.md', 'integrations.md', and 'external-access.md' provide factual technical specifications of the charm's interfaces, configuration options, and network requirements. Explanation: 'charm-architecture.md' contains conceptual discussion with diagrams explaining containers, components, integrations, event handling, and design choices."
+                  "reason": "Tutorial (1): getting-started.md provides a complete hands-on guided exercise deploying jenkins-k8s, accessing UI, and deploying agents. How-to (1): Multiple how-to guides with task-oriented instructions for specific outcomes (configure plugins, memory, backup/restore, rotate credentials, integrate agents, etc.). Reference (1): actions.md, configurations.md, integrations.md, external-access.md, and charm-architecture.md provide factual descriptions of interfaces, configuration options, and system components. Explanation (1): charm-architecture.md discusses design and component relationships; ADR-001 explains architectural decisions and rationale for path prefix handling."
                 }
               },
               "excluded_from_parent_medal": false
@@ -5424,9 +5424,9 @@
                   "value": ""
                 },
                 "diataxis_coverage_ai": {
-                  "state": "insufficient_data",
-                  "value": null,
-                  "reason": "AI documentation assessment is unavailable."
+                  "state": "measured",
+                  "value": 3,
+                  "reason": "Reference (1 point): Contains factual descriptions in charm-architecture.md (containers, components, integrations, events, code structure), integrations.md (interface details), and implicit actions/configurations references. How-to (1 point): Contains task-oriented instructions in upgrade.md (step-by-step upgrade process with commands) and contribute.md (development setup, testing, building, deploying). Explanation (1 point): Contains conceptual discussion in charm-architecture.md explaining how components work together, the purpose of the agent, event handling logic, and design choices. Tutorial (0 points): The tutorial/getting-started.md only redirects to external documentation without providing actual guided exercise content."
                 }
               },
               "excluded_from_parent_medal": false
@@ -5455,9 +5455,9 @@
                   "value": ""
                 },
                 "diataxis_coverage_ai": {
-                  "state": "insufficient_data",
-                  "value": null,
-                  "reason": "AI documentation assessment is unavailable."
+                  "state": "measured",
+                  "value": 4,
+                  "reason": "Tutorial (1): getting-started.md references full Jenkins tutorial with hands-on guidance. How-to (1): configure-agent-node-label.md and upgrade.md provide task-oriented instructions for specific operations like configuring labels and upgrading. Reference (1): actions.md, configurations.md, integrations.md, and charm-architecture.md provide factual technical descriptions of interfaces, commands, services, and architecture diagrams. Explanation (1): workload.md discusses concepts about how the workload is managed using apt packages and systemd, explaining design choices."
                 }
               },
               "excluded_from_parent_medal": false
@@ -5846,9 +5846,9 @@
                   "value": ""
                 },
                 "diataxis_coverage_ai": {
-                  "state": "insufficient_data",
-                  "value": null,
-                  "reason": "AI documentation assessment is unavailable."
+                  "state": "measured",
+                  "value": 3,
+                  "reason": "Reference: Multiple pages contain factual technical content including release notes with version details, configurations, actions, and system requirements. How-to: Practical instructions for backup/restore, adding mail users, and manual failover with specific commands. Explanation: Security and design documents exist but contain only TODO placeholders without actual explanatory content. Tutorial: Contains template structure but all actual content is placeholder text and TODOs."
                 }
               },
               "excluded_from_parent_medal": false
@@ -5877,9 +5877,9 @@
                   "value": ""
                 },
                 "diataxis_coverage_ai": {
-                  "state": "insufficient_data",
-                  "value": null,
-                  "reason": "AI documentation assessment is unavailable."
+                  "state": "measured",
+                  "value": 3,
+                  "reason": "Reference: extensive coverage including actions, configurations, relations, events, metrics, architecture, and 7 detailed release notes. How-to: meaningful guides for backup/restore, adding mail users, and manual failover with complete procedures. Explanation: changelog shows design evolution but no conceptual explanation content in explanation/ directory (only placeholders). Tutorial: only placeholder content without actual implementation."
                 }
               },
               "excluded_from_parent_medal": false
@@ -5908,9 +5908,9 @@
                   "value": ""
                 },
                 "diataxis_coverage_ai": {
-                  "state": "insufficient_data",
-                  "value": null,
-                  "reason": "AI documentation assessment is unavailable."
+                  "state": "measured",
+                  "value": 3,
+                  "reason": "Reference: Multiple pages contain factual descriptions including release notes with version history, feature descriptions, and configuration details (docs/release-notes/release-notes-000*.rst). How-to: Two complete guides provide task-oriented instructions: 'How to back up and restore' with specific steps for configuring encryption, integrating with Bacula, and running backups/restores; and 'How to add mail users' with concrete instructions for creating secrets, granting access, and updating credentials. Explanation: The failover guide includes conceptual discussion of the active/passive architecture and design rationale for synchronization approaches. Tutorial: The tutorial files are template placeholders with TODO markers and no actual guided exercise content."
                 }
               },
               "excluded_from_parent_medal": false
@@ -5939,9 +5939,9 @@
                   "value": ""
                 },
                 "diataxis_coverage_ai": {
-                  "state": "insufficient_data",
-                  "value": null,
-                  "reason": "AI documentation assessment is unavailable."
+                  "state": "measured",
+                  "value": 3,
+                  "reason": "Tutorial: Contains structured learning-oriented content in basic-deployment.rst with steps like 'What you'll do', 'What you'll need', deployment instructions, and 'Next steps'. How-to: Multiple task-oriented guides exist including back-up-restore.rst (backup/restore procedures with prerequisites and steps), failover.md (manual failover procedures), and how-to-add-mail-users.rst (managing mail users through secrets). Reference: Multiple factual descriptions including release-notes-0001 through 0007 with specific version requirements, features, and configurations; changelog.rst documents changes across dated revisions. Explanation: No meaningful conceptual discussion found - charm-design.rst and security.rst are TODO templates without actual content explaining design choices or concepts."
                 }
               },
               "excluded_from_parent_medal": false
@@ -5971,9 +5971,9 @@
                   "reason": "Snap-only repositories are exempt from Sphinx Stack adoption."
                 },
                 "diataxis_coverage_ai": {
-                  "state": "insufficient_data",
-                  "value": null,
-                  "reason": "AI documentation assessment is unavailable."
+                  "state": "measured",
+                  "value": 3,
+                  "reason": "Tutorial: basic-deployment.rst contains a structured learning-oriented guide with steps, prerequisites, setup, deployment, and cleanup. How-to: Multiple how-to guides with task-oriented instructions exist (back-up-restore.rst, failover.md, how-to-add-mail-users.rst show complete procedures for specific outcomes). Reference: Multiple reference documents contain factual technical information including release notes with version tables, actions, configurations, relation endpoints, and architectural details. Explanation: No meaningful conceptual discussion or design rationale is present; charm-design.rst and security.rst contain only TODO placeholders without actual content, and index.rst is navigational scaffolding."
                 }
               },
               "excluded_from_parent_medal": false
@@ -6638,9 +6638,9 @@
                   "value": "2.0"
                 },
                 "diataxis_coverage_ai": {
-                  "state": "insufficient_data",
-                  "value": null,
-                  "reason": "AI documentation assessment is unavailable."
+                  "state": "measured",
+                  "value": 4,
+                  "reason": "Tutorial (1 point): getting-started.md provides a complete learning-oriented guided exercise deploying Synapse with PostgreSQL and Traefik, creating users, and accessing via Element Desktop. How-to (1 point): Multiple task-oriented guides exist including backup-and-restore.md, configure-smtp.md, and horizontally-scale.md with concrete steps for specific operational outcomes. Reference (1 point): Substantive factual descriptions found in configurations.md, integrations.md (detailed interface specifications), and charm-architecture.md (OCI images, containers, code structure). Explanation (1 point): charm-architecture.md explains design choices (sidecar pattern, Pebble layers, container roles) and external-access.md discusses federation concepts and configuration implications."
                 }
               },
               "excluded_from_parent_medal": false
@@ -6829,9 +6829,9 @@
                   "value": ""
                 },
                 "diataxis_coverage_ai": {
-                  "state": "insufficient_data",
-                  "value": null,
-                  "reason": "AI documentation assessment is unavailable."
+                  "state": "measured",
+                  "value": 4,
+                  "reason": "Tutorial: getting-started.md provides a complete learning-oriented walkthrough with setup requirements, deployment steps, and verification commands. How-to: Multiple guides present task-oriented instructions (configure-saml.md explains setting configuration options, upgrade.md shows upgrade procedure). Reference: charm-architecture.md describes internal design with Juju events and code structure; integrations.md documents the saml interface with supported charms; configurations.md and actions.md reference external technical specifications. Explanation: charm-architecture.md discusses concepts like how metadata flows through the system and explains the event-driven design choices and charm operation."
                 }
               },
               "excluded_from_parent_medal": false
@@ -6860,9 +6860,9 @@
                   "value": ""
                 },
                 "diataxis_coverage_ai": {
-                  "state": "insufficient_data",
-                  "value": null,
-                  "reason": "AI documentation assessment is unavailable."
+                  "state": "measured",
+                  "value": 2,
+                  "reason": "Reference (1 point): charm-architecture.md provides factual descriptions of the system components, Pebble layers, OCI images, container configurations, integrations, and charm code structure. How-to (1 point): upgrade.md contains task-oriented instructions for upgrading the charm using the juju refresh command. The changelog contains only metadata about documentation reorganization with no meaningful content in any mode."
                 }
               },
               "excluded_from_parent_medal": false
@@ -6891,9 +6891,9 @@
                   "value": ""
                 },
                 "diataxis_coverage_ai": {
-                  "state": "insufficient_data",
-                  "value": null,
-                  "reason": "AI documentation assessment is unavailable."
+                  "state": "measured",
+                  "value": 4,
+                  "reason": "Tutorial: deploy-irc-bridge.md provides a complete learning-oriented walkthrough from requirements through deployment to interaction with the bridge. How-to: troubleshooting.md and upgrade.md provide task-oriented instructions for specific problems. Reference: charm-architecture.md contains factual descriptions of the system components, snap implementation, and code structure with diagrams. Explanation: index.md and charm-architecture.md include conceptual discussion of how IRC Bridge works as an Application Service, its integration patterns, and design rationale."
                 }
               },
               "excluded_from_parent_medal": false
@@ -7223,9 +7223,9 @@
                   "value": "2.0"
                 },
                 "diataxis_coverage_ai": {
-                  "state": "insufficient_data",
-                  "value": null,
-                  "reason": "AI documentation assessment is unavailable."
+                  "state": "measured",
+                  "value": 4,
+                  "reason": "Tutorial: tutorial.rst provides a complete learning-oriented guided exercise deploying Mattermost with PostgreSQL, including setup, integration, and verification steps. How-to: Multiple how-to guides exist covering specific tasks (back-up-restore.md, provide-certificate.md, integrate-with-cos.md, upgrade.md). Reference: Multiple reference documents provide factual information about actions, configurations, integrations, metrics, and architecture (actions.md, configurations.md, integrations.md, metrics.md, charm-architecture.rst). Explanation: explanation/security.rst provides discussion building understanding of security concepts and best practices; ADR-001 explains design decisions around theme patches."
                 }
               },
               "excluded_from_parent_medal": false
@@ -7374,9 +7374,9 @@
                   "value": ""
                 },
                 "diataxis_coverage_ai": {
-                  "state": "insufficient_data",
-                  "value": null,
-                  "reason": "AI documentation assessment is unavailable."
+                  "state": "measured",
+                  "value": 3,
+                  "reason": "Tutorial (1 point): getting-started.md provides step-by-step guided exercise deploying NetBox with all dependencies. How-to (1 point): Multiple how-to guides with task-oriented instructions exist - upgrade.md, configure-oidc.md, configure-scripts-reports.md, and contribute.md. Reference (1 point): charm-architecture.md describes the technical architecture including containers, services, and dependencies; actions.md and integrations.md link to external references. Explanation (0 points): No discussion building understanding of concepts or design rationale - charm-architecture.md is factual/descriptive rather than explanatory about why design choices were made."
                 }
               },
               "excluded_from_parent_medal": false
@@ -7528,9 +7528,9 @@
                   "value": "2.0"
                 },
                 "diataxis_coverage_ai": {
-                  "state": "insufficient_data",
-                  "value": null,
-                  "reason": "AI documentation assessment is unavailable."
+                  "state": "measured",
+                  "value": 4,
+                  "reason": "Tutorial: Contains a complete guided exercise deploying nginx-ingress-integrator with WordPress (docs/tutorial/tutorial.md). How-to: Multiple task-oriented guides including enabling OWASP ModSecurity, securing with TLS, adding nginx-route relation, and upgrade procedures. Reference: Detailed architecture documentation describing charm structure, events, code overview with diagram (docs/reference/architecture.md), plus integrations list. Explanation: Conceptual discussions on security practices (DoS, TLS, dependencies) and what ingress is in Kubernetes context (docs/explanation/)."
                 }
               },
               "excluded_from_parent_medal": false
@@ -7684,9 +7684,9 @@
                   "value": ""
                 },
                 "diataxis_coverage_ai": {
-                  "state": "insufficient_data",
-                  "value": null,
-                  "reason": "AI documentation assessment is unavailable."
+                  "state": "measured",
+                  "value": 4,
+                  "reason": "Tutorial (1 point): docs/tutorial/index.md contains a complete, learning-oriented guided exercise walking through OpenCTI deployment step-by-step. How-to (1 point): Multiple how-to guides provide task-oriented instructions (account creation, backup, observability integration, redeployment, upgrade). Reference (1 point): Extensive factual descriptions including configurations, actions, integrations, observability metrics/alerts, and detailed charm architecture with component diagrams. Explanation (1 point): docs/reference/charm-architecture.md provides substantial discussion building understanding of design choices, architecture patterns (sidecar pattern), OCI images, Juju events handling, and code overview explaining how the charm operates."
                 }
               },
               "excluded_from_parent_medal": false
@@ -7835,9 +7835,9 @@
                   "value": ""
                 },
                 "diataxis_coverage_ai": {
-                  "state": "insufficient_data",
-                  "value": null,
-                  "reason": "AI documentation assessment is unavailable."
+                  "state": "measured",
+                  "value": 3,
+                  "reason": "Tutorial (1 point): getting-started.md provides a complete guided exercise deploying Penpot step-by-step with prerequisites, commands, and verification steps. How-to (1 point): Multiple how-to guides exist with task-oriented instructions (configure-s3.md, configure-smtp.md, configure-sso.md, integrate-with-cos.md, manage-users.md, upgrade.md) showing specific configuration and operational tasks. Reference (1 point): charm-architecture.md contains factual descriptions of system architecture, containers, integrations, and code structure with diagrams; actions.md and configurations.md link to external reference but lack inline content themselves. Explanation (0 points): While charm-architecture.md contains some architectural discussion, it primarily serves as reference documentation describing what exists rather than building understanding of why design choices were made or explaining underlying concepts in depth."
                 }
               },
               "excluded_from_parent_medal": false
@@ -7987,9 +7987,9 @@
                   "value": ""
                 },
                 "diataxis_coverage_ai": {
-                  "state": "insufficient_data",
-                  "value": null,
-                  "reason": "AI documentation assessment is unavailable."
+                  "state": "measured",
+                  "value": 3,
+                  "reason": "Reference (1 point): docs/reference/charm-architecture.md contains factual descriptions of metrics, Juju events, and code structure. How-to (1 point): docs/how-to/relate-to-cos.md provides task-oriented instructions with specific commands for relating Pollen to COS observability stack, and docs/how-to/upgrade.md shows upgrade commands. Explanation (1 point): docs/reference/charm-architecture.md includes discussion building understanding of charm design, event handling, and architecture. Tutorial (0 points): No learning-oriented guided exercise with pedagogical progression is present; the COS how-to is task-focused rather than learning-focused."
                 }
               },
               "excluded_from_parent_medal": false
@@ -8121,9 +8121,9 @@
               "value": ""
             },
             "diataxis_coverage_ai": {
-              "state": "insufficient_data",
-              "value": null,
-              "reason": "AI documentation assessment is unavailable."
+              "state": "measured",
+              "value": 4,
+              "reason": "Tutorial: getting-started.md provides a complete learning-oriented walkthrough with setup requirements, deployment steps, and verification commands. How-to: Multiple guides present task-oriented instructions (configure-saml.md explains setting configuration options, upgrade.md shows upgrade procedure). Reference: charm-architecture.md describes internal design with Juju events and code structure; integrations.md documents the saml interface with supported charms; configurations.md and actions.md reference external technical specifications. Explanation: charm-architecture.md discusses concepts like how metadata flows through the system and explains the event-driven design choices and charm operation."
             }
           },
           "composition": null
@@ -8550,9 +8550,9 @@
                   "value": ""
                 },
                 "diataxis_coverage_ai": {
-                  "state": "insufficient_data",
-                  "value": null,
-                  "reason": "AI documentation assessment is unavailable."
+                  "state": "measured",
+                  "value": 3,
+                  "reason": "Reference (1 point): Multiple reference documents with factual descriptions exist, including actions.md, configurations.md, integrations.md, token-scopes.md, charm-architecture.md, cryptographic-overview.md, external-access.md, and cos.md containing specifications, API details, and configuration options. How-to (1 point): Extensive how-to guides provide task-oriented instructions for specific outcomes, such as changing tokens/paths, adding labels, debugging with SSH, integrating with COS, spawning OpenStack runners, upgrading, managing external contributors, and configuring runner storage. Explanation (1 point): Multiple explanation documents discuss concepts and design, including security.md (security design discussion), ssh-debug.md (SSH debugging concepts), arm64.md (ARM64 architecture rationale), managing-resource-usage.md (resource management concepts), and ADR-001 (pressure reconciler architecture). Tutorial (0 points): While quick-start.md exists, it is a deployment walkthrough rather than a true learning-oriented guided exercise that builds understanding through hands-on practice with pedagogical progression."
                 }
               },
               "excluded_from_parent_medal": false
@@ -8581,9 +8581,9 @@
                   "value": ""
                 },
                 "diataxis_coverage_ai": {
-                  "state": "insufficient_data",
-                  "value": null,
-                  "reason": "AI documentation assessment is unavailable."
+                  "state": "measured",
+                  "value": 3,
+                  "reason": "Tutorial: The quick-start guide (tutorial/quick-start.md) walks through deploying the charm step-by-step with specific commands and verification steps, including cleanup. How-to: Multiple how-to guides provide task-oriented instructions for specific configuration tasks (configure-base-image, configure-build-interval, configure-revision-history, pin-github-runner-version, upgrade). Reference: The charm-architecture document explains system design with C4 diagrams, describes component interactions, lists Juju events and their handling, and provides technical details about the codebase structure. The relation-endpoints document provides factual descriptions of integration interfaces and data formats. No Explanation content found\u2014the changelog contains release notes rather than conceptual discussion, and the architecture page is primarily structural/factual reference rather than building understanding of why design choices were made."
                 }
               },
               "excluded_from_parent_medal": false
@@ -8643,9 +8643,9 @@
                   "value": ""
                 },
                 "diataxis_coverage_ai": {
-                  "state": "insufficient_data",
-                  "value": null,
-                  "reason": "AI documentation assessment is unavailable."
+                  "state": "measured",
+                  "value": 4,
+                  "reason": "Tutorial: getting-started.md provides a complete learning-oriented walkthrough deploying the charm, configuring a client, and establishing an SSH session. How-to: get-server-config.md and upgrade.md contain task-oriented instructions for specific operational tasks. Reference: actions.md, configurations.md, relations.md, security-logs.md, and charm-architecture.md provide factual technical descriptions of interfaces, events, components, and configuration. Explanation: charm-architecture.md discusses design choices (why machine charm vs K8s, SSH port 10022 rationale) and the Sigma README explains the detection rule structure and field mappings."
                 }
               },
               "excluded_from_parent_medal": false
@@ -8705,9 +8705,9 @@
                   "value": "2.0"
                 },
                 "diataxis_coverage_ai": {
-                  "state": "insufficient_data",
-                  "value": null,
-                  "reason": "AI documentation assessment is unavailable."
+                  "state": "measured",
+                  "value": 4,
+                  "reason": "Tutorial: garm.md provides a complete step-by-step guided deployment exercise with prerequisites, concrete commands, and verification steps. How-to: Multiple task-oriented guides exist (retrieve-garm-credentials.md, secure-garm.md) with specific procedures. Reference: Extensive factual documentation covering architecture (architecture.md), charm interfaces (charms.md), security defaults (security.md), and security event logging (security-logs.md). Explanation: security.md and charm-release-and-promotion.md provide conceptual discussion of design choices, security posture, and release processes."
                 }
               },
               "excluded_from_parent_medal": false
@@ -8736,9 +8736,9 @@
                   "value": "2.0"
                 },
                 "diataxis_coverage_ai": {
-                  "state": "insufficient_data",
-                  "value": null,
-                  "reason": "AI documentation assessment is unavailable."
+                  "state": "measured",
+                  "value": 4,
+                  "reason": "1. Tutorial: garm.md provides a complete step-by-step guided exercise deploying GARM with PostgreSQL and configurator. 2. How-to: retrieve-garm-credentials.md and secure-garm.md provide task-oriented instructions for specific operational outcomes. 3. Reference: charms.md documents integrations/configurations/actions; architecture.md describes deployment components; security.md and security-logs.md describe security interfaces and event structures; sigma rules provide detection rule reference. 4. Explanation: security.md discusses security posture and design choices; charm-release-and-promotion.md explains the promotion process and decisions; ADRs document architectural decisions and rationale."
                 }
               },
               "excluded_from_parent_medal": false
@@ -9020,9 +9020,9 @@
                   "value": ""
                 },
                 "diataxis_coverage_ai": {
-                  "state": "insufficient_data",
-                  "value": null,
-                  "reason": "AI documentation assessment is unavailable."
+                  "state": "measured",
+                  "value": 4,
+                  "reason": "Tutorial: 'Getting started' provides a complete learning-oriented walkthrough with deployment steps and verification. How-to: 'Configure SMTP' and 'Upgrade' provide task-oriented instructions for specific outcomes. Reference: 'Charm architecture' contains factual technical descriptions of events, charm code structure, and design details; 'Actions', 'Configurations', and 'Integrations' pages exist but only link externally. Explanation: 'Charm architecture' discusses concepts like event handling and charm operation that build understanding of design choices."
                 }
               },
               "excluded_from_parent_medal": false
@@ -9178,9 +9178,9 @@
                   "value": "2.0"
                 },
                 "diataxis_coverage_ai": {
-                  "state": "insufficient_data",
-                  "value": null,
-                  "reason": "AI documentation assessment is unavailable."
+                  "state": "measured",
+                  "value": 4,
+                  "reason": "Tutorial: basic-deployment.rst contains a complete step-by-step tutorial for deploying Traefik and integrating with Flask. How-to: Multiple guides provide task-oriented instructions (enable-basicauth, integrate, tls-termination-using-a-local-ca, troubleshoot-reachability, troubleshoot-gateway-address-unavailable, upgrade). Reference: charm-architecture.md provides factual descriptions of architecture, containers, OCI images, and Juju events; ingress-libraries.md documents interface parameters; cryptographic-documentation-for-cos-lite-charms.md covers cryptographic implementation details. Explanation: tls.md discusses how TLS works conceptually; security.md explains security risks and practices."
                 }
               },
               "excluded_from_parent_medal": false
@@ -9329,9 +9329,9 @@
                   "value": ""
                 },
                 "diataxis_coverage_ai": {
-                  "state": "insufficient_data",
-                  "value": null,
-                  "reason": "AI documentation assessment is unavailable."
+                  "state": "measured",
+                  "value": 4,
+                  "reason": "Tutorial: getting-started.md provides a complete guided exercise with deployment, configuration, and testing steps. How-to: upgrade.md contains task-oriented instructions for upgrading the charm. Reference: configurations.md describes the files configuration structure, integrations.md references integration specifications, and charm-architecture.md describes the Flask application and paas-charm generation. Explanation: security.md discusses security concepts regarding Flask framework updates, and architecture-overview.md explains deployment architecture with a diagram showing typical component relationships."
                 }
               },
               "excluded_from_parent_medal": false
@@ -9587,9 +9587,9 @@
                   "value": ""
                 },
                 "diataxis_coverage_ai": {
-                  "state": "insufficient_data",
-                  "value": null,
-                  "reason": "AI documentation assessment is unavailable."
+                  "state": "measured",
+                  "value": 4,
+                  "reason": "1. Tutorial: 'getting-started.md' provides a learning-oriented guided exercise with step-by-step deployment instructions. 2. How-to: Multiple task-oriented guides exist (e.g., 'configure.md', 'collect-logs.md', 'backup-restore.md') with specific instructions for achieving outcomes. 3. Reference: Multiple factual descriptions exist including 'actions.md' (lists actions with link to Charmhub), 'configurations.md' (lists configurations with link), 'integrations.md' (describes relation interfaces and integration commands), 'charm-architecture.md' (describes containers, OCI images, storage, code structure), and 'external-access.md' (describes external connectivity requirements). 4. Explanation: 'architecture-overview.md' provides conceptual discussion of Wazuh components and architecture with diagrams, and 'security.md' discusses security concepts, practices and risks."
                 }
               },
               "excluded_from_parent_medal": false
@@ -9618,9 +9618,9 @@
                   "value": ""
                 },
                 "diataxis_coverage_ai": {
-                  "state": "insufficient_data",
-                  "value": null,
-                  "reason": "AI documentation assessment is unavailable."
+                  "state": "measured",
+                  "value": 0,
+                  "reason": "The documentation contains only a changelog (factual record of changes, not reference material for using the product) and a brief overview that describes what the product is and links to external/upstream documentation. There is no tutorial content, how-to guides, reference material about commands/APIs/configuration, or explanatory discussion of concepts or design. The overview explicitly states 'For the complete documentation, refer to [upstream]' and provides no actual usage documentation."
                 }
               },
               "excluded_from_parent_medal": false
@@ -9649,9 +9649,9 @@
                   "value": ""
                 },
                 "diataxis_coverage_ai": {
-                  "state": "insufficient_data",
-                  "value": null,
-                  "reason": "AI documentation assessment is unavailable."
+                  "state": "measured",
+                  "value": 4,
+                  "reason": "Tutorial: Extensive guided exercise in docs/tutorial/index.md with environment setup, deployment steps, TLS configuration, and data visualization. How-to: Multiple task-oriented guides (deploy, scale, enable TLS, change credentials, monitoring, OAuth access, JWT authentication). Reference: Release notes in docs/reference/release-notes/ with version details, requirements, compatibility, and highlights. Explanation: Monitoring documentation explains COS concepts, metrics meaning, and alert rules; OAuth guide discusses identity platform architecture and integration concepts."
                 }
               },
               "excluded_from_parent_medal": false
@@ -9863,9 +9863,9 @@
                   "value": "2.0"
                 },
                 "diataxis_coverage_ai": {
-                  "state": "insufficient_data",
-                  "value": null,
-                  "reason": "AI documentation assessment is unavailable."
+                  "state": "measured",
+                  "value": 4,
+                  "reason": "Tutorial: docs/tutorial.md provides a complete learning-oriented walkthrough deploying two WireGuard gateways, peering them, and testing routing. How-to: Multiple task-oriented guides cover enabling VRRP, performance tuning, setting up site-to-site VPN, integrating with COS, and upgrading. Reference: Extensive technical documentation of actions, configurations, metrics, integrations, and charm architecture with Juju events and code overview. Explanation: Security overview discusses WireGuard protocol cryptography and design principles; ADRs provide architectural decision context."
                 }
               },
               "excluded_from_parent_medal": false
@@ -10027,9 +10027,9 @@
                   "value": "2.0"
                 },
                 "diataxis_coverage_ai": {
-                  "state": "insufficient_data",
-                  "value": null,
-                  "reason": "AI documentation assessment is unavailable."
+                  "state": "measured",
+                  "value": 4,
+                  "reason": "Tutorial: docs/index.md references a tutorial that 'takes you step-by-step through a basic deployment' (content not shown but referenced). How-to: Multiple how-to guides with task-oriented instructions exist (e.g., configure-hostname.md, install-plugins.md, enable-waf.md). Reference: Substantial reference material is present including configurations.md, actions.md, charm-architecture.md (detailed architecture with diagrams, container descriptions, OCI image details), relation-endpoints.md (database, grafana, ingress, logging, metrics with interface details), plugins.md and themes.md (factual lists). Explanation: explanation/security-overview.md provides conceptual discussion about secrets, updates, spam protection, risks, and information security - building understanding of design choices and concepts."
                 }
               },
               "excluded_from_parent_medal": false
@@ -10292,7 +10292,7 @@
             "diataxis_coverage_ai": {
               "state": "measured",
               "value": 4,
-              "reason": "Tutorial: tutorial.md provides a complete step-by-step guided exercise deploying aproxy with a principal charm, verifying integration, and testing configuration. How-to: Multiple how-to guides exist with task-oriented instructions including configure.md (setting proxy-address, exclude-addresses, intercept-ports), upgrade.md (refresh procedures), back-up-restore.md (backup/restore procedures), and contribute.md (contribution workflow). Reference: Multiple reference documents provide factual technical information including integrations.md (juju-info interface details), configurations.md (configuration options reference), actions.md (actions reference), and charm-architecture.md (architectural specifications with diagrams, event handling, code structure). Explanation: security.md provides conceptual discussion of security risks, good practices, and design considerations around privileged operations, proxy reachability, traffic interception, and information security concerns."
+              "reason": "Tutorial: tutorial.md provides a complete step-by-step guided exercise deploying aproxy with a principal charm, verifying integration, and testing configuration. How-to: configure.md contains task-oriented instructions for setting proxy-address, exclude-addresses-from-proxy, and intercept-ports with concrete examples. Reference: charm-architecture.md provides factual technical descriptions including component diagrams, event handling, and code structure; integrations.md documents the juju-info interface; actions.md and configurations.md link to technical specifications. Explanation: security.md discusses security risks, good practices, and design considerations around privileged operations and traffic interception."
             }
           },
           "composition": null
@@ -10545,7 +10545,7 @@
             "diataxis_coverage_ai": {
               "state": "measured",
               "value": 4,
-              "reason": "Tutorial: tutorial.md contains a complete guided exercise deploying bacula-server with step-by-step instructions. How-to: Multiple task-oriented guides exist (integrate-with-backup-integrator-charm.md, use-baculum.md, upgrade.md) with specific procedures. Reference: Extensive factual descriptions including actions.md, configurations.md, integrations.md, and detailed architecture documents describing interfaces, relations, and technical specifications. Explanation: security.md provides conceptual discussion of security design choices and the architecture documents contain understanding-oriented discussion of design decisions and component relationships."
+              "reason": "Tutorial: Complete guided exercise deploying bacula-server with S3 storage, PostgreSQL database, creating credentials, and accessing Baculum. How-to: Multiple task-oriented guides for using Baculum interface, integrating backup-integrator, and upgrading charms with specific commands. Reference: Extensive factual documentation of actions, configurations, integrations (with interface details and example commands), and detailed architecture descriptions with component diagrams. Explanation: Security overview discussing Bacula security issues and protection mechanisms, providing conceptual understanding of security design choices."
             }
           },
           "composition": null
@@ -10668,7 +10668,7 @@
             "diataxis_coverage_ai": {
               "state": "measured",
               "value": 4,
-              "reason": "Tutorial: tutorial.md provides a complete learning-oriented guided exercise deploying Bacula server from scratch with step-by-step instructions. How-to: Multiple task-oriented guides exist (use-baculum.md for managing backups, integrate-with-backup-integrator-charm.md for integration, upgrade.md for upgrading charms). Reference: Extensive factual descriptions of interfaces, commands and configuration across actions.md, configurations.md, integrations.md, and architecture documentation. Explanation: security.md provides conceptual discussion of security design choices and the architecture documentation contains explanatory context about design decisions."
+              "reason": "Tutorial: docs/tutorial.md contains a complete guided exercise walking users through deploying Bacula server with S3 storage and PostgreSQL, accessing the web interface, and cleanup. How-to: Multiple guides exist for specific tasks including integrating with backup-integrator, using Baculum web interface, and upgrading charms. Reference: Extensive factual material covers actions, configurations, integrations/relations, and detailed architecture documentation for all three charms. Explanation: docs/explanation/security.md provides conceptual discussion of security considerations, design choices, and current limitations in the Bacula implementation."
             }
           },
           "composition": null
@@ -10791,7 +10791,7 @@
             "diataxis_coverage_ai": {
               "state": "measured",
               "value": 4,
-              "reason": "Tutorial: docs/tutorial.md contains a complete learning-oriented walkthrough deploying bacula-server with PostgreSQL and S3, creating credentials, and accessing Baculum. How-to: Multiple task-oriented guides exist including integrate-with-backup-integrator-charm.md (configuring backup-integrator), use-baculum.md (manual backup/restore procedures), and upgrade.md (upgrade procedures). Reference: Extensive factual documentation of actions, configurations, integrations (relations), and architecture across multiple files. Explanation: docs/explanation/security.md provides conceptual discussion of security considerations and design choices around Bacula protections."
+              "reason": "Tutorial: tutorial.md contains a complete step-by-step guided exercise deploying Bacula server, integrating components, and accessing the web interface. How-to: Multiple how-to guides cover task-oriented instructions (using Baculum, integrating with backup-integrator, upgrading). Reference: Multiple reference documents provide factual descriptions of actions, configurations, integrations, and architecture details. Explanation: security.md provides conceptual discussion of security issues and design choices in the Bacula charms implementation."
             }
           },
           "composition": null
@@ -10921,7 +10921,7 @@
             "diataxis_coverage_ai": {
               "state": "measured",
               "value": 4,
-              "reason": "Tutorial: docs/tutorial.md contains a complete learning-oriented walkthrough deploying bacula-server with hands-on steps. How-to: Multiple guides exist (use-baculum.md, integrate-with-backup-integrator-charm.md, upgrade.md) with task-oriented instructions for specific outcomes. Reference: Extensive factual descriptions exist covering actions, configurations, integrations, and architecture diagrams across multiple files. Explanation: docs/explanation/security.md provides conceptual discussion building understanding of security design choices and considerations."
+              "reason": "Tutorial: docs/tutorial.md contains a complete step-by-step guided exercise deploying Bacula server with S3 and PostgreSQL integration. How-to: docs/how-to/ contains task-oriented instructions for using Baculum, integrating with backup-integrator, and upgrading. Reference: docs/reference/ provides factual descriptions of actions, configurations, integrations, and architecture details. Explanation: docs/explanation/security.md discusses security concepts and design choices for the Bacula charms."
             }
           },
           "composition": null
@@ -11166,7 +11166,7 @@
             "diataxis_coverage_ai": {
               "state": "measured",
               "value": 4,
-              "reason": "Tutorial: getting-started.md provides a complete hands-on walkthrough deploying Chrony, configuring time sources, and enabling NTS with step-by-step commands. How-to: Multiple task-oriented guides exist - enabling NTS, setting up time sources, and upgrading - with specific instructions for each task. Reference: charm-architecture.md contains factual technical information about the charm's structure, how it works, component diagrams, and code organization. Explanation: charm-architecture.md also includes conceptual discussion explaining what Chrony is, how the charm operates as a machine charm, and how metrics collection works."
+              "reason": "Tutorial (1 point): getting-started.md provides a complete learning-oriented guided exercise with deployment, configuration, NTS setup, and cleanup. How-to (1 point): Multiple task-oriented guides exist including enable-nts.md, setup-time-sources.md, and upgrade.md with specific instructions for achieving outcomes. Reference (1 point): charm-architecture.md contains factual descriptions of the charm's structure, components, systemd service, ports, metrics, and code overview with technical specifications. Explanation (1 point): charm-architecture.md includes conceptual discussion explaining what Chrony is, how the charm operates as a machine charm, the relationship between Juju machines and units, and how metrics collection works with COS."
             }
           },
           "composition": null
@@ -11288,7 +11288,7 @@
             "diataxis_coverage_ai": {
               "state": "measured",
               "value": 4,
-              "reason": "Tutorial: docs/tutorial.md provides a complete learning-oriented walkthrough deploying the charm with step-by-step instructions. How-to: docs/how-to/integrate-with-cos.md and upgrade.md contain task-oriented guides for specific operations. Reference: docs/reference/ contains factual technical information including configurations.md (links to config specs), integrations.md (interface specifications), metrics.md (metric definitions), and charm-architecture.md (system architecture and event descriptions). Explanation: docs/explanation/security.md discusses security concepts including risks and patch management approach."
+              "reason": "Tutorial: docs/tutorial.md provides a complete learning-oriented walkthrough deploying the Chrony client charm with prerequisites, step-by-step commands, and environment setup/teardown. How-to: docs/how-to/integrate-with-cos.md and upgrade.md contain task-oriented instructions for specific goals (COS integration, upgrading). Reference: docs/reference/ contains factual descriptions of architecture, configurations, integrations, and metrics including interface specifications, event handling, and metric definitions. Explanation: docs/explanation/security.md discusses security concepts including risks and patch delivery, building understanding of design choices around attack surface and maintenance approach."
             }
           },
           "composition": null
@@ -11411,7 +11411,7 @@
             "diataxis_coverage_ai": {
               "state": "measured",
               "value": 2,
-              "reason": "How-to mode (1 point): The upgrade guide provides task-oriented instructions for upgrading the cloudflared charm with specific commands and verification steps. Reference mode (1 point): The upgrade guide includes factual descriptions of the juju refresh command and status output format. No tutorial content (no learning-oriented guided exercise), and no explanation content (no conceptual discussion or design rationale). The changelog is project metadata, not documentation content."
+              "reason": "How-to: The upgrade.md provides task-oriented instructions for upgrading the cloudflared charm with specific commands and verification steps. Reference: The upgrade.md references the juju refresh command with a link to its documentation and shows expected command outputs. No Tutorial (no learning-oriented guided exercise present) or Explanation (no conceptual discussion or design rationale provided). The changelog contains only metadata about documentation changes, not meaningful content in any mode."
             }
           },
           "composition": null
@@ -11785,7 +11785,7 @@
             "diataxis_coverage_ai": {
               "state": "measured",
               "value": 4,
-              "reason": "Tutorial: getting-started.md provides a complete learning-oriented guided exercise deploying the charm, integrating it with a backend, and testing it. How-to: Multiple guides cover specific tasks including caching with OpenStack Swift and upgrading the charm. Reference: Multiple pages contain factual descriptions including actions (links to Charmhub), configurations (links to Charmhub), integrations (detailed interface documentation with commands), charm-architecture.md (technical architecture details with containers, events, code structure), and external-access.md (configuration requirements). Explanation: security.md provides conceptual discussion of security design, risks like machine-in-the-middle attacks and caching sensitive data, with explanations of design choices and good practices."
+              "reason": "Tutorial: getting-started.md provides a complete guided exercise deploying the charm, integrating with backend-app, and testing. How-to: Multiple task-oriented guides exist including cache-content-with-openstack-swift.md with specific steps for Swift integration, and upgrade.md with upgrade instructions. Reference: Multiple factual descriptions exist including charm-architecture.md detailing containers and components, integrations.md describing relation endpoints with interface details, and links to actions/configurations on Charmhub. Explanation: security.md provides conceptual discussion of security design, risks like machine-in-the-middle attacks, and good practices for TLS and cache control."
             }
           },
           "composition": null
@@ -11908,7 +11908,7 @@
             "diataxis_coverage_ai": {
               "state": "measured",
               "value": 4,
-              "reason": "Tutorial: The 'Deploy with ingress-configurator and haproxy' tutorial provides a complete learning-oriented guided exercise with setup, deployment, configuration, and verification steps. How-to: Multiple task-oriented guides exist including 'Enable COS', 'Enable HTTPS', 'Hash client IP addresses', and 'Upgrade', each with concrete instructions for specific outcomes. Reference: Extensive factual descriptions of components, deployment architecture, configuration options, and relations exist across multiple reference pages. Explanation: Detailed discussion building understanding of caching behavior, charm design decisions, and security considerations is present across multiple explanation pages."
+              "reason": "Tutorial: 'deploy-with-ingress-configurator-and-haproxy.md' provides a complete learning-oriented walkthrough with hands-on steps to deploy Content Cache behind ingress-configurator and HAProxy, including environment setup, deployment, and verification. How-to: Multiple task-oriented guides exist (enable-cos.md, enable-https.md, hash-client-ip-addresses-in-logs.md, upgrade.md) with specific instructions for achieving concrete outcomes. Reference: 'components.md' and 'deployment-architecture.md' provide factual descriptions of the charm components, relations, and supported configurations. Explanation: Multiple discussion documents exist (caching-behavior.md, charm-design.md, security.md) that build understanding of concepts like cache expiry, design decisions, and security considerations."
             }
           },
           "composition": null
@@ -12031,7 +12031,7 @@
             "diataxis_coverage_ai": {
               "state": "measured",
               "value": 4,
-              "reason": "Tutorial: deploy-with-ingress-configurator-and-haproxy.md is a complete learning-oriented walkthrough with step-by-step deployment instructions and verification steps. How-to: Multiple guides provide task-oriented instructions (enable-cos.md, enable-https.md, hash-client-ip-addresses-in-logs.md, upgrade.md). Reference: components.md describes charms and their interfaces; deployment-architecture.md documents relations, endpoints, and required components in detail. Explanation: caching-behavior.md, charm-design.md, and security.md all provide conceptual discussion building understanding of design decisions, behavior, and architecture."
+              "reason": "Tutorial: deploy-with-ingress-configurator-and-haproxy.md provides a complete learning-oriented walkthrough with step-by-step instructions for deploying the charm. How-to: multiple guides (enable-cos.md, enable-https.md, hash-client-ip-addresses-in-logs.md, upgrade.md) provide task-oriented instructions for specific operations. Reference: components.md describes the charms/components, deployment-architecture.md documents relation endpoints and integration patterns. Explanation: caching-behavior.md, charm-design.md, and security.md provide conceptual discussion of design choices, caching mechanisms, and security considerations."
             }
           },
           "composition": null
@@ -12153,7 +12153,7 @@
             "diataxis_coverage_ai": {
               "state": "measured",
               "value": 3,
-              "reason": "Tutorial (1 point): getting-started.md provides a learning-oriented guided exercise deploying the charm with step-by-step instructions. How-to (1 point): manage-users.md and upgrade.md contain task-oriented instructions for specific outcomes like creating/removing users and upgrading. Reference (0 points): No factual interface/API/configuration documentation found. Explanation (1 point): index.md contains conceptual discussion explaining what the charm does, its relationship to Squid, and the forward proxy use case context."
+              "reason": "Tutorial (1 point): getting-started.md provides a guided learning exercise with setup steps and deployment commands. How-to (1 point): manage-users.md and upgrade.md contain task-oriented instructions for user management and upgrading. Reference (0 points): No factual interface/API/configuration reference documentation present; changelog describes changes but not interfaces. Explanation (1 point): index.md contains conceptual discussion explaining what the charm does, its subordinate nature, authentication support, and forward proxy use case context."
             }
           },
           "composition": null
@@ -12274,7 +12274,7 @@
             "diataxis_coverage_ai": {
               "state": "measured",
               "value": 4,
-              "reason": "Tutorial: docs/tutorial.md provides a complete step-by-step guided exercise deploying Discourse from scratch with concrete commands and validation steps. How-to: Multiple how-to guides exist with task-oriented instructions (configure hostname, S3, SMTP, SAML, backup/restore, upgrade). Reference: Substantial factual descriptions cover actions, configurations, integrations, charm architecture with technical specifications and interface details. Explanation: docs/explanation/security.md provides conceptual discussion of security risks, best practices, and design rationale around security topics."
+              "reason": "Tutorial: docs/tutorial.md contains a complete learning-oriented guided exercise for deploying Discourse for the first time with step-by-step instructions. How-to: Multiple how-to guides exist covering task-oriented instructions (configure hostname, S3, SMTP, SAML, backup/restore, upgrade, access Rails console). Reference: Extensive reference documentation includes actions, configurations, integrations, plugins, charm architecture diagrams and code structure, versioning, and external access requirements. Explanation: docs/explanation/security.md provides conceptual discussion building understanding of security concepts, risks, and design choices with explanations of DOS attacks, CORS policies, encryption, and best practices."
             }
           },
           "composition": null
@@ -12396,7 +12396,7 @@
             "diataxis_coverage_ai": {
               "state": "measured",
               "value": 4,
-              "reason": "Tutorial: Two substantial step-by-step tutorials walk through deploying DNS infrastructure (simple-deployment.md and secondary-and-resolver.md with concrete commands and expected outputs). How-to: Task-oriented upgrade instructions exist in upgrade.rst with specific refresh commands for each charm. Reference: Multiple pages provide factual technical descriptions including components.md (lists charms and snaps), bind-charm-architecture.md and dns-policy-charm-architecture.md (architecture diagrams and module descriptions), and project-architecture.md (deployment patterns and integration details). Explanation: project-overview.md explains design choices around the dns_record interface, request merging, and the policy layer; security.md discusses security concepts and best practices. All four modes have meaningful actual content beyond headings."
+              "reason": "Tutorial: Two complete guided exercises walk through deploying DNS servers with specific outcomes (simple-deployment.md and secondary-and-resolver.md). How-to: Task-oriented instructions for upgrading and contributing (upgrade.rst, contribute.rst). Reference: Factual descriptions of components, architectures, and commands (components.md, bind-charm-architecture.md, dns-policy-charm-architecture.md, project-architecture.md). Explanation: Discussion building understanding of concepts like dns_record interface, request merging, policy layers, security considerations, and project overview (project-overview.md, security.md)."
             }
           },
           "composition": null
@@ -12518,7 +12518,7 @@
             "diataxis_coverage_ai": {
               "state": "measured",
               "value": 4,
-              "reason": "Tutorial: Two complete step-by-step guided exercises exist (simple-deployment.md and secondary-and-resolver.md) with actual deployment commands and verification steps. How-to: upgrade.rst contains task-oriented instructions for upgrading charms. Reference: Multiple reference documents exist with factual descriptions including components.md (listing charms and snaps), bind-charm-architecture.md (component diagram and descriptions), dns-policy-charm-architecture.md (component diagram), and project-architecture.md (deployment patterns and integration details). Explanation: Multiple explanation documents exist including project-overview.md (discusses dns_record interface design, conflict handling decisions, policy layer rationale) and security.md (discusses security concepts and considerations). The changelog does not count as it only lists changes without substantial content in any mode."
+              "reason": "Tutorial: Two complete guided exercises (simple-deployment and secondary-and-resolver) walk through deploying DNS infrastructure. How-to: Upgrade instructions with actual commands for each charm variant. Reference: Components list with descriptions, architecture diagrams for bind and dns-policy charms showing internal modules and relationships, project architecture with integration diagrams. Explanation: Project overview discusses dns_record interface design, request merging, policy layer rationale, and deployment patterns; security page discusses configuration risks and best practices."
             }
           },
           "composition": null
@@ -12640,7 +12640,7 @@
             "diataxis_coverage_ai": {
               "state": "measured",
               "value": 4,
-              "reason": "Tutorial: Two complete guided exercises (simple-deployment.md and secondary-and-resolver.md) walk users through deploying DNS servers step-by-step with commands and expected outputs. How-to: upgrade.rst provides task-oriented instructions for upgrading charms. Reference: Multiple documents (components.md, bind-charm-architecture.md, dns-policy-charm-architecture.md, project-architecture.md) contain factual descriptions of interfaces, components, and architecture with diagrams. Explanation: project-overview.md and security.md provide conceptual discussion about dns_record interface design, request merging decisions, policy layers, and security considerations."
+              "reason": "Tutorial: Two complete step-by-step tutorials guide users through deploying DNS servers with clear exercises and verification steps. How-to: Task-oriented upgrade instructions exist in docs/how-to/upgrade.rst with specific commands for each charm. Reference: Multiple reference documents describe charm architectures, components, and project structure with technical details and diagrams. Explanation: Several explanation documents discuss project design, the dns_record interface concept, request merging philosophy, and security considerations."
             }
           },
           "composition": null
@@ -12763,7 +12763,7 @@
             "diataxis_coverage_ai": {
               "state": "measured",
               "value": 4,
-              "reason": "Tutorial: Two complete step-by-step tutorials guide users through deploying DNS servers with actual commands and verification steps. How-to: Upgrade procedures with specific commands for each charm, plus contribution guidelines. Reference: Detailed component descriptions, architecture diagrams with module relationships, and charm code structure for bind and dns-policy. Explanation: Project design rationale covering dns_record interface design, conflict handling philosophy, policy layer architecture, and security considerations with concrete examples."
+              "reason": "Tutorial: Two complete guided exercises walk users through deploying DNS servers step-by-step (simple-deployment.md and secondary-and-resolver.md). How-to: Task-oriented instructions for upgrading charms are provided (upgrade.rst). Reference: Multiple pages document architecture, components, and technical details (bind-charm-architecture.md, dns-policy-charm-architecture.md, components.md, project-architecture.md). Explanation: project-overview.md discusses design choices like the dns_record interface and request merging strategy, and security.md explains security concepts and best practices."
             }
           },
           "composition": null
@@ -12885,7 +12885,7 @@
             "diataxis_coverage_ai": {
               "state": "measured",
               "value": 4,
-              "reason": "Tutorial: Two complete step-by-step guided exercises exist (simple-deployment.md and secondary-and-resolver.md) with actual deployment instructions, commands, and verification steps. How-to: The upgrade.rst guide provides task-oriented instructions for upgrading charms with specific commands. Reference: Multiple pages contain factual descriptions including components.md (list of charms and snaps), bind-charm-architecture.md and dns-policy-charm-architecture.md (architectural diagrams and module descriptions), and project-architecture.md (system architecture with diagrams). Explanation: project-overview.md discusses design concepts like the dns_record interface and handling merge conflicts, while security.md provides conceptual security guidance - both build understanding of concepts and design choices."
+              "reason": "Tutorial: Two step-by-step guided exercises present (simple deployment and secondary/resolver deployment with concrete commands and verification steps). How-to: Upgrade instructions with specific commands for each charm component. Reference: Multiple architectural diagrams and factual descriptions of components, charm architectures (bind, dns-policy), and project architecture. Explanation: Discussion of design choices including dns_record interface design, conflict handling philosophy, policy layer rationale, and security considerations."
             }
           },
           "composition": null
@@ -13015,7 +13015,7 @@
             "diataxis_coverage_ai": {
               "state": "measured",
               "value": 4,
-              "reason": "Tutorial: Two detailed step-by-step tutorials with complete commands and verification steps for deploying DNS servers. How-to: Upgrade instructions with tab-set examples for multiple charms, and contribution guidelines. Reference: Multiple architecture documents with mermaid diagrams describing charm components, modules, and interactions; components list with descriptions of all charms and snaps. Explanation: Project overview discussing design decisions and concepts (dns_record interface, conflict handling, policy layer); security document covering risks and best practices."
+              "reason": "Tutorial: Two complete step-by-step tutorials (simple-deployment.md and secondary-and-resolver.md) guide users through deploying DNS servers with actual commands and verification steps. How-to: upgrade.rst provides task-oriented instructions for upgrading charms with specific commands. Reference: Multiple documents describe technical details - components.md lists all charms and snaps, bind-charm-architecture.md and dns-policy-charm-architecture.md show module structures with diagrams, project-architecture.md describes system architecture. Explanation: project-overview.md discusses design choices and concepts (dns_record interface, conflict handling, policy layer), and security.md explains security considerations and best practices."
             }
           },
           "composition": null
@@ -13145,7 +13145,7 @@
             "diataxis_coverage_ai": {
               "state": "measured",
               "value": 4,
-              "reason": "Tutorial: Two complete guided exercises deploy DNS servers with step-by-step instructions (simple-deployment.md and secondary-and-resolver.md). How-to: Task-oriented upgrade instructions are provided (upgrade.rst). Reference: Extensive factual descriptions of components, architectures, and project structure appear across multiple files (components.md, bind-charm-architecture.md, dns-policy-charm-architecture.md, project-architecture.md). Explanation: Conceptual discussion of DNS record interface design, request merging decisions, and security considerations exists (project-overview.md, security.md)."
+              "reason": "Tutorial: Two complete step-by-step guided exercises exist (simple-deployment.md and secondary-and-resolver.md) with commands, expected outputs, and progressive learning objectives. How-to: The upgrade.rst file provides task-oriented instructions for upgrading charms using juju refresh commands. Reference: Multiple files contain factual technical descriptions including components.md (listing charms and snaps), bind-charm-architecture.md and dns-policy-charm-architecture.md (showing module structures with diagrams), and project-architecture.md (describing integration patterns and deployment outputs). Explanation: project-overview.md discusses design concepts like the dns_record interface, conflict handling, and policy layer rationale, while security.md covers security considerations and best practices."
             }
           },
           "composition": null
@@ -13267,7 +13267,7 @@
             "diataxis_coverage_ai": {
               "state": "measured",
               "value": 4,
-              "reason": "All four Di\u00e1taxis modes have meaningful content: (1) Tutorial mode is covered by three step-by-step guided exercises deploying Falco, Falcosidekick, and connecting them (tutorial/getting-started.md, tutorial/deploy-falcosidekick.md, tutorial/end-to-end-deployment.md). (2) How-to mode contains task-oriented guides for configuring custom repositories, TLS termination with ingress, COS integration, troubleshooting, and upgrading (how-to/*.md files). (3) Reference mode provides factual technical details on actions, configurations, integrations, architecture diagrams, and metrics (reference/*.md files). (4) Explanation mode discusses design patterns and architecture in charm-design.md with detailed module responsibilities and data flow diagrams."
+              "reason": "All four Di\u00e1taxis modes have meaningful content: (1) Tutorial: Three detailed guided exercises walking through Falco deployment, Falcosidekick deployment, and end-to-end integration with commands and verification steps. (2) How-to: Multiple task-oriented guides covering custom repository configuration, TLS setup, COS integration, troubleshooting, and upgrades. (3) Reference: Technical documentation on actions, configurations, integrations, architecture diagrams, and metrics endpoints. (4) Explanation: Discussion of charm design patterns with architectural diagrams and security overview."
             }
           },
           "composition": null
@@ -13388,7 +13388,7 @@
             "diataxis_coverage_ai": {
               "state": "measured",
               "value": 4,
-              "reason": "All four Di\u00e1taxis modes contain meaningful content. Tutorials include step-by-step guided exercises for deploying Falco, Falcosidekick, and connecting them. How-to guides provide task-oriented instructions for operations like configuring custom repositories, TLS with ingress, COS integration, troubleshooting, and upgrading. Reference sections document configurations, actions, integrations, architecture diagrams, and metrics. Explanations discuss charm design patterns, module organization, and security considerations."
+              "reason": "Tutorial: Three complete guided exercises walk through deploying Falco, Falcosidekick, and connecting them end-to-end with actual commands and verification steps. How-to: Multiple task-oriented guides cover configuring custom repositories, TLS termination, COS integration, troubleshooting, and upgrades with concrete steps. Reference: Extensive factual documentation of actions, configurations, integrations, architecture diagrams, and metrics with technical specifications. Explanation: Two discussion documents explain charm design patterns/architecture and security concepts (though security.md contains only placeholder text, it represents explanatory intent)."
             }
           },
           "composition": null
@@ -13509,8 +13509,8 @@
             },
             "diataxis_coverage_ai": {
               "state": "measured",
-              "value": 4,
-              "reason": "Tutorial: getting-started.md contains a complete step-by-step guided exercise deploying the charm with Flask (1 point). How-to: Multiple how-to guides with task-oriented instructions exist (configure-external-hostname.md, configure-hsts.md, enforce-https.md, provide-certificate.md, select-gateway-class.md, etc.) (1 point). Reference: actions.md links to reference content, charm-architecture.md and deployment-architecture.md contain detailed technical descriptions of architecture, components, events, and Kubernetes resources (1 point). Explanation: workflow.md describes the charm's operational workflow, design.md discusses design choices like TLS termination and ingress-configurator pairing, and security-overview.md provides conceptual understanding of security considerations (1 point)."
+              "value": 3,
+              "reason": "Tutorial (1 point): docs/tutorial/getting-started.md provides a complete learning-oriented guided exercise deploying the charm with Flask. How-to (1 point): Multiple how-to guides provide task-oriented instructions (select-gateway-class.md, configure-external-hostname.md, provide-certificate.md, enforce-https.md, configure-hsts.md, get-proxied-endpoints.md, upgrade.md). Reference (1 point): docs/reference/ contains factual descriptions including charm-architecture.md (charm structure, events, code overview), deployment-architecture.md (deployment patterns), and actions.md (links to action documentation). Explanation (0 points): While docs/explanation/ exists with workflow.md, design.md, and security-overview.md, these are brief and lack the depth of discussion that builds understanding of concepts or design choices - they are more descriptive overviews than explanatory discussions."
             }
           },
           "composition": null
@@ -13632,7 +13632,7 @@
             "diataxis_coverage_ai": {
               "state": "measured",
               "value": 4,
-              "reason": "Tutorial: deploy-and-verify-on-kubernetes provides a complete learning exercise deploying the charm, publishing under a hostname, and verifying with Go tool. How-to: multiple guides cover configure-ingress, hostname, integrate-with-cos, upgrade, and troubleshoot-deployment. Reference: charm-configuration documents the hostname option, integrations documents endpoints and metrics, platforms-and-prerequisites lists required tools. Explanation: gopkg-service explains what gopkg.in does for Go programs and why, ingress explains how requests reach the workload through the controller architecture."
+              "reason": "Tutorial: deploy-and-verify-on-kubernetes.rst contains a complete guided exercise with prerequisites, steps to deploy the charm, publish under hostname, verify deployment, switch hostname, fetch a module with Go tool, and clean up. How-to: Multiple task-oriented guides exist (configure-ingress.rst, configure-hostname-and-check-go-import.rst, integrate-with-cos.rst, upgrade-the-charm.rst, troubleshoot-deployment.rst) with specific procedures for achieving outcomes like enabling HTTPS and integrating with observability. Reference: charm-configuration.rst describes the hostname option and its mapping, integrations.rst documents endpoints/metrics/logs/alert rules, platforms-and-prerequisites.rst lists architectures/tooling/channels. Explanation: gopkg-service.rst explains why gopkg.in exists and what the service does conceptually, ingress.rst discusses how request routing works and design choices around TLS termination and hostname settings."
             }
           },
           "composition": null
@@ -13755,7 +13755,7 @@
             "diataxis_coverage_ai": {
               "state": "measured",
               "value": 4,
-              "reason": "1. Tutorial: 'docs/tutorial/getting-started.md' provides a complete hands-on guided exercise deploying HAProxy, configuring TLS, integrating with a backend, and verifying traffic flow. 2. How-to: Multiple substantial task-oriented guides exist, including 'configure-high-availability.md', 'integrate-with-non-charm-workload.md', 'enable-ddos-protection.md', etc., with concrete steps to achieve specific outcomes. 3. Reference: 'docs/reference/relation-endpoints.md' provides factual descriptions of all relation interfaces; 'docs/reference/ftp-support.md', 'grpc-support.md', and 'http2-support.md' describe protocol capabilities; 'docs/reference/terraform.md' documents the Terraform module. 4. Explanation: 'docs/explanation/high-availability.md' discusses active/active and active/passive cluster concepts; 'docs/explanation/security.md' explains security design choices including DoS mitigation and privacy considerations; 'docs/explanation/project-architecture.md' provides architectural context of charm components."
+              "reason": "1. Tutorial: The getting-started.md guide provides step-by-step instructions for deploying HAProxy and integrating it with a backend application (Pollen charm), including verification steps. 2. How-to: Multiple task-oriented guides exist, such as configuring high availability, setting backend protocols, enabling DDoS protection, and hashing client IPs. 3. Reference: Technical specifications are provided for relation endpoints, supported protocols (FTP, gRPC, HTTP/2), Terraform module parameters, and SPOE authentication constraints. 4. Explanation: Conceptual discussion is present covering security practices (DoS mitigation, privacy compliance), high availability architectures (active/active vs active/passive), and project architecture overview."
             }
           },
           "composition": null
@@ -13877,7 +13877,7 @@
             "diataxis_coverage_ai": {
               "state": "measured",
               "value": 4,
-              "reason": "Tutorial: getting-started.md provides a complete step-by-step guided exercise deploying ingress-configurator with Gateway API. How-to: Multiple task-oriented guides exist (upgrade.md, integrate-non-charm-workload.md, integrate-tcp-non-charm-workload.md, add-features-to-ingress-requirer.md, loadbalancing-grpc.md, route-multiple-workloads.md) with specific deployment and configuration instructions. Reference: cache-config.md and gateway-route.md provide factual descriptions of relation interfaces including databag fields and configuration values. Explanation: modes-of-operation.md, gateway-route.md, and haproxy-route-tcp.md contain conceptual discussion of architecture, design choices, and how components work together."
+              "reason": "Tutorial: getting-started.md provides a complete guided deployment exercise with step-by-step commands. How-to: Multiple task-oriented guides exist (upgrade.md, integrate-non-charm-workload.md, add-features-to-ingress-requirer.md, etc.) with specific deployment and configuration instructions. Reference: cache-config.md and gateway-route.md document databag fields and interface specifications factually. Explanation: modes-of-operation.md, gateway-route.md, and haproxy-route-tcp.md discuss architectural concepts, design choices, and how components work together conceptually."
             }
           },
           "composition": null
@@ -14000,7 +14000,7 @@
             "diataxis_coverage_ai": {
               "state": "measured",
               "value": 4,
-              "reason": "Tutorial: getting-started.md provides a complete hands-on deployment walkthrough with verification steps. How-to: Multiple task-oriented guides exist (configure-high-availability.md, configure-backend-protocol.md, enable-ddos-protection.md, etc.) with concrete instructions for specific outcomes. Reference: Multiple pages provide factual technical specifications including relation-endpoints.md (interface definitions), ftp-support.md, grpc-support.md, http2-support.md (protocol capabilities), spoe-auth-support.md (authentication architecture), terraform.md (module parameters), and changelog.md (version history). Explanation: security.md and high-availability.md discuss conceptual understanding of design choices and operational patterns."
+              "reason": "Tutorial: getting-started.md contains a complete step-by-step deployment exercise with concrete commands and verification steps. How-to: Multiple task-oriented guides exist (configure-high-availability.md, enable-ddos-protection.md, hash-client-ip-addresses-in-logs.md, etc.) with specific operational procedures. Reference: relation-endpoints.md lists interface specifications, ftp-support.md and grpc-support.md describe protocol capabilities, terraform.md documents module parameters. Explanation: security.md discusses threat models and protection concepts, high-availability.md explains HA architectures, project-architecture.md describes system design."
             }
           },
           "composition": null
@@ -14130,7 +14130,7 @@
             "diataxis_coverage_ai": {
               "state": "measured",
               "value": 4,
-              "reason": "Tutorial: 'getting-started.md' provides a complete guided exercise deploying HAProxy with Pollen, including setup, TLS configuration, and verification steps. How-to: Multiple task-oriented guides exist (configure-backend-protocol.md, configure-high-availability.md, enable-ddos-protection.md, etc.) with concrete instructions for specific outcomes. Reference: Technical descriptions exist for protocols (ftp-support.md, grpc-support.md, http2-support.md), relation-endpoints.md documents interfaces, and terraform.md covers module parameters. Explanation: security.md discusses design choices around attacks and compliance; high-availability.md explains HA concepts and configurations; project-architecture.md provides conceptual understanding of system design."
+              "reason": "Tutorial: 'docs/tutorial/getting-started.md' provides a complete hands-on guided exercise deploying HAProxy, configuring TLS, integrating with Pollen backend, and verifying operation. How-to: Multiple task-oriented guides exist (e.g. 'configure-high-availability.md', 'enable-ddos-protection.md', 'hash-client-ip-addresses-in-logs.md') with concrete procedural steps for achieving specific outcomes. Reference: 'docs/reference/relation-endpoints.md' documents interfaces and endpoints; 'ftp-support.md', 'grpc-support.md', and 'http2-support.md' describe protocol capabilities and constraints; 'terraform.md' covers module inputs/outputs; changelog provides version history. Explanation: 'docs/explanation/security.md' discusses attack vectors and mitigation rationale; 'high-availability.md' explains active/active vs active/passive topologies and design tradeoffs; 'project-architecture.md' describes component relationships and integration patterns."
             }
           },
           "composition": null
@@ -14251,7 +14251,7 @@
             "diataxis_coverage_ai": {
               "state": "measured",
               "value": 4,
-              "reason": "Tutorial: getting-started.md provides a complete guided exercise deploying Hockeypuck with step-by-step instructions and expected outcomes. How-to: Multiple task-oriented guides exist (backup-and-restore, integrate-with-cos, manage-gpg-keys, manage-admin-keys, reconcile-between-two-keyservers, upgrade) with concrete commands for specific outcomes. Reference: Multiple factual technical documents exist including actions.md, charm-architecture.md (detailed architecture with diagrams and technical specifications), configurations.md, integrations.md (interface specifications), metrics.md (metric definitions), and ports.md. Explanation: security.md discusses concepts around risks and best practices with reasoning about design choices and trade-offs."
+              "reason": "Tutorial: 'getting-started.md' provides a complete hands-on exercise deploying Hockeypuck with PostgreSQL and Traefik, including setup, deployment commands, and verification steps. How-to: Multiple guides cover specific tasks like 'backup-and-restore-hockeypuck.md', 'manage-gpg-keys.md', 'integrate-with-cos.md', and 'reconcile-between-two-keyservers.md' with concrete procedural instructions. Reference: Technical specifications in 'actions.md', 'configurations.md', 'integrations.md', 'metrics.md', 'ports.md', and especially 'charm-architecture.md' which details the architecture with diagrams, container structure, OCI images, Juju events, and code organization. Explanation: 'charm-architecture.md' explains design choices (sidecar pattern, Pebble usage, 12-factor framework) and 'security.md' discusses security risks and best practices with conceptual understanding of trade-offs."
             }
           },
           "composition": null
@@ -14374,7 +14374,7 @@
             "diataxis_coverage_ai": {
               "state": "measured",
               "value": 4,
-              "reason": "Tutorial: getting-started.md contains a complete hands-on walkthrough deploying and configuring the charm with specific commands and verification steps. How-to: upgrade.md provides task-oriented instructions for upgrading different proxy charms with specific commands. Reference: Multiple files contain factual technical information - integrations.md describes interfaces and supported charms, charm-architecture.md describes technical aspects, actions.md and configurations.md reference specifications (though links only, the integrations file has actual content). Explanation: modes.md explains the two operational modes (integrator and pass-through) with conceptual discussion, and security.md discusses security concepts and best practices."
+              "reason": "Tutorial (1 point): tutorial/getting-started.md provides a complete hands-on guided exercise with prerequisites, step-by-step deployment, integration, testing, and cleanup. How-to (1 point): how-to/upgrade.md contains task-oriented instructions for upgrading three different charms with specific commands and verification steps. Reference (1 point): reference/integrations.md provides factual descriptions of the http-proxy and delegate-http-proxy interfaces with supported charms and example commands; actions.md and configurations.md link to external references. Explanation (1 point): explanation/modes.md discusses the two operating modes (integrator and pass-through) with conceptual descriptions; explanation/security.md provides discussion of security best practices and principles."
             }
           },
           "composition": null
@@ -14497,7 +14497,7 @@
             "diataxis_coverage_ai": {
               "state": "measured",
               "value": 4,
-              "reason": "Tutorial (1): getting-started.md contains a complete hands-on walkthrough deploying and configuring the charm with step-by-step commands and verification steps. How-to (1): upgrade.md provides task-oriented instructions for upgrading the charms with specific commands. Reference (1): integrations.md documents interface specifications with supported charms and example commands; actions.md and configurations.md reference external specifications. Explanation (1): modes.md explains the two operational modes (integrator and pass-through) with conceptual discussion; security.md discusses security best practices and principles."
+              "reason": "Tutorial: getting-started.md contains a complete hands-on walkthrough deploying and testing the charm with multiple steps and verification commands. How-to: upgrade.md provides task-oriented instructions for upgrading different proxy charms with specific commands. Reference: Multiple files contain factual technical specifications including actions, configurations, integrations with interface names and supported charms, and external access requirements. Explanation: modes.md explains two operational modes (integrator vs pass-through) with conceptual discussion, and security.md discusses security principles and best practices."
             }
           },
           "composition": null
@@ -14620,7 +14620,7 @@
             "diataxis_coverage_ai": {
               "state": "measured",
               "value": 4,
-              "reason": "Tutorial: getting-started.md provides a complete hands-on walkthrough deploying the charm with specific commands and verification steps. How-to: upgrade.md contains task-oriented instructions for upgrading the charm with specific commands and verification. Reference: actions.md, configurations.md, integrations.md provide factual descriptions of interfaces and commands; charm-architecture.md describes the charm structure. Explanation: modes.md discusses the two operational modes with conceptual explanations; security.md discusses best practices and security concepts."
+              "reason": "Tutorial: 'getting-started.md' provides a complete hands-on walkthrough deploying and configuring the charm with step-by-step commands and expected outcomes. How-to: 'upgrade.md' contains task-oriented instructions for upgrading different proxy charms with specific commands and verification steps. Reference: 'integrations.md' documents the http-proxy and delegate-http-proxy interfaces with supported charms and example commands; 'actions.md' and 'configurations.md' point to technical specifications. Explanation: 'modes.md' explains the two operational modes (integrator and pass-through) with conceptual differences; 'security.md' discusses security best practices and design considerations."
             }
           },
           "composition": null
@@ -14750,7 +14750,7 @@
             "diataxis_coverage_ai": {
               "state": "measured",
               "value": 4,
-              "reason": "Tutorial: getting-started.md provides a complete hands-on walkthrough deploying and testing the charm with step-by-step commands. How-to: upgrade.md contains task-oriented instructions for upgrading three different charms with specific procedures. Reference: integrations.md describes interfaces and supported charms, and actions.md/configurations.md reference external specifications (though minimal). Explanation: modes.md explains two operational modes with conceptual differences, and security.md discusses security principles and best practices."
+              "reason": "1. Tutorial: getting-started.md contains a complete hands-on walkthrough deploying the charm with concrete steps and commands. 2. How-to: upgrade.md provides task-oriented instructions for upgrading different proxy charms. 3. Reference: Multiple files contain factual technical information - actions.md, configurations.md, integrations.md describe interfaces and endpoints, and charm-architecture.md describes technical structure. 4. Explanation: modes.md explains the two operational modes with conceptual discussion, and security.md discusses security concepts and best practices."
             }
           },
           "composition": null
@@ -14993,7 +14993,7 @@
             "diataxis_coverage_ai": {
               "state": "measured",
               "value": 3,
-              "reason": "Tutorial: docs/tutorial.md provides a complete step-by-step guided exercise deploying Indico with integrations and verification. How-to: Multiple task-oriented guides exist (configure-s3.md, configure-saml.md, install-plugins.md, customize-theme.md, redeploy.md, etc.) with specific procedural instructions. Reference: Multiple reference documents provide factual technical information including actions.md, configurations.md, integrations.md, plugins.md, charm-architecture.md with architecture diagrams, component descriptions, and specifications. Explanation: No meaningful conceptual discussion or design rationale content found\u2014charm-architecture.md is descriptive/factual (reference) rather than explanatory about why design choices were made."
+              "reason": "Tutorial: docs/tutorial.md contains a complete learning-oriented guided exercise walking users through deployment with requirements, setup, and verification. How-to: Multiple how-to guides provide task-oriented instructions (configure-s3.md, configure-saml.md, install-plugins.md, etc.). Reference: Multiple reference documents contain factual descriptions including actions.md, configurations.md, integrations.md, charm-architecture.md, and plugins.md. Explanation: No meaningful explanatory content that builds understanding of concepts or design choices; charm-architecture.md was moved from Explanation to Reference per the changelog and contains factual descriptions rather than conceptual discussion."
             }
           },
           "composition": null
@@ -15114,7 +15114,7 @@
             "diataxis_coverage_ai": {
               "state": "measured",
               "value": 4,
-              "reason": "Tutorial: 'getting-started.md' provides a complete hands-on guide with concrete deployment steps, prerequisites, and commands for deploying Jenkins, exposing it via ingress, and integrating agents. How-to: Multiple how-to guides exist with task-oriented instructions (e.g., 'configure-installable-plugins.md', 'get-admin-password.md', 'backup-and-restore-jenkins.md', 'upgrade.md') covering specific operational tasks with concrete commands. Reference: 'actions.md', 'configurations.md', 'integrations.md', and 'external-access.md' provide factual technical specifications of the charm's interfaces, configuration options, and network requirements. Explanation: 'charm-architecture.md' contains conceptual discussion with diagrams explaining containers, components, integrations, event handling, and design choices."
+              "reason": "Tutorial (1): getting-started.md provides a complete hands-on guided exercise deploying jenkins-k8s, accessing UI, and deploying agents. How-to (1): Multiple how-to guides with task-oriented instructions for specific outcomes (configure plugins, memory, backup/restore, rotate credentials, integrate agents, etc.). Reference (1): actions.md, configurations.md, integrations.md, external-access.md, and charm-architecture.md provide factual descriptions of interfaces, configuration options, and system components. Explanation (1): charm-architecture.md discusses design and component relationships; ADR-001 explains architectural decisions and rationale for path prefix handling."
             }
           },
           "composition": null
@@ -15233,9 +15233,9 @@
               "value": ""
             },
             "diataxis_coverage_ai": {
-              "state": "insufficient_data",
-              "value": null,
-              "reason": "AI documentation assessment is unavailable."
+              "state": "measured",
+              "value": 3,
+              "reason": "Reference (1 point): Contains factual descriptions in charm-architecture.md (containers, components, integrations, events, code structure), integrations.md (interface details), and implicit actions/configurations references. How-to (1 point): Contains task-oriented instructions in upgrade.md (step-by-step upgrade process with commands) and contribute.md (development setup, testing, building, deploying). Explanation (1 point): Contains conceptual discussion in charm-architecture.md explaining how components work together, the purpose of the agent, event handling logic, and design choices. Tutorial (0 points): The tutorial/getting-started.md only redirects to external documentation without providing actual guided exercise content."
             }
           },
           "composition": null
@@ -15355,9 +15355,9 @@
               "value": ""
             },
             "diataxis_coverage_ai": {
-              "state": "insufficient_data",
-              "value": null,
-              "reason": "AI documentation assessment is unavailable."
+              "state": "measured",
+              "value": 4,
+              "reason": "Tutorial (1): getting-started.md references full Jenkins tutorial with hands-on guidance. How-to (1): configure-agent-node-label.md and upgrade.md provide task-oriented instructions for specific operations like configuring labels and upgrading. Reference (1): actions.md, configurations.md, integrations.md, and charm-architecture.md provide factual technical descriptions of interfaces, commands, services, and architecture diagrams. Explanation (1): workload.md discusses concepts about how the workload is managed using apt packages and systemd, explaining design choices."
             }
           },
           "composition": null
@@ -15477,9 +15477,9 @@
               "value": ""
             },
             "diataxis_coverage_ai": {
-              "state": "insufficient_data",
-              "value": null,
-              "reason": "AI documentation assessment is unavailable."
+              "state": "measured",
+              "value": 3,
+              "reason": "Reference: Multiple pages contain factual technical content including release notes with version details, configurations, actions, and system requirements. How-to: Practical instructions for backup/restore, adding mail users, and manual failover with specific commands. Explanation: Security and design documents exist but contain only TODO placeholders without actual explanatory content. Tutorial: Contains template structure but all actual content is placeholder text and TODOs."
             }
           },
           "composition": null
@@ -15599,9 +15599,9 @@
               "value": ""
             },
             "diataxis_coverage_ai": {
-              "state": "insufficient_data",
-              "value": null,
-              "reason": "AI documentation assessment is unavailable."
+              "state": "measured",
+              "value": 3,
+              "reason": "Reference: extensive coverage including actions, configurations, relations, events, metrics, architecture, and 7 detailed release notes. How-to: meaningful guides for backup/restore, adding mail users, and manual failover with complete procedures. Explanation: changelog shows design evolution but no conceptual explanation content in explanation/ directory (only placeholders). Tutorial: only placeholder content without actual implementation."
             }
           },
           "composition": null
@@ -15721,9 +15721,9 @@
               "value": ""
             },
             "diataxis_coverage_ai": {
-              "state": "insufficient_data",
-              "value": null,
-              "reason": "AI documentation assessment is unavailable."
+              "state": "measured",
+              "value": 3,
+              "reason": "Reference: Multiple pages contain factual descriptions including release notes with version history, feature descriptions, and configuration details (docs/release-notes/release-notes-000*.rst). How-to: Two complete guides provide task-oriented instructions: 'How to back up and restore' with specific steps for configuring encryption, integrating with Bacula, and running backups/restores; and 'How to add mail users' with concrete instructions for creating secrets, granting access, and updating credentials. Explanation: The failover guide includes conceptual discussion of the active/passive architecture and design rationale for synchronization approaches. Tutorial: The tutorial files are template placeholders with TODO markers and no actual guided exercise content."
             }
           },
           "composition": null
@@ -15843,9 +15843,9 @@
               "value": ""
             },
             "diataxis_coverage_ai": {
-              "state": "insufficient_data",
-              "value": null,
-              "reason": "AI documentation assessment is unavailable."
+              "state": "measured",
+              "value": 3,
+              "reason": "Tutorial: Contains structured learning-oriented content in basic-deployment.rst with steps like 'What you'll do', 'What you'll need', deployment instructions, and 'Next steps'. How-to: Multiple task-oriented guides exist including back-up-restore.rst (backup/restore procedures with prerequisites and steps), failover.md (manual failover procedures), and how-to-add-mail-users.rst (managing mail users through secrets). Reference: Multiple factual descriptions including release-notes-0001 through 0007 with specific version requirements, features, and configurations; changelog.rst documents changes across dated revisions. Explanation: No meaningful conceptual discussion found - charm-design.rst and security.rst are TODO templates without actual content explaining design choices or concepts."
             }
           },
           "composition": null
@@ -15973,9 +15973,9 @@
               "reason": "Snap-only repositories are exempt from Sphinx Stack adoption."
             },
             "diataxis_coverage_ai": {
-              "state": "insufficient_data",
-              "value": null,
-              "reason": "AI documentation assessment is unavailable."
+              "state": "measured",
+              "value": 3,
+              "reason": "Tutorial: basic-deployment.rst contains a structured learning-oriented guide with steps, prerequisites, setup, deployment, and cleanup. How-to: Multiple how-to guides with task-oriented instructions exist (back-up-restore.rst, failover.md, how-to-add-mail-users.rst show complete procedures for specific outcomes). Reference: Multiple reference documents contain factual technical information including release notes with version tables, actions, configurations, relation endpoints, and architectural details. Explanation: No meaningful conceptual discussion or design rationale is present; charm-design.rst and security.rst contain only TODO placeholders without actual content, and index.rst is navigational scaffolding."
             }
           },
           "composition": null
@@ -16095,9 +16095,9 @@
               "value": "2.0"
             },
             "diataxis_coverage_ai": {
-              "state": "insufficient_data",
-              "value": null,
-              "reason": "AI documentation assessment is unavailable."
+              "state": "measured",
+              "value": 4,
+              "reason": "Tutorial (1 point): getting-started.md provides a complete learning-oriented guided exercise deploying Synapse with PostgreSQL and Traefik, creating users, and accessing via Element Desktop. How-to (1 point): Multiple task-oriented guides exist including backup-and-restore.md, configure-smtp.md, and horizontally-scale.md with concrete steps for specific operational outcomes. Reference (1 point): Substantive factual descriptions found in configurations.md, integrations.md (detailed interface specifications), and charm-architecture.md (OCI images, containers, code structure). Explanation (1 point): charm-architecture.md explains design choices (sidecar pattern, Pebble layers, container roles) and external-access.md discusses federation concepts and configuration implications."
             }
           },
           "composition": null
@@ -16866,9 +16866,9 @@
               "value": ""
             },
             "diataxis_coverage_ai": {
-              "state": "insufficient_data",
-              "value": null,
-              "reason": "AI documentation assessment is unavailable."
+              "state": "measured",
+              "value": 2,
+              "reason": "Reference (1 point): charm-architecture.md provides factual descriptions of the system components, Pebble layers, OCI images, container configurations, integrations, and charm code structure. How-to (1 point): upgrade.md contains task-oriented instructions for upgrading the charm using the juju refresh command. The changelog contains only metadata about documentation reorganization with no meaningful content in any mode."
             }
           },
           "composition": null
@@ -16988,9 +16988,9 @@
               "value": ""
             },
             "diataxis_coverage_ai": {
-              "state": "insufficient_data",
-              "value": null,
-              "reason": "AI documentation assessment is unavailable."
+              "state": "measured",
+              "value": 4,
+              "reason": "Tutorial: deploy-irc-bridge.md provides a complete learning-oriented walkthrough from requirements through deployment to interaction with the bridge. How-to: troubleshooting.md and upgrade.md provide task-oriented instructions for specific problems. Reference: charm-architecture.md contains factual descriptions of the system components, snap implementation, and code structure with diagrams. Explanation: index.md and charm-architecture.md include conceptual discussion of how IRC Bridge works as an Application Service, its integration patterns, and design rationale."
             }
           },
           "composition": null
@@ -17109,9 +17109,9 @@
               "value": "2.0"
             },
             "diataxis_coverage_ai": {
-              "state": "insufficient_data",
-              "value": null,
-              "reason": "AI documentation assessment is unavailable."
+              "state": "measured",
+              "value": 4,
+              "reason": "Tutorial: tutorial.rst provides a complete learning-oriented guided exercise deploying Mattermost with PostgreSQL, including setup, integration, and verification steps. How-to: Multiple how-to guides exist covering specific tasks (back-up-restore.md, provide-certificate.md, integrate-with-cos.md, upgrade.md). Reference: Multiple reference documents provide factual information about actions, configurations, integrations, metrics, and architecture (actions.md, configurations.md, integrations.md, metrics.md, charm-architecture.rst). Explanation: explanation/security.rst provides discussion building understanding of security concepts and best practices; ADR-001 explains design decisions around theme patches."
             }
           },
           "composition": null
@@ -17230,9 +17230,9 @@
               "value": ""
             },
             "diataxis_coverage_ai": {
-              "state": "insufficient_data",
-              "value": null,
-              "reason": "AI documentation assessment is unavailable."
+              "state": "measured",
+              "value": 3,
+              "reason": "Tutorial (1 point): getting-started.md provides step-by-step guided exercise deploying NetBox with all dependencies. How-to (1 point): Multiple how-to guides with task-oriented instructions exist - upgrade.md, configure-oidc.md, configure-scripts-reports.md, and contribute.md. Reference (1 point): charm-architecture.md describes the technical architecture including containers, services, and dependencies; actions.md and integrations.md link to external references. Explanation (0 points): No discussion building understanding of concepts or design rationale - charm-architecture.md is factual/descriptive rather than explanatory about why design choices were made."
             }
           },
           "composition": null
@@ -17351,9 +17351,9 @@
               "value": "2.0"
             },
             "diataxis_coverage_ai": {
-              "state": "insufficient_data",
-              "value": null,
-              "reason": "AI documentation assessment is unavailable."
+              "state": "measured",
+              "value": 4,
+              "reason": "Tutorial: Contains a complete guided exercise deploying nginx-ingress-integrator with WordPress (docs/tutorial/tutorial.md). How-to: Multiple task-oriented guides including enabling OWASP ModSecurity, securing with TLS, adding nginx-route relation, and upgrade procedures. Reference: Detailed architecture documentation describing charm structure, events, code overview with diagram (docs/reference/architecture.md), plus integrations list. Explanation: Conceptual discussions on security practices (DoS, TLS, dependencies) and what ingress is in Kubernetes context (docs/explanation/)."
             }
           },
           "composition": null
@@ -17472,9 +17472,9 @@
               "value": ""
             },
             "diataxis_coverage_ai": {
-              "state": "insufficient_data",
-              "value": null,
-              "reason": "AI documentation assessment is unavailable."
+              "state": "measured",
+              "value": 4,
+              "reason": "Tutorial (1 point): docs/tutorial/index.md contains a complete, learning-oriented guided exercise walking through OpenCTI deployment step-by-step. How-to (1 point): Multiple how-to guides provide task-oriented instructions (account creation, backup, observability integration, redeployment, upgrade). Reference (1 point): Extensive factual descriptions including configurations, actions, integrations, observability metrics/alerts, and detailed charm architecture with component diagrams. Explanation (1 point): docs/reference/charm-architecture.md provides substantial discussion building understanding of design choices, architecture patterns (sidecar pattern), OCI images, Juju events handling, and code overview explaining how the charm operates."
             }
           },
           "composition": null
@@ -17593,9 +17593,9 @@
               "value": ""
             },
             "diataxis_coverage_ai": {
-              "state": "insufficient_data",
-              "value": null,
-              "reason": "AI documentation assessment is unavailable."
+              "state": "measured",
+              "value": 3,
+              "reason": "Tutorial (1 point): getting-started.md provides a complete guided exercise deploying Penpot step-by-step with prerequisites, commands, and verification steps. How-to (1 point): Multiple how-to guides exist with task-oriented instructions (configure-s3.md, configure-smtp.md, configure-sso.md, integrate-with-cos.md, manage-users.md, upgrade.md) showing specific configuration and operational tasks. Reference (1 point): charm-architecture.md contains factual descriptions of system architecture, containers, integrations, and code structure with diagrams; actions.md and configurations.md link to external reference but lack inline content themselves. Explanation (0 points): While charm-architecture.md contains some architectural discussion, it primarily serves as reference documentation describing what exists rather than building understanding of why design choices were made or explaining underlying concepts in depth."
             }
           },
           "composition": null
@@ -17715,9 +17715,9 @@
               "value": ""
             },
             "diataxis_coverage_ai": {
-              "state": "insufficient_data",
-              "value": null,
-              "reason": "AI documentation assessment is unavailable."
+              "state": "measured",
+              "value": 3,
+              "reason": "Reference (1 point): docs/reference/charm-architecture.md contains factual descriptions of metrics, Juju events, and code structure. How-to (1 point): docs/how-to/relate-to-cos.md provides task-oriented instructions with specific commands for relating Pollen to COS observability stack, and docs/how-to/upgrade.md shows upgrade commands. Explanation (1 point): docs/reference/charm-architecture.md includes discussion building understanding of charm design, event handling, and architecture. Tutorial (0 points): No learning-oriented guided exercise with pedagogical progression is present; the COS how-to is task-focused rather than learning-focused."
             }
           },
           "composition": null
@@ -17837,9 +17837,9 @@
               "value": ""
             },
             "diataxis_coverage_ai": {
-              "state": "insufficient_data",
-              "value": null,
-              "reason": "AI documentation assessment is unavailable."
+              "state": "measured",
+              "value": 3,
+              "reason": "Reference (1 point): Multiple reference documents with factual descriptions exist, including actions.md, configurations.md, integrations.md, token-scopes.md, charm-architecture.md, cryptographic-overview.md, external-access.md, and cos.md containing specifications, API details, and configuration options. How-to (1 point): Extensive how-to guides provide task-oriented instructions for specific outcomes, such as changing tokens/paths, adding labels, debugging with SSH, integrating with COS, spawning OpenStack runners, upgrading, managing external contributors, and configuring runner storage. Explanation (1 point): Multiple explanation documents discuss concepts and design, including security.md (security design discussion), ssh-debug.md (SSH debugging concepts), arm64.md (ARM64 architecture rationale), managing-resource-usage.md (resource management concepts), and ADR-001 (pressure reconciler architecture). Tutorial (0 points): While quick-start.md exists, it is a deployment walkthrough rather than a true learning-oriented guided exercise that builds understanding through hands-on practice with pedagogical progression."
             }
           },
           "composition": null
@@ -17959,9 +17959,9 @@
               "value": ""
             },
             "diataxis_coverage_ai": {
-              "state": "insufficient_data",
-              "value": null,
-              "reason": "AI documentation assessment is unavailable."
+              "state": "measured",
+              "value": 3,
+              "reason": "Tutorial: The quick-start guide (tutorial/quick-start.md) walks through deploying the charm step-by-step with specific commands and verification steps, including cleanup. How-to: Multiple how-to guides provide task-oriented instructions for specific configuration tasks (configure-base-image, configure-build-interval, configure-revision-history, pin-github-runner-version, upgrade). Reference: The charm-architecture document explains system design with C4 diagrams, describes component interactions, lists Juju events and their handling, and provides technical details about the codebase structure. The relation-endpoints document provides factual descriptions of integration interfaces and data formats. No Explanation content found\u2014the changelog contains release notes rather than conceptual discussion, and the architecture page is primarily structural/factual reference rather than building understanding of why design choices were made."
             }
           },
           "composition": null
@@ -18203,9 +18203,9 @@
               "value": ""
             },
             "diataxis_coverage_ai": {
-              "state": "insufficient_data",
-              "value": null,
-              "reason": "AI documentation assessment is unavailable."
+              "state": "measured",
+              "value": 4,
+              "reason": "Tutorial: getting-started.md provides a complete learning-oriented walkthrough deploying the charm, configuring a client, and establishing an SSH session. How-to: get-server-config.md and upgrade.md contain task-oriented instructions for specific operational tasks. Reference: actions.md, configurations.md, relations.md, security-logs.md, and charm-architecture.md provide factual technical descriptions of interfaces, events, components, and configuration. Explanation: charm-architecture.md discusses design choices (why machine charm vs K8s, SSH port 10022 rationale) and the Sigma README explains the detection rule structure and field mappings."
             }
           },
           "composition": null
@@ -18446,9 +18446,9 @@
               "value": "2.0"
             },
             "diataxis_coverage_ai": {
-              "state": "insufficient_data",
-              "value": null,
-              "reason": "AI documentation assessment is unavailable."
+              "state": "measured",
+              "value": 4,
+              "reason": "Tutorial: garm.md provides a complete step-by-step guided deployment exercise with prerequisites, concrete commands, and verification steps. How-to: Multiple task-oriented guides exist (retrieve-garm-credentials.md, secure-garm.md) with specific procedures. Reference: Extensive factual documentation covering architecture (architecture.md), charm interfaces (charms.md), security defaults (security.md), and security event logging (security-logs.md). Explanation: security.md and charm-release-and-promotion.md provide conceptual discussion of design choices, security posture, and release processes."
             }
           },
           "composition": null
@@ -18567,9 +18567,9 @@
               "value": "2.0"
             },
             "diataxis_coverage_ai": {
-              "state": "insufficient_data",
-              "value": null,
-              "reason": "AI documentation assessment is unavailable."
+              "state": "measured",
+              "value": 4,
+              "reason": "1. Tutorial: garm.md provides a complete step-by-step guided exercise deploying GARM with PostgreSQL and configurator. 2. How-to: retrieve-garm-credentials.md and secure-garm.md provide task-oriented instructions for specific operational outcomes. 3. Reference: charms.md documents integrations/configurations/actions; architecture.md describes deployment components; security.md and security-logs.md describe security interfaces and event structures; sigma rules provide detection rule reference. 4. Explanation: security.md discusses security posture and design choices; charm-release-and-promotion.md explains the promotion process and decisions; ADRs document architectural decisions and rationale."
             }
           },
           "composition": null
@@ -18689,9 +18689,9 @@
               "value": ""
             },
             "diataxis_coverage_ai": {
-              "state": "insufficient_data",
-              "value": null,
-              "reason": "AI documentation assessment is unavailable."
+              "state": "measured",
+              "value": 4,
+              "reason": "Tutorial: 'Getting started' provides a complete learning-oriented walkthrough with deployment steps and verification. How-to: 'Configure SMTP' and 'Upgrade' provide task-oriented instructions for specific outcomes. Reference: 'Charm architecture' contains factual technical descriptions of events, charm code structure, and design details; 'Actions', 'Configurations', and 'Integrations' pages exist but only link externally. Explanation: 'Charm architecture' discusses concepts like event handling and charm operation that build understanding of design choices."
             }
           },
           "composition": null
@@ -18810,9 +18810,9 @@
               "value": "2.0"
             },
             "diataxis_coverage_ai": {
-              "state": "insufficient_data",
-              "value": null,
-              "reason": "AI documentation assessment is unavailable."
+              "state": "measured",
+              "value": 4,
+              "reason": "Tutorial: basic-deployment.rst contains a complete step-by-step tutorial for deploying Traefik and integrating with Flask. How-to: Multiple guides provide task-oriented instructions (enable-basicauth, integrate, tls-termination-using-a-local-ca, troubleshoot-reachability, troubleshoot-gateway-address-unavailable, upgrade). Reference: charm-architecture.md provides factual descriptions of architecture, containers, OCI images, and Juju events; ingress-libraries.md documents interface parameters; cryptographic-documentation-for-cos-lite-charms.md covers cryptographic implementation details. Explanation: tls.md discusses how TLS works conceptually; security.md explains security risks and practices."
             }
           },
           "composition": null
@@ -18931,9 +18931,9 @@
               "value": ""
             },
             "diataxis_coverage_ai": {
-              "state": "insufficient_data",
-              "value": null,
-              "reason": "AI documentation assessment is unavailable."
+              "state": "measured",
+              "value": 4,
+              "reason": "Tutorial: getting-started.md provides a complete guided exercise with deployment, configuration, and testing steps. How-to: upgrade.md contains task-oriented instructions for upgrading the charm. Reference: configurations.md describes the files configuration structure, integrations.md references integration specifications, and charm-architecture.md describes the Flask application and paas-charm generation. Explanation: security.md discusses security concepts regarding Flask framework updates, and architecture-overview.md explains deployment architecture with a diagram showing typical component relationships."
             }
           },
           "composition": null
@@ -19052,9 +19052,9 @@
               "value": ""
             },
             "diataxis_coverage_ai": {
-              "state": "insufficient_data",
-              "value": null,
-              "reason": "AI documentation assessment is unavailable."
+              "state": "measured",
+              "value": 4,
+              "reason": "1. Tutorial: 'getting-started.md' provides a learning-oriented guided exercise with step-by-step deployment instructions. 2. How-to: Multiple task-oriented guides exist (e.g., 'configure.md', 'collect-logs.md', 'backup-restore.md') with specific instructions for achieving outcomes. 3. Reference: Multiple factual descriptions exist including 'actions.md' (lists actions with link to Charmhub), 'configurations.md' (lists configurations with link), 'integrations.md' (describes relation interfaces and integration commands), 'charm-architecture.md' (describes containers, OCI images, storage, code structure), and 'external-access.md' (describes external connectivity requirements). 4. Explanation: 'architecture-overview.md' provides conceptual discussion of Wazuh components and architecture with diagrams, and 'security.md' discusses security concepts, practices and risks."
             }
           },
           "composition": null
@@ -19174,9 +19174,9 @@
               "value": ""
             },
             "diataxis_coverage_ai": {
-              "state": "insufficient_data",
-              "value": null,
-              "reason": "AI documentation assessment is unavailable."
+              "state": "measured",
+              "value": 0,
+              "reason": "The documentation contains only a changelog (factual record of changes, not reference material for using the product) and a brief overview that describes what the product is and links to external/upstream documentation. There is no tutorial content, how-to guides, reference material about commands/APIs/configuration, or explanatory discussion of concepts or design. The overview explicitly states 'For the complete documentation, refer to [upstream]' and provides no actual usage documentation."
             }
           },
           "composition": null
@@ -19296,9 +19296,9 @@
               "value": ""
             },
             "diataxis_coverage_ai": {
-              "state": "insufficient_data",
-              "value": null,
-              "reason": "AI documentation assessment is unavailable."
+              "state": "measured",
+              "value": 4,
+              "reason": "Tutorial: Extensive guided exercise in docs/tutorial/index.md with environment setup, deployment steps, TLS configuration, and data visualization. How-to: Multiple task-oriented guides (deploy, scale, enable TLS, change credentials, monitoring, OAuth access, JWT authentication). Reference: Release notes in docs/reference/release-notes/ with version details, requirements, compatibility, and highlights. Explanation: Monitoring documentation explains COS concepts, metrics meaning, and alert rules; OAuth guide discusses identity platform architecture and integration concepts."
             }
           },
           "composition": null
@@ -19418,9 +19418,9 @@
               "value": "2.0"
             },
             "diataxis_coverage_ai": {
-              "state": "insufficient_data",
-              "value": null,
-              "reason": "AI documentation assessment is unavailable."
+              "state": "measured",
+              "value": 4,
+              "reason": "Tutorial: docs/tutorial.md provides a complete learning-oriented walkthrough deploying two WireGuard gateways, peering them, and testing routing. How-to: Multiple task-oriented guides cover enabling VRRP, performance tuning, setting up site-to-site VPN, integrating with COS, and upgrading. Reference: Extensive technical documentation of actions, configurations, metrics, integrations, and charm architecture with Juju events and code overview. Explanation: Security overview discusses WireGuard protocol cryptography and design principles; ADRs provide architectural decision context."
             }
           },
           "composition": null
@@ -19539,9 +19539,9 @@
               "value": "2.0"
             },
             "diataxis_coverage_ai": {
-              "state": "insufficient_data",
-              "value": null,
-              "reason": "AI documentation assessment is unavailable."
+              "state": "measured",
+              "value": 4,
+              "reason": "Tutorial: docs/index.md references a tutorial that 'takes you step-by-step through a basic deployment' (content not shown but referenced). How-to: Multiple how-to guides with task-oriented instructions exist (e.g., configure-hostname.md, install-plugins.md, enable-waf.md). Reference: Substantial reference material is present including configurations.md, actions.md, charm-architecture.md (detailed architecture with diagrams, container descriptions, OCI image details), relation-endpoints.md (database, grafana, ingress, logging, metrics with interface details), plugins.md and themes.md (factual lists). Explanation: explanation/security-overview.md provides conceptual discussion about secrets, updates, spam protection, risks, and information security - building understanding of design choices and concepts."
             }
           },
           "composition": null
