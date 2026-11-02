@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-02T07:22:20.384982+00:00",
+  "generated_at": "2026-11-02T07:57:46.913147+00:00",
   "metric_schema_version": 1,
   "framework": {
     "id": "v1",
@@ -151,7 +151,7 @@
                 "diataxis_coverage_ai": {
                   "state": "measured",
                   "value": 2,
-                  "reason": "The documentation clearly contains Tutorial content (framework-specific getting started guides with step-by-step setup) and Reference content (commands, tools like Rockcraft/Charmcraft), but lacks distinct How-to guides for specific tasks and Explanation content discussing architecture or concepts in depth."
+                  "reason": "The documentation contains tutorial content (framework-specific getting started guides with step-by-step commands) and reference content (tool installation commands and links to external references), but lacks dedicated how-to guides for specific tasks and explanation content discussing architecture or concepts."
                 },
                 "uses_rtd_hosting": {
                   "state": "measured",
@@ -428,7 +428,7 @@
                 "diataxis_coverage_ai": {
                   "state": "measured",
                   "value": 4,
-                  "reason": "The documentation explicitly contains all four Di\u00e1taxis types: Tutorial (getting started/deployment guide), How-to guides (configure, upgrade, backup), Reference (actions, configurations, integrations), and Explanation (security, architecture)."
+                  "reason": "The documentation explicitly references all four Di\u00e1taxis types: Tutorial (deployment guide), How-to guides (configure, upgrade, backup), Reference (actions, configurations, integrations), and Explanation (architecture, security)."
                 },
                 "uses_rtd_hosting": {
                   "state": "measured",
@@ -471,7 +471,7 @@
                 "diataxis_coverage_ai": {
                   "state": "measured",
                   "value": 2,
-                  "reason": "The documentation contains clear how-to guides (installation, configuration, running from source) and reference content (configuration options, command syntax), but lacks dedicated tutorial or explanation sections."
+                  "reason": "The documentation contains a how-to guide (Usage section with step-by-step installation and configuration) and reference content (nftables rules, command options), but lacks a proper tutorial with learning exercises and explanation sections discussing architecture or design rationale."
                 },
                 "uses_rtd_hosting": {
                   "state": "measured",
@@ -759,7 +759,7 @@
                 },
                 "uses_jubilant": {
                   "state": "measured",
-                  "value": true
+                  "value": false
                 },
                 "coverage_pct": {
                   "state": "insufficient_data",
@@ -791,7 +791,7 @@
                 },
                 "uses_jubilant": {
                   "state": "measured",
-                  "value": true
+                  "value": false
                 },
                 "coverage_pct": {
                   "state": "insufficient_data",
@@ -855,7 +855,7 @@
                 },
                 "uses_jubilant": {
                   "state": "measured",
-                  "value": false
+                  "value": true
                 },
                 "coverage_pct": {
                   "state": "insufficient_data",
@@ -910,7 +910,7 @@
                 "diataxis_coverage_ai": {
                   "state": "measured",
                   "value": 0,
-                  "reason": "The documentation is empty with no content provided in either the README or docs/index.md files."
+                  "reason": "The provided documentation is empty with no content in either the README or docs/index.md files, therefore none of the four Di\u00e1taxis types are present."
                 },
                 "uses_rtd_hosting": {
                   "state": "measured",
@@ -953,7 +953,7 @@
                 "diataxis_coverage_ai": {
                   "state": "measured",
                   "value": 0,
-                  "reason": "The documentation is empty with no content in either the README or docs/index.md files."
+                  "reason": "The documentation is empty with no content in either the README or docs/index.md files, therefore none of the four Di\u00e1taxis types are present."
                 },
                 "uses_rtd_hosting": {
                   "state": "measured",
@@ -996,7 +996,7 @@
                 "diataxis_coverage_ai": {
                   "state": "measured",
                   "value": 0,
-                  "reason": "The documentation is empty with no content in either the README or docs/index.md files, therefore none of the four Di\u00e1taxis types are present."
+                  "reason": "The documentation is empty with no content in either the README or docs/index.md files."
                 },
                 "uses_rtd_hosting": {
                   "state": "measured",
@@ -1039,7 +1039,7 @@
                 "diataxis_coverage_ai": {
                   "state": "measured",
                   "value": 0,
-                  "reason": "The documentation is empty with no content present in either the README or docs/index.md files."
+                  "reason": "The provided documentation is empty with no content in either the README or docs/index.md files."
                 },
                 "uses_rtd_hosting": {
                   "state": "measured",
@@ -1495,7 +1495,7 @@
                 },
                 "uses_jubilant": {
                   "state": "measured",
-                  "value": true
+                  "value": false
                 },
                 "coverage_pct": {
                   "state": "insufficient_data",
@@ -1550,7 +1550,7 @@
                 "diataxis_coverage_ai": {
                   "state": "measured",
                   "value": 0,
-                  "reason": "The documentation is empty with no content in either the README or docs/index.md files, therefore none of the four Di\u00e1taxis types are present."
+                  "reason": "The documentation is empty with no content present in either the README or docs/index.md files."
                 },
                 "uses_rtd_hosting": {
                   "state": "measured",
@@ -1829,7 +1829,7 @@
                 "diataxis_coverage_ai": {
                   "state": "measured",
                   "value": 4,
-                  "reason": "The documentation explicitly references and provides navigation to all four Di\u00e1taxis types: Tutorial (getting started section in README), How-to guides (upgrade guide), Reference (charm architecture), and Explanation sections."
+                  "reason": "The documentation contains all four types: a tutorial in the 'Get started' section with step-by-step deployment, how-to guides referenced in the navigation and upgrade section, reference material on charm architecture, and explanation content describing what the charm does and its capabilities."
                 },
                 "uses_rtd_hosting": {
                   "state": "measured",
@@ -1871,8 +1871,8 @@
                 },
                 "diataxis_coverage_ai": {
                   "state": "measured",
-                  "value": 4,
-                  "reason": "The documentation explicitly references all four types: Tutorial (Getting Started/tutorial.md), How-to guides (./how-to), Reference (./reference), and Explanation (./explanation) sections are clearly mentioned in the index structure."
+                  "value": 3,
+                  "reason": "The documentation clearly references Tutorial (tutorial.md), How-to guides (./how-to), and Reference (./reference) sections with explicit links, but lacks any Explanation content about concepts, architecture, or 'why' topics."
                 },
                 "uses_rtd_hosting": {
                   "state": "measured",
@@ -2284,7 +2284,7 @@
                 "diataxis_coverage_ai": {
                   "state": "measured",
                   "value": 0,
-                  "reason": "The documentation only contains repository metadata, project links, and a deprecation notice without any tutorial, how-to, reference, or explanation content."
+                  "reason": "The documentation only contains repository metadata, project information, and external links without any tutorial, how-to, reference, or explanation content present in the provided text."
                 },
                 "uses_rtd_hosting": {
                   "state": "measured",
@@ -2327,7 +2327,7 @@
                 "diataxis_coverage_ai": {
                   "state": "measured",
                   "value": 0,
-                  "reason": "The documentation only contains project metadata, repository deprecation notice, community links, and a reference to external documentation, with no actual tutorial, how-to, reference, or explanation content present."
+                  "reason": "The documentation only contains project metadata, community links, and a deprecation notice with no tutorial, how-to, reference, or explanation content present."
                 },
                 "uses_rtd_hosting": {
                   "state": "measured",
@@ -2370,7 +2370,7 @@
                 "diataxis_coverage_ai": {
                   "state": "measured",
                   "value": 1,
-                  "reason": "The documentation contains only a how-to guide section ('Building the Snap' with step-by-step instructions) but lacks tutorial, reference, and explanation content."
+                  "reason": "The documentation contains only a how-to guide section ('Building the Snap' with step-by-step installation instructions), but lacks tutorial, reference, and explanation content."
                 },
                 "uses_rtd_hosting": {
                   "state": "measured",
@@ -2800,7 +2800,7 @@
                 "diataxis_coverage_ai": {
                   "state": "measured",
                   "value": 3,
-                  "reason": "The documentation contains tutorial (referenced 'Getting started' tutorial), how-to guide (basic operations and integration examples), and reference (actions, tuning options, integrations list), but lacks explanation-oriented content discussing architecture or design rationale."
+                  "reason": "The documentation contains a tutorial reference ('Getting started' tutorial), how-to content (integrations and basic operations), and reference content (actions, tuning options), but lacks clear explanation-oriented content discussing architecture or conceptual understanding."
                 },
                 "uses_rtd_hosting": {
                   "state": "measured",
@@ -3077,7 +3077,7 @@
                 "diataxis_coverage_ai": {
                   "state": "measured",
                   "value": 1,
-                  "reason": "Only a tutorial is referenced ('Content Cache tutorial' for step-by-step instructions), while reference, how-to guides, and explanations are not present in the provided documentation."
+                  "reason": "The documentation only contains references to a tutorial (\"Get started\" section pointing to external tutorial), but no embedded how-to guides, reference material, or explanations are present in the provided content."
                 },
                 "uses_rtd_hosting": {
                   "state": "measured",
@@ -3120,7 +3120,7 @@
                 "diataxis_coverage_ai": {
                   "state": "measured",
                   "value": 1,
-                  "reason": "The documentation contains only a Tutorial reference (pointing to the Content Cache tutorial for getting started), but lacks embedded how-to guides, reference material, and explanations within the provided content."
+                  "reason": "Only Tutorial content is present via the reference to 'Content Cache tutorial' for step-by-step getting started instructions, while the other sections merely link to external documentation without containing actual How-to, Reference, or Explanation content."
                 },
                 "uses_rtd_hosting": {
                   "state": "measured",
@@ -3466,8 +3466,8 @@
             {
               "product_id": "superset-k8s",
               "repo": "canonical/superset-k8s-operator",
-              "medal": "gold",
-              "result": "gold",
+              "medal": "silver",
+              "result": "silver",
               "applicability": "scored",
               "metrics": {
                 "latest_build_passing": {
@@ -3480,7 +3480,7 @@
                 },
                 "uses_jubilant": {
                   "state": "measured",
-                  "value": true
+                  "value": false
                 },
                 "coverage_pct": {
                   "state": "insufficient_data",
@@ -3498,8 +3498,8 @@
             {
               "product_id": "ranger-k8s",
               "repo": "canonical/ranger-k8s-operator",
-              "medal": "gold",
-              "result": "gold",
+              "medal": "silver",
+              "result": "silver",
               "applicability": "scored",
               "metrics": {
                 "latest_build_passing": {
@@ -3512,7 +3512,7 @@
                 },
                 "uses_jubilant": {
                   "state": "measured",
-                  "value": true
+                  "value": false
                 },
                 "coverage_pct": {
                   "state": "insufficient_data",
@@ -3631,7 +3631,7 @@
                 "diataxis_coverage_ai": {
                   "state": "measured",
                   "value": 3,
-                  "reason": "The documentation clearly contains Tutorial (mentioned in table of contents), How-to guides (operational tasks like ingress and authentication, plus PostgreSQL configuration examples), and Reference (configuration options, actions, relations tables), but lacks Explanation content discussing architectural concepts or rationale."
+                  "reason": "The documentation clearly references a separate Tutorial section, includes How-to content (deployment steps, configuration examples like PostgreSQL sources/destinations), and Reference content (configuration options, relations, actions), but lacks Explanation-oriented content discussing architecture or design rationale."
                 },
                 "uses_rtd_hosting": {
                   "state": "measured",
@@ -3674,7 +3674,7 @@
                 "diataxis_coverage_ai": {
                   "state": "measured",
                   "value": 3,
-                  "reason": "The documentation contains how-to guides (deployment, configuration steps), reference material (configuration options, YAML formats), and explanatory content (HTTPS architecture, proxy settings), but lacks a dedicated tutorial with learning-oriented guided exercises."
+                  "reason": "The documentation contains clear how-to guides (deployment steps, configuration), extensive reference content (configuration options, YAML formats, CLI commands), and some explanatory content (HTTPS architecture, proxy mechanism descriptions), but lacks a true tutorial with a complete learning-oriented walkthrough for beginners."
                 },
                 "uses_rtd_hosting": {
                   "state": "measured",
@@ -3717,7 +3717,7 @@
                 "diataxis_coverage_ai": {
                   "state": "measured",
                   "value": 2,
-                  "reason": "The documentation contains Reference content (configuration options, integration requirements, CLI commands) and How-to guide content (deployment and usage instructions), but lacks Tutorial and Explanation sections as those are referenced externally."
+                  "reason": "The documentation contains Reference content (configuration options, integration requirements, CLI commands) and How-to guide content (deployment steps, connecting to databases), but lacks Tutorial and Explanation sections as those are externally linked rather than included."
                 },
                 "uses_rtd_hosting": {
                   "state": "measured",
@@ -3760,7 +3760,7 @@
                 "diataxis_coverage_ai": {
                   "state": "measured",
                   "value": 3,
-                  "reason": "The documentation includes tutorial-like deployment instructions (getting started), extensive how-to guides (managing credentials, backup/restore, integrations), and detailed reference content (configuration options, action results tables), but lacks dedicated explanation sections discussing architecture, design rationale, or conceptual understanding."
+                  "reason": "The documentation contains clear how-to guides (deploying, managing credentials, backup/restore), reference content (configuration options tables, action results), and some explanation (how catalog reconciliation works, authentication mechanisms), but lacks a proper learning-oriented tutorial for beginners."
                 },
                 "uses_rtd_hosting": {
                   "state": "measured",
@@ -3803,7 +3803,7 @@
                 "diataxis_coverage_ai": {
                   "state": "measured",
                   "value": 1,
-                  "reason": "The documentation contains only reference content (deployment architecture, requirements, integrations, configuration commands) but explicitly directs users to external documentation for tutorials, how-to guides, and explanations."
+                  "reason": "The documentation contains only Reference content (deployment architecture, requirements, integrations, configuration options) but explicitly points to external documentation for tutorial, how-to guides, and explanation."
                 },
                 "uses_rtd_hosting": {
                   "state": "measured",
@@ -3846,7 +3846,7 @@
                 "diataxis_coverage_ai": {
                   "state": "measured",
                   "value": 3,
-                  "reason": "The documentation contains a tutorial (deployment example with step-by-step commands), reference content (configuration table and actions list), and how-to guide elements (configuration examples and action usage), but lacks explanation-oriented content discussing architecture, design decisions, or conceptual understanding."
+                  "reason": "The documentation contains a tutorial (deployment steps), how-to guides (configuration and actions examples), and reference content (configuration table), but lacks explanation-oriented content discussing architecture or design decisions."
                 },
                 "uses_rtd_hosting": {
                   "state": "measured",
@@ -4558,7 +4558,7 @@
                 "diataxis_coverage_ai": {
                   "state": "measured",
                   "value": 2,
-                  "reason": "The documentation contains clear Tutorial content (getting-started guide) and How-to guides (manage users, upgrade, contribute), but lacks Reference documentation (e.g., configuration parameter tables, action API specs) and Explanation content (e.g., architecture discussion, authentication mechanism explanations)."
+                  "reason": "The documentation contains Tutorial content (getting started guide with step-by-step deployment) and How-to guides (managing users, configuring authentication, upgrading), but lacks Reference material (no API/config/CLI reference documentation) and Explanation content (no architecture or conceptual discussion beyond basic description)."
                 },
                 "uses_rtd_hosting": {
                   "state": "measured",
@@ -4757,7 +4757,7 @@
                 },
                 "uses_jubilant": {
                   "state": "measured",
-                  "value": false
+                  "value": true
                 },
                 "coverage_pct": {
                   "state": "measured",
@@ -4819,7 +4819,7 @@
                 "diataxis_coverage_ai": {
                   "state": "measured",
                   "value": 4,
-                  "reason": "The documentation explicitly mentions all four Di\u00e1taxis types: Tutorial (getting started/deployment), How-to guides (configuration/operations tasks), Reference (integrations/architecture/actions), and Explanation (security overview)."
+                  "reason": "The documentation explicitly references all four Di\u00e1taxis types: a tutorial for getting started, how-to guides for practical tasks, reference for technical details on actions/configurations/integrations, and explanation for security and context topics."
                 },
                 "uses_rtd_hosting": {
                   "state": "measured",
@@ -5051,8 +5051,8 @@
             {
               "product_id": "bind",
               "repo": "canonical/dns-operators",
-              "medal": "silver",
-              "result": "silver",
+              "medal": "gold",
+              "result": "gold",
               "applicability": "scored",
               "metrics": {
                 "latest_build_passing": {
@@ -5065,7 +5065,7 @@
                 },
                 "uses_jubilant": {
                   "state": "measured",
-                  "value": false
+                  "value": true
                 },
                 "coverage_pct": {
                   "state": "insufficient_data",
@@ -5083,8 +5083,8 @@
             {
               "product_id": "dns-policy",
               "repo": "canonical/dns-operators",
-              "medal": "silver",
-              "result": "silver",
+              "medal": "gold",
+              "result": "gold",
               "applicability": "scored",
               "metrics": {
                 "latest_build_passing": {
@@ -5097,7 +5097,7 @@
                 },
                 "uses_jubilant": {
                   "state": "measured",
-                  "value": false
+                  "value": true
                 },
                 "coverage_pct": {
                   "state": "insufficient_data",
@@ -5147,8 +5147,8 @@
             {
               "product_id": "dns-resolver",
               "repo": "canonical/dns-operators",
-              "medal": "silver",
-              "result": "silver",
+              "medal": "gold",
+              "result": "gold",
               "applicability": "scored",
               "metrics": {
                 "latest_build_passing": {
@@ -5161,7 +5161,7 @@
                 },
                 "uses_jubilant": {
                   "state": "measured",
-                  "value": false
+                  "value": true
                 },
                 "coverage_pct": {
                   "state": "insufficient_data",
@@ -5211,8 +5211,8 @@
             {
               "product_id": "charmed-bind",
               "repo": "canonical/dns-operators",
-              "medal": "gold",
-              "result": "gold",
+              "medal": "silver",
+              "result": "silver",
               "applicability": "scored",
               "metrics": {
                 "latest_build_passing": {
@@ -5225,7 +5225,7 @@
                 },
                 "uses_jubilant": {
                   "state": "measured",
-                  "value": true
+                  "value": false
                 },
                 "coverage_pct": {
                   "state": "insufficient_data",
@@ -5310,9 +5310,9 @@
                   "value": false
                 },
                 "diataxis_coverage_ai": {
-                  "state": "measured",
-                  "value": 2,
-                  "reason": "The documentation contains a clear tutorial (getting started with deployment command) and reference content (mentioning the dns_record interface and configuration points), but lacks dedicated how-to guides for specific tasks and explanation sections discussing architecture or design decisions."
+                  "state": "insufficient_data",
+                  "value": null,
+                  "reason": "AI documentation assessment is unavailable."
                 },
                 "uses_rtd_hosting": {
                   "state": "measured",
@@ -5353,9 +5353,9 @@
                   "value": false
                 },
                 "diataxis_coverage_ai": {
-                  "state": "measured",
-                  "value": 2,
-                  "reason": "The documentation contains a clear tutorial (Get started section with deployment and setup steps) and reference content (configuration options like allowed-hosts and debug), but lacks dedicated how-to guides for specific tasks and explanatory content about architecture or design decisions."
+                  "state": "insufficient_data",
+                  "value": null,
+                  "reason": "AI documentation assessment is unavailable."
                 },
                 "uses_rtd_hosting": {
                   "state": "measured",
@@ -5396,9 +5396,9 @@
                   "value": false
                 },
                 "diataxis_coverage_ai": {
-                  "state": "measured",
-                  "value": 2,
-                  "reason": "The documentation contains a tutorial (Get started section with deployment and integration steps) and reference content (mentioning configuration options and the dns_record interface), but lacks explicit how-to guides for specific tasks and explanation content about architecture or design decisions."
+                  "state": "insufficient_data",
+                  "value": null,
+                  "reason": "AI documentation assessment is unavailable."
                 },
                 "uses_rtd_hosting": {
                   "state": "measured",
@@ -5439,9 +5439,9 @@
                   "value": false
                 },
                 "diataxis_coverage_ai": {
-                  "state": "measured",
-                  "value": 2,
-                  "reason": "The documentation contains Tutorial content (the 'Get started' section with deployment commands) and Reference content (basic operations and links), but lacks explicit How-to guides for specific tasks and Explanation content about architecture or design decisions."
+                  "state": "insufficient_data",
+                  "value": null,
+                  "reason": "AI documentation assessment is unavailable."
                 },
                 "uses_rtd_hosting": {
                   "state": "measured",
@@ -5482,9 +5482,9 @@
                   "value": false
                 },
                 "diataxis_coverage_ai": {
-                  "state": "measured",
-                  "value": 1,
-                  "reason": "The documentation contains only tutorial content in the 'Get started' section showing basic deployment steps, but lacks how-to guides, reference documentation, and explanatory content."
+                  "state": "insufficient_data",
+                  "value": null,
+                  "reason": "AI documentation assessment is unavailable."
                 },
                 "uses_rtd_hosting": {
                   "state": "measured",
@@ -5525,9 +5525,9 @@
                   "value": false
                 },
                 "diataxis_coverage_ai": {
-                  "state": "measured",
-                  "value": 2,
-                  "reason": "The documentation contains tutorial content (\"Get started\" section with guided installation exercise) and how-to guide content (\"Build the snap\" with step-by-step instructions), but lacks reference documentation (API/configuration details) and explanation content (architecture/concepts discussion)."
+                  "state": "insufficient_data",
+                  "value": null,
+                  "reason": "AI documentation assessment is unavailable."
                 },
                 "uses_rtd_hosting": {
                   "state": "measured",
@@ -5568,9 +5568,9 @@
                   "value": false
                 },
                 "diataxis_coverage_ai": {
-                  "state": "measured",
-                  "value": 1,
-                  "reason": "The documentation contains only Tutorial content (Get started section with step-by-step installation and building instructions), but lacks How-to guides for specific tasks, Reference documentation for configuration/API details, and Explanation content discussing architecture or concepts."
+                  "state": "insufficient_data",
+                  "value": null,
+                  "reason": "AI documentation assessment is unavailable."
                 },
                 "uses_rtd_hosting": {
                   "state": "measured",
@@ -6300,7 +6300,7 @@
                 },
                 "uses_jubilant": {
                   "state": "measured",
-                  "value": true
+                  "value": false
                 },
                 "coverage_pct": {
                   "state": "insufficient_data",
@@ -6332,7 +6332,7 @@
                 },
                 "uses_jubilant": {
                   "state": "measured",
-                  "value": true
+                  "value": false
                 },
                 "coverage_pct": {
                   "state": "insufficient_data",
@@ -6387,7 +6387,7 @@
                 "diataxis_coverage_ai": {
                   "state": "measured",
                   "value": 1,
-                  "reason": "The documentation contains only reference-type content (brief factual descriptions of what the charm is, links to source repositories, and pointers to other documents) but lacks tutorials, how-to guides, or explanatory content."
+                  "reason": "The documentation only contains reference-type content (describing what the charm is, its components, and links to technical details) but lacks tutorials, how-to guides, or explanatory content."
                 },
                 "uses_rtd_hosting": {
                   "state": "measured",
@@ -6430,7 +6430,7 @@
                 "diataxis_coverage_ai": {
                   "state": "measured",
                   "value": 1,
-                  "reason": "The documentation contains only Reference content (factual information about the operator, links to components) but lacks tutorials, how-to guides, and explanations."
+                  "reason": "The documentation contains only reference-oriented content describing what the charm is and linking to external resources, with no tutorial, how-to guide, or explanation sections present."
                 },
                 "uses_rtd_hosting": {
                   "state": "measured",
@@ -6706,7 +6706,7 @@
                 },
                 "uses_jubilant": {
                   "state": "measured",
-                  "value": true
+                  "value": false
                 },
                 "coverage_pct": {
                   "state": "insufficient_data",
@@ -6761,7 +6761,7 @@
                 "diataxis_coverage_ai": {
                   "state": "measured",
                   "value": 3,
-                  "reason": "The documentation contains tutorial content (Getting Started section), how-to guides (Basic operations with step-by-step configuration instructions), and reference information (configuration options like gateway-class, hsts-max-age), but lacks explanation/understanding-oriented content about architecture or design decisions."
+                  "reason": "The documentation contains Tutorial (Getting Started section), How-to guide (Basic operations with configuration examples), and Reference (configuration options like gateway-class, hsts-max-age), but lacks Explanation content about architecture or why to use specific approaches."
                 },
                 "uses_rtd_hosting": {
                   "state": "measured",
@@ -6947,7 +6947,7 @@
                 },
                 "uses_jubilant": {
                   "state": "measured",
-                  "value": true
+                  "value": false
                 },
                 "coverage_pct": {
                   "state": "insufficient_data",
@@ -7002,7 +7002,7 @@
                 "diataxis_coverage_ai": {
                   "state": "measured",
                   "value": 3,
-                  "reason": "The documentation contains a tutorial (linked 'Getting started' with deployment steps), how-to guides (configure hostname, serve metrics on separate port, with links to more how-tos), and reference content (configuration options, actions, integrations lists), but lacks explanation-oriented content discussing architecture or design rationale."
+                  "reason": "The documentation contains tutorial content (getting started deployment steps), how-to guides (configuring hostname, serving metrics), and reference content (configuration options, integrations list), but lacks substantive explanation content about architecture or design decisions."
                 },
                 "uses_rtd_hosting": {
                   "state": "measured",
@@ -7351,7 +7351,7 @@
                 "diataxis_coverage_ai": {
                   "state": "measured",
                   "value": 1,
-                  "reason": "The documentation contains only a how-to guide (deployment and integration steps) but lacks tutorial, reference, and explanation sections."
+                  "reason": "The documentation contains only a how-to guide (deployment and integration steps) but lacks tutorials, reference documentation, and explanation content."
                 },
                 "uses_rtd_hosting": {
                   "state": "measured",
@@ -7394,7 +7394,7 @@
                 "diataxis_coverage_ai": {
                   "state": "measured",
                   "value": 4,
-                  "reason": "The documentation explicitly organizes content into all four Di\u00e1taxis types with dedicated sections for Tutorial (getting started), How-to guides (operations tasks), Reference (relation endpoints), and Explanation (modes of operation and how routing works)."
+                  "reason": "The documentation explicitly organizes content into all four Di\u00e1taxis types: Tutorial (getting started), How-to guides (operational tasks like routing traffic), Reference (relation endpoints like cache-config and gateway-route), and Explanation (modes of operation, how things work)."
                 },
                 "uses_rtd_hosting": {
                   "state": "measured",
@@ -7437,7 +7437,7 @@
                 "diataxis_coverage_ai": {
                   "state": "measured",
                   "value": 2,
-                  "reason": "The documentation contains a How-to guide (deployment and integration steps) and Reference content (configuration option 'hostname'), but lacks Tutorial and Explanation sections."
+                  "reason": "The documentation contains a how-to guide (deployment and integration commands) and reference content (overview of what the charm is), but lacks a tutorial (learning-oriented exercise) and explanation (architecture/design discussion)."
                 },
                 "uses_rtd_hosting": {
                   "state": "measured",
@@ -7478,9 +7478,9 @@
                   "value": false
                 },
                 "diataxis_coverage_ai": {
-                  "state": "measured",
-                  "value": 2,
-                  "reason": "The documentation contains How-to guide content (installation, configuration steps) and Reference content (file locations, CLI commands), but lacks Tutorial (guided learning exercise) and Explanation (architecture/design discussion) sections."
+                  "state": "insufficient_data",
+                  "value": null,
+                  "reason": "AI documentation assessment is unavailable."
                 },
                 "uses_rtd_hosting": {
                   "state": "measured",
@@ -7991,7 +7991,7 @@
                 "diataxis_coverage_ai": {
                   "state": "measured",
                   "value": 4,
-                  "reason": "The documentation explicitly references and contains all four Di\u00e1taxis types: tutorials (getting-started), how-to guides (manage-gpg-keys, backup-and-restore, etc.), reference (actions, configurations, integrations, metrics), and explanation (security, charm-architecture)."
+                  "reason": "The documentation explicitly references and links to all four Di\u00e1taxis types: tutorials (getting started), how-to guides (backup, manage keys, etc.), reference (actions, configurations, integrations), and explanation (security, charm architecture)."
                 },
                 "uses_rtd_hosting": {
                   "state": "measured",
@@ -8340,7 +8340,7 @@
                 "diataxis_coverage_ai": {
                   "state": "measured",
                   "value": 2,
-                  "reason": "The documentation contains a clear Tutorial (the 'Get started' section with setup, deploy, and basic operations) and Reference content (integration interface information and links), but lacks dedicated How-to guides for specific tasks and Explanation content about architecture or design decisions."
+                  "reason": "The documentation contains a Tutorial (Get started section with guided deployment exercise) and Reference content (Integrations section describing the http-proxy interface), but lacks dedicated How-to guides and Explanation sections."
                 },
                 "uses_rtd_hosting": {
                   "state": "measured",
@@ -8382,8 +8382,8 @@
                 },
                 "diataxis_coverage_ai": {
                   "state": "measured",
-                  "value": 2,
-                  "reason": "The documentation contains a clear Tutorial section ('Get started' with deployment walkthrough) and Reference content (integration relations descriptions), but lacks distinct How-to guides for specific tasks and Explanation content discussing architecture or design rationale."
+                  "value": 3,
+                  "reason": "The documentation contains a clear Tutorial (Get started section with step-by-step deployment), How-to guide elements (Basic operations), and Reference content (Integrations section describing relations), but lacks substantial Explanation content discussing architecture or design rationale."
                 },
                 "uses_rtd_hosting": {
                   "state": "measured",
@@ -8426,7 +8426,7 @@
                 "diataxis_coverage_ai": {
                   "state": "measured",
                   "value": 2,
-                  "reason": "The documentation contains tutorial content (mentions 'tutorial' and 'Getting started' with step-by-step instructions in Basic operations section) and reference content (configuration options like http-proxy-domains, CLI commands), but lacks clear how-to guides for specific tasks and explanation sections discussing architecture or rationale."
+                  "reason": "The documentation contains Tutorial (explicit reference to getting-started tutorial) and How-to guide (task-oriented examples showing integrator and pass-through mode setup), but lacks Reference (detailed configuration options/API documentation) and Explanation (architectural discussion of why/how the system works)."
                 },
                 "uses_rtd_hosting": {
                   "state": "measured",
@@ -8469,7 +8469,7 @@
                 "diataxis_coverage_ai": {
                   "state": "measured",
                   "value": 2,
-                  "reason": "The documentation contains a tutorial (\"Get started\" with guided setup steps) and reference content (configuration options like allowed-hosts, log-level, database settings), but lacks dedicated how-to guides for specific tasks and explanatory content about architecture or concepts."
+                  "reason": "The documentation contains a clear Tutorial (\"Get started\" section with guided installation and basic setup) and Reference content (snap configuration options with commands), but lacks dedicated How-to guides for specific tasks and Explanation content about architecture or concepts."
                 },
                 "uses_rtd_hosting": {
                   "state": "measured",
@@ -8934,7 +8934,7 @@
                 },
                 "uses_jubilant": {
                   "state": "measured",
-                  "value": true
+                  "value": false
                 },
                 "coverage_pct": {
                   "state": "insufficient_data",
@@ -8998,7 +8998,7 @@
                 "diataxis_coverage_ai": {
                   "state": "measured",
                   "value": 0,
-                  "reason": "The documentation is empty with no content present in either the README or docs/index.md files."
+                  "reason": "The provided documentation is empty with no content in either the README or docs/index.md files."
                 },
                 "uses_rtd_hosting": {
                   "state": "measured",
@@ -9241,7 +9241,7 @@
                 },
                 "uses_jubilant": {
                   "state": "measured",
-                  "value": true
+                  "value": false
                 },
                 "coverage_pct": {
                   "state": "measured",
@@ -9294,7 +9294,7 @@
                 "diataxis_coverage_ai": {
                   "state": "measured",
                   "value": 2,
-                  "reason": "The documentation contains a Tutorial (referenced as 'tutorial here' link) and Reference content (list of actions and integrations), but lacks How-to guides with detailed steps and Explanation content discussing architecture or design decisions."
+                  "reason": "The documentation contains a clear Tutorial reference (getting started guide linked) and Reference content (list of actions, integrations, configuration options), but lacks explicit How-to guides and Explanation content about architecture or design decisions."
                 },
                 "uses_rtd_hosting": {
                   "state": "measured",
@@ -9603,9 +9603,9 @@
                   "value": false
                 },
                 "diataxis_coverage_ai": {
-                  "state": "measured",
-                  "value": 4,
-                  "reason": "The documentation clearly contains all four Di\u00e1taxis types: tutorials (getting started guide), how-to guides (multiple task-based guides like configure plugins, rotate credentials), reference (actions, configurations, integrations), and explanation (architectural design records and charm architecture)."
+                  "state": "insufficient_data",
+                  "value": null,
+                  "reason": "AI documentation assessment is unavailable."
                 },
                 "uses_rtd_hosting": {
                   "state": "measured",
@@ -9646,9 +9646,9 @@
                   "value": false
                 },
                 "diataxis_coverage_ai": {
-                  "state": "measured",
-                  "value": 4,
-                  "reason": "The documentation explicitly organizes content into all four Di\u00e1taxis types: tutorials (getting started guide), how-to guides (contribute, upgrade), reference (actions, configurations, integrations, charm architecture), and explanation (mentioned in the structure with a dedicated section)."
+                  "state": "insufficient_data",
+                  "value": null,
+                  "reason": "AI documentation assessment is unavailable."
                 },
                 "uses_rtd_hosting": {
                   "state": "measured",
@@ -9689,9 +9689,9 @@
                   "value": false
                 },
                 "diataxis_coverage_ai": {
-                  "state": "measured",
-                  "value": 4,
-                  "reason": "The documentation explicitly includes all four Di\u00e1taxis types: tutorial (getting started), how-to guides (configure agent, upgrade), reference (actions, configurations, integrations, architecture), and explanation (workload management)."
+                  "state": "insufficient_data",
+                  "value": null,
+                  "reason": "AI documentation assessment is unavailable."
                 },
                 "uses_rtd_hosting": {
                   "state": "measured",
@@ -10254,9 +10254,9 @@
                   "value": false
                 },
                 "diataxis_coverage_ai": {
-                  "state": "measured",
-                  "value": 3,
-                  "reason": "The documentation contains a tutorial (basic deployment walkthrough), how-to guides (clear queue action, adjust sync schedule), and reference (configuration options in charmcraft.yaml), but lacks explanation content about architecture or design decisions."
+                  "state": "insufficient_data",
+                  "value": null,
+                  "reason": "AI documentation assessment is unavailable."
                 },
                 "uses_rtd_hosting": {
                   "state": "measured",
@@ -10297,9 +10297,9 @@
                   "value": false
                 },
                 "diataxis_coverage_ai": {
-                  "state": "measured",
-                  "value": 4,
-                  "reason": "The documentation explicitly references and links to all four types: tutorial (getting-started), how-to guides (backup-restore, contribute, redeploy, upgrade), reference (actions, configurations, charm-architecture), and explanation (security)."
+                  "state": "insufficient_data",
+                  "value": null,
+                  "reason": "AI documentation assessment is unavailable."
                 },
                 "uses_rtd_hosting": {
                   "state": "measured",
@@ -10340,9 +10340,9 @@
                   "value": false
                 },
                 "diataxis_coverage_ai": {
-                  "state": "measured",
-                  "value": 4,
-                  "reason": "The documentation clearly references all four Di\u00e1taxis types: Tutorial (getting started sections with deployment commands), How-to guides (backup, contribute, upgrade operations), Reference (actions, configurations, architecture), and Explanation (security, architecture discussions)."
+                  "state": "insufficient_data",
+                  "value": null,
+                  "reason": "AI documentation assessment is unavailable."
                 },
                 "uses_rtd_hosting": {
                   "state": "measured",
@@ -10383,9 +10383,9 @@
                   "value": false
                 },
                 "diataxis_coverage_ai": {
-                  "state": "measured",
-                  "value": 2,
-                  "reason": "The documentation contains tutorial content (\"Get started\" section with deployment steps) and reference content (mentions of configuration options and integrations), but lacks dedicated how-to guides for specific tasks and explanatory content about architecture or concepts."
+                  "state": "insufficient_data",
+                  "value": null,
+                  "reason": "AI documentation assessment is unavailable."
                 },
                 "uses_rtd_hosting": {
                   "state": "measured",
@@ -10426,9 +10426,9 @@
                   "value": false
                 },
                 "diataxis_coverage_ai": {
-                  "state": "measured",
-                  "value": 0,
-                  "reason": "The documentation is empty with no content in either README or docs/index.md, therefore none of the four Di\u00e1taxis documentation types are present."
+                  "state": "insufficient_data",
+                  "value": null,
+                  "reason": "AI documentation assessment is unavailable."
                 },
                 "uses_rtd_hosting": {
                   "state": "measured",
@@ -11200,8 +11200,8 @@
             {
               "product_id": "saml-integrator",
               "repo": "canonical/saml-integrator-operator",
-              "medal": "gold",
-              "result": "gold",
+              "medal": "silver",
+              "result": "silver",
               "applicability": "scored",
               "metrics": {
                 "latest_build_passing": {
@@ -11214,7 +11214,7 @@
                 },
                 "uses_jubilant": {
                   "state": "measured",
-                  "value": true
+                  "value": false
                 },
                 "coverage_pct": {
                   "state": "insufficient_data",
@@ -11331,9 +11331,9 @@
                   "value": false
                 },
                 "diataxis_coverage_ai": {
-                  "state": "measured",
-                  "value": 4,
-                  "reason": "The documentation explicitly mentions all four Di\u00e1taxis types: tutorial (getting started), how-to guides (configure SMTP, backup/restore, scaling), reference (configurations, actions, integrations, architecture), and explanation (charm architecture, external access)."
+                  "state": "insufficient_data",
+                  "value": null,
+                  "reason": "AI documentation assessment is unavailable."
                 },
                 "uses_rtd_hosting": {
                   "state": "measured",
@@ -11374,9 +11374,9 @@
                   "value": false
                 },
                 "diataxis_coverage_ai": {
-                  "state": "measured",
-                  "value": 1,
-                  "reason": "The documentation only contains reference-type content (badge, links to external resources, community information) but lacks tutorials, how-to guides, or explanatory content about Draupnir itself."
+                  "state": "insufficient_data",
+                  "value": null,
+                  "reason": "AI documentation assessment is unavailable."
                 },
                 "uses_rtd_hosting": {
                   "state": "measured",
@@ -11417,9 +11417,9 @@
                   "value": false
                 },
                 "diataxis_coverage_ai": {
-                  "state": "measured",
-                  "value": 1,
-                  "reason": "The documentation contains only reference information (links to external resources, project metadata, and community information) but lacks tutorials, how-to guides, and explanations."
+                  "state": "insufficient_data",
+                  "value": null,
+                  "reason": "AI documentation assessment is unavailable."
                 },
                 "uses_rtd_hosting": {
                   "state": "measured",
@@ -11460,9 +11460,9 @@
                   "value": false
                 },
                 "diataxis_coverage_ai": {
-                  "state": "measured",
-                  "value": 1,
-                  "reason": "The documentation contains only reference-type content (links to external resources, project metadata, and repository information) but lacks tutorials, how-to guides, or explanations."
+                  "state": "insufficient_data",
+                  "value": null,
+                  "reason": "AI documentation assessment is unavailable."
                 },
                 "uses_rtd_hosting": {
                   "state": "measured",
@@ -11503,9 +11503,9 @@
                   "value": false
                 },
                 "diataxis_coverage_ai": {
-                  "state": "measured",
-                  "value": 1,
-                  "reason": "The documentation only contains reference-like information (project description, links, community info) but lacks tutorials, how-to guides, or explanations of architecture/concepts."
+                  "state": "insufficient_data",
+                  "value": null,
+                  "reason": "AI documentation assessment is unavailable."
                 },
                 "uses_rtd_hosting": {
                   "state": "measured",
@@ -11546,9 +11546,9 @@
                   "value": false
                 },
                 "diataxis_coverage_ai": {
-                  "state": "measured",
-                  "value": 1,
-                  "reason": "Only Reference content is present (configuration options via environment variables), with no Tutorial, How-to guide, or Explanation sections."
+                  "state": "insufficient_data",
+                  "value": null,
+                  "reason": "AI documentation assessment is unavailable."
                 },
                 "uses_rtd_hosting": {
                   "state": "measured",
@@ -11589,9 +11589,9 @@
                   "value": false
                 },
                 "diataxis_coverage_ai": {
-                  "state": "measured",
-                  "value": 4,
-                  "reason": "The documentation explicitly mentions and includes all four Di\u00e1taxis types: tutorials (getting started), how-to guides (configure SAML, upgrade, contribute), reference (configurations, integrations, actions, architecture), and explanation (charm architecture)."
+                  "state": "insufficient_data",
+                  "value": null,
+                  "reason": "AI documentation assessment is unavailable."
                 },
                 "uses_rtd_hosting": {
                   "state": "measured",
@@ -11632,9 +11632,9 @@
                   "value": false
                 },
                 "diataxis_coverage_ai": {
-                  "state": "measured",
-                  "value": 1,
-                  "reason": "The documentation contains only an Explanation section (the Architecture diagram with mermaid graph showing system components and their relationships), but lacks Tutorial, How-to guide, and Reference content."
+                  "state": "insufficient_data",
+                  "value": null,
+                  "reason": "AI documentation assessment is unavailable."
                 },
                 "uses_rtd_hosting": {
                   "state": "measured",
@@ -11675,9 +11675,9 @@
                   "value": false
                 },
                 "diataxis_coverage_ai": {
-                  "state": "measured",
-                  "value": 4,
-                  "reason": "The documentation index explicitly shows all four Di\u00e1taxis types: Tutorial (Deploy IRC bridge), How-to (Troubleshooting, Contribute, Upgrade), Reference (Charm architecture), and Explanation (High-level overview section describing architecture and how the bridge works)."
+                  "state": "insufficient_data",
+                  "value": null,
+                  "reason": "AI documentation assessment is unavailable."
                 },
                 "uses_rtd_hosting": {
                   "state": "measured",
@@ -12607,7 +12607,7 @@
                 },
                 "uses_jubilant": {
                   "state": "measured",
-                  "value": true
+                  "value": false
                 },
                 "coverage_pct": {
                   "state": "insufficient_data",
@@ -12662,7 +12662,7 @@
                 "diataxis_coverage_ai": {
                   "state": "measured",
                   "value": 4,
-                  "reason": "The documentation explicitly organizes content using all four Di\u00e1taxis types: Tutorial (deployment guide), How-to guides (operations like backup/restore, COS integration), Reference (configurations, architecture, actions), and Explanation (security overview, architecture discussion)."
+                  "reason": "The documentation explicitly contains all four Di\u00e1taxis types: Tutorial (guided deployment), How-to guides (backup/restore, integrations), Reference (configurations, architecture, actions), and Explanation (security overview, architecture discussion)."
                 },
                 "uses_rtd_hosting": {
                   "state": "measured",
@@ -12901,7 +12901,7 @@
                 "diataxis_coverage_ai": {
                   "state": "measured",
                   "value": 3,
-                  "reason": "The documentation clearly contains Tutorials (getting-started guide), How-to guides (upgrade, configure OIDC, configure scripts-reports), and Reference (actions, integrations, charm architecture), but lacks Explanation-type content discussing concepts like why certain architectural decisions were made or understanding-oriented discussions."
+                  "reason": "The documentation clearly contains Tutorial (getting-started), How-to guides (upgrade, configure-oidc, configure-scripts-reports), and Reference (actions, integrations, charm-architecture) sections, but lacks Explanation content that provides understanding-oriented discussion of concepts like why certain design decisions were made."
                 },
                 "uses_rtd_hosting": {
                   "state": "measured",
@@ -13066,18 +13066,18 @@
       ],
       "dimensions": {
         "test_verification": {
-          "medal": "gold",
+          "medal": "silver",
           "target": "bronze",
           "applicability": "scored",
           "meets_target": true,
-          "result": "gold",
+          "result": "silver",
           "metrics": {},
           "composition": [
             {
               "product_id": "nginx-ingress-integrator-charm",
               "repo": "canonical/nginx-ingress-integrator-operator",
-              "medal": "gold",
-              "result": "gold",
+              "medal": "silver",
+              "result": "silver",
               "applicability": "scored",
               "metrics": {
                 "latest_build_passing": {
@@ -13090,7 +13090,7 @@
                 },
                 "uses_jubilant": {
                   "state": "measured",
-                  "value": true
+                  "value": false
                 },
                 "coverage_pct": {
                   "state": "insufficient_data",
@@ -13143,9 +13143,9 @@
                   "value": false
                 },
                 "diataxis_coverage_ai": {
-                  "state": "measured",
-                  "value": 4,
-                  "reason": "The documentation explicitly references all four Di\u00e1taxis types: Tutorial (getting started), How-to guides (step-by-step instructions for operations), Reference (integrations, specifications), and Explanation (concepts section mentioned in index)."
+                  "state": "insufficient_data",
+                  "value": null,
+                  "reason": "AI documentation assessment is unavailable."
                 },
                 "uses_rtd_hosting": {
                   "state": "measured",
@@ -13389,9 +13389,9 @@
                   "value": false
                 },
                 "diataxis_coverage_ai": {
-                  "state": "measured",
-                  "value": 3,
-                  "reason": "The documentation explicitly contains Tutorial (mentioned in both README and docs/index.md), How-to guides (multiple references to how-to tasks like account creation, upgrade, backup), and Reference (configurations, integrations, observability reference), but lacks clear Explanation content about architecture concepts or rationale."
+                  "state": "insufficient_data",
+                  "value": null,
+                  "reason": "AI documentation assessment is unavailable."
                 },
                 "uses_rtd_hosting": {
                   "state": "measured",
@@ -13553,18 +13553,18 @@
       "parent_product_ids": [],
       "dimensions": {
         "test_verification": {
-          "medal": "silver",
+          "medal": "gold",
           "target": "bronze",
           "applicability": "scored",
           "meets_target": true,
-          "result": "silver",
+          "result": "gold",
           "metrics": {},
           "composition": [
             {
               "product_id": "penpot-charm",
               "repo": "canonical/penpot-operator",
-              "medal": "silver",
-              "result": "silver",
+              "medal": "gold",
+              "result": "gold",
               "applicability": "scored",
               "metrics": {
                 "latest_build_passing": {
@@ -13577,7 +13577,7 @@
                 },
                 "uses_jubilant": {
                   "state": "measured",
-                  "value": false
+                  "value": true
                 },
                 "coverage_pct": {
                   "state": "insufficient_data",
@@ -13630,9 +13630,9 @@
                   "value": false
                 },
                 "diataxis_coverage_ai": {
-                  "state": "measured",
-                  "value": 4,
-                  "reason": "The documentation explicitly contains all four Di\u00e1taxis types: Tutorial (getting started deployment guide), How-to guides (configure S3, SMTP, SSO, manage users, etc.), Reference (actions, configurations, charm architecture), and Explanation (charm architecture discussing design and understanding)."
+                  "state": "insufficient_data",
+                  "value": null,
+                  "reason": "AI documentation assessment is unavailable."
                 },
                 "uses_rtd_hosting": {
                   "state": "measured",
@@ -13871,9 +13871,9 @@
                   "value": false
                 },
                 "diataxis_coverage_ai": {
-                  "state": "measured",
-                  "value": 1,
-                  "reason": "The documentation only contains reference-like content (integrations list, links to actions) but lacks tutorials, how-to guides, or explanations within the provided text itself, as all substantive content is externally linked."
+                  "state": "insufficient_data",
+                  "value": null,
+                  "reason": "AI documentation assessment is unavailable."
                 },
                 "uses_rtd_hosting": {
                   "state": "measured",
@@ -14035,11 +14035,11 @@
       ],
       "dimensions": {
         "test_verification": {
-          "medal": "gold",
+          "medal": "silver",
           "target": "gold",
           "applicability": "scored",
-          "meets_target": true,
-          "result": "gold",
+          "meets_target": false,
+          "result": "silver",
           "metrics": {
             "latest_build_passing": {
               "state": "measured",
@@ -14051,7 +14051,7 @@
             },
             "uses_jubilant": {
               "state": "measured",
-              "value": true
+              "value": false
             },
             "coverage_pct": {
               "state": "insufficient_data",
@@ -14094,9 +14094,9 @@
               "value": false
             },
             "diataxis_coverage_ai": {
-              "state": "measured",
-              "value": 4,
-              "reason": "The documentation explicitly mentions and includes all four Di\u00e1taxis types: tutorials (getting started), how-to guides (configure SAML, upgrade, contribute), reference (configurations, integrations, actions, architecture), and explanation (charm architecture)."
+              "state": "insufficient_data",
+              "value": null,
+              "reason": "AI documentation assessment is unavailable."
             },
             "uses_rtd_hosting": {
               "state": "measured",
@@ -14269,13 +14269,13 @@
             {
               "product_id": "github-runner",
               "repo": "canonical/github-runner-operator",
-              "medal": "silver",
-              "result": "silver",
+              "medal": "unrated",
+              "result": "below_minimum",
               "applicability": "scored",
               "metrics": {
                 "latest_build_passing": {
                   "state": "measured",
-                  "value": true
+                  "value": false
                 },
                 "integration_test_evidence_present": {
                   "state": "measured",
@@ -14283,7 +14283,7 @@
                 },
                 "uses_jubilant": {
                   "state": "measured",
-                  "value": false
+                  "value": true
                 },
                 "coverage_pct": {
                   "state": "insufficient_data",
@@ -15576,9 +15576,9 @@
                   "value": false
                 },
                 "diataxis_coverage_ai": {
-                  "state": "measured",
-                  "value": 4,
-                  "reason": "The documentation explicitly references all four Di\u00e1taxis types: Tutorial (getting started), How-to guides (configure SMTP, upgrade, contribute), Reference (actions, configurations, integrations, charm architecture), and Explanation (charm architecture explaining design/understanding)."
+                  "state": "insufficient_data",
+                  "value": null,
+                  "reason": "AI documentation assessment is unavailable."
                 },
                 "uses_rtd_hosting": {
                   "state": "measured",
@@ -15771,7 +15771,7 @@
                 },
                 "uses_jubilant": {
                   "state": "measured",
-                  "value": false
+                  "value": true
                 },
                 "coverage_pct": {
                   "state": "insufficient_data",
@@ -15824,9 +15824,9 @@
                   "value": false
                 },
                 "diataxis_coverage_ai": {
-                  "state": "measured",
-                  "value": 4,
-                  "reason": "The documentation explicitly includes Tutorial (guided basic deployment), How-to guides (TLS configuration, troubleshooting, integration), Reference (charm architecture, cryptographic documentation), and Explanation (security overview, TLS explanation) sections as evidenced in the index.md structure."
+                  "state": "insufficient_data",
+                  "value": null,
+                  "reason": "AI documentation assessment is unavailable."
                 },
                 "uses_rtd_hosting": {
                   "state": "measured",
@@ -16065,9 +16065,9 @@
                   "value": false
                 },
                 "diataxis_coverage_ai": {
-                  "state": "measured",
-                  "value": 4,
-                  "reason": "The documentation structure explicitly references all four Di\u00e1taxis types: Tutorial (getting-started.md), How-to (contribute.md), Reference (configurations.md, integrations.md), and Explanation (architecture-overview.md, security.md)."
+                  "state": "insufficient_data",
+                  "value": null,
+                  "reason": "AI documentation assessment is unavailable."
                 },
                 "uses_rtd_hosting": {
                   "state": "measured",
@@ -16855,18 +16855,18 @@
       "parent_product_ids": [],
       "dimensions": {
         "test_verification": {
-          "medal": "silver",
+          "medal": "gold",
           "target": "gold",
           "applicability": "scored",
-          "meets_target": false,
-          "result": "silver",
+          "meets_target": true,
+          "result": "gold",
           "metrics": {},
           "composition": [
             {
               "product_id": "wireguard-gateway",
               "repo": "canonical/wireguard-gateway-operator",
-              "medal": "silver",
-              "result": "silver",
+              "medal": "gold",
+              "result": "gold",
               "applicability": "scored",
               "metrics": {
                 "latest_build_passing": {
@@ -16879,7 +16879,7 @@
                 },
                 "uses_jubilant": {
                   "state": "measured",
-                  "value": false
+                  "value": true
                 },
                 "coverage_pct": {
                   "state": "insufficient_data",
@@ -17409,7 +17409,7 @@
             "diataxis_coverage_ai": {
               "state": "measured",
               "value": 2,
-              "reason": "The documentation clearly contains Tutorial content (framework-specific getting started guides with step-by-step setup) and Reference content (commands, tools like Rockcraft/Charmcraft), but lacks distinct How-to guides for specific tasks and Explanation content discussing architecture or concepts in depth."
+              "reason": "The documentation contains tutorial content (framework-specific getting started guides with step-by-step commands) and reference content (tool installation commands and links to external references), but lacks dedicated how-to guides for specific tasks and explanation content discussing architecture or concepts."
             },
             "uses_rtd_hosting": {
               "state": "measured",
@@ -17600,7 +17600,7 @@
             "diataxis_coverage_ai": {
               "state": "measured",
               "value": 4,
-              "reason": "The documentation explicitly contains all four Di\u00e1taxis types: Tutorial (getting started/deployment guide), How-to guides (configure, upgrade, backup), Reference (actions, configurations, integrations), and Explanation (security, architecture)."
+              "reason": "The documentation explicitly references all four Di\u00e1taxis types: Tutorial (deployment guide), How-to guides (configure, upgrade, backup), Reference (actions, configurations, integrations), and Explanation (architecture, security)."
             },
             "uses_rtd_hosting": {
               "state": "measured",
@@ -17791,7 +17791,7 @@
             "diataxis_coverage_ai": {
               "state": "measured",
               "value": 2,
-              "reason": "The documentation contains clear how-to guides (installation, configuration, running from source) and reference content (configuration options, command syntax), but lacks dedicated tutorial or explanation sections."
+              "reason": "The documentation contains a how-to guide (Usage section with step-by-step installation and configuration) and reference content (nftables rules, command options), but lacks a proper tutorial with learning exercises and explanation sections discussing architecture or design rationale."
             },
             "uses_rtd_hosting": {
               "state": "measured",
@@ -17937,7 +17937,7 @@
             },
             "uses_jubilant": {
               "state": "measured",
-              "value": true
+              "value": false
             },
             "coverage_pct": {
               "state": "insufficient_data",
@@ -17982,7 +17982,7 @@
             "diataxis_coverage_ai": {
               "state": "measured",
               "value": 0,
-              "reason": "The documentation is empty with no content provided in either the README or docs/index.md files."
+              "reason": "The provided documentation is empty with no content in either the README or docs/index.md files, therefore none of the four Di\u00e1taxis types are present."
             },
             "uses_rtd_hosting": {
               "state": "measured",
@@ -18128,7 +18128,7 @@
             },
             "uses_jubilant": {
               "state": "measured",
-              "value": true
+              "value": false
             },
             "coverage_pct": {
               "state": "insufficient_data",
@@ -18173,7 +18173,7 @@
             "diataxis_coverage_ai": {
               "state": "measured",
               "value": 0,
-              "reason": "The documentation is empty with no content in either the README or docs/index.md files."
+              "reason": "The documentation is empty with no content in either the README or docs/index.md files, therefore none of the four Di\u00e1taxis types are present."
             },
             "uses_rtd_hosting": {
               "state": "measured",
@@ -18364,7 +18364,7 @@
             "diataxis_coverage_ai": {
               "state": "measured",
               "value": 0,
-              "reason": "The documentation is empty with no content in either the README or docs/index.md files, therefore none of the four Di\u00e1taxis types are present."
+              "reason": "The documentation is empty with no content in either the README or docs/index.md files."
             },
             "uses_rtd_hosting": {
               "state": "measured",
@@ -18510,7 +18510,7 @@
             },
             "uses_jubilant": {
               "state": "measured",
-              "value": false
+              "value": true
             },
             "coverage_pct": {
               "state": "insufficient_data",
@@ -18555,7 +18555,7 @@
             "diataxis_coverage_ai": {
               "state": "measured",
               "value": 0,
-              "reason": "The documentation is empty with no content present in either the README or docs/index.md files."
+              "reason": "The provided documentation is empty with no content in either the README or docs/index.md files."
             },
             "uses_rtd_hosting": {
               "state": "measured",
@@ -18701,7 +18701,7 @@
             },
             "uses_jubilant": {
               "state": "measured",
-              "value": true
+              "value": false
             },
             "coverage_pct": {
               "state": "insufficient_data",
@@ -18746,7 +18746,7 @@
             "diataxis_coverage_ai": {
               "state": "measured",
               "value": 0,
-              "reason": "The documentation is empty with no content in either the README or docs/index.md files, therefore none of the four Di\u00e1taxis types are present."
+              "reason": "The documentation is empty with no content present in either the README or docs/index.md files."
             },
             "uses_rtd_hosting": {
               "state": "measured",
@@ -18938,7 +18938,7 @@
             "diataxis_coverage_ai": {
               "state": "measured",
               "value": 4,
-              "reason": "The documentation explicitly references and provides navigation to all four Di\u00e1taxis types: Tutorial (getting started section in README), How-to guides (upgrade guide), Reference (charm architecture), and Explanation sections."
+              "reason": "The documentation contains all four types: a tutorial in the 'Get started' section with step-by-step deployment, how-to guides referenced in the navigation and upgrade section, reference material on charm architecture, and explanation content describing what the charm does and its capabilities."
             },
             "uses_rtd_hosting": {
               "state": "measured",
@@ -19132,8 +19132,8 @@
             },
             "diataxis_coverage_ai": {
               "state": "measured",
-              "value": 4,
-              "reason": "The documentation explicitly references all four types: Tutorial (Getting Started/tutorial.md), How-to guides (./how-to), Reference (./reference), and Explanation (./explanation) sections are clearly mentioned in the index structure."
+              "value": 3,
+              "reason": "The documentation clearly references Tutorial (tutorial.md), How-to guides (./how-to), and Reference (./reference) sections with explicit links, but lacks any Explanation content about concepts, architecture, or 'why' topics."
             },
             "uses_rtd_hosting": {
               "state": "measured",
@@ -19328,7 +19328,7 @@
             "diataxis_coverage_ai": {
               "state": "measured",
               "value": 0,
-              "reason": "The documentation only contains repository metadata, project links, and a deprecation notice without any tutorial, how-to, reference, or explanation content."
+              "reason": "The documentation only contains repository metadata, project information, and external links without any tutorial, how-to, reference, or explanation content present in the provided text."
             },
             "uses_rtd_hosting": {
               "state": "measured",
@@ -19523,7 +19523,7 @@
             "diataxis_coverage_ai": {
               "state": "measured",
               "value": 0,
-              "reason": "The documentation only contains project metadata, repository deprecation notice, community links, and a reference to external documentation, with no actual tutorial, how-to, reference, or explanation content present."
+              "reason": "The documentation only contains project metadata, community links, and a deprecation notice with no tutorial, how-to, reference, or explanation content present."
             },
             "uses_rtd_hosting": {
               "state": "measured",
@@ -19718,7 +19718,7 @@
             "diataxis_coverage_ai": {
               "state": "measured",
               "value": 1,
-              "reason": "The documentation contains only a how-to guide section ('Building the Snap' with step-by-step instructions) but lacks tutorial, reference, and explanation content."
+              "reason": "The documentation contains only a how-to guide section ('Building the Snap' with step-by-step installation instructions), but lacks tutorial, reference, and explanation content."
             },
             "uses_rtd_hosting": {
               "state": "measured",
@@ -19912,7 +19912,7 @@
             "diataxis_coverage_ai": {
               "state": "measured",
               "value": 3,
-              "reason": "The documentation contains tutorial (referenced 'Getting started' tutorial), how-to guide (basic operations and integration examples), and reference (actions, tuning options, integrations list), but lacks explanation-oriented content discussing architecture or design rationale."
+              "reason": "The documentation contains a tutorial reference ('Getting started' tutorial), how-to content (integrations and basic operations), and reference content (actions, tuning options), but lacks clear explanation-oriented content discussing architecture or conceptual understanding."
             },
             "uses_rtd_hosting": {
               "state": "measured",
@@ -20103,7 +20103,7 @@
             "diataxis_coverage_ai": {
               "state": "measured",
               "value": 1,
-              "reason": "Only a tutorial is referenced ('Content Cache tutorial' for step-by-step instructions), while reference, how-to guides, and explanations are not present in the provided documentation."
+              "reason": "The documentation only contains references to a tutorial (\"Get started\" section pointing to external tutorial), but no embedded how-to guides, reference material, or explanations are present in the provided content."
             },
             "uses_rtd_hosting": {
               "state": "measured",
@@ -20294,7 +20294,7 @@
             "diataxis_coverage_ai": {
               "state": "measured",
               "value": 1,
-              "reason": "The documentation contains only a Tutorial reference (pointing to the Content Cache tutorial for getting started), but lacks embedded how-to guides, reference material, and explanations within the provided content."
+              "reason": "Only Tutorial content is present via the reference to 'Content Cache tutorial' for step-by-step getting started instructions, while the other sections merely link to external documentation without containing actual How-to, Reference, or Explanation content."
             },
             "uses_rtd_hosting": {
               "state": "measured",
@@ -20485,7 +20485,7 @@
             "diataxis_coverage_ai": {
               "state": "measured",
               "value": 3,
-              "reason": "The documentation clearly contains Tutorial (mentioned in table of contents), How-to guides (operational tasks like ingress and authentication, plus PostgreSQL configuration examples), and Reference (configuration options, actions, relations tables), but lacks Explanation content discussing architectural concepts or rationale."
+              "reason": "The documentation clearly references a separate Tutorial section, includes How-to content (deployment steps, configuration examples like PostgreSQL sources/destinations), and Reference content (configuration options, relations, actions), but lacks Explanation-oriented content discussing architecture or design rationale."
             },
             "uses_rtd_hosting": {
               "state": "measured",
@@ -20679,7 +20679,7 @@
             "diataxis_coverage_ai": {
               "state": "measured",
               "value": 3,
-              "reason": "The documentation contains how-to guides (deployment, configuration steps), reference material (configuration options, YAML formats), and explanatory content (HTTPS architecture, proxy settings), but lacks a dedicated tutorial with learning-oriented guided exercises."
+              "reason": "The documentation contains clear how-to guides (deployment steps, configuration), extensive reference content (configuration options, YAML formats, CLI commands), and some explanatory content (HTTPS architecture, proxy mechanism descriptions), but lacks a true tutorial with a complete learning-oriented walkthrough for beginners."
             },
             "uses_rtd_hosting": {
               "state": "measured",
@@ -20812,11 +20812,11 @@
       ],
       "dimensions": {
         "test_verification": {
-          "medal": "gold",
+          "medal": "silver",
           "target": "gold",
           "applicability": "scored",
-          "meets_target": true,
-          "result": "gold",
+          "meets_target": false,
+          "result": "silver",
           "metrics": {
             "latest_build_passing": {
               "state": "measured",
@@ -20828,7 +20828,7 @@
             },
             "uses_jubilant": {
               "state": "measured",
-              "value": true
+              "value": false
             },
             "coverage_pct": {
               "state": "insufficient_data",
@@ -20873,7 +20873,7 @@
             "diataxis_coverage_ai": {
               "state": "measured",
               "value": 2,
-              "reason": "The documentation contains Reference content (configuration options, integration requirements, CLI commands) and How-to guide content (deployment and usage instructions), but lacks Tutorial and Explanation sections as those are referenced externally."
+              "reason": "The documentation contains Reference content (configuration options, integration requirements, CLI commands) and How-to guide content (deployment steps, connecting to databases), but lacks Tutorial and Explanation sections as those are externally linked rather than included."
             },
             "uses_rtd_hosting": {
               "state": "measured",
@@ -21006,11 +21006,11 @@
       ],
       "dimensions": {
         "test_verification": {
-          "medal": "gold",
+          "medal": "silver",
           "target": "gold",
           "applicability": "scored",
-          "meets_target": true,
-          "result": "gold",
+          "meets_target": false,
+          "result": "silver",
           "metrics": {
             "latest_build_passing": {
               "state": "measured",
@@ -21022,7 +21022,7 @@
             },
             "uses_jubilant": {
               "state": "measured",
-              "value": true
+              "value": false
             },
             "coverage_pct": {
               "state": "insufficient_data",
@@ -21067,7 +21067,7 @@
             "diataxis_coverage_ai": {
               "state": "measured",
               "value": 3,
-              "reason": "The documentation includes tutorial-like deployment instructions (getting started), extensive how-to guides (managing credentials, backup/restore, integrations), and detailed reference content (configuration options, action results tables), but lacks dedicated explanation sections discussing architecture, design rationale, or conceptual understanding."
+              "reason": "The documentation contains clear how-to guides (deploying, managing credentials, backup/restore), reference content (configuration options tables, action results), and some explanation (how catalog reconciliation works, authentication mechanisms), but lacks a proper learning-oriented tutorial for beginners."
             },
             "uses_rtd_hosting": {
               "state": "measured",
@@ -21261,7 +21261,7 @@
             "diataxis_coverage_ai": {
               "state": "measured",
               "value": 1,
-              "reason": "The documentation contains only reference content (deployment architecture, requirements, integrations, configuration commands) but explicitly directs users to external documentation for tutorials, how-to guides, and explanations."
+              "reason": "The documentation contains only Reference content (deployment architecture, requirements, integrations, configuration options) but explicitly points to external documentation for tutorial, how-to guides, and explanation."
             },
             "uses_rtd_hosting": {
               "state": "measured",
@@ -21455,7 +21455,7 @@
             "diataxis_coverage_ai": {
               "state": "measured",
               "value": 3,
-              "reason": "The documentation contains a tutorial (deployment example with step-by-step commands), reference content (configuration table and actions list), and how-to guide elements (configuration examples and action usage), but lacks explanation-oriented content discussing architecture, design decisions, or conceptual understanding."
+              "reason": "The documentation contains a tutorial (deployment steps), how-to guides (configuration and actions examples), and reference content (configuration table), but lacks explanation-oriented content discussing architecture or design decisions."
             },
             "uses_rtd_hosting": {
               "state": "measured",
@@ -21652,7 +21652,7 @@
             "diataxis_coverage_ai": {
               "state": "measured",
               "value": 2,
-              "reason": "The documentation contains clear Tutorial content (getting-started guide) and How-to guides (manage users, upgrade, contribute), but lacks Reference documentation (e.g., configuration parameter tables, action API specs) and Explanation content (e.g., architecture discussion, authentication mechanism explanations)."
+              "reason": "The documentation contains Tutorial content (getting started guide with step-by-step deployment) and How-to guides (managing users, configuring authentication, upgrading), but lacks Reference material (no API/config/CLI reference documentation) and Explanation content (no architecture or conceptual discussion beyond basic description)."
             },
             "uses_rtd_hosting": {
               "state": "measured",
@@ -21798,7 +21798,7 @@
             },
             "uses_jubilant": {
               "state": "measured",
-              "value": false
+              "value": true
             },
             "coverage_pct": {
               "state": "measured",
@@ -21841,7 +21841,7 @@
             "diataxis_coverage_ai": {
               "state": "measured",
               "value": 4,
-              "reason": "The documentation explicitly mentions all four Di\u00e1taxis types: Tutorial (getting started/deployment), How-to guides (configuration/operations tasks), Reference (integrations/architecture/actions), and Explanation (security overview)."
+              "reason": "The documentation explicitly references all four Di\u00e1taxis types: a tutorial for getting started, how-to guides for practical tasks, reference for technical details on actions/configurations/integrations, and explanation for security and context topics."
             },
             "uses_rtd_hosting": {
               "state": "measured",
@@ -21971,11 +21971,11 @@
       ],
       "dimensions": {
         "test_verification": {
-          "medal": "silver",
+          "medal": "gold",
           "target": "bronze",
           "applicability": "scored",
           "meets_target": true,
-          "result": "silver",
+          "result": "gold",
           "metrics": {
             "latest_build_passing": {
               "state": "measured",
@@ -21987,7 +21987,7 @@
             },
             "uses_jubilant": {
               "state": "measured",
-              "value": false
+              "value": true
             },
             "coverage_pct": {
               "state": "insufficient_data",
@@ -22030,9 +22030,9 @@
               "value": false
             },
             "diataxis_coverage_ai": {
-              "state": "measured",
-              "value": 2,
-              "reason": "The documentation contains a clear tutorial (getting started with deployment command) and reference content (mentioning the dns_record interface and configuration points), but lacks dedicated how-to guides for specific tasks and explanation sections discussing architecture or design decisions."
+              "state": "insufficient_data",
+              "value": null,
+              "reason": "AI documentation assessment is unavailable."
             },
             "uses_rtd_hosting": {
               "state": "measured",
@@ -22162,11 +22162,11 @@
       ],
       "dimensions": {
         "test_verification": {
-          "medal": "silver",
+          "medal": "gold",
           "target": "bronze",
           "applicability": "scored",
           "meets_target": true,
-          "result": "silver",
+          "result": "gold",
           "metrics": {
             "latest_build_passing": {
               "state": "measured",
@@ -22178,7 +22178,7 @@
             },
             "uses_jubilant": {
               "state": "measured",
-              "value": false
+              "value": true
             },
             "coverage_pct": {
               "state": "insufficient_data",
@@ -22221,9 +22221,9 @@
               "value": false
             },
             "diataxis_coverage_ai": {
-              "state": "measured",
-              "value": 2,
-              "reason": "The documentation contains a clear tutorial (Get started section with deployment and setup steps) and reference content (configuration options like allowed-hosts and debug), but lacks dedicated how-to guides for specific tasks and explanatory content about architecture or design decisions."
+              "state": "insufficient_data",
+              "value": null,
+              "reason": "AI documentation assessment is unavailable."
             },
             "uses_rtd_hosting": {
               "state": "measured",
@@ -22412,9 +22412,9 @@
               "value": false
             },
             "diataxis_coverage_ai": {
-              "state": "measured",
-              "value": 2,
-              "reason": "The documentation contains a tutorial (Get started section with deployment and integration steps) and reference content (mentioning configuration options and the dns_record interface), but lacks explicit how-to guides for specific tasks and explanation content about architecture or design decisions."
+              "state": "insufficient_data",
+              "value": null,
+              "reason": "AI documentation assessment is unavailable."
             },
             "uses_rtd_hosting": {
               "state": "measured",
@@ -22544,11 +22544,11 @@
       ],
       "dimensions": {
         "test_verification": {
-          "medal": "silver",
+          "medal": "gold",
           "target": "bronze",
           "applicability": "scored",
           "meets_target": true,
-          "result": "silver",
+          "result": "gold",
           "metrics": {
             "latest_build_passing": {
               "state": "measured",
@@ -22560,7 +22560,7 @@
             },
             "uses_jubilant": {
               "state": "measured",
-              "value": false
+              "value": true
             },
             "coverage_pct": {
               "state": "insufficient_data",
@@ -22603,9 +22603,9 @@
               "value": false
             },
             "diataxis_coverage_ai": {
-              "state": "measured",
-              "value": 2,
-              "reason": "The documentation contains Tutorial content (the 'Get started' section with deployment commands) and Reference content (basic operations and links), but lacks explicit How-to guides for specific tasks and Explanation content about architecture or design decisions."
+              "state": "insufficient_data",
+              "value": null,
+              "reason": "AI documentation assessment is unavailable."
             },
             "uses_rtd_hosting": {
               "state": "measured",
@@ -22794,9 +22794,9 @@
               "value": false
             },
             "diataxis_coverage_ai": {
-              "state": "measured",
-              "value": 1,
-              "reason": "The documentation contains only tutorial content in the 'Get started' section showing basic deployment steps, but lacks how-to guides, reference documentation, and explanatory content."
+              "state": "insufficient_data",
+              "value": null,
+              "reason": "AI documentation assessment is unavailable."
             },
             "uses_rtd_hosting": {
               "state": "measured",
@@ -22926,11 +22926,11 @@
       ],
       "dimensions": {
         "test_verification": {
-          "medal": "gold",
+          "medal": "silver",
           "target": "bronze",
           "applicability": "scored",
           "meets_target": true,
-          "result": "gold",
+          "result": "silver",
           "metrics": {
             "latest_build_passing": {
               "state": "measured",
@@ -22942,7 +22942,7 @@
             },
             "uses_jubilant": {
               "state": "measured",
-              "value": true
+              "value": false
             },
             "coverage_pct": {
               "state": "insufficient_data",
@@ -22985,9 +22985,9 @@
               "value": false
             },
             "diataxis_coverage_ai": {
-              "state": "measured",
-              "value": 2,
-              "reason": "The documentation contains tutorial content (\"Get started\" section with guided installation exercise) and how-to guide content (\"Build the snap\" with step-by-step instructions), but lacks reference documentation (API/configuration details) and explanation content (architecture/concepts discussion)."
+              "state": "insufficient_data",
+              "value": null,
+              "reason": "AI documentation assessment is unavailable."
             },
             "uses_rtd_hosting": {
               "state": "measured",
@@ -23176,9 +23176,9 @@
               "value": false
             },
             "diataxis_coverage_ai": {
-              "state": "measured",
-              "value": 1,
-              "reason": "The documentation contains only Tutorial content (Get started section with step-by-step installation and building instructions), but lacks How-to guides for specific tasks, Reference documentation for configuration/API details, and Explanation content discussing architecture or concepts."
+              "state": "insufficient_data",
+              "value": null,
+              "reason": "AI documentation assessment is unavailable."
             },
             "uses_rtd_hosting": {
               "state": "measured",
@@ -23324,7 +23324,7 @@
             },
             "uses_jubilant": {
               "state": "measured",
-              "value": true
+              "value": false
             },
             "coverage_pct": {
               "state": "insufficient_data",
@@ -23369,7 +23369,7 @@
             "diataxis_coverage_ai": {
               "state": "measured",
               "value": 1,
-              "reason": "The documentation contains only reference-type content (brief factual descriptions of what the charm is, links to source repositories, and pointers to other documents) but lacks tutorials, how-to guides, or explanatory content."
+              "reason": "The documentation only contains reference-type content (describing what the charm is, its components, and links to technical details) but lacks tutorials, how-to guides, or explanatory content."
             },
             "uses_rtd_hosting": {
               "state": "measured",
@@ -23515,7 +23515,7 @@
             },
             "uses_jubilant": {
               "state": "measured",
-              "value": true
+              "value": false
             },
             "coverage_pct": {
               "state": "insufficient_data",
@@ -23560,7 +23560,7 @@
             "diataxis_coverage_ai": {
               "state": "measured",
               "value": 1,
-              "reason": "The documentation contains only Reference content (factual information about the operator, links to components) but lacks tutorials, how-to guides, and explanations."
+              "reason": "The documentation contains only reference-oriented content describing what the charm is and linking to external resources, with no tutorial, how-to guide, or explanation sections present."
             },
             "uses_rtd_hosting": {
               "state": "measured",
@@ -23706,7 +23706,7 @@
             },
             "uses_jubilant": {
               "state": "measured",
-              "value": true
+              "value": false
             },
             "coverage_pct": {
               "state": "insufficient_data",
@@ -23751,7 +23751,7 @@
             "diataxis_coverage_ai": {
               "state": "measured",
               "value": 3,
-              "reason": "The documentation contains tutorial content (Getting Started section), how-to guides (Basic operations with step-by-step configuration instructions), and reference information (configuration options like gateway-class, hsts-max-age), but lacks explanation/understanding-oriented content about architecture or design decisions."
+              "reason": "The documentation contains Tutorial (Getting Started section), How-to guide (Basic operations with configuration examples), and Reference (configuration options like gateway-class, hsts-max-age), but lacks Explanation content about architecture or why to use specific approaches."
             },
             "uses_rtd_hosting": {
               "state": "measured",
@@ -23897,7 +23897,7 @@
             },
             "uses_jubilant": {
               "state": "measured",
-              "value": true
+              "value": false
             },
             "coverage_pct": {
               "state": "insufficient_data",
@@ -23942,7 +23942,7 @@
             "diataxis_coverage_ai": {
               "state": "measured",
               "value": 3,
-              "reason": "The documentation contains a tutorial (linked 'Getting started' with deployment steps), how-to guides (configure hostname, serve metrics on separate port, with links to more how-tos), and reference content (configuration options, actions, integrations lists), but lacks explanation-oriented content discussing architecture or design rationale."
+              "reason": "The documentation contains tutorial content (getting started deployment steps), how-to guides (configuring hostname, serving metrics), and reference content (configuration options, integrations list), but lacks substantive explanation content about architecture or design decisions."
             },
             "uses_rtd_hosting": {
               "state": "measured",
@@ -24133,7 +24133,7 @@
             "diataxis_coverage_ai": {
               "state": "measured",
               "value": 1,
-              "reason": "The documentation contains only a how-to guide (deployment and integration steps) but lacks tutorial, reference, and explanation sections."
+              "reason": "The documentation contains only a how-to guide (deployment and integration steps) but lacks tutorials, reference documentation, and explanation content."
             },
             "uses_rtd_hosting": {
               "state": "measured",
@@ -24324,7 +24324,7 @@
             "diataxis_coverage_ai": {
               "state": "measured",
               "value": 4,
-              "reason": "The documentation explicitly organizes content into all four Di\u00e1taxis types with dedicated sections for Tutorial (getting started), How-to guides (operations tasks), Reference (relation endpoints), and Explanation (modes of operation and how routing works)."
+              "reason": "The documentation explicitly organizes content into all four Di\u00e1taxis types: Tutorial (getting started), How-to guides (operational tasks like routing traffic), Reference (relation endpoints like cache-config and gateway-route), and Explanation (modes of operation, how things work)."
             },
             "uses_rtd_hosting": {
               "state": "measured",
@@ -24515,7 +24515,7 @@
             "diataxis_coverage_ai": {
               "state": "measured",
               "value": 2,
-              "reason": "The documentation contains a How-to guide (deployment and integration steps) and Reference content (configuration option 'hostname'), but lacks Tutorial and Explanation sections."
+              "reason": "The documentation contains a how-to guide (deployment and integration commands) and reference content (overview of what the charm is), but lacks a tutorial (learning-oriented exercise) and explanation (architecture/design discussion)."
             },
             "uses_rtd_hosting": {
               "state": "measured",
@@ -24704,9 +24704,9 @@
               "value": false
             },
             "diataxis_coverage_ai": {
-              "state": "measured",
-              "value": 2,
-              "reason": "The documentation contains How-to guide content (installation, configuration steps) and Reference content (file locations, CLI commands), but lacks Tutorial (guided learning exercise) and Explanation (architecture/design discussion) sections."
+              "state": "insufficient_data",
+              "value": null,
+              "reason": "AI documentation assessment is unavailable."
             },
             "uses_rtd_hosting": {
               "state": "measured",
@@ -24897,7 +24897,7 @@
             "diataxis_coverage_ai": {
               "state": "measured",
               "value": 4,
-              "reason": "The documentation explicitly references and contains all four Di\u00e1taxis types: tutorials (getting-started), how-to guides (manage-gpg-keys, backup-and-restore, etc.), reference (actions, configurations, integrations, metrics), and explanation (security, charm-architecture)."
+              "reason": "The documentation explicitly references and links to all four Di\u00e1taxis types: tutorials (getting started), how-to guides (backup, manage keys, etc.), reference (actions, configurations, integrations), and explanation (security, charm architecture)."
             },
             "uses_rtd_hosting": {
               "state": "measured",
@@ -25088,7 +25088,7 @@
             "diataxis_coverage_ai": {
               "state": "measured",
               "value": 2,
-              "reason": "The documentation contains a clear Tutorial (the 'Get started' section with setup, deploy, and basic operations) and Reference content (integration interface information and links), but lacks dedicated How-to guides for specific tasks and Explanation content about architecture or design decisions."
+              "reason": "The documentation contains a Tutorial (Get started section with guided deployment exercise) and Reference content (Integrations section describing the http-proxy interface), but lacks dedicated How-to guides and Explanation sections."
             },
             "uses_rtd_hosting": {
               "state": "measured",
@@ -25278,8 +25278,8 @@
             },
             "diataxis_coverage_ai": {
               "state": "measured",
-              "value": 2,
-              "reason": "The documentation contains a clear Tutorial section ('Get started' with deployment walkthrough) and Reference content (integration relations descriptions), but lacks distinct How-to guides for specific tasks and Explanation content discussing architecture or design rationale."
+              "value": 3,
+              "reason": "The documentation contains a clear Tutorial (Get started section with step-by-step deployment), How-to guide elements (Basic operations), and Reference content (Integrations section describing relations), but lacks substantial Explanation content discussing architecture or design rationale."
             },
             "uses_rtd_hosting": {
               "state": "measured",
@@ -25470,7 +25470,7 @@
             "diataxis_coverage_ai": {
               "state": "measured",
               "value": 2,
-              "reason": "The documentation contains tutorial content (mentions 'tutorial' and 'Getting started' with step-by-step instructions in Basic operations section) and reference content (configuration options like http-proxy-domains, CLI commands), but lacks clear how-to guides for specific tasks and explanation sections discussing architecture or rationale."
+              "reason": "The documentation contains Tutorial (explicit reference to getting-started tutorial) and How-to guide (task-oriented examples showing integrator and pass-through mode setup), but lacks Reference (detailed configuration options/API documentation) and Explanation (architectural discussion of why/how the system works)."
             },
             "uses_rtd_hosting": {
               "state": "measured",
@@ -25661,7 +25661,7 @@
             "diataxis_coverage_ai": {
               "state": "measured",
               "value": 2,
-              "reason": "The documentation contains a tutorial (\"Get started\" with guided setup steps) and reference content (configuration options like allowed-hosts, log-level, database settings), but lacks dedicated how-to guides for specific tasks and explanatory content about architecture or concepts."
+              "reason": "The documentation contains a clear Tutorial (\"Get started\" section with guided installation and basic setup) and Reference content (snap configuration options with commands), but lacks dedicated How-to guides for specific tasks and Explanation content about architecture or concepts."
             },
             "uses_rtd_hosting": {
               "state": "measured",
@@ -25807,7 +25807,7 @@
             },
             "uses_jubilant": {
               "state": "measured",
-              "value": true
+              "value": false
             },
             "coverage_pct": {
               "state": "insufficient_data",
@@ -25852,7 +25852,7 @@
             "diataxis_coverage_ai": {
               "state": "measured",
               "value": 0,
-              "reason": "The documentation is empty with no content present in either the README or docs/index.md files."
+              "reason": "The provided documentation is empty with no content in either the README or docs/index.md files."
             },
             "uses_rtd_hosting": {
               "state": "measured",
@@ -25998,7 +25998,7 @@
             },
             "uses_jubilant": {
               "state": "measured",
-              "value": true
+              "value": false
             },
             "coverage_pct": {
               "state": "measured",
@@ -26041,7 +26041,7 @@
             "diataxis_coverage_ai": {
               "state": "measured",
               "value": 2,
-              "reason": "The documentation contains a Tutorial (referenced as 'tutorial here' link) and Reference content (list of actions and integrations), but lacks How-to guides with detailed steps and Explanation content discussing architecture or design decisions."
+              "reason": "The documentation contains a clear Tutorial reference (getting started guide linked) and Reference content (list of actions, integrations, configuration options), but lacks explicit How-to guides and Explanation content about architecture or design decisions."
             },
             "uses_rtd_hosting": {
               "state": "measured",
@@ -26228,9 +26228,9 @@
               "value": false
             },
             "diataxis_coverage_ai": {
-              "state": "measured",
-              "value": 4,
-              "reason": "The documentation clearly contains all four Di\u00e1taxis types: tutorials (getting started guide), how-to guides (multiple task-based guides like configure plugins, rotate credentials), reference (actions, configurations, integrations), and explanation (architectural design records and charm architecture)."
+              "state": "insufficient_data",
+              "value": null,
+              "reason": "AI documentation assessment is unavailable."
             },
             "uses_rtd_hosting": {
               "state": "measured",
@@ -26419,9 +26419,9 @@
               "value": false
             },
             "diataxis_coverage_ai": {
-              "state": "measured",
-              "value": 4,
-              "reason": "The documentation explicitly organizes content into all four Di\u00e1taxis types: tutorials (getting started guide), how-to guides (contribute, upgrade), reference (actions, configurations, integrations, charm architecture), and explanation (mentioned in the structure with a dedicated section)."
+              "state": "insufficient_data",
+              "value": null,
+              "reason": "AI documentation assessment is unavailable."
             },
             "uses_rtd_hosting": {
               "state": "measured",
@@ -26610,9 +26610,9 @@
               "value": false
             },
             "diataxis_coverage_ai": {
-              "state": "measured",
-              "value": 4,
-              "reason": "The documentation explicitly includes all four Di\u00e1taxis types: tutorial (getting started), how-to guides (configure agent, upgrade), reference (actions, configurations, integrations, architecture), and explanation (workload management)."
+              "state": "insufficient_data",
+              "value": null,
+              "reason": "AI documentation assessment is unavailable."
             },
             "uses_rtd_hosting": {
               "state": "measured",
@@ -26801,9 +26801,9 @@
               "value": false
             },
             "diataxis_coverage_ai": {
-              "state": "measured",
-              "value": 3,
-              "reason": "The documentation contains a tutorial (basic deployment walkthrough), how-to guides (clear queue action, adjust sync schedule), and reference (configuration options in charmcraft.yaml), but lacks explanation content about architecture or design decisions."
+              "state": "insufficient_data",
+              "value": null,
+              "reason": "AI documentation assessment is unavailable."
             },
             "uses_rtd_hosting": {
               "state": "measured",
@@ -26992,9 +26992,9 @@
               "value": false
             },
             "diataxis_coverage_ai": {
-              "state": "measured",
-              "value": 4,
-              "reason": "The documentation explicitly references and links to all four types: tutorial (getting-started), how-to guides (backup-restore, contribute, redeploy, upgrade), reference (actions, configurations, charm-architecture), and explanation (security)."
+              "state": "insufficient_data",
+              "value": null,
+              "reason": "AI documentation assessment is unavailable."
             },
             "uses_rtd_hosting": {
               "state": "measured",
@@ -27183,9 +27183,9 @@
               "value": false
             },
             "diataxis_coverage_ai": {
-              "state": "measured",
-              "value": 4,
-              "reason": "The documentation clearly references all four Di\u00e1taxis types: Tutorial (getting started sections with deployment commands), How-to guides (backup, contribute, upgrade operations), Reference (actions, configurations, architecture), and Explanation (security, architecture discussions)."
+              "state": "insufficient_data",
+              "value": null,
+              "reason": "AI documentation assessment is unavailable."
             },
             "uses_rtd_hosting": {
               "state": "measured",
@@ -27374,9 +27374,9 @@
               "value": false
             },
             "diataxis_coverage_ai": {
-              "state": "measured",
-              "value": 2,
-              "reason": "The documentation contains tutorial content (\"Get started\" section with deployment steps) and reference content (mentions of configuration options and integrations), but lacks dedicated how-to guides for specific tasks and explanatory content about architecture or concepts."
+              "state": "insufficient_data",
+              "value": null,
+              "reason": "AI documentation assessment is unavailable."
             },
             "uses_rtd_hosting": {
               "state": "measured",
@@ -27565,9 +27565,9 @@
               "value": false
             },
             "diataxis_coverage_ai": {
-              "state": "measured",
-              "value": 0,
-              "reason": "The documentation is empty with no content in either README or docs/index.md, therefore none of the four Di\u00e1taxis documentation types are present."
+              "state": "insufficient_data",
+              "value": null,
+              "reason": "AI documentation assessment is unavailable."
             },
             "uses_rtd_hosting": {
               "state": "measured",
@@ -27754,9 +27754,9 @@
               "value": false
             },
             "diataxis_coverage_ai": {
-              "state": "measured",
-              "value": 4,
-              "reason": "The documentation explicitly mentions all four Di\u00e1taxis types: tutorial (getting started), how-to guides (configure SMTP, backup/restore, scaling), reference (configurations, actions, integrations, architecture), and explanation (charm architecture, external access)."
+              "state": "insufficient_data",
+              "value": null,
+              "reason": "AI documentation assessment is unavailable."
             },
             "uses_rtd_hosting": {
               "state": "measured",
@@ -27945,9 +27945,9 @@
               "value": false
             },
             "diataxis_coverage_ai": {
-              "state": "measured",
-              "value": 1,
-              "reason": "The documentation only contains reference-type content (badge, links to external resources, community information) but lacks tutorials, how-to guides, or explanatory content about Draupnir itself."
+              "state": "insufficient_data",
+              "value": null,
+              "reason": "AI documentation assessment is unavailable."
             },
             "uses_rtd_hosting": {
               "state": "measured",
@@ -28139,9 +28139,9 @@
               "value": false
             },
             "diataxis_coverage_ai": {
-              "state": "measured",
-              "value": 1,
-              "reason": "The documentation contains only reference information (links to external resources, project metadata, and community information) but lacks tutorials, how-to guides, and explanations."
+              "state": "insufficient_data",
+              "value": null,
+              "reason": "AI documentation assessment is unavailable."
             },
             "uses_rtd_hosting": {
               "state": "measured",
@@ -28333,9 +28333,9 @@
               "value": false
             },
             "diataxis_coverage_ai": {
-              "state": "measured",
-              "value": 1,
-              "reason": "The documentation contains only reference-type content (links to external resources, project metadata, and repository information) but lacks tutorials, how-to guides, or explanations."
+              "state": "insufficient_data",
+              "value": null,
+              "reason": "AI documentation assessment is unavailable."
             },
             "uses_rtd_hosting": {
               "state": "measured",
@@ -28527,9 +28527,9 @@
               "value": false
             },
             "diataxis_coverage_ai": {
-              "state": "measured",
-              "value": 1,
-              "reason": "The documentation only contains reference-like information (project description, links, community info) but lacks tutorials, how-to guides, or explanations of architecture/concepts."
+              "state": "insufficient_data",
+              "value": null,
+              "reason": "AI documentation assessment is unavailable."
             },
             "uses_rtd_hosting": {
               "state": "measured",
@@ -28722,9 +28722,9 @@
               "value": false
             },
             "diataxis_coverage_ai": {
-              "state": "measured",
-              "value": 1,
-              "reason": "Only Reference content is present (configuration options via environment variables), with no Tutorial, How-to guide, or Explanation sections."
+              "state": "insufficient_data",
+              "value": null,
+              "reason": "AI documentation assessment is unavailable."
             },
             "uses_rtd_hosting": {
               "state": "measured",
@@ -28916,9 +28916,9 @@
               "value": false
             },
             "diataxis_coverage_ai": {
-              "state": "measured",
-              "value": 1,
-              "reason": "The documentation contains only an Explanation section (the Architecture diagram with mermaid graph showing system components and their relationships), but lacks Tutorial, How-to guide, and Reference content."
+              "state": "insufficient_data",
+              "value": null,
+              "reason": "AI documentation assessment is unavailable."
             },
             "uses_rtd_hosting": {
               "state": "measured",
@@ -29107,9 +29107,9 @@
               "value": false
             },
             "diataxis_coverage_ai": {
-              "state": "measured",
-              "value": 4,
-              "reason": "The documentation index explicitly shows all four Di\u00e1taxis types: Tutorial (Deploy IRC bridge), How-to (Troubleshooting, Contribute, Upgrade), Reference (Charm architecture), and Explanation (High-level overview section describing architecture and how the bridge works)."
+              "state": "insufficient_data",
+              "value": null,
+              "reason": "AI documentation assessment is unavailable."
             },
             "uses_rtd_hosting": {
               "state": "measured",
@@ -29259,7 +29259,7 @@
             },
             "uses_jubilant": {
               "state": "measured",
-              "value": true
+              "value": false
             },
             "coverage_pct": {
               "state": "insufficient_data",
@@ -29304,7 +29304,7 @@
             "diataxis_coverage_ai": {
               "state": "measured",
               "value": 4,
-              "reason": "The documentation explicitly organizes content using all four Di\u00e1taxis types: Tutorial (deployment guide), How-to guides (operations like backup/restore, COS integration), Reference (configurations, architecture, actions), and Explanation (security overview, architecture discussion)."
+              "reason": "The documentation explicitly contains all four Di\u00e1taxis types: Tutorial (guided deployment), How-to guides (backup/restore, integrations), Reference (configurations, architecture, actions), and Explanation (security overview, architecture discussion)."
             },
             "uses_rtd_hosting": {
               "state": "measured",
@@ -29493,7 +29493,7 @@
             "diataxis_coverage_ai": {
               "state": "measured",
               "value": 3,
-              "reason": "The documentation clearly contains Tutorials (getting-started guide), How-to guides (upgrade, configure OIDC, configure scripts-reports), and Reference (actions, integrations, charm architecture), but lacks Explanation-type content discussing concepts like why certain architectural decisions were made or understanding-oriented discussions."
+              "reason": "The documentation clearly contains Tutorial (getting-started), How-to guides (upgrade, configure-oidc, configure-scripts-reports), and Reference (actions, integrations, charm-architecture) sections, but lacks Explanation content that provides understanding-oriented discussion of concepts like why certain design decisions were made."
             },
             "uses_rtd_hosting": {
               "state": "measured",
@@ -29623,11 +29623,11 @@
       ],
       "dimensions": {
         "test_verification": {
-          "medal": "gold",
+          "medal": "silver",
           "target": "bronze",
           "applicability": "scored",
           "meets_target": true,
-          "result": "gold",
+          "result": "silver",
           "metrics": {
             "latest_build_passing": {
               "state": "measured",
@@ -29639,7 +29639,7 @@
             },
             "uses_jubilant": {
               "state": "measured",
-              "value": true
+              "value": false
             },
             "coverage_pct": {
               "state": "insufficient_data",
@@ -29682,9 +29682,9 @@
               "value": false
             },
             "diataxis_coverage_ai": {
-              "state": "measured",
-              "value": 4,
-              "reason": "The documentation explicitly references all four Di\u00e1taxis types: Tutorial (getting started), How-to guides (step-by-step instructions for operations), Reference (integrations, specifications), and Explanation (concepts section mentioned in index)."
+              "state": "insufficient_data",
+              "value": null,
+              "reason": "AI documentation assessment is unavailable."
             },
             "uses_rtd_hosting": {
               "state": "measured",
@@ -29873,9 +29873,9 @@
               "value": false
             },
             "diataxis_coverage_ai": {
-              "state": "measured",
-              "value": 3,
-              "reason": "The documentation explicitly contains Tutorial (mentioned in both README and docs/index.md), How-to guides (multiple references to how-to tasks like account creation, upgrade, backup), and Reference (configurations, integrations, observability reference), but lacks clear Explanation content about architecture concepts or rationale."
+              "state": "insufficient_data",
+              "value": null,
+              "reason": "AI documentation assessment is unavailable."
             },
             "uses_rtd_hosting": {
               "state": "measured",
@@ -30005,11 +30005,11 @@
       ],
       "dimensions": {
         "test_verification": {
-          "medal": "silver",
+          "medal": "gold",
           "target": "bronze",
           "applicability": "scored",
           "meets_target": true,
-          "result": "silver",
+          "result": "gold",
           "metrics": {
             "latest_build_passing": {
               "state": "measured",
@@ -30021,7 +30021,7 @@
             },
             "uses_jubilant": {
               "state": "measured",
-              "value": false
+              "value": true
             },
             "coverage_pct": {
               "state": "insufficient_data",
@@ -30064,9 +30064,9 @@
               "value": false
             },
             "diataxis_coverage_ai": {
-              "state": "measured",
-              "value": 4,
-              "reason": "The documentation explicitly contains all four Di\u00e1taxis types: Tutorial (getting started deployment guide), How-to guides (configure S3, SMTP, SSO, manage users, etc.), Reference (actions, configurations, charm architecture), and Explanation (charm architecture discussing design and understanding)."
+              "state": "insufficient_data",
+              "value": null,
+              "reason": "AI documentation assessment is unavailable."
             },
             "uses_rtd_hosting": {
               "state": "measured",
@@ -30255,9 +30255,9 @@
               "value": false
             },
             "diataxis_coverage_ai": {
-              "state": "measured",
-              "value": 1,
-              "reason": "The documentation only contains reference-like content (integrations list, links to actions) but lacks tutorials, how-to guides, or explanations within the provided text itself, as all substantive content is externally linked."
+              "state": "insufficient_data",
+              "value": null,
+              "reason": "AI documentation assessment is unavailable."
             },
             "uses_rtd_hosting": {
               "state": "measured",
@@ -30387,15 +30387,15 @@
       ],
       "dimensions": {
         "test_verification": {
-          "medal": "silver",
+          "medal": "unrated",
           "target": "gold",
           "applicability": "scored",
           "meets_target": false,
-          "result": "silver",
+          "result": "below_minimum",
           "metrics": {
             "latest_build_passing": {
               "state": "measured",
-              "value": true
+              "value": false
             },
             "integration_test_evidence_present": {
               "state": "measured",
@@ -30403,7 +30403,7 @@
             },
             "uses_jubilant": {
               "state": "measured",
-              "value": false
+              "value": true
             },
             "coverage_pct": {
               "state": "insufficient_data",
@@ -31792,9 +31792,9 @@
               "value": false
             },
             "diataxis_coverage_ai": {
-              "state": "measured",
-              "value": 4,
-              "reason": "The documentation explicitly references all four Di\u00e1taxis types: Tutorial (getting started), How-to guides (configure SMTP, upgrade, contribute), Reference (actions, configurations, integrations, charm architecture), and Explanation (charm architecture explaining design/understanding)."
+              "state": "insufficient_data",
+              "value": null,
+              "reason": "AI documentation assessment is unavailable."
             },
             "uses_rtd_hosting": {
               "state": "measured",
@@ -31940,7 +31940,7 @@
             },
             "uses_jubilant": {
               "state": "measured",
-              "value": false
+              "value": true
             },
             "coverage_pct": {
               "state": "insufficient_data",
@@ -31983,9 +31983,9 @@
               "value": false
             },
             "diataxis_coverage_ai": {
-              "state": "measured",
-              "value": 4,
-              "reason": "The documentation explicitly includes Tutorial (guided basic deployment), How-to guides (TLS configuration, troubleshooting, integration), Reference (charm architecture, cryptographic documentation), and Explanation (security overview, TLS explanation) sections as evidenced in the index.md structure."
+              "state": "insufficient_data",
+              "value": null,
+              "reason": "AI documentation assessment is unavailable."
             },
             "uses_rtd_hosting": {
               "state": "measured",
@@ -32174,9 +32174,9 @@
               "value": false
             },
             "diataxis_coverage_ai": {
-              "state": "measured",
-              "value": 4,
-              "reason": "The documentation structure explicitly references all four Di\u00e1taxis types: Tutorial (getting-started.md), How-to (contribute.md), Reference (configurations.md, integrations.md), and Explanation (architecture-overview.md, security.md)."
+              "state": "insufficient_data",
+              "value": null,
+              "reason": "AI documentation assessment is unavailable."
             },
             "uses_rtd_hosting": {
               "state": "measured",
@@ -32877,11 +32877,11 @@
       ],
       "dimensions": {
         "test_verification": {
-          "medal": "silver",
+          "medal": "gold",
           "target": "gold",
           "applicability": "scored",
-          "meets_target": false,
-          "result": "silver",
+          "meets_target": true,
+          "result": "gold",
           "metrics": {
             "latest_build_passing": {
               "state": "measured",
@@ -32893,7 +32893,7 @@
             },
             "uses_jubilant": {
               "state": "measured",
-              "value": false
+              "value": true
             },
             "coverage_pct": {
               "state": "insufficient_data",
