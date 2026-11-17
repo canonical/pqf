@@ -64,6 +64,7 @@ def requires_provider_one_or_newer(constraint: str) -> bool:
 
 
 def _blocks(value: Any) -> list[dict[str, Any]]:
+    """Normalize block lists from HCL and single-block mappings from Terraform JSON."""
     blocks = value if isinstance(value, list) else [value]
     if not all(isinstance(block, dict) for block in blocks):
         raise ValueError("Expected Terraform blocks to be mappings.")
@@ -71,6 +72,10 @@ def _blocks(value: Any) -> list[dict[str, Any]]:
 
 
 def _requirements(path: str, text: str) -> list[dict[str, Any]]:
+    """Parse one Terraform file and extract its required_providers mappings.
+
+    Each mapping associates local provider names with their source and version requirements.
+    """
     document = json.loads(text) if path.endswith(".json") else hcl2.loads(text)
     if not isinstance(document, dict):
         raise ValueError("Expected a Terraform document mapping.")
@@ -82,6 +87,10 @@ def _requirements(path: str, text: str) -> list[dict[str, Any]]:
 
 
 def _provider_outcome(path: str, name: str, requirement: Any) -> MetricOutcome | None:
+    """Check a Juju provider's source and version, including the path in failure reasons.
+
+    Return None for declarations identified as unrelated providers.
+    """
     source = requirement.get("source") if isinstance(requirement, dict) else None
     if source is not None and (not isinstance(source, str) or "${" in source):
         return insufficient_data(f"{path}: provider {name!r} has a nonliteral source {source!r}.")
