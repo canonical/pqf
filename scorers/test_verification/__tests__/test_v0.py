@@ -174,7 +174,7 @@ def test_terraform_implicit_or_wrong_juju_source_is_noncompliant(declaration):
         UNIT,
         files({"charm/versions.tf": f"terraform {{ required_providers {{ {declaration} }} }}"}),
     )
-    assert result["uses_tf_v1_provider"] == measured(False)
+    assert result["uses_tf_v1_provider"].value is False
 
 
 @pytest.mark.parametrize("source", ["juju/juju", "registry.terraform.io/juju/juju"])
@@ -467,7 +467,7 @@ def test_terraform_all_modules_must_use_v1():
             }
         ),
     )
-    assert result["uses_tf_v1_provider"] == measured(False)
+    assert result["uses_tf_v1_provider"].value is False
 
 
 def test_other_component_root_workflow_does_not_prove_component_juju():
