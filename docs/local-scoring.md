@@ -88,21 +88,10 @@ For a quick check of just one dimension, run:
 make score-dimension PRODUCT=traefik-k8s DIMENSION=test_verification FRAMEWORK_VERSION=v0
 ```
 
-`PRODUCT`, `DIMENSION`, and `FRAMEWORK_VERSION` are all required. The dimension must exist in the
-selected framework contract (use its ID, such as `test_verification`, not its display label).
-This prints the raw metric outcomes and saves only
-`.pqf-score/v0/traefik-k8s/test_verification.json`; it does not run other dimensions or update the
-published product-set data. An OpenRouter key is optional: documentation's AI metrics report
-`insufficient_data` without it. Use the complete local loop above when rebuilding a dashboard
-preview, so all dimensions have fresh evidence.
-
-The V0 Terraform metric requires **every in-scope module**, including test setup modules, to
-explicitly declare `juju/juju` (or `registry.terraform.io/juju/juju`) with a minimum provider
-version of **1.0 or newer**. For example, `>= 1.0, < 3.0`, `>= 1.0`, and `~> 1.0` pass;
-`>= 0.12, < 3.0` and `~> 0.20` fail. Newer major versions are allowed. HCL is parsed with
-`python-hcl2`; Terraform JSON is supported too. No Terraform modules is N/A; uninterpretable
-declarations are insufficient data. Failures include the module/file and the offending declaration
-in the raw outcome's `reason`, displayed inline in the Product page's Evidence column.
+All three variables are required; use a dimension ID from the selected contract. This prints the
+outcomes and saves `.pqf-score/v0/traefik-k8s/test_verification.json` without running other dimensions
+or rebuilding dashboard data. An OpenRouter key is optional; AI metrics report `insufficient_data`
+without it. Use the complete local loop above to rebuild a dashboard preview.
 
 | Change | Rerun |
 |--------|-------|

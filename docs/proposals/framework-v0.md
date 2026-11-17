@@ -117,11 +117,6 @@ Any additional variation should be agreed as a supported practice before it is a
    in the outcome reason. Uninterpretable declarations return *insufficient data*.
 4. Return *not applicable* when the component has no Terraform modules.
 
-This corrects the former v1 implementation's unintended restriction to ranges entirely within
-major 1. The original implementation remains available for reproducibility. The intended minimum
-matches the [repolint check](https://github.com/canonical/repolint/blob/main/src/repolint/checks/tf_v1.py),
-without copying its literal regex.
-
 **Accepted variations**
 
 - Tests may live at the repository root or inside a monorepo component.
