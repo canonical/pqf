@@ -20,7 +20,6 @@ from scorers.security_ssdlc import logic as security_ssdlc_logic
 from scorers.shared import github_signals
 from scorers.substrate_compat import logic as substrate_compat_logic
 from scorers.test_verification import logic as test_verification_logic
-from scorers.test_verification.terraform_v1 import terraform_outcome as terraform_v1_outcome
 
 DEFAULT_OPENROUTER_MODEL = "anthropic/claude-sonnet-4.5"
 
@@ -58,16 +57,6 @@ def _run_v0_testing(unit: EvaluationUnit, context: ScorerContext) -> dict[str, M
         context.github_token,
         juju4_track=context.juju4_track,
         juju_lts_track=context.juju_lts_track,
-    )
-
-
-def _run_v0_testing_tf_v1(unit: EvaluationUnit, context: ScorerContext) -> dict[str, MetricOutcome]:
-    return test_verification_logic.compute_v0_metrics(
-        unit,
-        context.github_token,
-        juju4_track=context.juju4_track,
-        juju_lts_track=context.juju_lts_track,
-        terraform_evaluator=terraform_v1_outcome,
     )
 
 
@@ -122,7 +111,6 @@ RUNNERS = MappingProxyType(
         "security_ssdlc": _run_security_ssdlc,
         "engagement": _run_engagement,
         "v0_testing": _run_v0_testing,
-        "v0_testing_tf_v1": _run_v0_testing_tf_v1,
         "v0_documentation": _run_v0_documentation,
         "v0_security": _run_v0_security,
     }
@@ -171,16 +159,6 @@ RUNNER_SOURCE_FILES = MappingProxyType(
         "v0_security": (
             *RUNNER_SOURCE_FILES["security_ssdlc"],
             Path(security_ssdlc_logic.__file__).resolve().parent / "v0.py",
-        ),
-    }
-)
-
-RUNNER_SOURCE_FILES = MappingProxyType(
-    {
-        **RUNNER_SOURCE_FILES,
-        "v0_testing_tf_v1": (
-            *RUNNER_SOURCE_FILES["v0_testing"],
-            Path(test_verification_logic.__file__).resolve().parent / "terraform_v1.py",
         ),
     }
 )
@@ -373,11 +351,6 @@ METRIC_BINDINGS = MappingProxyType(
             )
             for output, implementation in outputs.items()
         },
-        "uses-tf-v1-provider/v1": MetricBinding(
-            "test_verification",
-            "uses_tf_v1_provider",
-            "v0_testing_tf_v1",
-        ),
     }
 )
 

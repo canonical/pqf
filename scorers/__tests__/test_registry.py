@@ -29,12 +29,7 @@ def _dimension_config(version_id: str, dimension_name: str) -> dict:
     return framework.dimensions["dimensions"][dimension_name]
 
 
-@pytest.mark.parametrize(("revision", "expected"), [("v1", False), ("v2", True)])
-def test_terraform_revisions_preserve_old_measurement_and_correct_current_one(
-    monkeypatch,
-    revision,
-    expected,
-):
+def test_v0_terraform_uses_corrected_measurement(monkeypatch):
     monkeypatch.setattr(
         "scorers.test_verification.evidence.acquire",
         lambda unit, token: {
@@ -48,21 +43,13 @@ terraform {
 """,
         },
     )
-    config = {
-        "outputs": {
-            "uses_tf_v1_provider": {
-                "implementation": f"uses-tf-v1-provider/{revision}",
-                "type": "boolean",
-            }
-        }
-    }
     result = registry.run_dimension(
         UNIT,
         "test_verification",
-        config,
+        _dimension_config("v0", "test_verification"),
         registry.ScorerContext("token"),
     )
-    assert result["uses_tf_v1_provider"].value is expected
+    assert result["uses_tf_v1_provider"].value is True
 
 
 def test_run_dimension_executes_shared_runner_once_and_filters_selected_outputs(monkeypatch):

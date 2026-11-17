@@ -1,5 +1,3 @@
-from collections.abc import Callable
-
 import requests
 
 from engine.metric_outcomes import MetricOutcome, insufficient_data, measured
@@ -11,7 +9,6 @@ from scorers.shared.github_signals import (
     search_code_count,
     workflow_files,
 )
-from scorers.test_verification.terraform import terraform_outcome
 
 
 def _uses_ops_testing(repos: list[str], github_token: str | None) -> bool:
@@ -122,7 +119,6 @@ def compute_v0_metrics(
     *,
     juju4_track: str = "4/stable",
     juju_lts_track: str = "3.6/stable",
-    terraform_evaluator: Callable[[dict[str, str]], MetricOutcome] = terraform_outcome,
 ) -> dict[str, MetricOutcome]:
     """Measure the target V0 contract; acquisition failures propagate to the runner."""
     from scorers.test_verification.evidence import UninterpretableRepository, acquire
@@ -135,10 +131,4 @@ def compute_v0_metrics(
         if unit.product_type.value == "charm":
             result = {key: insufficient_data(str(exc)) for key in CHARM_METRICS}
         return result
-    return evaluate_files(
-        unit,
-        files,
-        juju4_track=juju4_track,
-        juju_lts_track=juju_lts_track,
-        terraform_evaluator=terraform_evaluator,
-    )
+    return evaluate_files(unit, files, juju4_track=juju4_track, juju_lts_track=juju_lts_track)

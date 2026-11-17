@@ -6,7 +6,6 @@ import itertools
 import posixpath
 import re
 import shlex
-from collections.abc import Callable
 from typing import Any
 
 import yaml
@@ -479,7 +478,6 @@ def evaluate_files(
     *,
     juju4_track: str = "4/stable",
     juju_lts_track: str = "3.6/stable",
-    terraform_evaluator: Callable[[dict[str, str]], MetricOutcome] = terraform_outcome,
 ) -> dict[str, MetricOutcome]:
     if unit.product_type != ProductType.CHARM:
         return {key: not_applicable("This is not a charm.") for key in CHARM_METRICS}
@@ -505,7 +503,7 @@ def evaluate_files(
     result = {
         "uses_ops_testing": _python_outcome(component, jubilant=False),
         "uses_jubilant": _python_outcome(component, jubilant=True),
-        "uses_tf_v1_provider": terraform_evaluator(component),
+        "uses_tf_v1_provider": terraform_outcome(component),
     }
     unit_runners = []
     charm_ci = []
