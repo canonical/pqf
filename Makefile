@@ -10,7 +10,7 @@
 	test test-ui test-all \
 	build dev \
 	audit audit-python audit-ui \
-	score score-docs score-no-llm _score-product \
+	score score-docs score-dimension score-no-llm _score-product \
 	score-all score-all-no-llm _merge _assemble _version-index \
 	e2e _require-github-token _require-openrouter-key \
 	catalog-discovery catalog-discovery-fetch catalog-discovery-report \
@@ -70,6 +70,7 @@ help:
 	@echo "    make score PRODUCT=<id> FRAMEWORK_VERSION=<id>        Score one product (all dimensions, with LLM)"
 	@echo "    make score-no-llm PRODUCT=<id> FRAMEWORK_VERSION=<id> Score one product (skip AI doc checks)"
 	@echo "    make score-docs PRODUCT=<id> FRAMEWORK_VERSION=<id>   Run only the documentation scorer"
+	@echo "    make score-dimension PRODUCT=<id> DIMENSION=<id> FRAMEWORK_VERSION=<id>  Run only one dimension (AI optional)"
 	@echo "    make score-all FRAMEWORK_VERSION=<id>                 Score all products for one framework (with LLM)"
 	@echo "    make score-all-no-llm FRAMEWORK_VERSION=<id>          Score all products for one framework (no LLM)"
 	@echo "    make _version-index                                   Rebuild public/framework-versions.json"
@@ -137,6 +138,7 @@ audit: audit-python audit-ui
 # ── Scoring ───────────────────────────────────────────────────────────────────
 # Usage: make score PRODUCT=matrix
 PRODUCT ?= $(error PRODUCT is required. Usage: make score PRODUCT=matrix)
+DIMENSION ?= $(error DIMENSION is required. Example: DIMENSION=test_verification)
 
 score: SCORE_RUNNER_ENV =
 score: SCORE_MESSAGE = Scoring product: $(PRODUCT) for framework $(FRAMEWORK_VERSION)
@@ -174,6 +176,18 @@ score-docs: _require-github-token _require-openrouter-key
 		--products-dir products/ \
 		> $(VERSION_SCORE_DIR)/documentation.json
 	@echo "Results in $(VERSION_SCORE_DIR)/documentation.json"
+
+score-dimension: _require-github-token
+	@mkdir -p $(VERSION_SCORE_DIR)
+	$(PYTHON) scorers/run.py \
+		--framework-root $(FRAMEWORK_ROOT) \
+		--framework-version $(FRAMEWORK_VERSION) \
+		--dimension $(DIMENSION) \
+		--product-yaml products/$(PRODUCT).yaml \
+		--products-dir products/ \
+		> $(VERSION_SCORE_DIR)/$(DIMENSION).json
+	@cat $(VERSION_SCORE_DIR)/$(DIMENSION).json | $(PYTHON) -m json.tool --indent 2
+	@echo "Results in $(VERSION_SCORE_DIR)/$(DIMENSION).json"
 
 # ── Score all products and rebuild one versioned portfolio ────────────────────
 # Discovers all product YAMLs in products/, scores each one, merges the raw

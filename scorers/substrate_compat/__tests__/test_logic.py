@@ -522,7 +522,8 @@ def test_missing_workflows_dir_returns_false():
 
 @pytest.mark.parametrize("status", [400, 401, 403, 405, 422, 429, 500])
 @responses.activate
-def test_workflow_listing_failure_raises_acquisition_error(status):
+def test_workflow_listing_failure_raises_acquisition_error(status, mocker):
+    mocker.patch("time.sleep")
     url = f"{_GITHUB_API}/repos/canonical/synapse-operator/contents/.github/workflows"
     responses.add(
         responses.GET,
@@ -546,12 +547,13 @@ def test_workflow_listing_failure_raises_acquisition_error(status):
     assert exc_info.value.url == url
     assert "secret-token" not in str(exc_info.value)
     assert "must not leak" not in str(exc_info.value)
-    assert len(responses.calls) == (2 if status in {401, 403, 429} else 1)
+    assert len(responses.calls) == {401: 2, 403: 2, 429: 2, 500: 4}.get(status, 1)
 
 
 @pytest.mark.parametrize("status", [400, 404, 401, 403, 405, 422, 429, 500])
 @responses.activate
-def test_workflow_file_failure_raises_acquisition_error(status):
+def test_workflow_file_failure_raises_acquisition_error(status, mocker):
+    mocker.patch("time.sleep")
     _mock_workflows_dir("canonical/synapse-operator", ["ci.yaml"])
     url = f"{_GITHUB_API}/repos/canonical/synapse-operator/contents/.github/workflows/ci.yaml"
     responses.add(
@@ -576,7 +578,7 @@ def test_workflow_file_failure_raises_acquisition_error(status):
     assert exc_info.value.url == url
     assert "secret-token" not in str(exc_info.value)
     assert "must not leak" not in str(exc_info.value)
-    expected_calls = 3 if status in {401, 403, 429} else 2
+    expected_calls = {401: 3, 403: 3, 429: 3, 500: 5}.get(status, 2)
     assert len(responses.calls) == expected_calls
 
 

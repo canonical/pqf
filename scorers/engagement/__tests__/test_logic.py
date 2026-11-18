@@ -321,7 +321,8 @@ def test_has_squad_topic_true():
 
 @pytest.mark.parametrize("status", [400, 404, 403, 405, 422, 429, 500])
 @responses.activate
-def test_has_squad_topic_raises_when_required_evidence_cannot_be_acquired(status):
+def test_has_squad_topic_raises_when_required_evidence_cannot_be_acquired(status, mocker):
+    mocker.patch("time.sleep")
     url = f"{_GITHUB_API}/repos/canonical/test-repo/topics"
     responses.add(
         responses.GET,
@@ -347,7 +348,7 @@ def test_has_squad_topic_raises_when_required_evidence_cannot_be_acquired(status
     assert exc_info.value.url == url
     assert "secret-token" not in str(exc_info.value)
     assert "must not leak" not in str(exc_info.value)
-    assert len(responses.calls) == (2 if status in {403, 429} else 1)
+    assert len(responses.calls) == {403: 2, 429: 2, 500: 4}.get(status, 1)
 
 
 @responses.activate
@@ -367,7 +368,8 @@ def test_has_jira_sync_treats_not_found_as_absent():
 
 @pytest.mark.parametrize("status", [400, 401, 403, 405, 422, 429, 500])
 @responses.activate
-def test_has_jira_sync_raises_when_acquisition_fails(status):
+def test_has_jira_sync_raises_when_acquisition_fails(status, mocker):
+    mocker.patch("time.sleep")
     url = f"{_GITHUB_API}/repos/canonical/test-repo/contents/.github/.jira_sync_config.yaml"
     responses.add(
         responses.GET,
@@ -390,7 +392,7 @@ def test_has_jira_sync_raises_when_acquisition_fails(status):
     assert exc_info.value.url == url
     assert "secret-token" not in str(exc_info.value)
     assert "must not leak" not in str(exc_info.value)
-    assert len(responses.calls) == (2 if status in {401, 429} else 1)
+    assert len(responses.calls) == {401: 2, 429: 2, 500: 4}.get(status, 1)
     if status in {401, 429}:
         assert "Authorization" not in responses.calls[1].request.headers
 
@@ -654,7 +656,10 @@ def test_paginate_json_array_stops_at_ordered_cutoff():
 @pytest.mark.parametrize("status", [400, 404, 403, 405, 422, 429, 500])
 @pytest.mark.parametrize("endpoint", ["issues", "pulls"])
 @responses.activate
-def test_paginate_json_array_raises_when_required_evidence_cannot_be_acquired(endpoint, status):
+def test_paginate_json_array_raises_when_required_evidence_cannot_be_acquired(
+    endpoint, status, mocker
+):
+    mocker.patch("time.sleep")
     url = f"https://api.github.com/repos/canonical/example/{endpoint}"
     responses.add(
         responses.GET,
@@ -682,7 +687,7 @@ def test_paginate_json_array_raises_when_required_evidence_cannot_be_acquired(en
     assert exc_info.value.url == url
     assert str(exc_info.value) == f"GitHub evidence acquisition failed: status={status} url={url}"
     assert "secret-token" not in str(exc_info.value)
-    assert len(responses.calls) == (2 if status in {403, 429} else 1)
+    assert len(responses.calls) == {403: 2, 429: 2, 500: 4}.get(status, 1)
 
 
 @responses.activate

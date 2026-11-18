@@ -174,7 +174,7 @@ def test_terraform_implicit_or_wrong_juju_source_is_noncompliant(declaration):
         UNIT,
         files({"charm/versions.tf": f"terraform {{ required_providers {{ {declaration} }} }}"}),
     )
-    assert result["uses_tf_v1_provider"] == measured(False)
+    assert result["uses_tf_v1_provider"].value is False
 
 
 @pytest.mark.parametrize("source", ["juju/juju", "registry.terraform.io/juju/juju"])
@@ -184,7 +184,7 @@ def test_terraform_arbitrary_local_alias_requires_recognized_source(source):
         files(
             {
                 "charm/versions.tf.json": '{"terraform":{"required_providers":{"controller":'
-                f'{{"source":"{source}","version":"~> 1.0"}}' + "}}}",
+                f'{{"source":"{source}","version":">= 1.0, < 3.0"}}' + "}}}",
             }
         ),
     )
@@ -436,8 +436,8 @@ def test_machine_k8s_is_not_applicable():
     assert result["supports_canonical_k8s"].state == MetricState.NOT_APPLICABLE
 
 
-@pytest.mark.parametrize("constraint", ["~> 1.0", "~> 1.2.3", ">= 1.0, < 2.0", "= 1.2.3"])
-def test_terraform_supported_major_one_constraints(constraint):
+@pytest.mark.parametrize("constraint", [">= 1.0, < 2.0", ">= 1.2.3, < 1.3.0", ">= 2.0, < 3.0"])
+def test_terraform_explicit_provider_ranges(constraint):
     result = evaluate_files(
         UNIT,
         files(
@@ -455,19 +455,19 @@ terraform {{
     assert result["uses_tf_v1_provider"] == measured(True)
 
 
-def test_terraform_all_modules_must_use_v1():
+def test_terraform_all_modules_must_require_provider_one_or_newer():
     result = evaluate_files(
         UNIT,
         files(
             {
                 "charm/a/versions.tf.json": '{"terraform":{"required_providers":{"juju":'
-                '{"source":"juju/juju","version":"~> 1.0"}}}}',
+                '{"source":"juju/juju","version":">= 1.0, < 3.0"}}}}',
                 "charm/b/versions.tf": "terraform { required_providers { juju = "
-                '{ source = "juju/juju" version = "~> 0.20" } } }',
+                '{ source = "juju/juju" version = ">= 0.20, < 1.0" } } }',
             }
         ),
     )
-    assert result["uses_tf_v1_provider"] == measured(False)
+    assert result["uses_tf_v1_provider"].value is False
 
 
 def test_other_component_root_workflow_does_not_prove_component_juju():
@@ -808,7 +808,7 @@ terraform {
   required_providers {
     controller = {
       source = "juju/juju"
-      version = "~> 1.0"
+      version = ">= 1.0, < 3.0"
       configuration_aliases = [juju.alias]
     }
   }

@@ -73,12 +73,11 @@ major-only track (`4/stable`) accepts any stable release in that line
   including aliases and comments. Juju requirements must explicitly identify
   `juju/juju` or `registry.terraform.io/juju/juju`; the local alias can be
   arbitrary. An omitted source defaults to `hashicorp/juju` and does not qualify.
-  All component modules must declare a Juju
-  requirement restricted to major 1: exact, pessimistic (`~>`), or bounded
-  comparison constraints. An unbounded `>= 1.0` does **not** restrict major
-  versions to 1. Unsupported/dynamic expressions and contradictory ranges
-  are insufficient; missing requirements are measured false; no modules is
-  not applicable.
+  Every component module must use an explicit `>= A, < B` range with
+  `1.0 <= A < B`; bound order is irrelevant. Pessimistic (`~>`), exact, and
+  unbounded requirements are measured false. Dynamic/unreadable declarations
+  and empty intervals are insufficient; missing requirements are measured false;
+  no modules is not applicable.
 
 All eight charm-only metrics are not applicable to snaps. Missing required
 test/workflow/configuration evidence is measured false, rather than adoption by

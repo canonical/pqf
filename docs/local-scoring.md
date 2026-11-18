@@ -24,7 +24,8 @@ The Makefile reads `GITHUB_TOKEN` from `gh auth token`, so you do not need to ex
 
 GitHub evidence requests retry rate limits up to three times with the same credentials, honoring
 `Retry-After` or the primary rate-limit reset time (at most one hour per wait). Retry waits are
-logged. Connection interruptions/timeouts retry with 1, 2 and 4 second backoff.
+logged. Connection interruptions, timeouts, and HTTP 500/502/503/504 responses retry with
+1, 2 and 4 second backoff.
 Exhausted retries and acquisition failures still fail scoring; they are never converted
 into missing files, disabled protections, or zero-valued metrics. An unsuccessful anonymous
 fallback preserves the original authenticated response. The narrow exception is an explicit
@@ -81,6 +82,17 @@ index will fail fast because active/upcoming entries must stay in sync with thei
 contracts.
 
 ## What to rerun after a change
+
+For a quick check of just one dimension, run:
+
+```bash
+make score-dimension PRODUCT=traefik-k8s DIMENSION=test_verification FRAMEWORK_VERSION=v0
+```
+
+All three variables are required; use a dimension ID from the selected contract. This prints the
+outcomes and saves `.pqf-score/v0/traefik-k8s/test_verification.json` without running other dimensions
+or rebuilding dashboard data. An OpenRouter key is optional; AI metrics report `insufficient_data`
+without it. Use the complete local loop above to rebuild a dashboard preview.
 
 | Change | Rerun |
 |--------|-------|

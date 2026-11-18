@@ -39,6 +39,17 @@ const LOW_LEAF = leaf('synapse', { coverage_pct: { state: 'measured', value: 0 }
 const HIGH_LEAF = leaf('saml', { coverage_pct: { state: 'measured', value: 70 }, latest_build_passing: { state: 'measured', value: false } })
 
 describe('RootMetricsList', () => {
+  it('shows the failing component reason inline on the root product', () => {
+    const reason = 'terraform/versions.tf: ~> 0.20 permits Juju providers below 1.0.'
+    render(<RootMetricsList
+      composition={[leaf('traefik', { latest_build_passing: { state: 'measured', value: false, reason } })]}
+      thresholds={THRESHOLDS}
+      metaOutputs={{ latest_build_passing: OUTPUTS.latest_build_passing }}
+    />)
+    expect(screen.getByText(reason)).toBeVisible()
+    expect(screen.getByLabelText('false')).toHaveAccessibleDescription(reason)
+  })
+
   it('renders metric labels from metaOutputs', () => {
     render(
       <RootMetricsList composition={[LOW_LEAF]} thresholds={THRESHOLDS} metaOutputs={OUTPUTS} />,

@@ -29,6 +29,29 @@ def _dimension_config(version_id: str, dimension_name: str) -> dict:
     return framework.dimensions["dimensions"][dimension_name]
 
 
+def test_v0_terraform_uses_corrected_measurement(monkeypatch):
+    monkeypatch.setattr(
+        "scorers.test_verification.evidence.acquire",
+        lambda unit, token: {
+            "charmcraft.yaml": "name: example",
+            "terraform/versions.tf": """
+terraform {
+  required_providers {
+    juju = { source = "juju/juju", version = ">= 1.0, < 3.0" }
+  }
+}
+""",
+        },
+    )
+    result = registry.run_dimension(
+        UNIT,
+        "test_verification",
+        _dimension_config("v0", "test_verification"),
+        registry.ScorerContext("token"),
+    )
+    assert result["uses_tf_v1_provider"].value is True
+
+
 def test_run_dimension_executes_shared_runner_once_and_filters_selected_outputs(monkeypatch):
     calls: list[tuple[EvaluationUnit, registry.ScorerContext]] = []
 
