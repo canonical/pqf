@@ -106,15 +106,16 @@ Any additional variation should be agreed as a supported practice before it is a
 **ID:** `uses_tf_v1_provider`\
 **Implementation:** `uses-tf-v1-provider/v2`\
 **Applies to:** charms\
-**What it measures:** every in-scope Terraform module requires Juju provider 1.0 or newer\
+**What it measures:** every in-scope Terraform module explicitly bounds Juju provider versions at 1.0 or newer\
 **Measurement**
 
 1. Parse HCL with `python-hcl2` and Terraform JSON with the standard JSON parser.
-2. Require an explicit `juju/juju` provider source and a version constraint excluding pre-1.0
-   releases in every module, including test setup modules. Newer major versions are allowed:
-   `>= 1.0, < 3.0` passes, whereas `>= 0.12, < 3.0` fails.
-3. Return `false` for missing, wrong-source, or older requirements, with the path and declaration
-   in the outcome reason. Uninterpretable declarations return *insufficient data*.
+2. Require an explicit `juju/juju` provider source and a `>= A, < B` range with
+   `1.0 <= A < B` in every module, including test setup modules. For example,
+   `>= 1.0, < 3.0` passes; `~> 1.2`, exact pins, and unbounded requirements fail.
+3. Return `false` for missing, wrong-source, older, or noncanonical requirements, with the path
+   and declaration in the outcome reason. Unreadable declarations and empty intervals return
+   *insufficient data*.
 4. Return *not applicable* when the component has no Terraform modules.
 
 **Accepted variations**
@@ -122,6 +123,7 @@ Any additional variation should be agreed as a supported practice before it is a
 - Tests may live at the repository root or inside a monorepo component.
 - The provider's local name may differ from `juju`; the fully qualified source
   `registry.terraform.io/juju/juju` is equivalent to `juju/juju`.
+- The two version bounds may appear in either order.
 
 ### Uses GitHub-hosted runners for unit tests
 

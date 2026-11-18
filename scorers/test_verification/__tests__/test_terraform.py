@@ -21,12 +21,38 @@ terraform {{
 
 @pytest.mark.parametrize(
     "constraint",
-    [">= 1.0, < 3.0", ">= 1.0", "~> 1.2", "~> 1.2.3", "= 1.2.3", ">= 2.0"],
+    [">= 1.0, < 3.0", ">= 1.2.3, < 1.3.0", ">= 2.0, < 4.0", " < 3.0 , >= 1.0 "],
 )
-def test_requires_provider_one_or_newer(constraint):
+def test_requires_explicit_provider_range(constraint):
     outcome = terraform_outcome({"terraform/versions.tf": requirement(constraint)})
     assert outcome.state == MetricState.MEASURED
     assert outcome.value is True
+
+
+@pytest.mark.parametrize(
+    "constraint",
+    [
+        "~> 1.2",
+        "~> 1.2.3",
+        "= 1.2.3",
+        "1.2.3",
+        ">= 1.0",
+        ">= 2.0",
+        "> 1.0, < 3.0",
+        ">= 1.0, <= 3.0",
+        ">= 1.0, < 3.0, != 2.0",
+        ">= 1.0, >= 2.0, < 3.0",
+        ">= 1.0, < 3.0, < 4.0",
+        "= 1, != 1",
+    ],
+)
+def test_noncanonical_constraints_explain_required_interval(constraint):
+    outcome = terraform_outcome({"terraform/versions.tf": requirement(constraint)})
+    assert outcome.state == MetricState.MEASURED
+    assert outcome.value is False
+    assert "terraform/versions.tf" in outcome.reason
+    assert constraint in outcome.reason
+    assert ">= A, < B" in outcome.reason
 
 
 def test_traefik_module_and_test_setup_allow_provider_two():
@@ -50,7 +76,7 @@ def test_pre_one_requirements_explain_the_module_and_constraint(constraint):
     assert "1.0" in outcome.reason
 
 
-@pytest.mark.parametrize("constraint", [">= 2, < 1", ">= 1, < 1", "= 1, != 1", "var.version"])
+@pytest.mark.parametrize("constraint", [">= 2, < 1", ">= 1, < 1", ">= 1.2.0, < 1.2", "var.version"])
 def test_uninterpretable_or_empty_ranges_are_unknown(constraint):
     outcome = terraform_outcome({"versions.tf": requirement(constraint)})
     assert outcome.state == MetricState.INSUFFICIENT_DATA
@@ -61,7 +87,7 @@ def test_all_modules_must_meet_the_minimum():
     outcome = terraform_outcome(
         {
             "terraform/versions.tf": requirement(">= 1.0, < 3.0"),
-            "terraform/tests/setup/main.tf": requirement("~> 0.20"),
+            "terraform/tests/setup/main.tf": requirement(">= 0.20, < 1.0"),
         }
     )
     assert outcome.value is False
@@ -82,7 +108,8 @@ locals {
     assert outcome.value is True
 
 
-def test_json_provider_alias_and_registry_address():
+@pytest.mark.parametrize("constraint, expected", [(">= 1.0, < 3.0", True), ("~> 1.2", False)])
+def test_json_provider_alias_and_registry_address(constraint, expected):
     outcome = terraform_outcome(
         {
             "versions.tf.json": json.dumps(
@@ -91,7 +118,7 @@ def test_json_provider_alias_and_registry_address():
                         "required_providers": {
                             "controller": {
                                 "source": "registry.terraform.io/juju/juju",
-                                "version": ">= 1.0, < 3.0",
+                                "version": constraint,
                             }
                         }
                     }
@@ -99,7 +126,8 @@ def test_json_provider_alias_and_registry_address():
             )
         }
     )
-    assert outcome.value is True
+    assert outcome.state == MetricState.MEASURED
+    assert outcome.value is expected
 
 
 def test_missing_juju_requirement_explains_module():

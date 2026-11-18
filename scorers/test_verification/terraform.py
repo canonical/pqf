@@ -1,6 +1,6 @@
-"""Every Terraform module must explicitly require juju/juju >= 1.0.
+"""Every Terraform module must bound juju/juju with >= A, < B, where A >= 1.0.
 
-Newer major versions are allowed. Missing/older requirements fail; unreadable
+Newer major versions are allowed. Missing/noncanonical requirements fail; unreadable
 declarations are unknown. HCL syntax is parsed by python-hcl2, never by regex.
 """
 
@@ -11,7 +11,6 @@ from typing import Any
 
 import hcl2
 from lark.exceptions import LarkError
-from packaging.specifiers import SpecifierSet
 from packaging.version import Version
 
 from engine.metric_outcomes import (
@@ -26,41 +25,26 @@ _JUJU_SOURCES = {"juju/juju", "registry.terraform.io/juju/juju"}
 _CLAUSE = re.compile(r"(~>|>=|<=|!=|>|<|=)?\s*(\d+(?:\.\d+){0,2})")
 
 
-def requires_provider_one_or_newer(constraint: str) -> bool:
-    """Check the minimum of a nonempty numeric Terraform version range.
+def requires_explicit_provider_range(constraint: str) -> bool:
+    """Require one >= lower and one < upper bound, with lower >= 1.0.
 
-    packaging handles comparisons and exclusions. Translate Terraform's `=`
-    and pessimistic `~>` operators into standard comparison specifiers first.
-    Dynamic/unsupported constraints and empty ranges raise ValueError.
+    Unreadable numeric constraints and empty intervals raise ValueError.
     """
-    comparisons = []
+    bounds = {}
     for clause in constraint.split(","):
         match = _CLAUSE.fullmatch(clause.strip())
         if not match:
             raise ValueError("Expected a literal numeric Terraform version constraint.")
         operator, number = match.groups()
-        if operator == "~>":
-            release = Version(number).release
-            ceiling = (
-                f"{release[0] + 1}.0" if len(release) < 3 else f"{release[0]}.{release[1] + 1}.0"
-            )
-            comparisons.extend((f">={number}", f"<{ceiling}"))
-        else:
-            comparisons.append(f"{'==' if operator in (None, '=') else operator}{number}")
-    specifiers = SpecifierSet(",".join(comparisons))
-    minimum = max(
-        (Version(s.version) for s in specifiers if s.operator in {">", ">=", "=="}),
-        default=Version("0"),
-    )
-    maximum = min(
-        (Version(s.version) for s in specifiers if s.operator in {"<", "<=", "=="}),
-        default=None,
-    )
-    if maximum is not None and (
-        minimum > maximum or (minimum == maximum and minimum not in specifiers)
-    ):
+        if operator not in {">=", "<"} or operator in bounds:
+            return False
+        bounds[operator] = Version(number)
+    if set(bounds) != {">=", "<"}:
+        return False
+    lower, upper = bounds[">="], bounds["<"]
+    if lower >= upper:
         raise ValueError("The provider version range is empty.")
-    return minimum >= Version("1.0")
+    return lower >= Version("1.0")
 
 
 def _blocks(value: Any) -> list[dict[str, Any]]:
@@ -107,19 +91,19 @@ def _provider_outcome(path: str, name: str, requirement: Any) -> MetricOutcome |
         return MetricOutcome(
             MetricState.MEASURED,
             False,
-            f"{path}: juju/juju has no version constraint; it must require at least 1.0.",
+            f"{path}: juju/juju has no version constraint; expected >= A, < B with A >= 1.0.",
         )
     try:
         if not isinstance(constraint, str):
             raise ValueError("Expected a literal version constraint string.")
-        if requires_provider_one_or_newer(constraint):
+        if requires_explicit_provider_range(constraint):
             return measured(True)
     except ValueError as exc:
         return insufficient_data(f"{path}: juju/juju constraint {constraint!r}: {exc}")
     return MetricOutcome(
         MetricState.MEASURED,
         False,
-        f"{path}: juju/juju constraint {constraint!r} permits versions below 1.0.",
+        f"{path}: juju/juju constraint {constraint!r} must use >= A, < B with A >= 1.0.",
     )
 
 
@@ -153,7 +137,7 @@ def terraform_outcome(files: dict[str, str]) -> MetricOutcome:
                     MetricState.MEASURED,
                     False,
                     f"{directory}: no explicit juju/juju provider requirement; "
-                    "expected at least 1.0.",
+                    "expected >= A, < B with A >= 1.0.",
                 )
             )
         outcomes.extend(module_outcomes)

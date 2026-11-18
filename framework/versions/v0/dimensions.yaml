@@ -38,7 +38,7 @@ dimensions:
         implementation: "uses-tf-v1-provider/v2"
         type: boolean
         label: "Terraform Juju provider v1+"
-        description: "Every Terraform module in the charm, including test setup modules, explicitly requires juju/juju version 1.0 or newer. Newer major versions are allowed; ranges permitting pre-1.0 versions fail."
+        description: "Every Terraform module in the charm, including test setup modules, explicitly bounds juju/juju with >= A, < B, where 1.0 <= A < B. Pessimistic constraints, exact pins, and unbounded requirements fail."
       uses_charm_ci:
         implementation: "uses-charm-ci/v1"
         type: boolean
