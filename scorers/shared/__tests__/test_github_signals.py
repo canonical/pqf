@@ -146,6 +146,66 @@ def test_exhausted_connection_retries_still_fail(mocker):
     assert [call.args[0] for call in sleep.call_args_list] == [1, 2, 4]
 
 
+@pytest.mark.parametrize("status", [500, 502, 503, 504])
+@pytest.mark.parametrize("use_session", [False, True])
+@responses.activate
+def test_transient_server_errors_retry_authenticated_request(mocker, status, use_session):
+    url = "https://api.github.com/repos/canonical/dns-operators/pulls/475/reviews"
+    sleep = mocker.patch("time.sleep")
+    responses.get(url, status=status)
+    responses.get(url, json=[{"submitted_at": "2026-11-17T12:00:00Z"}])
+
+    response = (
+        github_signals.github_session_get(build_github_session("gh-token"), url)
+        if use_session
+        else github_get(url, "gh-token")
+    )
+
+    assert response.status_code == 200
+    assert response.json() == [{"submitted_at": "2026-11-17T12:00:00Z"}]
+    assert len(responses.calls) == 2
+    sleep.assert_called_once_with(1)
+    assert all(
+        call.request.headers["Authorization"] == "token gh-token" for call in responses.calls
+    )
+
+
+@responses.activate
+def test_server_error_after_rate_limit_is_retried(mocker):
+    url = "https://api.github.com/repos/canonical/haproxy-operator/git/blobs/example"
+    sleep = mocker.patch("time.sleep")
+    responses.get(url, status=403, headers={"Retry-After": "60"})
+    responses.get(url, status=502)
+    responses.get(url, json={"encoding": "base64", "content": "ZXhhbXBsZQ=="})
+
+    response = github_signals.github_session_get(build_github_session("gh-token"), url)
+
+    assert response.status_code == 200
+    assert [call.args[0] for call in sleep.call_args_list] == [60, 2]
+    assert all(
+        call.request.headers["Authorization"] == "token gh-token" for call in responses.calls
+    )
+
+
+@responses.activate
+def test_exhausted_server_retries_preserve_required_evidence_failure(mocker):
+    url = "https://api.github.com/repos/canonical/haproxy-operator/git/blobs/example"
+    sleep = mocker.patch("time.sleep")
+    responses.get(url, status=502, json={"message": "Bad Gateway"})
+
+    response = github_signals.github_session_get(build_github_session("gh-token"), url)
+
+    with pytest.raises(GitHubAcquisitionError) as error:
+        raise_for_required_github_evidence(response, url)
+    assert error.value.status_code == 502
+    assert error.value.url == url
+    assert len(responses.calls) == 4
+    assert [call.args[0] for call in sleep.call_args_list] == [1, 2, 4]
+    assert all(
+        call.request.headers["Authorization"] == "token gh-token" for call in responses.calls
+    )
+
+
 @responses.activate
 def test_session_get_retries_rate_limited_request_anonymously():
     url = "https://api.github.com/repos/canonical/example/issues"

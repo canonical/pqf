@@ -96,10 +96,14 @@ def _get_with_retries(session: requests.Session, url: str, **kwargs: Any) -> req
             time.sleep(delay)
             continue
         delay = _rate_limit_delay(response)
+        failure = "rate limit"
+        if response.status_code in {500, 502, 503, 504}:
+            delay = 2**attempt
+            failure = f"server error {response.status_code}"
         if delay is None or delay > 3601 or attempt == 3:
             return response
         _LOGGER.warning(
-            "GitHub rate limit for %s; retrying in %.0fs (%s/3)", url, delay, attempt + 1
+            "GitHub %s for %s; retrying in %.0fs (%s/3)", failure, url, delay, attempt + 1
         )
         time.sleep(delay)
     raise AssertionError("Unreachable retry state")
