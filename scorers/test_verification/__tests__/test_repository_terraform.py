@@ -10,11 +10,11 @@ from engine.framework import discover_frameworks, get_framework
 from engine.metric_outcomes import MetricState, measured
 from engine.models import EvaluationUnit, ProductType
 from scorers import registry
+from scorers.shared.github_signals import GitHubAcquisitionError
 from scorers.test_verification.evidence import acquire
-from scorers.test_verification.terraform_repository import (
-    compute_metrics,
-    repository_terraform_outcome,
-)
+from scorers.test_verification.logic import compute_v0_metrics
+from scorers.test_verification.terraform import terraform_outcome
+from scorers.test_verification.v0 import evaluate_files
 
 UNIT = EvaluationUnit("example", ProductType.CHARM, "canonical/example", subpath="charm")
 VALID = """
@@ -46,19 +46,18 @@ resource "kubernetes_namespace" "test" { metadata { name = "test" } }
     ],
 )
 def test_repository_measurement_includes_every_location(path):
-    outcome = repository_terraform_outcome({"charm/terraform/versions.tf": VALID, path: INVALID})
+    outcome = terraform_outcome({"charm/terraform/versions.tf": VALID, path: INVALID})
     assert outcome.state == MetricState.MEASURED
     assert outcome.value is False
     assert path in outcome.reason
 
 
 def test_explicit_non_juju_utility_does_not_fail_juju_compliance():
-    assert repository_terraform_outcome(
+    assert terraform_outcome(
         {"terraform/versions.tf": VALID, "tests/namespace/main.tf": NON_JUJU}
     ) == measured(True)
     assert (
-        repository_terraform_outcome({"tests/namespace/main.tf": NON_JUJU}).state
-        == MetricState.NOT_APPLICABLE
+        terraform_outcome({"tests/namespace/main.tf": NON_JUJU}).state == MetricState.NOT_APPLICABLE
     )
 
 
@@ -72,19 +71,19 @@ def test_explicit_non_juju_utility_does_not_fail_juju_compliance():
     ],
 )
 def test_non_juju_provider_does_not_hide_missing_juju_requirements(extra):
-    outcome = repository_terraform_outcome({"terraform/main.tf": NON_JUJU + extra})
+    outcome = terraform_outcome({"terraform/main.tf": NON_JUJU + extra})
     assert outcome.value is False
     assert "no explicit juju/juju" in outcome.reason
 
 
 def test_unclassified_module_without_provider_requirement_fails():
-    outcome = repository_terraform_outcome({"terraform/main.tf": 'locals { name = "test" }'})
+    outcome = terraform_outcome({"terraform/main.tf": 'locals { name = "test" }'})
     assert outcome.value is False
     assert "terraform" in outcome.reason
 
 
 def test_malformed_utility_is_unknown_not_excluded():
-    outcome = repository_terraform_outcome(
+    outcome = terraform_outcome(
         {"terraform/versions.tf": VALID, "tests/namespace/main.tf": "terraform {"}
     )
     assert outcome.state == MetricState.INSUFFICIENT_DATA
@@ -92,12 +91,10 @@ def test_malformed_utility_is_unknown_not_excluded():
 
 
 def test_no_terraform_is_not_applicable():
-    assert repository_terraform_outcome({}).state == MetricState.NOT_APPLICABLE
+    assert terraform_outcome({}).state == MetricState.NOT_APPLICABLE
 
 
-def test_terraform_json_is_included_and_legacy_validation_is_unchanged():
-    from scorers.test_verification.terraform import terraform_outcome
-
+def test_terraform_json_and_unrelated_utility_are_included():
     files = {
         "tests/namespace/main.tf": NON_JUJU,
         "terraform/product/versions.tf.json": json.dumps(
@@ -113,12 +110,11 @@ def test_terraform_json_is_included_and_legacy_validation_is_unchanged():
             }
         ),
     }
-    assert repository_terraform_outcome(files) == measured(True)
-    assert terraform_outcome(files).value is False
+    assert terraform_outcome(files) == measured(True)
 
 
 def test_unreadable_provider_identity_cannot_be_excluded():
-    outcome = repository_terraform_outcome(
+    outcome = terraform_outcome(
         {
             "utility/versions.tf": "terraform { required_providers { "
             "kubernetes = { source = var.provider_source } } }"
@@ -128,7 +124,7 @@ def test_unreadable_provider_identity_cannot_be_excluded():
 
 
 def test_unknown_resource_provider_is_not_classified_as_non_juju():
-    outcome = repository_terraform_outcome(
+    outcome = terraform_outcome(
         {"utility/main.tf": NON_JUJU + 'resource "custom_application" "app" {}'}
     )
     assert outcome.value is False
@@ -136,7 +132,7 @@ def test_unknown_resource_provider_is_not_classified_as_non_juju():
 
 @pytest.mark.parametrize("source", ["/", "hashicorp//kubernetes", "invalid source/kubernetes"])
 def test_malformed_non_juju_sources_do_not_hide_unclassified_modules(source):
-    outcome = repository_terraform_outcome(
+    outcome = terraform_outcome(
         {"utility/main.tf": NON_JUJU.replace("hashicorp/kubernetes", source)}
     )
     assert outcome.value is False
@@ -162,6 +158,27 @@ def snapshot(contents):
             json={"encoding": "base64", "content": base64.b64encode(text.encode()).decode()},
         )
     return base
+
+
+def test_existing_v0_evaluator_measures_repository_terraform_without_charm_metadata():
+    result = evaluate_files(UNIT, {"terraform/product/versions.tf": INVALID})
+    assert result["uses_tf_v1_provider"].value is False
+    assert "terraform/product/versions.tf" in result["uses_tf_v1_provider"].reason
+    assert result["uses_ops_testing"].state == MetricState.INSUFFICIENT_DATA
+
+
+def test_existing_v0_evaluator_includes_sibling_charm_terraform():
+    result = evaluate_files(
+        UNIT,
+        {
+            "charm/charmcraft.yaml": "name: example",
+            "charm/terraform/versions.tf": VALID,
+            "other/charmcraft.yaml": "name: other",
+            "other/terraform/versions.tf": INVALID,
+        },
+    )
+    assert result["uses_tf_v1_provider"].value is False
+    assert "other/terraform/versions.tf" in result["uses_tf_v1_provider"].reason
 
 
 @responses.activate
@@ -190,24 +207,34 @@ def test_v0_dispatch_acquires_bundles_without_broadening_other_metrics():
 @responses.activate
 def test_repository_evidence_is_shared_without_charm_metadata():
     snapshot({"terraform/product/versions.tf": INVALID})
-    first = compute_metrics(UNIT)
-    second = compute_metrics(replace(UNIT, product_id="other", subpath="other"))
+    first = compute_v0_metrics(UNIT)
+    second = compute_v0_metrics(replace(UNIT, product_id="other", subpath="other"))
     assert first == second
     assert first["uses_tf_v1_provider"].value is False
 
 
 @responses.activate
-def test_old_revision_keeps_component_scope():
-    snapshot({"charm/charmcraft.yaml": "name: example", "terraform/versions.tf": INVALID})
-    assert "terraform/versions.tf" not in acquire(UNIT, None)
+def test_acquisition_is_repository_wide_for_terraform_only():
+    snapshot(
+        {
+            "charm/charmcraft.yaml": "name: example",
+            "terraform/versions.tf": INVALID,
+            "charm/tests/unit/test_app.py": "from ops.testing import Context",
+            "other/tests/unit/test_app.py": "from ops.testing import Harness",
+        }
+    )
+    evidence = acquire(UNIT, None)
+    assert "terraform/versions.tf" in evidence
+    assert "charm/tests/unit/test_app.py" in evidence
+    assert "other/tests/unit/test_app.py" not in evidence
 
 
 @responses.activate
 def test_repository_terraform_blob_failure_propagates():
     base = snapshot({"terraform/versions.tf": VALID})
     responses.replace(responses.GET, base + "/git/blobs/blob-0", status=403)
-    with pytest.raises(Exception, match="403"):
-        compute_metrics(UNIT)
+    with pytest.raises(GitHubAcquisitionError, match="403"):
+        compute_v0_metrics(UNIT)
 
 
 @responses.activate
@@ -215,11 +242,10 @@ def test_truncated_repository_tree_does_not_become_no_modules():
     base = snapshot({})
     responses.replace(responses.GET, base + "/git/trees/tip", json={"tree": [], "truncated": True})
     with pytest.raises(ValueError, match="truncated"):
-        compute_metrics(UNIT)
+        compute_v0_metrics(UNIT)
 
 
+@responses.activate
 def test_snaps_do_not_acquire_terraform():
-    assert (
-        compute_metrics(replace(UNIT, product_type=ProductType.SNAP))["uses_tf_v1_provider"].state
-        == MetricState.NOT_APPLICABLE
-    )
+    result = compute_v0_metrics(replace(UNIT, product_type=ProductType.SNAP))
+    assert result["uses_tf_v1_provider"].state == MetricState.NOT_APPLICABLE

@@ -34,10 +34,12 @@ major-only track (`4/stable`) accepts any stable release in that line
 * `v0.py` is pure. Ops Testing positive imports and deprecated Harness
   references are scoped exclusively to the component's `tests/unit`;
   Jubilant imports are independently scoped to `tests/integration`.
-  Nested charms cannot supply another charm's tests or Terraform modules.
+  Nested charms cannot supply another charm's test imports. Terraform is repository-wide
+  and intentionally includes sibling charms, product bundles, test setups, and examples.
 * A charm unit with no `charmcraft.yaml`/`metadata.yaml` at its configured
-  path makes every charm metric insufficient, surfacing a wrong product
+  path makes the component-scoped charm metrics insufficient, surfacing a wrong product
   `subpath` instead of reporting false non-compliance.
+  Repository-wide Terraform evidence does not depend on this component metadata.
 * Workflows require parsed job-level reusable calls. Supported integration
   names are `canonical/charm-ci/.github/workflows/integration-test.yml` and
   equivalent underscore/plural/YAML spellings. Build-only calls and incidental
@@ -73,11 +75,16 @@ major-only track (`4/stable`) accepts any stable release in that line
   including aliases and comments. Juju requirements must explicitly identify
   `juju/juju` or `registry.terraform.io/juju/juju`; the local alias can be
   arbitrary. An omitted source defaults to `hashicorp/juju` and does not qualify.
-  Every component module must use an explicit `>= A, < B` range with
+  Every Juju or unclassified module in the repository must use an explicit `>= A, < B` range with
   `1.0 <= A < B`; bound order is irrelevant. Pessimistic (`~>`), exact, and
   unbounded requirements are measured false. Dynamic/unreadable declarations
   and empty intervals are insufficient; missing requirements are measured false;
-  no modules is not applicable.
+  no applicable modules is not applicable. Only explicitly non-Juju modules without
+  module calls, Juju usage, or unclassified provider ownership are excluded.
+  All tracked charms sharing a repository use the same Terraform evidence, independent
+  of their source subpaths. Passing certifies provider bounds, not module locations or
+  overall Terraform correctness. The unused component-scoped revision was removed;
+  `uses-tf-v1-provider/v3` uses the existing V0 runner and acquisition path.
 
 All eight charm-only metrics are not applicable to snaps. Missing required
 test/workflow/configuration evidence is measured false, rather than adoption by

@@ -32,7 +32,7 @@ def _dimension_config(version_id: str, dimension_name: str) -> dict:
 def test_v0_terraform_uses_corrected_measurement(monkeypatch):
     monkeypatch.setattr(
         "scorers.test_verification.evidence.acquire",
-        lambda unit, token, **kwargs: {
+        lambda unit, token: {
             "charmcraft.yaml": "name: example",
             "terraform/versions.tf": """
 terraform {
@@ -55,7 +55,7 @@ terraform {
 def test_v0_terraform_includes_product_bundle_outside_charm(monkeypatch):
     monkeypatch.setattr(
         "scorers.test_verification.evidence.acquire",
-        lambda unit, token, **kwargs: {
+        lambda unit, token: {
             "charm/charmcraft.yaml": "name: example",
             "terraform/product/versions.tf": """
 terraform {

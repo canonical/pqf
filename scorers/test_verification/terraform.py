@@ -1,4 +1,4 @@
-"""Every Terraform module must bound juju/juju with >= A, < B, where A >= 1.0.
+"""Repository-wide Juju provider bounds, excluding explicit non-Juju utilities.
 
 Newer major versions are allowed. Missing/noncanonical requirements fail; unreadable
 declarations are unknown. HCL syntax is parsed by python-hcl2, never by regex.
@@ -23,6 +23,7 @@ from engine.metric_outcomes import (
 
 _JUJU_SOURCES = {"juju/juju", "registry.terraform.io/juju/juju"}
 _CLAUSE = re.compile(r"(~>|>=|<=|!=|>|<|=)?\s*(\d+(?:\.\d+){0,2})")
+_PROVIDER_SOURCE = re.compile(r"(?:[A-Za-z0-9.-]+(?::[0-9]+)?/)?[A-Za-z0-9_-]+/[A-Za-z0-9_-]+")
 
 
 def requires_explicit_provider_range(constraint: str) -> bool:
@@ -55,19 +56,43 @@ def _blocks(value: Any) -> list[dict[str, Any]]:
     return blocks
 
 
-def _requirements(path: str, text: str) -> list[dict[str, Any]]:
-    """Parse one Terraform file and extract its required_providers mappings.
-
-    Each mapping associates local provider names with their source and version requirements.
-    """
+def _document(path: str, text: str) -> dict[str, Any]:
     document = json.loads(text) if path.endswith(".json") else hcl2.loads(text)
     if not isinstance(document, dict):
         raise ValueError("Expected a Terraform document mapping.")
-    return [
-        providers
-        for terraform in _blocks(document.get("terraform", []))
-        for providers in _blocks(terraform.get("required_providers", []))
-    ]
+    return document
+
+
+def _explicitly_non_juju(documents: list[dict[str, Any]]) -> bool:
+    providers = set()
+    resource_types = set()
+    for document in documents:
+        if document.get("module"):
+            return False
+        for block in _blocks(document.get("provider", [])):
+            if "juju" in block:
+                return False
+            resource_types.update(f"{name}_" for name in block)
+        for kind in ("resource", "data"):
+            for block in _blocks(document.get(kind, [])):
+                if any(name.startswith("juju_") for name in block):
+                    return False
+                resource_types.update(block)
+        for terraform in _blocks(document.get("terraform", [])):
+            for requirements in _blocks(terraform.get("required_providers", [])):
+                for name, requirement in requirements.items():
+                    source = requirement.get("source") if isinstance(requirement, dict) else None
+                    if (
+                        name == "juju"
+                        or not isinstance(source, str)
+                        or source in _JUJU_SOURCES
+                        or not _PROVIDER_SOURCE.fullmatch(source)
+                    ):
+                        return False
+                    providers.add(name)
+    return bool(providers) and all(
+        any(kind.startswith(f"{name}_") for name in providers) for kind in resource_types
+    )
 
 
 def _provider_outcome(path: str, name: str, requirement: Any) -> MetricOutcome | None:
@@ -108,29 +133,44 @@ def _provider_outcome(path: str, name: str, requirement: Any) -> MetricOutcome |
 
 
 def terraform_outcome(files: dict[str, str]) -> MetricOutcome:
-    """Require every in-scope module, including test setup modules, to comply."""
+    """Require every Juju or unclassified module in the source repository to comply."""
     modules: dict[str, list[tuple[str, str]]] = defaultdict(list)
     for path, text in files.items():
         if path.endswith((".tf", ".tf.json")):
             directory = path.rsplit("/", 1)[0] if "/" in path else "."
             modules[directory].append((path, text))
     if not modules:
-        return not_applicable("No Terraform modules in the component.")
+        return not_applicable("No Terraform modules in the source repository.")
 
     outcomes = []
     for directory, entries in sorted(modules.items()):
         module_outcomes = []
+        documents = []
         for path, text in sorted(entries):
             try:
-                declarations = _requirements(path, text)
+                document = _document(path, text)
+                declarations = [
+                    providers
+                    for terraform in _blocks(document.get("terraform", []))
+                    for providers in _blocks(terraform.get("required_providers", []))
+                ]
             except (ValueError, LarkError) as exc:
                 module_outcomes.append(insufficient_data(f"{path}: cannot parse Terraform: {exc}"))
                 continue
+            documents.append(document)
             for declaration in declarations:
                 for name, requirement in declaration.items():
                     outcome = _provider_outcome(path, name, requirement)
                     if outcome is not None:
                         module_outcomes.append(outcome)
+        if len(documents) == len(entries):
+            try:
+                if _explicitly_non_juju(documents):
+                    continue
+            except ValueError as exc:
+                module_outcomes.append(
+                    insufficient_data(f"{directory}: cannot classify Terraform: {exc}")
+                )
         if not module_outcomes:
             module_outcomes.append(
                 MetricOutcome(
@@ -149,4 +189,6 @@ def terraform_outcome(files: dict[str, str]) -> MetricOutcome:
     ]
     if unknowns:
         return insufficient_data("\n".join(unknowns))
+    if not outcomes:
+        return not_applicable("No Juju or unclassified Terraform modules in the source repository.")
     return measured(True)

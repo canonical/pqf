@@ -142,7 +142,8 @@ module rather than attributing it to a particular charm.
   `registry.terraform.io/juju/juju` is equivalent to `juju/juju`.
 - The two version bounds may appear in either order.
 
-Revision `v2` retains the previous component-scoped measurement for contracts that select it.
+The previous component-scoped revision is no longer selected by any contract and has been
+removed. Revision `v3` runs through the existing V0 testing runner.
 
 ### Uses GitHub-hosted runners for unit tests
 

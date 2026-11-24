@@ -89,7 +89,7 @@ class Evidence:
                 return entries
             page += 1
 
-    def files(self, sha: str, scope: str, *, terraform_only: bool = False) -> dict[str, str]:
+    def files(self, sha: str, scope: str) -> dict[str, str]:
         tree = self.get(f"/git/trees/{sha}", recursive=1)
         if tree.get("truncated"):
             raise ValueError("GitHub repository tree was truncated; evidence is incomplete.")
@@ -105,23 +105,15 @@ class Evidence:
             config = name in {"charmcraft.yaml", "metadata.yaml", "spread.yaml"} or (
                 "concierge" in name and name.endswith((".yaml", ".yml"))
             )
-            component = scoped(path, scope) and (
-                path.endswith((".tf", ".tf.json"))
-                or path.endswith(".py")
-                and "tests" in path.split("/")
-            )
-            selected = (
-                path.endswith((".tf", ".tf.json"))
-                if terraform_only
-                else workflow or config or component
-            )
-            if not selected:
+            terraform = path.endswith((".tf", ".tf.json"))
+            component = scoped(path, scope) and path.endswith(".py") and "tests" in path.split("/")
+            if not (workflow or config or terraform or component):
                 continue
             blob = self.get(f"/git/blobs/{entry['sha']}")
             if blob.get("encoding") != "base64" or not isinstance(blob.get("content"), str):
                 raise ValueError(f"Cannot decode GitHub blob {path}.")
             files[path] = base64.b64decode(blob["content"], validate=False).decode("utf-8")
-        for candidate in sorted(set() if terraform_only else _linked_paths(files) - files.keys()):
+        for candidate in sorted(_linked_paths(files) - files.keys()):
             matching = next(
                 (
                     entry
@@ -138,10 +130,8 @@ class Evidence:
         return files
 
 
-def acquire(
-    unit: EvaluationUnit, token: str | None, *, terraform_only: bool = False
-) -> dict[str, str]:
-    """Return scoped testing evidence, or only Terraform from the whole repository."""
+def acquire(unit: EvaluationUnit, token: str | None) -> dict[str, str]:
+    """Return scoped testing evidence and Terraform from the whole repository."""
     if not unit.repo:
         raise UninterpretableRepository("Repository is absent.")
     evidence = Evidence(unit.repo, token)
@@ -153,4 +143,4 @@ def acquire(
     sha = branch_data.get("commit", {}).get("sha")
     if not isinstance(sha, str) or not sha:
         raise UninterpretableRepository("Default branch tip is absent.")
-    return evidence.files(sha, normalize(unit.subpath or "."), terraform_only=terraform_only)
+    return evidence.files(sha, normalize(unit.subpath or "."))
