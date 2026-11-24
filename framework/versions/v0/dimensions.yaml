@@ -35,10 +35,10 @@ dimensions:
         label: "Uses Jubilant"
         description: "The charm's integration tests use Jubilant to drive Juju."
       uses_tf_v1_provider:
-        implementation: "uses-tf-v1-provider/v2"
+        implementation: "uses-tf-v1-provider/v3"
         type: boolean
-        label: "Terraform Juju provider v1+"
-        description: "Every Terraform module in the charm, including test setup modules, explicitly bounds juju/juju with >= A, < B, where 1.0 <= A < B. Pessimistic constraints, exact pins, and unbounded requirements fail."
+        label: "Juju provider version bounds"
+        description: "Checks Terraform across the entire source repository, regardless of the charm subpath or module location, including charm modules, product bundles, test setups, and examples. Every Juju or unclassified module must explicitly declare juju/juju with >= A, < B, where 1.0 <= A < B. Pessimistic constraints, exact pins, missing requirements, and unbounded requirements fail. Only explicitly non-Juju modules without module calls or Juju usage are excluded. Unreadable declarations are insufficient data; no applicable modules is not applicable. Evidence is shared by all tracked charms in that repository. Passing certifies provider bounds only, not module locations or overall Terraform correctness."
       uses_charm_ci:
         implementation: "uses-charm-ci/v1"
         type: boolean

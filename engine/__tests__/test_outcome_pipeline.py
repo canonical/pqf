@@ -71,6 +71,7 @@ def test_v0_outcomes_survive_complete_generation_pipeline(tmp_path, monkeypatch,
         {
             **registry.RUNNERS,
             "v0_testing": testing,
+            "repository_terraform": testing,
             "v0_documentation": documentation,
             "v0_security": security,
         },

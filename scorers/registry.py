@@ -20,6 +20,7 @@ from scorers.security_ssdlc import logic as security_ssdlc_logic
 from scorers.shared import github_signals
 from scorers.substrate_compat import logic as substrate_compat_logic
 from scorers.test_verification import logic as test_verification_logic
+from scorers.test_verification import terraform_repository
 
 DEFAULT_OPENROUTER_MODEL = "anthropic/claude-sonnet-4.5"
 
@@ -58,6 +59,12 @@ def _run_v0_testing(unit: EvaluationUnit, context: ScorerContext) -> dict[str, M
         juju4_track=context.juju4_track,
         juju_lts_track=context.juju_lts_track,
     )
+
+
+def _run_repository_terraform(
+    unit: EvaluationUnit, context: ScorerContext
+) -> dict[str, MetricOutcome]:
+    return terraform_repository.compute_metrics(unit, context.github_token)
 
 
 def _run_v0_documentation(unit: EvaluationUnit, context: ScorerContext) -> dict[str, MetricOutcome]:
@@ -111,6 +118,7 @@ RUNNERS = MappingProxyType(
         "security_ssdlc": _run_security_ssdlc,
         "engagement": _run_engagement,
         "v0_testing": _run_v0_testing,
+        "repository_terraform": _run_repository_terraform,
         "v0_documentation": _run_v0_documentation,
         "v0_security": _run_v0_security,
     }
@@ -148,6 +156,13 @@ RUNNER_SOURCE_FILES = MappingProxyType(
 RUNNER_SOURCE_FILES = MappingProxyType(
     {
         **RUNNER_SOURCE_FILES,
+        "repository_terraform": (
+            Path(terraform_repository.__file__).resolve(),
+            Path(terraform_repository.__file__).resolve().parent / "terraform.py",
+            Path(terraform_repository.__file__).resolve().parent / "evidence.py",
+            Path(terraform_repository.__file__).resolve().parent / "v0.py",
+            Path(github_signals.__file__).resolve(),
+        ),
         "v0_testing": (
             *RUNNER_SOURCE_FILES["test_verification"],
             *(
@@ -311,6 +326,9 @@ METRIC_BINDINGS = MappingProxyType(
 METRIC_BINDINGS = MappingProxyType(
     {
         **METRIC_BINDINGS,
+        "uses-tf-v1-provider/v3": MetricBinding(
+            "test_verification", "uses_tf_v1_provider", "repository_terraform"
+        ),
         **{
             implementation: MetricBinding(dimension, output, runner)
             for dimension, runner, outputs in (
