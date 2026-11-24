@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-23T08:15:11.787571+00:00",
+  "generated_at": "2026-11-24T22:19:39.913181+00:00",
   "metric_schema_version": 1,
   "framework": {
     "id": "v1",
@@ -9,20 +9,20 @@
     "description": "The first operational PQF quality bar."
   },
   "contract_digest": "0f33b7f5b5660b8dd4560349ebc9c3e07631362edd660e4549afecacbb1f802a",
-  "source_revision": "fdd8c5628f21684672465ab0ca3accaabf7987da",
+  "source_revision": "a71883eca3be0599e296fe955d643b7a4fba34e7",
   "implementation_fingerprints": {
     "avg-pr-review-days/v1": "6d84531e7298cc26356f67b68c020e51b6a1654d007bf027c410e25f8bd40892",
     "avg-triage-days/v1": "7b42470ebf5ae214df0aaf2fb46bb63feaa1ef9bccca2ed19f377eaa422e8065",
     "branch-protection-required-checks/v1": "001d188995b3a626b44b485dccffeeae92b7f594657d31331fed79e00807cde3",
     "changelog-present/v1": "5f1133cafbb2ee9ac160625995b00f9c8726c41a1a40fb0e8646b811f8c6bd87",
     "contributing-present/v1": "eb0aef4658114cd7d48098d15b6bd60a89e1ebcb29788089e33c5be84ee9b95b",
-    "coverage-pct/v1": "03d1140af376dd5d99b8f2e698b4a384ef9fa81d17a0f9fd29427b128b8c49c7",
+    "coverage-pct/v1": "405d3b7245a38a9da326a9bf70230676cfeae32fc1a2853b3fc45bab914e268e",
     "cve-process-evidence/v1": "7df8c2eaa4ab0d762190cb393e9a2756da5411c0d7d5693266a776d1f112ea62",
     "diataxis-coverage-ai/v1": "8924b864327bc87a3fa5f74035f8b0b01ae742d0d270ffb3b16e6631415cb596",
     "documentation-workflow-status/v1": "d07ea6eafd2b33efe308283463125c9da7708d607a564f4d85d6992974b95dbb",
-    "integration-test-evidence-present/v1": "01ffab259ce0c9de1bd331fe332f086b8c86edb0e5945c6157021f4d3a6ad1c9",
+    "integration-test-evidence-present/v1": "660352afc124fdb7f64a8380be4b713e3ec1c879a835977f5441ceb7160b8ee2",
     "jira-sync-configured/v1": "d48b247a29abc4c70110dcddd8c68c25d0b4db5d54e708623172c288b658f692",
-    "latest-build-passing/v1": "e6c9a4b56c5704afae6345026e7394fcae63d21f0b308bb028c216595d981626",
+    "latest-build-passing/v1": "b589e52e475db90af9b885be14977883ce496e5e4948c329dd5b0f030844087a",
     "ownership-signal/v1": "f3a631ba62a46a674679c098032eb3b7b8f62e1e19b3581a9bad5f83854bb081",
     "readme-present/v1": "55998d6d63d3b3fa30f75d042ea6a290b7155ffd54b010694182357ae6e7165e",
     "release-notes-process-implemented/v1": "165dcac204986f76eb6a3411fb37505f2f453c6ca1b1b786ce8c6adc8abc7f1e",
@@ -32,19 +32,19 @@
     "sast-workflow-present/v1": "e051fb7460a1004fdaa93dd399bfae15f3e88519b5d81ec9d8f95e821ea9a59c",
     "security-file-present/v1": "a73ff6dee145f41528a3601ad340242828df7966d07f7f1fa0cd22b03a5283bd",
     "signed-commits-required/v1": "6a6e2810bab46a509e9593eea5530b076de7ff7e02bd2bc474c6db24b47943c5",
-    "stability-pct/v1": "5f42b13d02c251a0f422811f0c73009fbbdf8dc39db11ffd094ed0f49a146cb6",
+    "stability-pct/v1": "a7acb0728a522651107c97fc2813c508463a44f81912b9c6fa5cf2c037f460bc",
     "substrate-test-evidence-present/v1": "f90ffd5f805db28b9b6a9902824aa4a65589de7250928759710fc707d4deb4e6",
     "supports-juju-3/v1": "299e9034dfba6f5493b51c93748e9d8bffd05b1e5c755d2295a7a44f1a846547",
     "supports-juju-4/v1": "7bfb6a44f40ce6469be892b3fca49253554734bbb6bc169ee345b539e63059b1",
     "uses-canonical-k8s/v1": "3ce7cc4dadd750ee1f490397c8ef6c13ffe32c1c1322e28155c3c0b16d7dce17",
-    "uses-jubilant/v1": "ffd69d032fe79865fbe5c47b0dc129e91b5ac1265af61100e99ab6bccde24f3e",
+    "uses-jubilant/v1": "5a1097f68d0de0fec9f52ac9bb8f6342a62b5c29e8646f88d03c9727536ce884",
     "uses-rtd-hosting/v1": "df02a92fe44688518307c9b9423d0072ddc2848fae7bb6ca3b278cec4ac88564"
   },
   "compliance_summary": {
     "total": 37,
     "meeting_target": 2,
-    "below_target": 28,
-    "insufficient_data": 7
+    "below_target": 29,
+    "insufficient_data": 6
   },
   "products": [
     {
@@ -55,7 +55,7 @@
       "lifecycle": "stable",
       "current_medal": "unrated",
       "target_medal": "gold",
-      "current_result": "insufficient_data",
+      "current_result": "below_minimum",
       "target_result": "gold",
       "meets_target": false,
       "squad": "emea",
@@ -72,24 +72,23 @@
       "parent_product_ids": [],
       "dimensions": {
         "test_verification": {
-          "medal": "unrated",
+          "medal": "bronze",
           "target": "gold",
-          "applicability": "insufficient_data",
+          "applicability": "scored",
           "meets_target": false,
-          "result": "insufficient_data",
+          "result": "bronze",
           "metrics": {},
           "composition": [
             {
               "product_id": "paas-charm",
               "repo": "canonical/paas-charm",
-              "medal": "unrated",
-              "result": "insufficient_data",
-              "applicability": "insufficient_data",
+              "medal": "bronze",
+              "result": "bronze",
+              "applicability": "scored",
               "metrics": {
                 "latest_build_passing": {
-                  "state": "insufficient_data",
-                  "value": null,
-                  "reason": "The legacy measurement has no evidence."
+                  "state": "measured",
+                  "value": true
                 },
                 "integration_test_evidence_present": {
                   "state": "measured",
@@ -150,9 +149,9 @@
                   "value": false
                 },
                 "diataxis_coverage_ai": {
-                  "state": "measured",
-                  "value": 2,
-                  "reason": "The documentation contains Tutorial content (Getting Started section with framework-specific tutorial links) and Reference content (commands and configuration details), but lacks distinct How-to guides and Explanation sections."
+                  "state": "insufficient_data",
+                  "value": null,
+                  "reason": "AI documentation assessment is unavailable."
                 },
                 "uses_rtd_hosting": {
                   "state": "measured",
@@ -264,7 +263,7 @@
                 },
                 "response_coverage_rate": {
                   "state": "measured",
-                  "value": 87.5
+                  "value": 86.6
                 },
                 "avg_triage_days": {
                   "state": "measured",
@@ -272,7 +271,7 @@
                 },
                 "avg_pr_review_days": {
                   "state": "measured",
-                  "value": 1.2
+                  "value": 0.8
                 },
                 "has_jira_sync": {
                   "state": "measured",
@@ -280,7 +279,7 @@
                 },
                 "repo_views_14d": {
                   "state": "measured",
-                  "value": 412
+                  "value": 436
                 }
               },
               "excluded_from_parent_medal": false
@@ -427,9 +426,9 @@
                   "value": false
                 },
                 "diataxis_coverage_ai": {
-                  "state": "measured",
-                  "value": 4,
-                  "reason": "The documentation explicitly includes all four Di\u00e1taxis types: Tutorial (deployment guide), How-to guides (configure, upgrade, backup), Reference (actions, configurations, integrations), and Explanation (security, architecture)."
+                  "state": "insufficient_data",
+                  "value": null,
+                  "reason": "AI documentation assessment is unavailable."
                 },
                 "uses_rtd_hosting": {
                   "state": "measured",
@@ -470,9 +469,9 @@
                   "value": false
                 },
                 "diataxis_coverage_ai": {
-                  "state": "measured",
-                  "value": 2,
-                  "reason": "The documentation contains a clear how-to guide (installation and configuration steps) and reference content (nftables rules, CLI options), but lacks a learning-oriented tutorial with explanations of concepts and understanding-oriented discussion of architecture or design decisions."
+                  "state": "insufficient_data",
+                  "value": null,
+                  "reason": "AI documentation assessment is unavailable."
                 },
                 "uses_rtd_hosting": {
                   "state": "measured",
@@ -640,7 +639,7 @@
                 },
                 "response_coverage_rate": {
                   "state": "measured",
-                  "value": 92.9
+                  "value": 89.7
                 },
                 "avg_triage_days": {
                   "state": "measured",
@@ -656,7 +655,7 @@
                 },
                 "repo_views_14d": {
                   "state": "measured",
-                  "value": 18
+                  "value": 24
                 }
               },
               "excluded_from_parent_medal": false
@@ -693,7 +692,7 @@
                 },
                 "repo_views_14d": {
                   "state": "measured",
-                  "value": 86
+                  "value": 93
                 }
               },
               "excluded_from_parent_medal": false
@@ -763,7 +762,7 @@
                 },
                 "uses_jubilant": {
                   "state": "measured",
-                  "value": false
+                  "value": true
                 },
                 "coverage_pct": {
                   "state": "insufficient_data",
@@ -795,7 +794,7 @@
                 },
                 "uses_jubilant": {
                   "state": "measured",
-                  "value": false
+                  "value": true
                 },
                 "coverage_pct": {
                   "state": "insufficient_data",
@@ -827,7 +826,7 @@
                 },
                 "uses_jubilant": {
                   "state": "measured",
-                  "value": true
+                  "value": false
                 },
                 "coverage_pct": {
                   "state": "insufficient_data",
@@ -859,7 +858,7 @@
                 },
                 "uses_jubilant": {
                   "state": "measured",
-                  "value": true
+                  "value": false
                 },
                 "coverage_pct": {
                   "state": "insufficient_data",
@@ -912,9 +911,9 @@
                   "value": false
                 },
                 "diataxis_coverage_ai": {
-                  "state": "measured",
-                  "value": 0,
-                  "reason": "The documentation is empty with no content in either README or docs/index.md files."
+                  "state": "insufficient_data",
+                  "value": null,
+                  "reason": "AI documentation assessment is unavailable."
                 },
                 "uses_rtd_hosting": {
                   "state": "measured",
@@ -955,9 +954,9 @@
                   "value": false
                 },
                 "diataxis_coverage_ai": {
-                  "state": "measured",
-                  "value": 0,
-                  "reason": "The documentation is empty with no content in either the README or docs/index.md files, so none of the four Di\u00e1taxis types are present."
+                  "state": "insufficient_data",
+                  "value": null,
+                  "reason": "AI documentation assessment is unavailable."
                 },
                 "uses_rtd_hosting": {
                   "state": "measured",
@@ -998,9 +997,9 @@
                   "value": false
                 },
                 "diataxis_coverage_ai": {
-                  "state": "measured",
-                  "value": 0,
-                  "reason": "The documentation is empty with no content provided in either the README or docs/index.md files."
+                  "state": "insufficient_data",
+                  "value": null,
+                  "reason": "AI documentation assessment is unavailable."
                 },
                 "uses_rtd_hosting": {
                   "state": "measured",
@@ -1041,9 +1040,9 @@
                   "value": false
                 },
                 "diataxis_coverage_ai": {
-                  "state": "measured",
-                  "value": 0,
-                  "reason": "The documentation is empty with no content in either the README or docs/index.md files, so none of the four Di\u00e1taxis types are present."
+                  "state": "insufficient_data",
+                  "value": null,
+                  "reason": "AI documentation assessment is unavailable."
                 },
                 "uses_rtd_hosting": {
                   "state": "measured",
@@ -1339,7 +1338,7 @@
                 },
                 "repo_views_14d": {
                   "state": "measured",
-                  "value": 16
+                  "value": 11
                 }
               },
               "excluded_from_parent_medal": false
@@ -1373,7 +1372,7 @@
                 },
                 "repo_views_14d": {
                   "state": "measured",
-                  "value": 16
+                  "value": 11
                 }
               },
               "excluded_from_parent_medal": false
@@ -1407,7 +1406,7 @@
                 },
                 "repo_views_14d": {
                   "state": "measured",
-                  "value": 16
+                  "value": 11
                 }
               },
               "excluded_from_parent_medal": false
@@ -1441,7 +1440,7 @@
                 },
                 "repo_views_14d": {
                   "state": "measured",
-                  "value": 16
+                  "value": 11
                 }
               },
               "excluded_from_parent_medal": false
@@ -1499,7 +1498,7 @@
                 },
                 "uses_jubilant": {
                   "state": "measured",
-                  "value": true
+                  "value": false
                 },
                 "coverage_pct": {
                   "state": "insufficient_data",
@@ -1552,9 +1551,9 @@
                   "value": false
                 },
                 "diataxis_coverage_ai": {
-                  "state": "measured",
-                  "value": 0,
-                  "reason": "The documentation is empty with no content present in either the README or docs/index.md files."
+                  "state": "insufficient_data",
+                  "value": null,
+                  "reason": "AI documentation assessment is unavailable."
                 },
                 "uses_rtd_hosting": {
                   "state": "measured",
@@ -1666,7 +1665,7 @@
                 },
                 "response_coverage_rate": {
                   "state": "measured",
-                  "value": 95.2
+                  "value": 90.5
                 },
                 "avg_triage_days": {
                   "state": "measured",
@@ -1674,7 +1673,7 @@
                 },
                 "avg_pr_review_days": {
                   "state": "measured",
-                  "value": 2.9
+                  "value": 3.0
                 },
                 "has_jira_sync": {
                   "state": "measured",
@@ -1682,7 +1681,7 @@
                 },
                 "repo_views_14d": {
                   "state": "measured",
-                  "value": 134
+                  "value": 154
                 }
               },
               "excluded_from_parent_medal": false
@@ -1831,9 +1830,9 @@
                   "value": false
                 },
                 "diataxis_coverage_ai": {
-                  "state": "measured",
-                  "value": 4,
-                  "reason": "The documentation explicitly references all four Di\u00e1taxis types with dedicated sections: Tutorial (Getting started section in README), How-to guides (upgrade documentation), Reference (charm architecture), and Explanation (mentioned in navigation structure)."
+                  "state": "insufficient_data",
+                  "value": null,
+                  "reason": "AI documentation assessment is unavailable."
                 },
                 "uses_rtd_hosting": {
                   "state": "measured",
@@ -1874,9 +1873,9 @@
                   "value": false
                 },
                 "diataxis_coverage_ai": {
-                  "state": "measured",
-                  "value": 4,
-                  "reason": "The documentation explicitly references all four Di\u00e1taxis types: Tutorials (tutorial.md mentioned twice), How-to guides, Reference, and Explanation sections are all clearly indicated in the index table."
+                  "state": "insufficient_data",
+                  "value": null,
+                  "reason": "AI documentation assessment is unavailable."
                 },
                 "uses_rtd_hosting": {
                   "state": "measured",
@@ -2100,7 +2099,7 @@
                 },
                 "repo_views_14d": {
                   "state": "measured",
-                  "value": 3
+                  "value": 2
                 }
               },
               "excluded_from_parent_medal": false
@@ -2286,9 +2285,9 @@
                   "value": false
                 },
                 "diataxis_coverage_ai": {
-                  "state": "measured",
-                  "value": 0,
-                  "reason": "The documentation only contains a repository notice, project overview, and community links without any tutorial, how-to, reference, or explanation content."
+                  "state": "insufficient_data",
+                  "value": null,
+                  "reason": "AI documentation assessment is unavailable."
                 },
                 "uses_rtd_hosting": {
                   "state": "measured",
@@ -2329,9 +2328,9 @@
                   "value": false
                 },
                 "diataxis_coverage_ai": {
-                  "state": "measured",
-                  "value": 0,
-                  "reason": "The documentation contains only repository metadata, navigation links, and a deprecation warning, with no actual tutorial, how-to, reference, or explanation content present."
+                  "state": "insufficient_data",
+                  "value": null,
+                  "reason": "AI documentation assessment is unavailable."
                 },
                 "uses_rtd_hosting": {
                   "state": "measured",
@@ -2372,9 +2371,9 @@
                   "value": false
                 },
                 "diataxis_coverage_ai": {
-                  "state": "measured",
-                  "value": 1,
-                  "reason": "The documentation contains only a How-to guide (building and installing the snap with step-by-step instructions), but lacks tutorials, reference documentation, and explanatory content."
+                  "state": "insufficient_data",
+                  "value": null,
+                  "reason": "AI documentation assessment is unavailable."
                 },
                 "uses_rtd_hosting": {
                   "state": "measured",
@@ -2691,7 +2690,7 @@
                 },
                 "repo_views_14d": {
                   "state": "measured",
-                  "value": 2
+                  "value": 1
                 }
               },
               "excluded_from_parent_medal": false
@@ -2725,23 +2724,23 @@
       "parent_product_ids": [],
       "dimensions": {
         "test_verification": {
-          "medal": "unrated",
+          "medal": "silver",
           "target": "bronze",
           "applicability": "scored",
-          "meets_target": false,
-          "result": "below_minimum",
+          "meets_target": true,
+          "result": "silver",
           "metrics": {},
           "composition": [
             {
               "product_id": "content-cache-k8s-charm",
               "repo": "canonical/content-cache-k8s-operator",
-              "medal": "unrated",
-              "result": "below_minimum",
+              "medal": "silver",
+              "result": "silver",
               "applicability": "scored",
               "metrics": {
                 "latest_build_passing": {
                   "state": "measured",
-                  "value": false
+                  "value": true
                 },
                 "integration_test_evidence_present": {
                   "state": "measured",
@@ -2802,9 +2801,9 @@
                   "value": false
                 },
                 "diataxis_coverage_ai": {
-                  "state": "measured",
-                  "value": 3,
-                  "reason": "The documentation clearly contains a Tutorial (referenced 'Getting started' guide), Reference (actions, tuning options, integrations list), and How-to guide (integration example with WordPress), but lacks substantial Explanation content about architecture or design decisions."
+                  "state": "insufficient_data",
+                  "value": null,
+                  "reason": "AI documentation assessment is unavailable."
                 },
                 "uses_rtd_hosting": {
                   "state": "measured",
@@ -2916,15 +2915,15 @@
                 },
                 "response_coverage_rate": {
                   "state": "measured",
-                  "value": 76.9
+                  "value": 85.2
                 },
                 "avg_triage_days": {
                   "state": "measured",
-                  "value": 184.4
+                  "value": 147.5
                 },
                 "avg_pr_review_days": {
                   "state": "measured",
-                  "value": 13.1
+                  "value": 15.4
                 },
                 "has_jira_sync": {
                   "state": "measured",
@@ -2932,7 +2931,7 @@
                 },
                 "repo_views_14d": {
                   "state": "measured",
-                  "value": 17
+                  "value": 15
                 }
               },
               "excluded_from_parent_medal": false
@@ -2970,23 +2969,23 @@
       "parent_product_ids": [],
       "dimensions": {
         "test_verification": {
-          "medal": "unrated",
+          "medal": "silver",
           "target": "silver",
           "applicability": "scored",
-          "meets_target": false,
-          "result": "below_minimum",
+          "meets_target": true,
+          "result": "silver",
           "metrics": {},
           "composition": [
             {
               "product_id": "content-cache-charm",
               "repo": "canonical/content-cache-operator",
-              "medal": "unrated",
-              "result": "below_minimum",
+              "medal": "silver",
+              "result": "silver",
               "applicability": "scored",
               "metrics": {
                 "latest_build_passing": {
                   "state": "measured",
-                  "value": false
+                  "value": true
                 },
                 "integration_test_evidence_present": {
                   "state": "measured",
@@ -3012,13 +3011,13 @@
             {
               "product_id": "content-cache-backends-config",
               "repo": "canonical/content-cache-operator",
-              "medal": "unrated",
-              "result": "below_minimum",
+              "medal": "silver",
+              "result": "silver",
               "applicability": "scored",
               "metrics": {
                 "latest_build_passing": {
                   "state": "measured",
-                  "value": false
+                  "value": true
                 },
                 "integration_test_evidence_present": {
                   "state": "measured",
@@ -3079,9 +3078,9 @@
                   "value": false
                 },
                 "diataxis_coverage_ai": {
-                  "state": "measured",
-                  "value": 1,
-                  "reason": "Only a Tutorial is explicitly referenced ('Content Cache tutorial' link), while How-to guides, Reference documentation, and Explanation content are not clearly present in the provided documentation."
+                  "state": "insufficient_data",
+                  "value": null,
+                  "reason": "AI documentation assessment is unavailable."
                 },
                 "uses_rtd_hosting": {
                   "state": "measured",
@@ -3122,9 +3121,9 @@
                   "value": false
                 },
                 "diataxis_coverage_ai": {
-                  "state": "measured",
-                  "value": 2,
-                  "reason": "The documentation contains Tutorial content (reference to 'Getting started' tutorial and step-by-step instructions) and Reference content (mentions of configuration options like backends, hostname, etc.), but lacks explicit How-to guides and Explanation sections."
+                  "state": "insufficient_data",
+                  "value": null,
+                  "reason": "AI documentation assessment is unavailable."
                 },
                 "uses_rtd_hosting": {
                   "state": "measured",
@@ -3292,15 +3291,15 @@
                 },
                 "response_coverage_rate": {
                   "state": "measured",
-                  "value": 85.0
+                  "value": 90.0
                 },
                 "avg_triage_days": {
                   "state": "measured",
-                  "value": 15.6
+                  "value": 13.5
                 },
                 "avg_pr_review_days": {
                   "state": "measured",
-                  "value": 0.3
+                  "value": 1.7
                 },
                 "has_jira_sync": {
                   "state": "measured",
@@ -3308,7 +3307,7 @@
                 },
                 "repo_views_14d": {
                   "state": "measured",
-                  "value": 297
+                  "value": 307
                 }
               },
               "excluded_from_parent_medal": false
@@ -3326,15 +3325,15 @@
                 },
                 "response_coverage_rate": {
                   "state": "measured",
-                  "value": 85.0
+                  "value": 90.0
                 },
                 "avg_triage_days": {
                   "state": "measured",
-                  "value": 15.6
+                  "value": 13.5
                 },
                 "avg_pr_review_days": {
                   "state": "measured",
-                  "value": 0.3
+                  "value": 1.7
                 },
                 "has_jira_sync": {
                   "state": "measured",
@@ -3342,7 +3341,7 @@
                 },
                 "repo_views_14d": {
                   "state": "measured",
-                  "value": 297
+                  "value": 307
                 }
               },
               "excluded_from_parent_medal": false
@@ -3633,9 +3632,9 @@
                   "value": false
                 },
                 "diataxis_coverage_ai": {
-                  "state": "measured",
-                  "value": 3,
-                  "reason": "The documentation clearly contains a Tutorial section (mentioned in the table), How-to guides (operational tasks like ingress, authentication, upgrades), and Reference content (configuration options, actions, relations, plus technical details on PostgreSQL relations), but lacks Explanation content that would discuss architecture, design decisions, or conceptual overviews."
+                  "state": "insufficient_data",
+                  "value": null,
+                  "reason": "AI documentation assessment is unavailable."
                 },
                 "uses_rtd_hosting": {
                   "state": "measured",
@@ -3676,9 +3675,9 @@
                   "value": false
                 },
                 "diataxis_coverage_ai": {
-                  "state": "measured",
-                  "value": 3,
-                  "reason": "The documentation contains How-to guides (deployment steps, configuration instructions), Reference content (config options, file formats, CLI commands), and Explanation sections (HTTPS architecture, proxy behavior), but lacks a comprehensive Tutorial with a learning-oriented walkthrough from first principles."
+                  "state": "insufficient_data",
+                  "value": null,
+                  "reason": "AI documentation assessment is unavailable."
                 },
                 "uses_rtd_hosting": {
                   "state": "measured",
@@ -3719,9 +3718,9 @@
                   "value": false
                 },
                 "diataxis_coverage_ai": {
-                  "state": "measured",
-                  "value": 2,
-                  "reason": "The documentation contains reference content (configuration options, integrations, deployment requirements) and mentions tutorials/how-to guides exist externally, but only the usage section provides partial how-to instructions while explanation content is limited to brief description."
+                  "state": "insufficient_data",
+                  "value": null,
+                  "reason": "AI documentation assessment is unavailable."
                 },
                 "uses_rtd_hosting": {
                   "state": "measured",
@@ -3762,9 +3761,9 @@
                   "value": false
                 },
                 "diataxis_coverage_ai": {
-                  "state": "measured",
-                  "value": 3,
-                  "reason": "The documentation contains How-to guides (deploying, managing credentials, backup/restore), Reference content (configuration options, action results table, search options table), and Tutorial-like getting started sections, but lacks dedicated Explanation content discussing architecture or design rationale."
+                  "state": "insufficient_data",
+                  "value": null,
+                  "reason": "AI documentation assessment is unavailable."
                 },
                 "uses_rtd_hosting": {
                   "state": "measured",
@@ -3805,9 +3804,9 @@
                   "value": false
                 },
                 "diataxis_coverage_ai": {
-                  "state": "measured",
-                  "value": 1,
-                  "reason": "The documentation contains only Reference content (description of components, deployment requirements, configuration commands, and integration options) but explicitly defers Tutorial, How-to, and Explanation content to external documentation links."
+                  "state": "insufficient_data",
+                  "value": null,
+                  "reason": "AI documentation assessment is unavailable."
                 },
                 "uses_rtd_hosting": {
                   "state": "measured",
@@ -3848,9 +3847,9 @@
                   "value": false
                 },
                 "diataxis_coverage_ai": {
-                  "state": "measured",
-                  "value": 3,
-                  "reason": "The documentation contains a tutorial (deployment steps for getting started), how-to guides (configuration and actions), and reference content (configuration options table), but lacks explanation-oriented discussion about architecture or design rationale."
+                  "state": "insufficient_data",
+                  "value": null,
+                  "reason": "AI documentation assessment is unavailable."
                 },
                 "uses_rtd_hosting": {
                   "state": "measured",
@@ -4254,7 +4253,7 @@
                 },
                 "response_coverage_rate": {
                   "state": "measured",
-                  "value": 78.6
+                  "value": 71.4
                 },
                 "avg_triage_days": {
                   "state": "measured",
@@ -4262,7 +4261,7 @@
                 },
                 "avg_pr_review_days": {
                   "state": "measured",
-                  "value": 1.2
+                  "value": 1.3
                 },
                 "has_jira_sync": {
                   "state": "measured",
@@ -4289,7 +4288,7 @@
                 },
                 "response_coverage_rate": {
                   "state": "measured",
-                  "value": 84.6
+                  "value": 92.9
                 },
                 "avg_triage_days": {
                   "state": "measured",
@@ -4297,7 +4296,7 @@
                 },
                 "avg_pr_review_days": {
                   "state": "measured",
-                  "value": 0.4
+                  "value": 2.9
                 },
                 "has_jira_sync": {
                   "state": "measured",
@@ -4324,7 +4323,7 @@
                 },
                 "response_coverage_rate": {
                   "state": "measured",
-                  "value": 67.2
+                  "value": 65.6
                 },
                 "avg_triage_days": {
                   "state": "measured",
@@ -4359,7 +4358,7 @@
                 },
                 "response_coverage_rate": {
                   "state": "measured",
-                  "value": 70.0
+                  "value": 71.4
                 },
                 "avg_triage_days": {
                   "state": "measured",
@@ -4367,7 +4366,7 @@
                 },
                 "avg_pr_review_days": {
                   "state": "measured",
-                  "value": 0.3
+                  "value": 3.6
                 },
                 "has_jira_sync": {
                   "state": "measured",
@@ -4394,7 +4393,7 @@
                 },
                 "response_coverage_rate": {
                   "state": "measured",
-                  "value": 52.6
+                  "value": 57.1
                 },
                 "avg_triage_days": {
                   "state": "measured",
@@ -4402,7 +4401,7 @@
                 },
                 "avg_pr_review_days": {
                   "state": "measured",
-                  "value": 0.7
+                  "value": 3.4
                 },
                 "has_jira_sync": {
                   "state": "measured",
@@ -4483,23 +4482,23 @@
       "parent_product_ids": [],
       "dimensions": {
         "test_verification": {
-          "medal": "silver",
+          "medal": "unrated",
           "target": "bronze",
           "applicability": "scored",
-          "meets_target": true,
-          "result": "silver",
+          "meets_target": false,
+          "result": "below_minimum",
           "metrics": {},
           "composition": [
             {
               "product_id": "digest-squid-auth-helper-charm",
               "repo": "canonical/digest-squid-auth-helper",
-              "medal": "silver",
-              "result": "silver",
+              "medal": "unrated",
+              "result": "below_minimum",
               "applicability": "scored",
               "metrics": {
                 "latest_build_passing": {
                   "state": "measured",
-                  "value": true
+                  "value": false
                 },
                 "integration_test_evidence_present": {
                   "state": "measured",
@@ -4560,9 +4559,9 @@
                   "value": false
                 },
                 "diataxis_coverage_ai": {
-                  "state": "measured",
-                  "value": 2,
-                  "reason": "The documentation clearly contains Tutorial content (getting started guide) and How-to guides (manage users, configure authentication, upgrade, contribute), but lacks Reference material (no API/config/CLI reference details) and Explanation content (no architecture overview or conceptual discussion)."
+                  "state": "insufficient_data",
+                  "value": null,
+                  "reason": "AI documentation assessment is unavailable."
                 },
                 "uses_rtd_hosting": {
                   "state": "measured",
@@ -4690,7 +4689,7 @@
                 },
                 "repo_views_14d": {
                   "state": "measured",
-                  "value": 20
+                  "value": 27
                 }
               },
               "excluded_from_parent_medal": false
@@ -4844,9 +4843,9 @@
                   "value": false
                 },
                 "diataxis_coverage_ai": {
-                  "state": "measured",
-                  "value": 4,
-                  "reason": "The documentation explicitly mentions all four Di\u00e1taxis types: Tutorial (getting started), How-to guides (configuration and operations tasks), Reference (integrations, actions, architecture), and Explanation (security overview)."
+                  "state": "insufficient_data",
+                  "value": null,
+                  "reason": "AI documentation assessment is unavailable."
                 },
                 "uses_rtd_hosting": {
                   "state": "measured",
@@ -5057,7 +5056,7 @@
                 },
                 "response_coverage_rate": {
                   "state": "measured",
-                  "value": 85.0
+                  "value": 90.7
                 },
                 "avg_triage_days": {
                   "state": "measured",
@@ -5065,7 +5064,7 @@
                 },
                 "avg_pr_review_days": {
                   "state": "measured",
-                  "value": 5.2
+                  "value": 4.6
                 },
                 "has_jira_sync": {
                   "state": "measured",
@@ -5073,7 +5072,7 @@
                 },
                 "repo_views_14d": {
                   "state": "measured",
-                  "value": 262
+                  "value": 268
                 }
               },
               "excluded_from_parent_medal": false
@@ -5091,7 +5090,7 @@
                 },
                 "response_coverage_rate": {
                   "state": "measured",
-                  "value": 87.0
+                  "value": 91.7
                 },
                 "avg_triage_days": {
                   "state": "measured",
@@ -5099,7 +5098,7 @@
                 },
                 "avg_pr_review_days": {
                   "state": "measured",
-                  "value": 0.8
+                  "value": 0.9
                 },
                 "has_jira_sync": {
                   "state": "measured",
@@ -5107,7 +5106,7 @@
                 },
                 "repo_views_14d": {
                   "state": "measured",
-                  "value": 73
+                  "value": 77
                 }
               },
               "excluded_from_parent_medal": false
@@ -5207,6 +5206,38 @@
             {
               "product_id": "dns-policy",
               "repo": "canonical/dns-operators",
+              "medal": "silver",
+              "result": "silver",
+              "applicability": "scored",
+              "metrics": {
+                "latest_build_passing": {
+                  "state": "measured",
+                  "value": true
+                },
+                "integration_test_evidence_present": {
+                  "state": "measured",
+                  "value": true
+                },
+                "uses_jubilant": {
+                  "state": "measured",
+                  "value": false
+                },
+                "coverage_pct": {
+                  "state": "insufficient_data",
+                  "value": null,
+                  "reason": "The legacy measurement has no evidence."
+                },
+                "stability_pct": {
+                  "state": "insufficient_data",
+                  "value": null,
+                  "reason": "The legacy measurement has no evidence."
+                }
+              },
+              "excluded_from_parent_medal": false
+            },
+            {
+              "product_id": "dns-integrator",
+              "repo": "canonical/dns-operators",
               "medal": "gold",
               "result": "gold",
               "applicability": "scored",
@@ -5237,42 +5268,10 @@
               "excluded_from_parent_medal": false
             },
             {
-              "product_id": "dns-integrator",
-              "repo": "canonical/dns-operators",
-              "medal": "silver",
-              "result": "silver",
-              "applicability": "scored",
-              "metrics": {
-                "latest_build_passing": {
-                  "state": "measured",
-                  "value": true
-                },
-                "integration_test_evidence_present": {
-                  "state": "measured",
-                  "value": true
-                },
-                "uses_jubilant": {
-                  "state": "measured",
-                  "value": false
-                },
-                "coverage_pct": {
-                  "state": "insufficient_data",
-                  "value": null,
-                  "reason": "The legacy measurement has no evidence."
-                },
-                "stability_pct": {
-                  "state": "insufficient_data",
-                  "value": null,
-                  "reason": "The legacy measurement has no evidence."
-                }
-              },
-              "excluded_from_parent_medal": false
-            },
-            {
               "product_id": "dns-resolver",
               "repo": "canonical/dns-operators",
-              "medal": "silver",
-              "result": "silver",
+              "medal": "gold",
+              "result": "gold",
               "applicability": "scored",
               "metrics": {
                 "latest_build_passing": {
@@ -5285,7 +5284,7 @@
                 },
                 "uses_jubilant": {
                   "state": "measured",
-                  "value": false
+                  "value": true
                 },
                 "coverage_pct": {
                   "state": "insufficient_data",
@@ -5367,8 +5366,8 @@
             {
               "product_id": "charmed-dns-policy",
               "repo": "canonical/dns-operators",
-              "medal": "gold",
-              "result": "gold",
+              "medal": "silver",
+              "result": "silver",
               "applicability": "scored",
               "metrics": {
                 "latest_build_passing": {
@@ -5381,7 +5380,7 @@
                 },
                 "uses_jubilant": {
                   "state": "measured",
-                  "value": true
+                  "value": false
                 },
                 "coverage_pct": {
                   "state": "insufficient_data",
@@ -6142,7 +6141,7 @@
                 },
                 "response_coverage_rate": {
                   "state": "measured",
-                  "value": 45.5
+                  "value": 71.9
                 },
                 "avg_triage_days": {
                   "state": "measured",
@@ -6150,7 +6149,7 @@
                 },
                 "avg_pr_review_days": {
                   "state": "measured",
-                  "value": 5.6
+                  "value": 24.8
                 },
                 "has_jira_sync": {
                   "state": "measured",
@@ -6158,7 +6157,7 @@
                 },
                 "repo_views_14d": {
                   "state": "measured",
-                  "value": 51
+                  "value": 57
                 }
               },
               "excluded_from_parent_medal": false
@@ -6176,7 +6175,7 @@
                 },
                 "response_coverage_rate": {
                   "state": "measured",
-                  "value": 45.5
+                  "value": 71.9
                 },
                 "avg_triage_days": {
                   "state": "measured",
@@ -6184,7 +6183,7 @@
                 },
                 "avg_pr_review_days": {
                   "state": "measured",
-                  "value": 5.6
+                  "value": 24.8
                 },
                 "has_jira_sync": {
                   "state": "measured",
@@ -6192,7 +6191,7 @@
                 },
                 "repo_views_14d": {
                   "state": "measured",
-                  "value": 51
+                  "value": 57
                 }
               },
               "excluded_from_parent_medal": false
@@ -6210,7 +6209,7 @@
                 },
                 "response_coverage_rate": {
                   "state": "measured",
-                  "value": 45.5
+                  "value": 71.9
                 },
                 "avg_triage_days": {
                   "state": "measured",
@@ -6218,7 +6217,7 @@
                 },
                 "avg_pr_review_days": {
                   "state": "measured",
-                  "value": 5.6
+                  "value": 24.8
                 },
                 "has_jira_sync": {
                   "state": "measured",
@@ -6226,7 +6225,7 @@
                 },
                 "repo_views_14d": {
                   "state": "measured",
-                  "value": 51
+                  "value": 57
                 }
               },
               "excluded_from_parent_medal": false
@@ -6244,7 +6243,7 @@
                 },
                 "response_coverage_rate": {
                   "state": "measured",
-                  "value": 45.5
+                  "value": 71.9
                 },
                 "avg_triage_days": {
                   "state": "measured",
@@ -6252,7 +6251,7 @@
                 },
                 "avg_pr_review_days": {
                   "state": "measured",
-                  "value": 5.6
+                  "value": 24.8
                 },
                 "has_jira_sync": {
                   "state": "measured",
@@ -6260,7 +6259,7 @@
                 },
                 "repo_views_14d": {
                   "state": "measured",
-                  "value": 51
+                  "value": 57
                 }
               },
               "excluded_from_parent_medal": false
@@ -6278,7 +6277,7 @@
                 },
                 "response_coverage_rate": {
                   "state": "measured",
-                  "value": 45.5
+                  "value": 71.9
                 },
                 "avg_triage_days": {
                   "state": "measured",
@@ -6286,7 +6285,7 @@
                 },
                 "avg_pr_review_days": {
                   "state": "measured",
-                  "value": 5.6
+                  "value": 24.8
                 },
                 "has_jira_sync": {
                   "state": "measured",
@@ -6294,7 +6293,7 @@
                 },
                 "repo_views_14d": {
                   "state": "measured",
-                  "value": 51
+                  "value": 57
                 }
               },
               "excluded_from_parent_medal": false
@@ -6312,7 +6311,7 @@
                 },
                 "response_coverage_rate": {
                   "state": "measured",
-                  "value": 45.5
+                  "value": 71.9
                 },
                 "avg_triage_days": {
                   "state": "measured",
@@ -6320,7 +6319,7 @@
                 },
                 "avg_pr_review_days": {
                   "state": "measured",
-                  "value": 5.6
+                  "value": 24.8
                 },
                 "has_jira_sync": {
                   "state": "measured",
@@ -6328,7 +6327,7 @@
                 },
                 "repo_views_14d": {
                   "state": "measured",
-                  "value": 51
+                  "value": 57
                 }
               },
               "excluded_from_parent_medal": false
@@ -6346,7 +6345,7 @@
                 },
                 "response_coverage_rate": {
                   "state": "measured",
-                  "value": 45.5
+                  "value": 71.9
                 },
                 "avg_triage_days": {
                   "state": "measured",
@@ -6354,7 +6353,7 @@
                 },
                 "avg_pr_review_days": {
                   "state": "measured",
-                  "value": 5.6
+                  "value": 24.8
                 },
                 "has_jira_sync": {
                   "state": "measured",
@@ -6362,7 +6361,7 @@
                 },
                 "repo_views_14d": {
                   "state": "measured",
-                  "value": 51
+                  "value": 57
                 }
               },
               "excluded_from_parent_medal": false
@@ -6400,23 +6399,23 @@
       "parent_product_ids": [],
       "dimensions": {
         "test_verification": {
-          "medal": "bronze",
+          "medal": "unrated",
           "target": "silver",
           "applicability": "scored",
           "meets_target": false,
-          "result": "bronze",
+          "result": "below_minimum",
           "metrics": {},
           "composition": [
             {
               "product_id": "falco-charm",
               "repo": "canonical/falco-operators",
-              "medal": "bronze",
-              "result": "bronze",
+              "medal": "unrated",
+              "result": "below_minimum",
               "applicability": "scored",
               "metrics": {
                 "latest_build_passing": {
                   "state": "measured",
-                  "value": true
+                  "value": false
                 },
                 "integration_test_evidence_present": {
                   "state": "measured",
@@ -6424,7 +6423,7 @@
                 },
                 "uses_jubilant": {
                   "state": "measured",
-                  "value": false
+                  "value": true
                 },
                 "coverage_pct": {
                   "state": "insufficient_data",
@@ -6442,13 +6441,13 @@
             {
               "product_id": "falcosidekick-k8s",
               "repo": "canonical/falco-operators",
-              "medal": "bronze",
-              "result": "bronze",
+              "medal": "unrated",
+              "result": "below_minimum",
               "applicability": "scored",
               "metrics": {
                 "latest_build_passing": {
                   "state": "measured",
-                  "value": true
+                  "value": false
                 },
                 "integration_test_evidence_present": {
                   "state": "measured",
@@ -6456,7 +6455,7 @@
                 },
                 "uses_jubilant": {
                   "state": "measured",
-                  "value": false
+                  "value": true
                 },
                 "coverage_pct": {
                   "state": "insufficient_data",
@@ -6509,9 +6508,9 @@
                   "value": false
                 },
                 "diataxis_coverage_ai": {
-                  "state": "measured",
-                  "value": 1,
-                  "reason": "The documentation contains only Reference content (description of what the charm is, links to source components) but lacks Tutorial, How-to guide, or Explanation sections."
+                  "state": "insufficient_data",
+                  "value": null,
+                  "reason": "AI documentation assessment is unavailable."
                 },
                 "uses_rtd_hosting": {
                   "state": "measured",
@@ -6552,9 +6551,9 @@
                   "value": false
                 },
                 "diataxis_coverage_ai": {
-                  "state": "measured",
-                  "value": 1,
-                  "reason": "The documentation contains only Reference content (describing what the charm is, its dependencies, and linking to related resources) but lacks tutorials, how-to guides, or explanations of architecture/concepts."
+                  "state": "insufficient_data",
+                  "value": null,
+                  "reason": "AI documentation assessment is unavailable."
                 },
                 "uses_rtd_hosting": {
                   "state": "measured",
@@ -6722,7 +6721,7 @@
                 },
                 "response_coverage_rate": {
                   "state": "measured",
-                  "value": 76.9
+                  "value": 83.3
                 },
                 "avg_triage_days": {
                   "state": "measured",
@@ -6730,7 +6729,7 @@
                 },
                 "avg_pr_review_days": {
                   "state": "measured",
-                  "value": 3.7
+                  "value": 3.4
                 },
                 "has_jira_sync": {
                   "state": "measured",
@@ -6738,7 +6737,7 @@
                 },
                 "repo_views_14d": {
                   "state": "measured",
-                  "value": 83
+                  "value": 170
                 }
               },
               "excluded_from_parent_medal": false
@@ -6756,7 +6755,7 @@
                 },
                 "response_coverage_rate": {
                   "state": "measured",
-                  "value": 76.9
+                  "value": 83.3
                 },
                 "avg_triage_days": {
                   "state": "measured",
@@ -6764,7 +6763,7 @@
                 },
                 "avg_pr_review_days": {
                   "state": "measured",
-                  "value": 3.7
+                  "value": 3.4
                 },
                 "has_jira_sync": {
                   "state": "measured",
@@ -6772,7 +6771,7 @@
                 },
                 "repo_views_14d": {
                   "state": "measured",
-                  "value": 83
+                  "value": 170
                 }
               },
               "excluded_from_parent_medal": false
@@ -6806,23 +6805,23 @@
       "parent_product_ids": [],
       "dimensions": {
         "test_verification": {
-          "medal": "unrated",
+          "medal": "silver",
           "target": "gold",
           "applicability": "scored",
           "meets_target": false,
-          "result": "below_minimum",
+          "result": "silver",
           "metrics": {},
           "composition": [
             {
               "product_id": "gateway-api-integrator-charm",
               "repo": "canonical/gateway-api-integrator-operator",
-              "medal": "unrated",
-              "result": "below_minimum",
+              "medal": "silver",
+              "result": "silver",
               "applicability": "scored",
               "metrics": {
                 "latest_build_passing": {
                   "state": "measured",
-                  "value": false
+                  "value": true
                 },
                 "integration_test_evidence_present": {
                   "state": "measured",
@@ -6883,9 +6882,9 @@
                   "value": false
                 },
                 "diataxis_coverage_ai": {
-                  "state": "measured",
-                  "value": 2,
-                  "reason": "The documentation contains Tutorial content (Getting Started section) and How-to guide content (Basic operations with step-by-step configuration instructions), but lacks dedicated Reference sections (like API/config specs) and Explanation content (architecture/design discussions)."
+                  "state": "insufficient_data",
+                  "value": null,
+                  "reason": "AI documentation assessment is unavailable."
                 },
                 "uses_rtd_hosting": {
                   "state": "measured",
@@ -6997,7 +6996,7 @@
                 },
                 "response_coverage_rate": {
                   "state": "measured",
-                  "value": 82.5
+                  "value": 86.0
                 },
                 "avg_triage_days": {
                   "state": "measured",
@@ -7013,7 +7012,7 @@
                 },
                 "repo_views_14d": {
                   "state": "measured",
-                  "value": 31
+                  "value": 28
                 }
               },
               "excluded_from_parent_medal": false
@@ -7071,7 +7070,7 @@
                 },
                 "uses_jubilant": {
                   "state": "measured",
-                  "value": false
+                  "value": true
                 },
                 "coverage_pct": {
                   "state": "insufficient_data",
@@ -7124,9 +7123,9 @@
                   "value": false
                 },
                 "diataxis_coverage_ai": {
-                  "state": "measured",
-                  "value": 3,
-                  "reason": "The documentation contains tutorial content (getting started deployment guide), how-to guides (configure hostname, serve metrics), and reference content (configuration options, integrations list), but lacks understanding-oriented explanation of architecture or design decisions."
+                  "state": "insufficient_data",
+                  "value": null,
+                  "reason": "AI documentation assessment is unavailable."
                 },
                 "uses_rtd_hosting": {
                   "state": "measured",
@@ -7238,7 +7237,7 @@
                 },
                 "response_coverage_rate": {
                   "state": "measured",
-                  "value": 96.0
+                  "value": 94.2
                 },
                 "avg_triage_days": {
                   "state": "measured",
@@ -7246,7 +7245,7 @@
                 },
                 "avg_pr_review_days": {
                   "state": "measured",
-                  "value": 1.5
+                  "value": 1.6
                 },
                 "has_jira_sync": {
                   "state": "measured",
@@ -7254,7 +7253,7 @@
                 },
                 "repo_views_14d": {
                   "state": "measured",
-                  "value": 112
+                  "value": 129
                 }
               },
               "excluded_from_parent_medal": false
@@ -7310,13 +7309,13 @@
             {
               "product_id": "haproxy-charm",
               "repo": "canonical/haproxy-operator",
-              "medal": "unrated",
-              "result": "below_minimum",
+              "medal": "bronze",
+              "result": "bronze",
               "applicability": "scored",
               "metrics": {
                 "latest_build_passing": {
                   "state": "measured",
-                  "value": false
+                  "value": true
                 },
                 "integration_test_evidence_present": {
                   "state": "measured",
@@ -7374,13 +7373,13 @@
             {
               "product_id": "haproxy-spoe-auth",
               "repo": "canonical/haproxy-operator",
-              "medal": "unrated",
-              "result": "below_minimum",
+              "medal": "bronze",
+              "result": "bronze",
               "applicability": "scored",
               "metrics": {
                 "latest_build_passing": {
                   "state": "measured",
-                  "value": false
+                  "value": true
                 },
                 "integration_test_evidence_present": {
                   "state": "measured",
@@ -7388,7 +7387,7 @@
                 },
                 "uses_jubilant": {
                   "state": "measured",
-                  "value": false
+                  "value": true
                 },
                 "coverage_pct": {
                   "state": "insufficient_data",
@@ -7884,7 +7883,7 @@
                 },
                 "response_coverage_rate": {
                   "state": "measured",
-                  "value": 94.2
+                  "value": 95.0
                 },
                 "avg_triage_days": {
                   "state": "measured",
@@ -7900,7 +7899,7 @@
                 },
                 "repo_views_14d": {
                   "state": "measured",
-                  "value": 299
+                  "value": 366
                 }
               },
               "excluded_from_parent_medal": false
@@ -7918,7 +7917,7 @@
                 },
                 "response_coverage_rate": {
                   "state": "measured",
-                  "value": 91.0
+                  "value": 92.4
                 },
                 "avg_triage_days": {
                   "state": "measured",
@@ -7934,7 +7933,7 @@
                 },
                 "repo_views_14d": {
                   "state": "measured",
-                  "value": 68
+                  "value": 67
                 }
               },
               "excluded_from_parent_medal": false
@@ -7952,7 +7951,7 @@
                 },
                 "response_coverage_rate": {
                   "state": "measured",
-                  "value": 94.2
+                  "value": 95.0
                 },
                 "avg_triage_days": {
                   "state": "measured",
@@ -7968,7 +7967,7 @@
                 },
                 "repo_views_14d": {
                   "state": "measured",
-                  "value": 299
+                  "value": 366
                 }
               },
               "excluded_from_parent_medal": false
@@ -7986,7 +7985,7 @@
                 },
                 "response_coverage_rate": {
                   "state": "measured",
-                  "value": 94.2
+                  "value": 95.0
                 },
                 "avg_triage_days": {
                   "state": "measured",
@@ -8002,7 +8001,7 @@
                 },
                 "repo_views_14d": {
                   "state": "measured",
-                  "value": 299
+                  "value": 366
                 }
               },
               "excluded_from_parent_medal": false
@@ -8113,9 +8112,9 @@
                   "value": false
                 },
                 "diataxis_coverage_ai": {
-                  "state": "measured",
-                  "value": 4,
-                  "reason": "The documentation explicitly includes all four Di\u00e1taxis types: tutorials (getting started), how-to guides (key management, server operations), reference (actions, configurations, integrations, metrics), and explanation (security, charm architecture)."
+                  "state": "insufficient_data",
+                  "value": null,
+                  "reason": "AI documentation assessment is unavailable."
                 },
                 "uses_rtd_hosting": {
                   "state": "measured",
@@ -8243,7 +8242,7 @@
                 },
                 "repo_views_14d": {
                   "state": "measured",
-                  "value": 117
+                  "value": 119
                 }
               },
               "excluded_from_parent_medal": false
@@ -8299,8 +8298,8 @@
             {
               "product_id": "squid-forward-proxy",
               "repo": "canonical/http-proxy-operators",
-              "medal": "silver",
-              "result": "silver",
+              "medal": "gold",
+              "result": "gold",
               "applicability": "scored",
               "metrics": {
                 "latest_build_passing": {
@@ -8313,7 +8312,7 @@
                 },
                 "uses_jubilant": {
                   "state": "measured",
-                  "value": false
+                  "value": true
                 },
                 "coverage_pct": {
                   "state": "insufficient_data",
@@ -8395,8 +8394,8 @@
             {
               "product_id": "charmed-http-proxy-policy",
               "repo": "canonical/http-proxy-operators",
-              "medal": "silver",
-              "result": "silver",
+              "medal": "gold",
+              "result": "gold",
               "applicability": "scored",
               "metrics": {
                 "latest_build_passing": {
@@ -8409,7 +8408,7 @@
                 },
                 "uses_jubilant": {
                   "state": "measured",
-                  "value": false
+                  "value": true
                 },
                 "coverage_pct": {
                   "state": "insufficient_data",
@@ -8889,7 +8888,7 @@
                 },
                 "repo_views_14d": {
                   "state": "measured",
-                  "value": 152
+                  "value": 149
                 }
               },
               "excluded_from_parent_medal": false
@@ -8923,7 +8922,7 @@
                 },
                 "repo_views_14d": {
                   "state": "measured",
-                  "value": 152
+                  "value": 149
                 }
               },
               "excluded_from_parent_medal": false
@@ -8957,7 +8956,7 @@
                 },
                 "repo_views_14d": {
                   "state": "measured",
-                  "value": 152
+                  "value": 149
                 }
               },
               "excluded_from_parent_medal": false
@@ -8991,7 +8990,7 @@
                 },
                 "repo_views_14d": {
                   "state": "measured",
-                  "value": 152
+                  "value": 149
                 }
               },
               "excluded_from_parent_medal": false
@@ -9372,7 +9371,7 @@
                 },
                 "repo_views_14d": {
                   "state": "measured",
-                  "value": 146
+                  "value": 152
                 }
               },
               "excluded_from_parent_medal": false
@@ -9390,7 +9389,7 @@
                 },
                 "response_coverage_rate": {
                   "state": "measured",
-                  "value": 87.0
+                  "value": 91.7
                 },
                 "avg_triage_days": {
                   "state": "measured",
@@ -9398,7 +9397,7 @@
                 },
                 "avg_pr_review_days": {
                   "state": "measured",
-                  "value": 0.8
+                  "value": 0.9
                 },
                 "has_jira_sync": {
                   "state": "measured",
@@ -9406,7 +9405,7 @@
                 },
                 "repo_views_14d": {
                   "state": "measured",
-                  "value": 73
+                  "value": 77
                 }
               },
               "excluded_from_parent_medal": false
@@ -9650,7 +9649,7 @@
                 },
                 "response_coverage_rate": {
                   "state": "measured",
-                  "value": 88.1
+                  "value": 87.5
                 },
                 "avg_triage_days": {
                   "state": "measured",
@@ -9666,7 +9665,7 @@
                 },
                 "repo_views_14d": {
                   "state": "measured",
-                  "value": 315
+                  "value": 323
                 }
               },
               "excluded_from_parent_medal": false
@@ -9718,8 +9717,8 @@
             {
               "product_id": "jenkins-k8s",
               "repo": "canonical/jenkins-k8s-operator",
-              "medal": "silver",
-              "result": "silver",
+              "medal": "gold",
+              "result": "gold",
               "applicability": "scored",
               "metrics": {
                 "latest_build_passing": {
@@ -9732,7 +9731,7 @@
                 },
                 "uses_jubilant": {
                   "state": "measured",
-                  "value": false
+                  "value": true
                 },
                 "coverage_pct": {
                   "state": "measured",
@@ -10167,7 +10166,7 @@
                 },
                 "avg_pr_review_days": {
                   "state": "measured",
-                  "value": 2.9
+                  "value": 3.0
                 },
                 "has_jira_sync": {
                   "state": "measured",
@@ -10175,7 +10174,7 @@
                 },
                 "repo_views_14d": {
                   "state": "measured",
-                  "value": 771
+                  "value": 773
                 }
               },
               "excluded_from_parent_medal": false
@@ -10227,7 +10226,7 @@
                 },
                 "response_coverage_rate": {
                   "state": "measured",
-                  "value": 88.6
+                  "value": 91.4
                 },
                 "avg_triage_days": {
                   "state": "measured",
@@ -10235,7 +10234,7 @@
                 },
                 "avg_pr_review_days": {
                   "state": "measured",
-                  "value": 1.2
+                  "value": 2.4
                 },
                 "has_jira_sync": {
                   "state": "measured",
@@ -10243,7 +10242,7 @@
                 },
                 "repo_views_14d": {
                   "state": "measured",
-                  "value": 43
+                  "value": 44
                 }
               },
               "excluded_from_parent_medal": false
@@ -10317,7 +10316,7 @@
                 },
                 "uses_jubilant": {
                   "state": "measured",
-                  "value": false
+                  "value": true
                 },
                 "coverage_pct": {
                   "state": "insufficient_data",
@@ -10349,7 +10348,7 @@
                 },
                 "uses_jubilant": {
                   "state": "measured",
-                  "value": false
+                  "value": true
                 },
                 "coverage_pct": {
                   "state": "insufficient_data",
@@ -10413,7 +10412,7 @@
                 },
                 "uses_jubilant": {
                   "state": "measured",
-                  "value": false
+                  "value": true
                 },
                 "coverage_pct": {
                   "state": "insufficient_data",
@@ -11024,7 +11023,7 @@
                 },
                 "repo_views_14d": {
                   "state": "measured",
-                  "value": 123
+                  "value": 122
                 }
               },
               "excluded_from_parent_medal": false
@@ -11058,7 +11057,7 @@
                 },
                 "repo_views_14d": {
                   "state": "measured",
-                  "value": 123
+                  "value": 122
                 }
               },
               "excluded_from_parent_medal": false
@@ -11092,7 +11091,7 @@
                 },
                 "repo_views_14d": {
                   "state": "measured",
-                  "value": 123
+                  "value": 122
                 }
               },
               "excluded_from_parent_medal": false
@@ -11126,7 +11125,7 @@
                 },
                 "repo_views_14d": {
                   "state": "measured",
-                  "value": 123
+                  "value": 122
                 }
               },
               "excluded_from_parent_medal": false
@@ -11160,7 +11159,7 @@
                 },
                 "repo_views_14d": {
                   "state": "measured",
-                  "value": 123
+                  "value": 122
                 }
               },
               "excluded_from_parent_medal": false
@@ -11283,13 +11282,13 @@
             {
               "product_id": "draupnir",
               "repo": "canonical/draupnir-snap",
-              "medal": "unrated",
-              "result": "below_minimum",
+              "medal": "bronze",
+              "result": "bronze",
               "applicability": "scored",
               "metrics": {
                 "latest_build_passing": {
                   "state": "measured",
-                  "value": false
+                  "value": true
                 },
                 "integration_test_evidence_present": {
                   "state": "measured",
@@ -11347,13 +11346,13 @@
             {
               "product_id": "mas-cli",
               "repo": "canonical/mas-cli-snap",
-              "medal": "unrated",
-              "result": "below_minimum",
+              "medal": "bronze",
+              "result": "bronze",
               "applicability": "scored",
               "metrics": {
                 "latest_build_passing": {
                   "state": "measured",
-                  "value": false
+                  "value": true
                 },
                 "integration_test_evidence_present": {
                   "state": "measured",
@@ -11379,13 +11378,13 @@
             {
               "product_id": "matrix-appservice-irc",
               "repo": "canonical/matrix-appservice-irc",
-              "medal": "unrated",
-              "result": "below_minimum",
+              "medal": "bronze",
+              "result": "bronze",
               "applicability": "scored",
               "metrics": {
                 "latest_build_passing": {
                   "state": "measured",
-                  "value": false
+                  "value": true
                 },
                 "integration_test_evidence_present": {
                   "state": "measured",
@@ -12481,7 +12480,7 @@
                 },
                 "response_coverage_rate": {
                   "state": "measured",
-                  "value": 87.8
+                  "value": 92.9
                 },
                 "avg_triage_days": {
                   "state": "measured",
@@ -12489,7 +12488,7 @@
                 },
                 "avg_pr_review_days": {
                   "state": "measured",
-                  "value": 1.8
+                  "value": 1.9
                 },
                 "has_jira_sync": {
                   "state": "measured",
@@ -12497,7 +12496,7 @@
                 },
                 "repo_views_14d": {
                   "state": "measured",
-                  "value": 132
+                  "value": 169
                 }
               },
               "excluded_from_parent_medal": false
@@ -12534,7 +12533,7 @@
                 },
                 "repo_views_14d": {
                   "state": "measured",
-                  "value": 3
+                  "value": 4
                 }
               },
               "excluded_from_parent_medal": false
@@ -12571,7 +12570,7 @@
                 },
                 "repo_views_14d": {
                   "state": "measured",
-                  "value": 7
+                  "value": 8
                 }
               },
               "excluded_from_parent_medal": false
@@ -12589,7 +12588,7 @@
                 },
                 "response_coverage_rate": {
                   "state": "measured",
-                  "value": 80.0
+                  "value": 100.0
                 },
                 "avg_triage_days": {
                   "state": "measured",
@@ -12597,7 +12596,7 @@
                 },
                 "avg_pr_review_days": {
                   "state": "measured",
-                  "value": 1.8
+                  "value": 10.7
                 },
                 "has_jira_sync": {
                   "state": "measured",
@@ -12605,7 +12604,7 @@
                 },
                 "repo_views_14d": {
                   "state": "measured",
-                  "value": 10
+                  "value": 14
                 }
               },
               "excluded_from_parent_medal": false
@@ -12642,7 +12641,7 @@
                 },
                 "repo_views_14d": {
                   "state": "measured",
-                  "value": 11
+                  "value": 13
                 }
               },
               "excluded_from_parent_medal": false
@@ -12697,7 +12696,7 @@
                 },
                 "response_coverage_rate": {
                   "state": "measured",
-                  "value": 96.0
+                  "value": 95.9
                 },
                 "avg_triage_days": {
                   "state": "measured",
@@ -12713,7 +12712,7 @@
                 },
                 "repo_views_14d": {
                   "state": "measured",
-                  "value": 51
+                  "value": 55
                 }
               },
               "excluded_from_parent_medal": false
@@ -12848,7 +12847,7 @@
                 },
                 "uses_jubilant": {
                   "state": "measured",
-                  "value": true
+                  "value": false
                 },
                 "coverage_pct": {
                   "state": "insufficient_data",
@@ -13015,7 +13014,7 @@
                 },
                 "response_coverage_rate": {
                   "state": "measured",
-                  "value": 92.3
+                  "value": 96.0
                 },
                 "avg_triage_days": {
                   "state": "measured",
@@ -13023,7 +13022,7 @@
                 },
                 "avg_pr_review_days": {
                   "state": "measured",
-                  "value": 1.9
+                  "value": 1.8
                 },
                 "has_jira_sync": {
                   "state": "measured",
@@ -13031,7 +13030,7 @@
                 },
                 "repo_views_14d": {
                   "state": "measured",
-                  "value": 112
+                  "value": 95
                 }
               },
               "excluded_from_parent_medal": false
@@ -13089,7 +13088,7 @@
                 },
                 "uses_jubilant": {
                   "state": "measured",
-                  "value": true
+                  "value": false
                 },
                 "coverage_pct": {
                   "state": "measured",
@@ -13270,7 +13269,7 @@
                 },
                 "repo_views_14d": {
                   "state": "measured",
-                  "value": 290
+                  "value": 307
                 }
               },
               "excluded_from_parent_medal": false
@@ -13448,7 +13447,7 @@
             },
             "response_coverage_rate": {
               "state": "measured",
-              "value": 87.0
+              "value": 91.7
             },
             "avg_triage_days": {
               "state": "measured",
@@ -13456,7 +13455,7 @@
             },
             "avg_pr_review_days": {
               "state": "measured",
-              "value": 0.8
+              "value": 0.9
             },
             "has_jira_sync": {
               "state": "measured",
@@ -13464,7 +13463,7 @@
             },
             "repo_views_14d": {
               "state": "measured",
-              "value": 73
+              "value": 77
             }
           },
           "composition": null
@@ -13501,23 +13500,23 @@
       "parent_product_ids": [],
       "dimensions": {
         "test_verification": {
-          "medal": "bronze",
+          "medal": "unrated",
           "target": "silver",
           "applicability": "scored",
           "meets_target": false,
-          "result": "bronze",
+          "result": "below_minimum",
           "metrics": {},
           "composition": [
             {
               "product_id": "opencti-charm",
               "repo": "canonical/opencti-operator",
-              "medal": "bronze",
-              "result": "bronze",
+              "medal": "unrated",
+              "result": "below_minimum",
               "applicability": "scored",
               "metrics": {
                 "latest_build_passing": {
                   "state": "measured",
-                  "value": true
+                  "value": false
                 },
                 "integration_test_evidence_present": {
                   "state": "measured",
@@ -13692,7 +13691,7 @@
                 },
                 "response_coverage_rate": {
                   "state": "measured",
-                  "value": 86.1
+                  "value": 86.5
                 },
                 "avg_triage_days": {
                   "state": "measured",
@@ -13708,7 +13707,7 @@
                 },
                 "repo_views_14d": {
                   "state": "measured",
-                  "value": 211
+                  "value": 178
                 }
               },
               "excluded_from_parent_medal": false
@@ -13933,7 +13932,7 @@
                 },
                 "response_coverage_rate": {
                   "state": "measured",
-                  "value": 89.7
+                  "value": 93.1
                 },
                 "avg_triage_days": {
                   "state": "measured",
@@ -13941,7 +13940,7 @@
                 },
                 "avg_pr_review_days": {
                   "state": "measured",
-                  "value": 1.0
+                  "value": 2.4
                 },
                 "has_jira_sync": {
                   "state": "measured",
@@ -13949,7 +13948,7 @@
                 },
                 "repo_views_14d": {
                   "state": "measured",
-                  "value": 415
+                  "value": 414
                 }
               },
               "excluded_from_parent_medal": false
@@ -14190,7 +14189,7 @@
                 },
                 "repo_views_14d": {
                   "state": "measured",
-                  "value": 45
+                  "value": 47
                 }
               },
               "excluded_from_parent_medal": false
@@ -14367,7 +14366,7 @@
             },
             "response_coverage_rate": {
               "state": "measured",
-              "value": 96.0
+              "value": 95.9
             },
             "avg_triage_days": {
               "state": "measured",
@@ -14383,7 +14382,7 @@
             },
             "repo_views_14d": {
               "state": "measured",
-              "value": 51
+              "value": 55
             }
           },
           "composition": null
@@ -14618,13 +14617,13 @@
             {
               "product_id": "github-runner-planner",
               "repo": "canonical/github-runner-operators",
-              "medal": "bronze",
-              "result": "bronze",
+              "medal": "unrated",
+              "result": "below_minimum",
               "applicability": "scored",
               "metrics": {
                 "latest_build_passing": {
                   "state": "measured",
-                  "value": true
+                  "value": false
                 },
                 "integration_test_evidence_present": {
                   "state": "measured",
@@ -14632,7 +14631,7 @@
                 },
                 "uses_jubilant": {
                   "state": "measured",
-                  "value": false
+                  "value": true
                 },
                 "coverage_pct": {
                   "state": "insufficient_data",
@@ -14650,13 +14649,13 @@
             {
               "product_id": "github-runner-webhook-gateway",
               "repo": "canonical/github-runner-operators",
-              "medal": "bronze",
-              "result": "bronze",
+              "medal": "unrated",
+              "result": "below_minimum",
               "applicability": "scored",
               "metrics": {
                 "latest_build_passing": {
                   "state": "measured",
-                  "value": true
+                  "value": false
                 },
                 "integration_test_evidence_present": {
                   "state": "measured",
@@ -15185,11 +15184,11 @@
           ]
         },
         "security_ssdlc": {
-          "medal": "silver",
+          "medal": "bronze",
           "target": "gold",
           "applicability": "scored",
           "meets_target": false,
-          "result": "silver",
+          "result": "bronze",
           "metrics": {},
           "composition": [
             {
@@ -15225,8 +15224,8 @@
             {
               "product_id": "github-runner-image-builder",
               "repo": "canonical/github-runner-image-builder-operator",
-              "medal": "silver",
-              "result": "silver",
+              "medal": "bronze",
+              "result": "bronze",
               "applicability": "scored",
               "metrics": {
                 "renovate_enabled": {
@@ -15235,11 +15234,11 @@
                 },
                 "branch_protection_required_checks": {
                   "state": "measured",
-                  "value": true
+                  "value": false
                 },
                 "signed_commits_required": {
                   "state": "measured",
-                  "value": true
+                  "value": false
                 },
                 "sast_workflow_present": {
                   "state": "measured",
@@ -15444,7 +15443,7 @@
                 },
                 "repo_views_14d": {
                   "state": "measured",
-                  "value": 104
+                  "value": 102
                 }
               },
               "excluded_from_parent_medal": false
@@ -15515,7 +15514,7 @@
                 },
                 "repo_views_14d": {
                   "state": "measured",
-                  "value": 8
+                  "value": 7
                 }
               },
               "excluded_from_parent_medal": false
@@ -15533,7 +15532,7 @@
                 },
                 "response_coverage_rate": {
                   "state": "measured",
-                  "value": 70.0
+                  "value": 75.0
                 },
                 "avg_triage_days": {
                   "state": "measured",
@@ -15541,7 +15540,7 @@
                 },
                 "avg_pr_review_days": {
                   "state": "measured",
-                  "value": 2.6
+                  "value": 6.2
                 },
                 "has_jira_sync": {
                   "state": "measured",
@@ -15549,7 +15548,7 @@
                 },
                 "repo_views_14d": {
                   "state": "measured",
-                  "value": 14
+                  "value": 13
                 }
               },
               "excluded_from_parent_medal": false
@@ -15604,7 +15603,7 @@
                 },
                 "response_coverage_rate": {
                   "state": "measured",
-                  "value": 95.1
+                  "value": 94.4
                 },
                 "avg_triage_days": {
                   "state": "measured",
@@ -15620,7 +15619,7 @@
                 },
                 "repo_views_14d": {
                   "state": "measured",
-                  "value": 403
+                  "value": 411
                 }
               },
               "excluded_from_parent_medal": false
@@ -15638,7 +15637,7 @@
                 },
                 "response_coverage_rate": {
                   "state": "measured",
-                  "value": 95.1
+                  "value": 94.4
                 },
                 "avg_triage_days": {
                   "state": "measured",
@@ -15654,7 +15653,7 @@
                 },
                 "repo_views_14d": {
                   "state": "measured",
-                  "value": 403
+                  "value": 411
                 }
               },
               "excluded_from_parent_medal": false
@@ -15895,7 +15894,7 @@
                 },
                 "repo_views_14d": {
                   "state": "measured",
-                  "value": 46
+                  "value": 47
                 }
               },
               "excluded_from_parent_medal": false
@@ -16127,15 +16126,15 @@
                 },
                 "response_coverage_rate": {
                   "state": "measured",
-                  "value": 88.1
+                  "value": 90.0
                 },
                 "avg_triage_days": {
                   "state": "measured",
-                  "value": 196.5
+                  "value": 205.7
                 },
                 "avg_pr_review_days": {
                   "state": "measured",
-                  "value": 4.1
+                  "value": 4.2
                 },
                 "has_jira_sync": {
                   "state": "measured",
@@ -16143,7 +16142,7 @@
                 },
                 "repo_views_14d": {
                   "state": "measured",
-                  "value": 400
+                  "value": 431
                 }
               },
               "excluded_from_parent_medal": false
@@ -16788,11 +16787,11 @@
           ]
         },
         "security_ssdlc": {
-          "medal": "unrated",
+          "medal": "bronze",
           "target": "silver",
           "applicability": "scored",
           "meets_target": false,
-          "result": "below_minimum",
+          "result": "bronze",
           "metrics": {},
           "composition": [
             {
@@ -16828,17 +16827,17 @@
             {
               "product_id": "wazuh-indexer",
               "repo": "canonical/wazuh-indexer-operator",
-              "medal": "unrated",
-              "result": "below_minimum",
+              "medal": "bronze",
+              "result": "bronze",
               "applicability": "scored",
               "metrics": {
                 "renovate_enabled": {
                   "state": "measured",
-                  "value": false
+                  "value": true
                 },
                 "branch_protection_required_checks": {
                   "state": "measured",
-                  "value": true
+                  "value": false
                 },
                 "signed_commits_required": {
                   "state": "measured",
@@ -16858,13 +16857,13 @@
             {
               "product_id": "wazuh-dashboard",
               "repo": "canonical/wazuh-dashboard-operator",
-              "medal": "unrated",
-              "result": "below_minimum",
+              "medal": "silver",
+              "result": "silver",
               "applicability": "scored",
               "metrics": {
                 "renovate_enabled": {
                   "state": "measured",
-                  "value": false
+                  "value": true
                 },
                 "branch_protection_required_checks": {
                   "state": "measured",
@@ -16917,7 +16916,7 @@
                 },
                 "response_coverage_rate": {
                   "state": "measured",
-                  "value": 84.8
+                  "value": 87.2
                 },
                 "avg_triage_days": {
                   "state": "measured",
@@ -16925,7 +16924,7 @@
                 },
                 "avg_pr_review_days": {
                   "state": "measured",
-                  "value": 1.3
+                  "value": 1.2
                 },
                 "has_jira_sync": {
                   "state": "measured",
@@ -16933,7 +16932,7 @@
                 },
                 "repo_views_14d": {
                   "state": "measured",
-                  "value": 558
+                  "value": 570
                 }
               },
               "excluded_from_parent_medal": false
@@ -16951,7 +16950,7 @@
                 },
                 "response_coverage_rate": {
                   "state": "measured",
-                  "value": 50.0
+                  "value": 60.0
                 },
                 "avg_triage_days": {
                   "state": "measured",
@@ -16959,7 +16958,7 @@
                 },
                 "avg_pr_review_days": {
                   "state": "measured",
-                  "value": 0.4
+                  "value": 0.3
                 },
                 "has_jira_sync": {
                   "state": "measured",
@@ -16967,7 +16966,7 @@
                 },
                 "repo_views_14d": {
                   "state": "measured",
-                  "value": 14
+                  "value": 11
                 }
               },
               "excluded_from_parent_medal": false
@@ -16985,7 +16984,7 @@
                 },
                 "response_coverage_rate": {
                   "state": "measured",
-                  "value": 75.0
+                  "value": 92.9
                 },
                 "avg_triage_days": {
                   "state": "measured",
@@ -16993,7 +16992,7 @@
                 },
                 "avg_pr_review_days": {
                   "state": "measured",
-                  "value": 3.7
+                  "value": 3.3
                 },
                 "has_jira_sync": {
                   "state": "measured",
@@ -17001,7 +17000,7 @@
                 },
                 "repo_views_14d": {
                   "state": "measured",
-                  "value": 841
+                  "value": 851
                 }
               },
               "excluded_from_parent_medal": false
@@ -17235,7 +17234,7 @@
                 },
                 "response_coverage_rate": {
                   "state": "measured",
-                  "value": 72.7
+                  "value": 81.8
                 },
                 "avg_triage_days": {
                   "state": "measured",
@@ -17243,7 +17242,7 @@
                 },
                 "avg_pr_review_days": {
                   "state": "measured",
-                  "value": 10.2
+                  "value": 8.6
                 },
                 "has_jira_sync": {
                   "state": "measured",
@@ -17503,7 +17502,7 @@
                 },
                 "repo_views_14d": {
                   "state": "measured",
-                  "value": 52
+                  "value": 61
                 }
               },
               "excluded_from_parent_medal": false
@@ -17520,7 +17519,7 @@
       "lifecycle": "stable",
       "current_medal": "unrated",
       "target_medal": "gold",
-      "current_result": "insufficient_data",
+      "current_result": "below_minimum",
       "target_result": "gold",
       "meets_target": false,
       "squad": "",
@@ -17537,16 +17536,15 @@
       ],
       "dimensions": {
         "test_verification": {
-          "medal": "unrated",
+          "medal": "bronze",
           "target": "gold",
-          "applicability": "insufficient_data",
+          "applicability": "scored",
           "meets_target": false,
-          "result": "insufficient_data",
+          "result": "bronze",
           "metrics": {
             "latest_build_passing": {
-              "state": "insufficient_data",
-              "value": null,
-              "reason": "The legacy measurement has no evidence."
+              "state": "measured",
+              "value": true
             },
             "integration_test_evidence_present": {
               "state": "measured",
@@ -17597,9 +17595,9 @@
               "value": false
             },
             "diataxis_coverage_ai": {
-              "state": "measured",
-              "value": 2,
-              "reason": "The documentation contains Tutorial content (Getting Started section with framework-specific tutorial links) and Reference content (commands and configuration details), but lacks distinct How-to guides and Explanation sections."
+              "state": "insufficient_data",
+              "value": null,
+              "reason": "AI documentation assessment is unavailable."
             },
             "uses_rtd_hosting": {
               "state": "measured",
@@ -17681,7 +17679,7 @@
             },
             "response_coverage_rate": {
               "state": "measured",
-              "value": 87.5
+              "value": 86.6
             },
             "avg_triage_days": {
               "state": "measured",
@@ -17689,7 +17687,7 @@
             },
             "avg_pr_review_days": {
               "state": "measured",
-              "value": 1.2
+              "value": 0.8
             },
             "has_jira_sync": {
               "state": "measured",
@@ -17697,7 +17695,7 @@
             },
             "repo_views_14d": {
               "state": "measured",
-              "value": 412
+              "value": 436
             }
           },
           "composition": null
@@ -17788,9 +17786,9 @@
               "value": false
             },
             "diataxis_coverage_ai": {
-              "state": "measured",
-              "value": 4,
-              "reason": "The documentation explicitly includes all four Di\u00e1taxis types: Tutorial (deployment guide), How-to guides (configure, upgrade, backup), Reference (actions, configurations, integrations), and Explanation (security, architecture)."
+              "state": "insufficient_data",
+              "value": null,
+              "reason": "AI documentation assessment is unavailable."
             },
             "uses_rtd_hosting": {
               "state": "measured",
@@ -17872,7 +17870,7 @@
             },
             "response_coverage_rate": {
               "state": "measured",
-              "value": 92.9
+              "value": 89.7
             },
             "avg_triage_days": {
               "state": "measured",
@@ -17888,7 +17886,7 @@
             },
             "repo_views_14d": {
               "state": "measured",
-              "value": 18
+              "value": 24
             }
           },
           "composition": null
@@ -17979,9 +17977,9 @@
               "value": false
             },
             "diataxis_coverage_ai": {
-              "state": "measured",
-              "value": 2,
-              "reason": "The documentation contains a clear how-to guide (installation and configuration steps) and reference content (nftables rules, CLI options), but lacks a learning-oriented tutorial with explanations of concepts and understanding-oriented discussion of architecture or design decisions."
+              "state": "insufficient_data",
+              "value": null,
+              "reason": "AI documentation assessment is unavailable."
             },
             "uses_rtd_hosting": {
               "state": "measured",
@@ -18082,7 +18080,7 @@
             },
             "repo_views_14d": {
               "state": "measured",
-              "value": 86
+              "value": 93
             }
           },
           "composition": null
@@ -18130,7 +18128,7 @@
             },
             "uses_jubilant": {
               "state": "measured",
-              "value": false
+              "value": true
             },
             "coverage_pct": {
               "state": "insufficient_data",
@@ -18173,9 +18171,9 @@
               "value": false
             },
             "diataxis_coverage_ai": {
-              "state": "measured",
-              "value": 0,
-              "reason": "The documentation is empty with no content in either README or docs/index.md files."
+              "state": "insufficient_data",
+              "value": null,
+              "reason": "AI documentation assessment is unavailable."
             },
             "uses_rtd_hosting": {
               "state": "measured",
@@ -18273,7 +18271,7 @@
             },
             "repo_views_14d": {
               "state": "measured",
-              "value": 16
+              "value": 11
             }
           },
           "composition": null
@@ -18321,7 +18319,7 @@
             },
             "uses_jubilant": {
               "state": "measured",
-              "value": false
+              "value": true
             },
             "coverage_pct": {
               "state": "insufficient_data",
@@ -18364,9 +18362,9 @@
               "value": false
             },
             "diataxis_coverage_ai": {
-              "state": "measured",
-              "value": 0,
-              "reason": "The documentation is empty with no content in either the README or docs/index.md files, so none of the four Di\u00e1taxis types are present."
+              "state": "insufficient_data",
+              "value": null,
+              "reason": "AI documentation assessment is unavailable."
             },
             "uses_rtd_hosting": {
               "state": "measured",
@@ -18464,7 +18462,7 @@
             },
             "repo_views_14d": {
               "state": "measured",
-              "value": 16
+              "value": 11
             }
           },
           "composition": null
@@ -18512,7 +18510,7 @@
             },
             "uses_jubilant": {
               "state": "measured",
-              "value": true
+              "value": false
             },
             "coverage_pct": {
               "state": "insufficient_data",
@@ -18555,9 +18553,9 @@
               "value": false
             },
             "diataxis_coverage_ai": {
-              "state": "measured",
-              "value": 0,
-              "reason": "The documentation is empty with no content provided in either the README or docs/index.md files."
+              "state": "insufficient_data",
+              "value": null,
+              "reason": "AI documentation assessment is unavailable."
             },
             "uses_rtd_hosting": {
               "state": "measured",
@@ -18655,7 +18653,7 @@
             },
             "repo_views_14d": {
               "state": "measured",
-              "value": 16
+              "value": 11
             }
           },
           "composition": null
@@ -18703,7 +18701,7 @@
             },
             "uses_jubilant": {
               "state": "measured",
-              "value": true
+              "value": false
             },
             "coverage_pct": {
               "state": "insufficient_data",
@@ -18746,9 +18744,9 @@
               "value": false
             },
             "diataxis_coverage_ai": {
-              "state": "measured",
-              "value": 0,
-              "reason": "The documentation is empty with no content in either the README or docs/index.md files, so none of the four Di\u00e1taxis types are present."
+              "state": "insufficient_data",
+              "value": null,
+              "reason": "AI documentation assessment is unavailable."
             },
             "uses_rtd_hosting": {
               "state": "measured",
@@ -18846,7 +18844,7 @@
             },
             "repo_views_14d": {
               "state": "measured",
-              "value": 16
+              "value": 11
             }
           },
           "composition": null
@@ -18894,7 +18892,7 @@
             },
             "uses_jubilant": {
               "state": "measured",
-              "value": true
+              "value": false
             },
             "coverage_pct": {
               "state": "insufficient_data",
@@ -18937,9 +18935,9 @@
               "value": false
             },
             "diataxis_coverage_ai": {
-              "state": "measured",
-              "value": 0,
-              "reason": "The documentation is empty with no content present in either the README or docs/index.md files."
+              "state": "insufficient_data",
+              "value": null,
+              "reason": "AI documentation assessment is unavailable."
             },
             "uses_rtd_hosting": {
               "state": "measured",
@@ -19021,7 +19019,7 @@
             },
             "response_coverage_rate": {
               "state": "measured",
-              "value": 95.2
+              "value": 90.5
             },
             "avg_triage_days": {
               "state": "measured",
@@ -19029,7 +19027,7 @@
             },
             "avg_pr_review_days": {
               "state": "measured",
-              "value": 2.9
+              "value": 3.0
             },
             "has_jira_sync": {
               "state": "measured",
@@ -19037,7 +19035,7 @@
             },
             "repo_views_14d": {
               "state": "measured",
-              "value": 134
+              "value": 154
             }
           },
           "composition": null
@@ -19129,9 +19127,9 @@
               "value": false
             },
             "diataxis_coverage_ai": {
-              "state": "measured",
-              "value": 4,
-              "reason": "The documentation explicitly references all four Di\u00e1taxis types with dedicated sections: Tutorial (Getting started section in README), How-to guides (upgrade documentation), Reference (charm architecture), and Explanation (mentioned in navigation structure)."
+              "state": "insufficient_data",
+              "value": null,
+              "reason": "AI documentation assessment is unavailable."
             },
             "uses_rtd_hosting": {
               "state": "measured",
@@ -19324,9 +19322,9 @@
               "value": false
             },
             "diataxis_coverage_ai": {
-              "state": "measured",
-              "value": 4,
-              "reason": "The documentation explicitly references all four Di\u00e1taxis types: Tutorials (tutorial.md mentioned twice), How-to guides, Reference, and Explanation sections are all clearly indicated in the index table."
+              "state": "insufficient_data",
+              "value": null,
+              "reason": "AI documentation assessment is unavailable."
             },
             "uses_rtd_hosting": {
               "state": "measured",
@@ -19427,7 +19425,7 @@
             },
             "repo_views_14d": {
               "state": "measured",
-              "value": 3
+              "value": 2
             }
           },
           "composition": null
@@ -19519,9 +19517,9 @@
               "value": false
             },
             "diataxis_coverage_ai": {
-              "state": "measured",
-              "value": 0,
-              "reason": "The documentation only contains a repository notice, project overview, and community links without any tutorial, how-to, reference, or explanation content."
+              "state": "insufficient_data",
+              "value": null,
+              "reason": "AI documentation assessment is unavailable."
             },
             "uses_rtd_hosting": {
               "state": "measured",
@@ -19714,9 +19712,9 @@
               "value": false
             },
             "diataxis_coverage_ai": {
-              "state": "measured",
-              "value": 0,
-              "reason": "The documentation contains only repository metadata, navigation links, and a deprecation warning, with no actual tutorial, how-to, reference, or explanation content present."
+              "state": "insufficient_data",
+              "value": null,
+              "reason": "AI documentation assessment is unavailable."
             },
             "uses_rtd_hosting": {
               "state": "measured",
@@ -19909,9 +19907,9 @@
               "value": false
             },
             "diataxis_coverage_ai": {
-              "state": "measured",
-              "value": 1,
-              "reason": "The documentation contains only a How-to guide (building and installing the snap with step-by-step instructions), but lacks tutorials, reference documentation, and explanatory content."
+              "state": "insufficient_data",
+              "value": null,
+              "reason": "AI documentation assessment is unavailable."
             },
             "uses_rtd_hosting": {
               "state": "measured",
@@ -20012,7 +20010,7 @@
             },
             "repo_views_14d": {
               "state": "measured",
-              "value": 2
+              "value": 1
             }
           },
           "composition": null
@@ -20044,15 +20042,15 @@
       ],
       "dimensions": {
         "test_verification": {
-          "medal": "unrated",
+          "medal": "silver",
           "target": "bronze",
           "applicability": "scored",
-          "meets_target": false,
-          "result": "below_minimum",
+          "meets_target": true,
+          "result": "silver",
           "metrics": {
             "latest_build_passing": {
               "state": "measured",
-              "value": false
+              "value": true
             },
             "integration_test_evidence_present": {
               "state": "measured",
@@ -20103,9 +20101,9 @@
               "value": false
             },
             "diataxis_coverage_ai": {
-              "state": "measured",
-              "value": 3,
-              "reason": "The documentation clearly contains a Tutorial (referenced 'Getting started' guide), Reference (actions, tuning options, integrations list), and How-to guide (integration example with WordPress), but lacks substantial Explanation content about architecture or design decisions."
+              "state": "insufficient_data",
+              "value": null,
+              "reason": "AI documentation assessment is unavailable."
             },
             "uses_rtd_hosting": {
               "state": "measured",
@@ -20187,15 +20185,15 @@
             },
             "response_coverage_rate": {
               "state": "measured",
-              "value": 76.9
+              "value": 85.2
             },
             "avg_triage_days": {
               "state": "measured",
-              "value": 184.4
+              "value": 147.5
             },
             "avg_pr_review_days": {
               "state": "measured",
-              "value": 13.1
+              "value": 15.4
             },
             "has_jira_sync": {
               "state": "measured",
@@ -20203,7 +20201,7 @@
             },
             "repo_views_14d": {
               "state": "measured",
-              "value": 17
+              "value": 15
             }
           },
           "composition": null
@@ -20235,15 +20233,15 @@
       ],
       "dimensions": {
         "test_verification": {
-          "medal": "unrated",
+          "medal": "silver",
           "target": "silver",
           "applicability": "scored",
-          "meets_target": false,
-          "result": "below_minimum",
+          "meets_target": true,
+          "result": "silver",
           "metrics": {
             "latest_build_passing": {
               "state": "measured",
-              "value": false
+              "value": true
             },
             "integration_test_evidence_present": {
               "state": "measured",
@@ -20294,9 +20292,9 @@
               "value": false
             },
             "diataxis_coverage_ai": {
-              "state": "measured",
-              "value": 1,
-              "reason": "Only a Tutorial is explicitly referenced ('Content Cache tutorial' link), while How-to guides, Reference documentation, and Explanation content are not clearly present in the provided documentation."
+              "state": "insufficient_data",
+              "value": null,
+              "reason": "AI documentation assessment is unavailable."
             },
             "uses_rtd_hosting": {
               "state": "measured",
@@ -20378,15 +20376,15 @@
             },
             "response_coverage_rate": {
               "state": "measured",
-              "value": 85.0
+              "value": 90.0
             },
             "avg_triage_days": {
               "state": "measured",
-              "value": 15.6
+              "value": 13.5
             },
             "avg_pr_review_days": {
               "state": "measured",
-              "value": 0.3
+              "value": 1.7
             },
             "has_jira_sync": {
               "state": "measured",
@@ -20394,7 +20392,7 @@
             },
             "repo_views_14d": {
               "state": "measured",
-              "value": 297
+              "value": 307
             }
           },
           "composition": null
@@ -20426,15 +20424,15 @@
       ],
       "dimensions": {
         "test_verification": {
-          "medal": "unrated",
+          "medal": "silver",
           "target": "silver",
           "applicability": "scored",
-          "meets_target": false,
-          "result": "below_minimum",
+          "meets_target": true,
+          "result": "silver",
           "metrics": {
             "latest_build_passing": {
               "state": "measured",
-              "value": false
+              "value": true
             },
             "integration_test_evidence_present": {
               "state": "measured",
@@ -20485,9 +20483,9 @@
               "value": false
             },
             "diataxis_coverage_ai": {
-              "state": "measured",
-              "value": 2,
-              "reason": "The documentation contains Tutorial content (reference to 'Getting started' tutorial and step-by-step instructions) and Reference content (mentions of configuration options like backends, hostname, etc.), but lacks explicit How-to guides and Explanation sections."
+              "state": "insufficient_data",
+              "value": null,
+              "reason": "AI documentation assessment is unavailable."
             },
             "uses_rtd_hosting": {
               "state": "measured",
@@ -20569,15 +20567,15 @@
             },
             "response_coverage_rate": {
               "state": "measured",
-              "value": 85.0
+              "value": 90.0
             },
             "avg_triage_days": {
               "state": "measured",
-              "value": 15.6
+              "value": 13.5
             },
             "avg_pr_review_days": {
               "state": "measured",
-              "value": 0.3
+              "value": 1.7
             },
             "has_jira_sync": {
               "state": "measured",
@@ -20585,7 +20583,7 @@
             },
             "repo_views_14d": {
               "state": "measured",
-              "value": 297
+              "value": 307
             }
           },
           "composition": null
@@ -20676,9 +20674,9 @@
               "value": false
             },
             "diataxis_coverage_ai": {
-              "state": "measured",
-              "value": 3,
-              "reason": "The documentation clearly contains a Tutorial section (mentioned in the table), How-to guides (operational tasks like ingress, authentication, upgrades), and Reference content (configuration options, actions, relations, plus technical details on PostgreSQL relations), but lacks Explanation content that would discuss architecture, design decisions, or conceptual overviews."
+              "state": "insufficient_data",
+              "value": null,
+              "reason": "AI documentation assessment is unavailable."
             },
             "uses_rtd_hosting": {
               "state": "measured",
@@ -20762,7 +20760,7 @@
             },
             "response_coverage_rate": {
               "state": "measured",
-              "value": 78.6
+              "value": 71.4
             },
             "avg_triage_days": {
               "state": "measured",
@@ -20770,7 +20768,7 @@
             },
             "avg_pr_review_days": {
               "state": "measured",
-              "value": 1.2
+              "value": 1.3
             },
             "has_jira_sync": {
               "state": "measured",
@@ -20870,9 +20868,9 @@
               "value": false
             },
             "diataxis_coverage_ai": {
-              "state": "measured",
-              "value": 3,
-              "reason": "The documentation contains How-to guides (deployment steps, configuration instructions), Reference content (config options, file formats, CLI commands), and Explanation sections (HTTPS architecture, proxy behavior), but lacks a comprehensive Tutorial with a learning-oriented walkthrough from first principles."
+              "state": "insufficient_data",
+              "value": null,
+              "reason": "AI documentation assessment is unavailable."
             },
             "uses_rtd_hosting": {
               "state": "measured",
@@ -20956,7 +20954,7 @@
             },
             "response_coverage_rate": {
               "state": "measured",
-              "value": 84.6
+              "value": 92.9
             },
             "avg_triage_days": {
               "state": "measured",
@@ -20964,7 +20962,7 @@
             },
             "avg_pr_review_days": {
               "state": "measured",
-              "value": 0.4
+              "value": 2.9
             },
             "has_jira_sync": {
               "state": "measured",
@@ -21064,9 +21062,9 @@
               "value": false
             },
             "diataxis_coverage_ai": {
-              "state": "measured",
-              "value": 2,
-              "reason": "The documentation contains reference content (configuration options, integrations, deployment requirements) and mentions tutorials/how-to guides exist externally, but only the usage section provides partial how-to instructions while explanation content is limited to brief description."
+              "state": "insufficient_data",
+              "value": null,
+              "reason": "AI documentation assessment is unavailable."
             },
             "uses_rtd_hosting": {
               "state": "measured",
@@ -21150,7 +21148,7 @@
             },
             "response_coverage_rate": {
               "state": "measured",
-              "value": 67.2
+              "value": 65.6
             },
             "avg_triage_days": {
               "state": "measured",
@@ -21258,9 +21256,9 @@
               "value": false
             },
             "diataxis_coverage_ai": {
-              "state": "measured",
-              "value": 3,
-              "reason": "The documentation contains How-to guides (deploying, managing credentials, backup/restore), Reference content (configuration options, action results table, search options table), and Tutorial-like getting started sections, but lacks dedicated Explanation content discussing architecture or design rationale."
+              "state": "insufficient_data",
+              "value": null,
+              "reason": "AI documentation assessment is unavailable."
             },
             "uses_rtd_hosting": {
               "state": "measured",
@@ -21344,7 +21342,7 @@
             },
             "response_coverage_rate": {
               "state": "measured",
-              "value": 70.0
+              "value": 71.4
             },
             "avg_triage_days": {
               "state": "measured",
@@ -21352,7 +21350,7 @@
             },
             "avg_pr_review_days": {
               "state": "measured",
-              "value": 0.3
+              "value": 3.6
             },
             "has_jira_sync": {
               "state": "measured",
@@ -21452,9 +21450,9 @@
               "value": false
             },
             "diataxis_coverage_ai": {
-              "state": "measured",
-              "value": 1,
-              "reason": "The documentation contains only Reference content (description of components, deployment requirements, configuration commands, and integration options) but explicitly defers Tutorial, How-to, and Explanation content to external documentation links."
+              "state": "insufficient_data",
+              "value": null,
+              "reason": "AI documentation assessment is unavailable."
             },
             "uses_rtd_hosting": {
               "state": "measured",
@@ -21538,7 +21536,7 @@
             },
             "response_coverage_rate": {
               "state": "measured",
-              "value": 52.6
+              "value": 57.1
             },
             "avg_triage_days": {
               "state": "measured",
@@ -21546,7 +21544,7 @@
             },
             "avg_pr_review_days": {
               "state": "measured",
-              "value": 0.7
+              "value": 3.4
             },
             "has_jira_sync": {
               "state": "measured",
@@ -21646,9 +21644,9 @@
               "value": false
             },
             "diataxis_coverage_ai": {
-              "state": "measured",
-              "value": 3,
-              "reason": "The documentation contains a tutorial (deployment steps for getting started), how-to guides (configuration and actions), and reference content (configuration options table), but lacks explanation-oriented discussion about architecture or design rationale."
+              "state": "insufficient_data",
+              "value": null,
+              "reason": "AI documentation assessment is unavailable."
             },
             "uses_rtd_hosting": {
               "state": "measured",
@@ -21784,15 +21782,15 @@
       ],
       "dimensions": {
         "test_verification": {
-          "medal": "silver",
+          "medal": "unrated",
           "target": "bronze",
           "applicability": "scored",
-          "meets_target": true,
-          "result": "silver",
+          "meets_target": false,
+          "result": "below_minimum",
           "metrics": {
             "latest_build_passing": {
               "state": "measured",
-              "value": true
+              "value": false
             },
             "integration_test_evidence_present": {
               "state": "measured",
@@ -21843,9 +21841,9 @@
               "value": false
             },
             "diataxis_coverage_ai": {
-              "state": "measured",
-              "value": 2,
-              "reason": "The documentation clearly contains Tutorial content (getting started guide) and How-to guides (manage users, configure authentication, upgrade, contribute), but lacks Reference material (no API/config/CLI reference details) and Explanation content (no architecture overview or conceptual discussion)."
+              "state": "insufficient_data",
+              "value": null,
+              "reason": "AI documentation assessment is unavailable."
             },
             "uses_rtd_hosting": {
               "state": "measured",
@@ -21943,7 +21941,7 @@
             },
             "repo_views_14d": {
               "state": "measured",
-              "value": 20
+              "value": 27
             }
           },
           "composition": null
@@ -22032,9 +22030,9 @@
               "value": false
             },
             "diataxis_coverage_ai": {
-              "state": "measured",
-              "value": 4,
-              "reason": "The documentation explicitly mentions all four Di\u00e1taxis types: Tutorial (getting started), How-to guides (configuration and operations tasks), Reference (integrations, actions, architecture), and Explanation (security overview)."
+              "state": "insufficient_data",
+              "value": null,
+              "reason": "AI documentation assessment is unavailable."
             },
             "uses_rtd_hosting": {
               "state": "measured",
@@ -22116,7 +22114,7 @@
             },
             "response_coverage_rate": {
               "state": "measured",
-              "value": 85.0
+              "value": 90.7
             },
             "avg_triage_days": {
               "state": "measured",
@@ -22124,7 +22122,7 @@
             },
             "avg_pr_review_days": {
               "state": "measured",
-              "value": 5.2
+              "value": 4.6
             },
             "has_jira_sync": {
               "state": "measured",
@@ -22132,7 +22130,7 @@
             },
             "repo_views_14d": {
               "state": "measured",
-              "value": 262
+              "value": 268
             }
           },
           "composition": null
@@ -22307,7 +22305,7 @@
             },
             "response_coverage_rate": {
               "state": "measured",
-              "value": 45.5
+              "value": 71.9
             },
             "avg_triage_days": {
               "state": "measured",
@@ -22315,7 +22313,7 @@
             },
             "avg_pr_review_days": {
               "state": "measured",
-              "value": 5.6
+              "value": 24.8
             },
             "has_jira_sync": {
               "state": "measured",
@@ -22323,7 +22321,7 @@
             },
             "repo_views_14d": {
               "state": "measured",
-              "value": 51
+              "value": 57
             }
           },
           "composition": null
@@ -22355,11 +22353,11 @@
       ],
       "dimensions": {
         "test_verification": {
-          "medal": "gold",
+          "medal": "silver",
           "target": "bronze",
           "applicability": "scored",
           "meets_target": true,
-          "result": "gold",
+          "result": "silver",
           "metrics": {
             "latest_build_passing": {
               "state": "measured",
@@ -22371,7 +22369,7 @@
             },
             "uses_jubilant": {
               "state": "measured",
-              "value": true
+              "value": false
             },
             "coverage_pct": {
               "state": "insufficient_data",
@@ -22498,7 +22496,7 @@
             },
             "response_coverage_rate": {
               "state": "measured",
-              "value": 45.5
+              "value": 71.9
             },
             "avg_triage_days": {
               "state": "measured",
@@ -22506,7 +22504,7 @@
             },
             "avg_pr_review_days": {
               "state": "measured",
-              "value": 5.6
+              "value": 24.8
             },
             "has_jira_sync": {
               "state": "measured",
@@ -22514,7 +22512,7 @@
             },
             "repo_views_14d": {
               "state": "measured",
-              "value": 51
+              "value": 57
             }
           },
           "composition": null
@@ -22546,11 +22544,11 @@
       ],
       "dimensions": {
         "test_verification": {
-          "medal": "silver",
+          "medal": "gold",
           "target": "bronze",
           "applicability": "scored",
           "meets_target": true,
-          "result": "silver",
+          "result": "gold",
           "metrics": {
             "latest_build_passing": {
               "state": "measured",
@@ -22562,7 +22560,7 @@
             },
             "uses_jubilant": {
               "state": "measured",
-              "value": false
+              "value": true
             },
             "coverage_pct": {
               "state": "insufficient_data",
@@ -22689,7 +22687,7 @@
             },
             "response_coverage_rate": {
               "state": "measured",
-              "value": 45.5
+              "value": 71.9
             },
             "avg_triage_days": {
               "state": "measured",
@@ -22697,7 +22695,7 @@
             },
             "avg_pr_review_days": {
               "state": "measured",
-              "value": 5.6
+              "value": 24.8
             },
             "has_jira_sync": {
               "state": "measured",
@@ -22705,7 +22703,7 @@
             },
             "repo_views_14d": {
               "state": "measured",
-              "value": 51
+              "value": 57
             }
           },
           "composition": null
@@ -22737,11 +22735,11 @@
       ],
       "dimensions": {
         "test_verification": {
-          "medal": "silver",
+          "medal": "gold",
           "target": "bronze",
           "applicability": "scored",
           "meets_target": true,
-          "result": "silver",
+          "result": "gold",
           "metrics": {
             "latest_build_passing": {
               "state": "measured",
@@ -22753,7 +22751,7 @@
             },
             "uses_jubilant": {
               "state": "measured",
-              "value": false
+              "value": true
             },
             "coverage_pct": {
               "state": "insufficient_data",
@@ -22880,7 +22878,7 @@
             },
             "response_coverage_rate": {
               "state": "measured",
-              "value": 45.5
+              "value": 71.9
             },
             "avg_triage_days": {
               "state": "measured",
@@ -22888,7 +22886,7 @@
             },
             "avg_pr_review_days": {
               "state": "measured",
-              "value": 5.6
+              "value": 24.8
             },
             "has_jira_sync": {
               "state": "measured",
@@ -22896,7 +22894,7 @@
             },
             "repo_views_14d": {
               "state": "measured",
-              "value": 51
+              "value": 57
             }
           },
           "composition": null
@@ -23071,7 +23069,7 @@
             },
             "response_coverage_rate": {
               "state": "measured",
-              "value": 45.5
+              "value": 71.9
             },
             "avg_triage_days": {
               "state": "measured",
@@ -23079,7 +23077,7 @@
             },
             "avg_pr_review_days": {
               "state": "measured",
-              "value": 5.6
+              "value": 24.8
             },
             "has_jira_sync": {
               "state": "measured",
@@ -23087,7 +23085,7 @@
             },
             "repo_views_14d": {
               "state": "measured",
-              "value": 51
+              "value": 57
             }
           },
           "composition": null
@@ -23262,7 +23260,7 @@
             },
             "response_coverage_rate": {
               "state": "measured",
-              "value": 45.5
+              "value": 71.9
             },
             "avg_triage_days": {
               "state": "measured",
@@ -23270,7 +23268,7 @@
             },
             "avg_pr_review_days": {
               "state": "measured",
-              "value": 5.6
+              "value": 24.8
             },
             "has_jira_sync": {
               "state": "measured",
@@ -23278,7 +23276,7 @@
             },
             "repo_views_14d": {
               "state": "measured",
-              "value": 51
+              "value": 57
             }
           },
           "composition": null
@@ -23310,11 +23308,11 @@
       ],
       "dimensions": {
         "test_verification": {
-          "medal": "gold",
+          "medal": "silver",
           "target": "bronze",
           "applicability": "scored",
           "meets_target": true,
-          "result": "gold",
+          "result": "silver",
           "metrics": {
             "latest_build_passing": {
               "state": "measured",
@@ -23326,7 +23324,7 @@
             },
             "uses_jubilant": {
               "state": "measured",
-              "value": true
+              "value": false
             },
             "coverage_pct": {
               "state": "insufficient_data",
@@ -23453,7 +23451,7 @@
             },
             "response_coverage_rate": {
               "state": "measured",
-              "value": 45.5
+              "value": 71.9
             },
             "avg_triage_days": {
               "state": "measured",
@@ -23461,7 +23459,7 @@
             },
             "avg_pr_review_days": {
               "state": "measured",
-              "value": 5.6
+              "value": 24.8
             },
             "has_jira_sync": {
               "state": "measured",
@@ -23469,7 +23467,7 @@
             },
             "repo_views_14d": {
               "state": "measured",
-              "value": 51
+              "value": 57
             }
           },
           "composition": null
@@ -23501,15 +23499,15 @@
       ],
       "dimensions": {
         "test_verification": {
-          "medal": "bronze",
+          "medal": "unrated",
           "target": "silver",
           "applicability": "scored",
           "meets_target": false,
-          "result": "bronze",
+          "result": "below_minimum",
           "metrics": {
             "latest_build_passing": {
               "state": "measured",
-              "value": true
+              "value": false
             },
             "integration_test_evidence_present": {
               "state": "measured",
@@ -23517,7 +23515,7 @@
             },
             "uses_jubilant": {
               "state": "measured",
-              "value": false
+              "value": true
             },
             "coverage_pct": {
               "state": "insufficient_data",
@@ -23560,9 +23558,9 @@
               "value": false
             },
             "diataxis_coverage_ai": {
-              "state": "measured",
-              "value": 1,
-              "reason": "The documentation contains only Reference content (description of what the charm is, links to source components) but lacks Tutorial, How-to guide, or Explanation sections."
+              "state": "insufficient_data",
+              "value": null,
+              "reason": "AI documentation assessment is unavailable."
             },
             "uses_rtd_hosting": {
               "state": "measured",
@@ -23644,7 +23642,7 @@
             },
             "response_coverage_rate": {
               "state": "measured",
-              "value": 76.9
+              "value": 83.3
             },
             "avg_triage_days": {
               "state": "measured",
@@ -23652,7 +23650,7 @@
             },
             "avg_pr_review_days": {
               "state": "measured",
-              "value": 3.7
+              "value": 3.4
             },
             "has_jira_sync": {
               "state": "measured",
@@ -23660,7 +23658,7 @@
             },
             "repo_views_14d": {
               "state": "measured",
-              "value": 83
+              "value": 170
             }
           },
           "composition": null
@@ -23692,15 +23690,15 @@
       ],
       "dimensions": {
         "test_verification": {
-          "medal": "bronze",
+          "medal": "unrated",
           "target": "silver",
           "applicability": "scored",
           "meets_target": false,
-          "result": "bronze",
+          "result": "below_minimum",
           "metrics": {
             "latest_build_passing": {
               "state": "measured",
-              "value": true
+              "value": false
             },
             "integration_test_evidence_present": {
               "state": "measured",
@@ -23708,7 +23706,7 @@
             },
             "uses_jubilant": {
               "state": "measured",
-              "value": false
+              "value": true
             },
             "coverage_pct": {
               "state": "insufficient_data",
@@ -23751,9 +23749,9 @@
               "value": false
             },
             "diataxis_coverage_ai": {
-              "state": "measured",
-              "value": 1,
-              "reason": "The documentation contains only Reference content (describing what the charm is, its dependencies, and linking to related resources) but lacks tutorials, how-to guides, or explanations of architecture/concepts."
+              "state": "insufficient_data",
+              "value": null,
+              "reason": "AI documentation assessment is unavailable."
             },
             "uses_rtd_hosting": {
               "state": "measured",
@@ -23835,7 +23833,7 @@
             },
             "response_coverage_rate": {
               "state": "measured",
-              "value": 76.9
+              "value": 83.3
             },
             "avg_triage_days": {
               "state": "measured",
@@ -23843,7 +23841,7 @@
             },
             "avg_pr_review_days": {
               "state": "measured",
-              "value": 3.7
+              "value": 3.4
             },
             "has_jira_sync": {
               "state": "measured",
@@ -23851,7 +23849,7 @@
             },
             "repo_views_14d": {
               "state": "measured",
-              "value": 83
+              "value": 170
             }
           },
           "composition": null
@@ -23883,15 +23881,15 @@
       ],
       "dimensions": {
         "test_verification": {
-          "medal": "unrated",
+          "medal": "silver",
           "target": "gold",
           "applicability": "scored",
           "meets_target": false,
-          "result": "below_minimum",
+          "result": "silver",
           "metrics": {
             "latest_build_passing": {
               "state": "measured",
-              "value": false
+              "value": true
             },
             "integration_test_evidence_present": {
               "state": "measured",
@@ -23942,9 +23940,9 @@
               "value": false
             },
             "diataxis_coverage_ai": {
-              "state": "measured",
-              "value": 2,
-              "reason": "The documentation contains Tutorial content (Getting Started section) and How-to guide content (Basic operations with step-by-step configuration instructions), but lacks dedicated Reference sections (like API/config specs) and Explanation content (architecture/design discussions)."
+              "state": "insufficient_data",
+              "value": null,
+              "reason": "AI documentation assessment is unavailable."
             },
             "uses_rtd_hosting": {
               "state": "measured",
@@ -24026,7 +24024,7 @@
             },
             "response_coverage_rate": {
               "state": "measured",
-              "value": 82.5
+              "value": 86.0
             },
             "avg_triage_days": {
               "state": "measured",
@@ -24042,7 +24040,7 @@
             },
             "repo_views_14d": {
               "state": "measured",
-              "value": 31
+              "value": 28
             }
           },
           "composition": null
@@ -24090,7 +24088,7 @@
             },
             "uses_jubilant": {
               "state": "measured",
-              "value": false
+              "value": true
             },
             "coverage_pct": {
               "state": "insufficient_data",
@@ -24133,9 +24131,9 @@
               "value": false
             },
             "diataxis_coverage_ai": {
-              "state": "measured",
-              "value": 3,
-              "reason": "The documentation contains tutorial content (getting started deployment guide), how-to guides (configure hostname, serve metrics), and reference content (configuration options, integrations list), but lacks understanding-oriented explanation of architecture or design decisions."
+              "state": "insufficient_data",
+              "value": null,
+              "reason": "AI documentation assessment is unavailable."
             },
             "uses_rtd_hosting": {
               "state": "measured",
@@ -24217,7 +24215,7 @@
             },
             "response_coverage_rate": {
               "state": "measured",
-              "value": 96.0
+              "value": 94.2
             },
             "avg_triage_days": {
               "state": "measured",
@@ -24225,7 +24223,7 @@
             },
             "avg_pr_review_days": {
               "state": "measured",
-              "value": 1.5
+              "value": 1.6
             },
             "has_jira_sync": {
               "state": "measured",
@@ -24233,7 +24231,7 @@
             },
             "repo_views_14d": {
               "state": "measured",
-              "value": 112
+              "value": 129
             }
           },
           "composition": null
@@ -24265,15 +24263,15 @@
       ],
       "dimensions": {
         "test_verification": {
-          "medal": "unrated",
+          "medal": "bronze",
           "target": "gold",
           "applicability": "scored",
           "meets_target": false,
-          "result": "below_minimum",
+          "result": "bronze",
           "metrics": {
             "latest_build_passing": {
               "state": "measured",
-              "value": false
+              "value": true
             },
             "integration_test_evidence_present": {
               "state": "measured",
@@ -24408,7 +24406,7 @@
             },
             "response_coverage_rate": {
               "state": "measured",
-              "value": 94.2
+              "value": 95.0
             },
             "avg_triage_days": {
               "state": "measured",
@@ -24424,7 +24422,7 @@
             },
             "repo_views_14d": {
               "state": "measured",
-              "value": 299
+              "value": 366
             }
           },
           "composition": null
@@ -24599,7 +24597,7 @@
             },
             "response_coverage_rate": {
               "state": "measured",
-              "value": 91.0
+              "value": 92.4
             },
             "avg_triage_days": {
               "state": "measured",
@@ -24615,7 +24613,7 @@
             },
             "repo_views_14d": {
               "state": "measured",
-              "value": 68
+              "value": 67
             }
           },
           "composition": null
@@ -24647,15 +24645,15 @@
       ],
       "dimensions": {
         "test_verification": {
-          "medal": "unrated",
+          "medal": "bronze",
           "target": "gold",
           "applicability": "scored",
           "meets_target": false,
-          "result": "below_minimum",
+          "result": "bronze",
           "metrics": {
             "latest_build_passing": {
               "state": "measured",
-              "value": false
+              "value": true
             },
             "integration_test_evidence_present": {
               "state": "measured",
@@ -24663,7 +24661,7 @@
             },
             "uses_jubilant": {
               "state": "measured",
-              "value": false
+              "value": true
             },
             "coverage_pct": {
               "state": "insufficient_data",
@@ -24790,7 +24788,7 @@
             },
             "response_coverage_rate": {
               "state": "measured",
-              "value": 94.2
+              "value": 95.0
             },
             "avg_triage_days": {
               "state": "measured",
@@ -24806,7 +24804,7 @@
             },
             "repo_views_14d": {
               "state": "measured",
-              "value": 299
+              "value": 366
             }
           },
           "composition": null
@@ -24981,7 +24979,7 @@
             },
             "response_coverage_rate": {
               "state": "measured",
-              "value": 94.2
+              "value": 95.0
             },
             "avg_triage_days": {
               "state": "measured",
@@ -24997,7 +24995,7 @@
             },
             "repo_views_14d": {
               "state": "measured",
-              "value": 299
+              "value": 366
             }
           },
           "composition": null
@@ -25088,9 +25086,9 @@
               "value": false
             },
             "diataxis_coverage_ai": {
-              "state": "measured",
-              "value": 4,
-              "reason": "The documentation explicitly includes all four Di\u00e1taxis types: tutorials (getting started), how-to guides (key management, server operations), reference (actions, configurations, integrations, metrics), and explanation (security, charm architecture)."
+              "state": "insufficient_data",
+              "value": null,
+              "reason": "AI documentation assessment is unavailable."
             },
             "uses_rtd_hosting": {
               "state": "measured",
@@ -25188,7 +25186,7 @@
             },
             "repo_views_14d": {
               "state": "measured",
-              "value": 117
+              "value": 119
             }
           },
           "composition": null
@@ -25220,11 +25218,11 @@
       ],
       "dimensions": {
         "test_verification": {
-          "medal": "silver",
+          "medal": "gold",
           "target": "silver",
           "applicability": "scored",
           "meets_target": true,
-          "result": "silver",
+          "result": "gold",
           "metrics": {
             "latest_build_passing": {
               "state": "measured",
@@ -25236,7 +25234,7 @@
             },
             "uses_jubilant": {
               "state": "measured",
-              "value": false
+              "value": true
             },
             "coverage_pct": {
               "state": "insufficient_data",
@@ -25379,7 +25377,7 @@
             },
             "repo_views_14d": {
               "state": "measured",
-              "value": 152
+              "value": 149
             }
           },
           "composition": null
@@ -25570,7 +25568,7 @@
             },
             "repo_views_14d": {
               "state": "measured",
-              "value": 152
+              "value": 149
             }
           },
           "composition": null
@@ -25761,7 +25759,7 @@
             },
             "repo_views_14d": {
               "state": "measured",
-              "value": 152
+              "value": 149
             }
           },
           "composition": null
@@ -25793,11 +25791,11 @@
       ],
       "dimensions": {
         "test_verification": {
-          "medal": "silver",
+          "medal": "gold",
           "target": "silver",
           "applicability": "scored",
           "meets_target": true,
-          "result": "silver",
+          "result": "gold",
           "metrics": {
             "latest_build_passing": {
               "state": "measured",
@@ -25809,7 +25807,7 @@
             },
             "uses_jubilant": {
               "state": "measured",
-              "value": false
+              "value": true
             },
             "coverage_pct": {
               "state": "insufficient_data",
@@ -25952,7 +25950,7 @@
             },
             "repo_views_14d": {
               "state": "measured",
-              "value": 152
+              "value": 149
             }
           },
           "composition": null
@@ -26143,7 +26141,7 @@
             },
             "repo_views_14d": {
               "state": "measured",
-              "value": 146
+              "value": 152
             }
           },
           "composition": null
@@ -26316,7 +26314,7 @@
             },
             "response_coverage_rate": {
               "state": "measured",
-              "value": 88.1
+              "value": 87.5
             },
             "avg_triage_days": {
               "state": "measured",
@@ -26332,7 +26330,7 @@
             },
             "repo_views_14d": {
               "state": "measured",
-              "value": 315
+              "value": 323
             }
           },
           "composition": null
@@ -26364,11 +26362,11 @@
       ],
       "dimensions": {
         "test_verification": {
-          "medal": "silver",
+          "medal": "gold",
           "target": "bronze",
           "applicability": "scored",
           "meets_target": true,
-          "result": "silver",
+          "result": "gold",
           "metrics": {
             "latest_build_passing": {
               "state": "measured",
@@ -26380,7 +26378,7 @@
             },
             "uses_jubilant": {
               "state": "measured",
-              "value": false
+              "value": true
             },
             "coverage_pct": {
               "state": "measured",
@@ -26513,7 +26511,7 @@
             },
             "avg_pr_review_days": {
               "state": "measured",
-              "value": 2.9
+              "value": 3.0
             },
             "has_jira_sync": {
               "state": "measured",
@@ -26521,7 +26519,7 @@
             },
             "repo_views_14d": {
               "state": "measured",
-              "value": 771
+              "value": 773
             }
           },
           "composition": null
@@ -26887,7 +26885,7 @@
             },
             "response_coverage_rate": {
               "state": "measured",
-              "value": 88.6
+              "value": 91.4
             },
             "avg_triage_days": {
               "state": "measured",
@@ -26895,7 +26893,7 @@
             },
             "avg_pr_review_days": {
               "state": "measured",
-              "value": 1.2
+              "value": 2.4
             },
             "has_jira_sync": {
               "state": "measured",
@@ -26903,7 +26901,7 @@
             },
             "repo_views_14d": {
               "state": "measured",
-              "value": 43
+              "value": 44
             }
           },
           "composition": null
@@ -26951,7 +26949,7 @@
             },
             "uses_jubilant": {
               "state": "measured",
-              "value": false
+              "value": true
             },
             "coverage_pct": {
               "state": "insufficient_data",
@@ -27094,7 +27092,7 @@
             },
             "repo_views_14d": {
               "state": "measured",
-              "value": 123
+              "value": 122
             }
           },
           "composition": null
@@ -27142,7 +27140,7 @@
             },
             "uses_jubilant": {
               "state": "measured",
-              "value": false
+              "value": true
             },
             "coverage_pct": {
               "state": "insufficient_data",
@@ -27285,7 +27283,7 @@
             },
             "repo_views_14d": {
               "state": "measured",
-              "value": 123
+              "value": 122
             }
           },
           "composition": null
@@ -27476,7 +27474,7 @@
             },
             "repo_views_14d": {
               "state": "measured",
-              "value": 123
+              "value": 122
             }
           },
           "composition": null
@@ -27524,7 +27522,7 @@
             },
             "uses_jubilant": {
               "state": "measured",
-              "value": false
+              "value": true
             },
             "coverage_pct": {
               "state": "insufficient_data",
@@ -27667,7 +27665,7 @@
             },
             "repo_views_14d": {
               "state": "measured",
-              "value": 123
+              "value": 122
             }
           },
           "composition": null
@@ -27858,7 +27856,7 @@
             },
             "repo_views_14d": {
               "state": "measured",
-              "value": 123
+              "value": 122
             }
           },
           "composition": null
@@ -28031,7 +28029,7 @@
             },
             "response_coverage_rate": {
               "state": "measured",
-              "value": 87.8
+              "value": 92.9
             },
             "avg_triage_days": {
               "state": "measured",
@@ -28039,7 +28037,7 @@
             },
             "avg_pr_review_days": {
               "state": "measured",
-              "value": 1.8
+              "value": 1.9
             },
             "has_jira_sync": {
               "state": "measured",
@@ -28047,7 +28045,7 @@
             },
             "repo_views_14d": {
               "state": "measured",
-              "value": 132
+              "value": 169
             }
           },
           "composition": null
@@ -28060,9 +28058,9 @@
       "name": "draupnir",
       "description": "",
       "lifecycle": "stable",
-      "current_medal": "unrated",
+      "current_medal": "bronze",
       "target_medal": "gold",
-      "current_result": "below_minimum",
+      "current_result": "bronze",
       "target_result": "gold",
       "meets_target": false,
       "squad": "",
@@ -28079,15 +28077,15 @@
       ],
       "dimensions": {
         "test_verification": {
-          "medal": "unrated",
+          "medal": "bronze",
           "target": "gold",
           "applicability": "scored",
           "meets_target": false,
-          "result": "below_minimum",
+          "result": "bronze",
           "metrics": {
             "latest_build_passing": {
               "state": "measured",
-              "value": false
+              "value": true
             },
             "integration_test_evidence_present": {
               "state": "measured",
@@ -28241,7 +28239,7 @@
             },
             "repo_views_14d": {
               "state": "measured",
-              "value": 3
+              "value": 4
             }
           },
           "composition": null
@@ -28435,7 +28433,7 @@
             },
             "repo_views_14d": {
               "state": "measured",
-              "value": 7
+              "value": 8
             }
           },
           "composition": null
@@ -28448,9 +28446,9 @@
       "name": "mas-cli",
       "description": "",
       "lifecycle": "stable",
-      "current_medal": "unrated",
+      "current_medal": "bronze",
       "target_medal": "gold",
-      "current_result": "below_minimum",
+      "current_result": "bronze",
       "target_result": "gold",
       "meets_target": false,
       "squad": "",
@@ -28467,15 +28465,15 @@
       ],
       "dimensions": {
         "test_verification": {
-          "medal": "unrated",
+          "medal": "bronze",
           "target": "gold",
           "applicability": "scored",
           "meets_target": false,
-          "result": "below_minimum",
+          "result": "bronze",
           "metrics": {
             "latest_build_passing": {
               "state": "measured",
-              "value": false
+              "value": true
             },
             "integration_test_evidence_present": {
               "state": "measured",
@@ -28610,7 +28608,7 @@
             },
             "response_coverage_rate": {
               "state": "measured",
-              "value": 80.0
+              "value": 100.0
             },
             "avg_triage_days": {
               "state": "measured",
@@ -28618,7 +28616,7 @@
             },
             "avg_pr_review_days": {
               "state": "measured",
-              "value": 1.8
+              "value": 10.7
             },
             "has_jira_sync": {
               "state": "measured",
@@ -28626,7 +28624,7 @@
             },
             "repo_views_14d": {
               "state": "measured",
-              "value": 10
+              "value": 14
             }
           },
           "composition": null
@@ -28639,9 +28637,9 @@
       "name": "matrix-appservice-irc",
       "description": "",
       "lifecycle": "stable",
-      "current_medal": "unrated",
+      "current_medal": "bronze",
       "target_medal": "gold",
-      "current_result": "below_minimum",
+      "current_result": "bronze",
       "target_result": "gold",
       "meets_target": false,
       "squad": "",
@@ -28658,15 +28656,15 @@
       ],
       "dimensions": {
         "test_verification": {
-          "medal": "unrated",
+          "medal": "bronze",
           "target": "gold",
           "applicability": "scored",
           "meets_target": false,
-          "result": "below_minimum",
+          "result": "bronze",
           "metrics": {
             "latest_build_passing": {
               "state": "measured",
-              "value": false
+              "value": true
             },
             "integration_test_evidence_present": {
               "state": "measured",
@@ -28820,7 +28818,7 @@
             },
             "repo_views_14d": {
               "state": "measured",
-              "value": 11
+              "value": 13
             }
           },
           "composition": null
@@ -29449,7 +29447,7 @@
             },
             "uses_jubilant": {
               "state": "measured",
-              "value": true
+              "value": false
             },
             "coverage_pct": {
               "state": "insufficient_data",
@@ -29576,7 +29574,7 @@
             },
             "response_coverage_rate": {
               "state": "measured",
-              "value": 92.3
+              "value": 96.0
             },
             "avg_triage_days": {
               "state": "measured",
@@ -29584,7 +29582,7 @@
             },
             "avg_pr_review_days": {
               "state": "measured",
-              "value": 1.9
+              "value": 1.8
             },
             "has_jira_sync": {
               "state": "measured",
@@ -29592,7 +29590,7 @@
             },
             "repo_views_14d": {
               "state": "measured",
-              "value": 112
+              "value": 95
             }
           },
           "composition": null
@@ -29640,7 +29638,7 @@
             },
             "uses_jubilant": {
               "state": "measured",
-              "value": true
+              "value": false
             },
             "coverage_pct": {
               "state": "measured",
@@ -29781,7 +29779,7 @@
             },
             "repo_views_14d": {
               "state": "measured",
-              "value": 290
+              "value": 307
             }
           },
           "composition": null
@@ -29813,15 +29811,15 @@
       ],
       "dimensions": {
         "test_verification": {
-          "medal": "bronze",
+          "medal": "unrated",
           "target": "silver",
           "applicability": "scored",
           "meets_target": false,
-          "result": "bronze",
+          "result": "below_minimum",
           "metrics": {
             "latest_build_passing": {
               "state": "measured",
-              "value": true
+              "value": false
             },
             "integration_test_evidence_present": {
               "state": "measured",
@@ -29956,7 +29954,7 @@
             },
             "response_coverage_rate": {
               "state": "measured",
-              "value": 86.1
+              "value": 86.5
             },
             "avg_triage_days": {
               "state": "measured",
@@ -29972,7 +29970,7 @@
             },
             "repo_views_14d": {
               "state": "measured",
-              "value": 211
+              "value": 178
             }
           },
           "composition": null
@@ -30147,7 +30145,7 @@
             },
             "response_coverage_rate": {
               "state": "measured",
-              "value": 89.7
+              "value": 93.1
             },
             "avg_triage_days": {
               "state": "measured",
@@ -30155,7 +30153,7 @@
             },
             "avg_pr_review_days": {
               "state": "measured",
-              "value": 1.0
+              "value": 2.4
             },
             "has_jira_sync": {
               "state": "measured",
@@ -30163,7 +30161,7 @@
             },
             "repo_views_14d": {
               "state": "measured",
-              "value": 415
+              "value": 414
             }
           },
           "composition": null
@@ -30354,7 +30352,7 @@
             },
             "repo_views_14d": {
               "state": "measured",
-              "value": 45
+              "value": 47
             }
           },
           "composition": null
@@ -30548,7 +30546,7 @@
             },
             "repo_views_14d": {
               "state": "measured",
-              "value": 104
+              "value": 102
             }
           },
           "composition": null
@@ -30681,11 +30679,11 @@
           "composition": null
         },
         "security_ssdlc": {
-          "medal": "silver",
+          "medal": "bronze",
           "target": "gold",
           "applicability": "scored",
           "meets_target": false,
-          "result": "silver",
+          "result": "bronze",
           "metrics": {
             "renovate_enabled": {
               "state": "measured",
@@ -30693,11 +30691,11 @@
             },
             "branch_protection_required_checks": {
               "state": "measured",
-              "value": true
+              "value": false
             },
             "signed_commits_required": {
               "state": "measured",
-              "value": true
+              "value": false
             },
             "sast_workflow_present": {
               "state": "measured",
@@ -30933,7 +30931,7 @@
             },
             "repo_views_14d": {
               "state": "measured",
-              "value": 8
+              "value": 7
             }
           },
           "composition": null
@@ -31108,7 +31106,7 @@
             },
             "response_coverage_rate": {
               "state": "measured",
-              "value": 70.0
+              "value": 75.0
             },
             "avg_triage_days": {
               "state": "measured",
@@ -31116,7 +31114,7 @@
             },
             "avg_pr_review_days": {
               "state": "measured",
-              "value": 2.6
+              "value": 6.2
             },
             "has_jira_sync": {
               "state": "measured",
@@ -31124,7 +31122,7 @@
             },
             "repo_views_14d": {
               "state": "measured",
-              "value": 14
+              "value": 13
             }
           },
           "composition": null
@@ -31350,15 +31348,15 @@
       ],
       "dimensions": {
         "test_verification": {
-          "medal": "bronze",
+          "medal": "unrated",
           "target": "gold",
           "applicability": "scored",
           "meets_target": false,
-          "result": "bronze",
+          "result": "below_minimum",
           "metrics": {
             "latest_build_passing": {
               "state": "measured",
-              "value": true
+              "value": false
             },
             "integration_test_evidence_present": {
               "state": "measured",
@@ -31366,7 +31364,7 @@
             },
             "uses_jubilant": {
               "state": "measured",
-              "value": false
+              "value": true
             },
             "coverage_pct": {
               "state": "insufficient_data",
@@ -31493,7 +31491,7 @@
             },
             "response_coverage_rate": {
               "state": "measured",
-              "value": 95.1
+              "value": 94.4
             },
             "avg_triage_days": {
               "state": "measured",
@@ -31509,7 +31507,7 @@
             },
             "repo_views_14d": {
               "state": "measured",
-              "value": 403
+              "value": 411
             }
           },
           "composition": null
@@ -31541,15 +31539,15 @@
       ],
       "dimensions": {
         "test_verification": {
-          "medal": "bronze",
+          "medal": "unrated",
           "target": "gold",
           "applicability": "scored",
           "meets_target": false,
-          "result": "bronze",
+          "result": "below_minimum",
           "metrics": {
             "latest_build_passing": {
               "state": "measured",
-              "value": true
+              "value": false
             },
             "integration_test_evidence_present": {
               "state": "measured",
@@ -31684,7 +31682,7 @@
             },
             "response_coverage_rate": {
               "state": "measured",
-              "value": 95.1
+              "value": 94.4
             },
             "avg_triage_days": {
               "state": "measured",
@@ -31700,7 +31698,7 @@
             },
             "repo_views_14d": {
               "state": "measured",
-              "value": 403
+              "value": 411
             }
           },
           "composition": null
@@ -31891,7 +31889,7 @@
             },
             "repo_views_14d": {
               "state": "measured",
-              "value": 46
+              "value": 47
             }
           },
           "composition": null
@@ -32066,15 +32064,15 @@
             },
             "response_coverage_rate": {
               "state": "measured",
-              "value": 88.1
+              "value": 90.0
             },
             "avg_triage_days": {
               "state": "measured",
-              "value": 196.5
+              "value": 205.7
             },
             "avg_pr_review_days": {
               "state": "measured",
-              "value": 4.1
+              "value": 4.2
             },
             "has_jira_sync": {
               "state": "measured",
@@ -32082,7 +32080,7 @@
             },
             "repo_views_14d": {
               "state": "measured",
-              "value": 400
+              "value": 431
             }
           },
           "composition": null
@@ -32446,7 +32444,7 @@
             },
             "response_coverage_rate": {
               "state": "measured",
-              "value": 84.8
+              "value": 87.2
             },
             "avg_triage_days": {
               "state": "measured",
@@ -32454,7 +32452,7 @@
             },
             "avg_pr_review_days": {
               "state": "measured",
-              "value": 1.3
+              "value": 1.2
             },
             "has_jira_sync": {
               "state": "measured",
@@ -32462,7 +32460,7 @@
             },
             "repo_views_14d": {
               "state": "measured",
-              "value": 558
+              "value": 570
             }
           },
           "composition": null
@@ -32595,19 +32593,19 @@
           "composition": null
         },
         "security_ssdlc": {
-          "medal": "unrated",
+          "medal": "bronze",
           "target": "silver",
           "applicability": "scored",
           "meets_target": false,
-          "result": "below_minimum",
+          "result": "bronze",
           "metrics": {
             "renovate_enabled": {
               "state": "measured",
-              "value": false
+              "value": true
             },
             "branch_protection_required_checks": {
               "state": "measured",
-              "value": true
+              "value": false
             },
             "signed_commits_required": {
               "state": "measured",
@@ -32637,7 +32635,7 @@
             },
             "response_coverage_rate": {
               "state": "measured",
-              "value": 50.0
+              "value": 60.0
             },
             "avg_triage_days": {
               "state": "measured",
@@ -32645,7 +32643,7 @@
             },
             "avg_pr_review_days": {
               "state": "measured",
-              "value": 0.4
+              "value": 0.3
             },
             "has_jira_sync": {
               "state": "measured",
@@ -32653,7 +32651,7 @@
             },
             "repo_views_14d": {
               "state": "measured",
-              "value": 14
+              "value": 11
             }
           },
           "composition": null
@@ -32786,15 +32784,15 @@
           "composition": null
         },
         "security_ssdlc": {
-          "medal": "unrated",
+          "medal": "silver",
           "target": "silver",
           "applicability": "scored",
-          "meets_target": false,
-          "result": "below_minimum",
+          "meets_target": true,
+          "result": "silver",
           "metrics": {
             "renovate_enabled": {
               "state": "measured",
-              "value": false
+              "value": true
             },
             "branch_protection_required_checks": {
               "state": "measured",
@@ -32828,7 +32826,7 @@
             },
             "response_coverage_rate": {
               "state": "measured",
-              "value": 75.0
+              "value": 92.9
             },
             "avg_triage_days": {
               "state": "measured",
@@ -32836,7 +32834,7 @@
             },
             "avg_pr_review_days": {
               "state": "measured",
-              "value": 3.7
+              "value": 3.3
             },
             "has_jira_sync": {
               "state": "measured",
@@ -32844,7 +32842,7 @@
             },
             "repo_views_14d": {
               "state": "measured",
-              "value": 841
+              "value": 851
             }
           },
           "composition": null
@@ -33019,7 +33017,7 @@
             },
             "response_coverage_rate": {
               "state": "measured",
-              "value": 72.7
+              "value": 81.8
             },
             "avg_triage_days": {
               "state": "measured",
@@ -33027,7 +33025,7 @@
             },
             "avg_pr_review_days": {
               "state": "measured",
-              "value": 10.2
+              "value": 8.6
             },
             "has_jira_sync": {
               "state": "measured",
@@ -33224,7 +33222,7 @@
             },
             "repo_views_14d": {
               "state": "measured",
-              "value": 52
+              "value": 61
             }
           },
           "composition": null
