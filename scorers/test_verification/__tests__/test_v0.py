@@ -665,8 +665,10 @@ def test_charm_without_metadata_at_scope_is_insufficient_not_noncompliant():
     assert all(
         outcome.state == MetricState.INSUFFICIENT_DATA
         and "No charm metadata" in (outcome.reason or "")
-        for outcome in result.values()
+        for key, outcome in result.items()
+        if key != "uses_tf_v1_provider"
     )
+    assert result["uses_tf_v1_provider"].state == MetricState.NOT_APPLICABLE
 
 
 def test_missing_repository_is_insufficient_not_adoption():

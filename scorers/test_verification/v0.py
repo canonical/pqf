@@ -481,13 +481,17 @@ def evaluate_files(
 ) -> dict[str, MetricOutcome]:
     if unit.product_type != ProductType.CHARM:
         return {key: not_applicable("This is not a charm.") for key in CHARM_METRICS}
+    terraform = terraform_outcome(files)
     scope = normalize(unit.subpath or ".")
     if not any(
         posixpath.join(scope, name).removeprefix("./") in files
         for name in ("charmcraft.yaml", "metadata.yaml")
     ):
         reason = "No charm metadata at the configured path; check the product subpath."
-        return {key: insufficient_data(reason) for key in CHARM_METRICS}
+        return {
+            **{key: insufficient_data(reason) for key in CHARM_METRICS},
+            "uses_tf_v1_provider": terraform,
+        }
     other_charms = [
         normalize(posixpath.dirname(path))
         for path in files
@@ -503,7 +507,7 @@ def evaluate_files(
     result = {
         "uses_ops_testing": _python_outcome(component, jubilant=False),
         "uses_jubilant": _python_outcome(component, jubilant=True),
-        "uses_tf_v1_provider": terraform_outcome(component),
+        "uses_tf_v1_provider": terraform,
     }
     unit_runners = []
     charm_ci = []

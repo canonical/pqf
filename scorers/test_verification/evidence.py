@@ -105,12 +105,9 @@ class Evidence:
             config = name in {"charmcraft.yaml", "metadata.yaml", "spread.yaml"} or (
                 "concierge" in name and name.endswith((".yaml", ".yml"))
             )
-            component = scoped(path, scope) and (
-                path.endswith((".tf", ".tf.json"))
-                or path.endswith(".py")
-                and "tests" in path.split("/")
-            )
-            if not (workflow or config or component):
+            terraform = path.endswith((".tf", ".tf.json"))
+            component = scoped(path, scope) and path.endswith(".py") and "tests" in path.split("/")
+            if not (workflow or config or terraform or component):
                 continue
             blob = self.get(f"/git/blobs/{entry['sha']}")
             if blob.get("encoding") != "base64" or not isinstance(blob.get("content"), str):
@@ -134,7 +131,7 @@ class Evidence:
 
 
 def acquire(unit: EvaluationUnit, token: str | None) -> dict[str, str]:
-    """Return the scoped default-branch files needed by the V0 testing checks."""
+    """Return scoped testing evidence and Terraform from the whole repository."""
     if not unit.repo:
         raise UninterpretableRepository("Repository is absent.")
     evidence = Evidence(unit.repo, token)

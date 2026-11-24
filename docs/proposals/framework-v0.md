@@ -101,29 +101,49 @@ Any additional variation should be agreed as a supported practice before it is a
 
 - Tests may live at the repository root or inside a monorepo component.
 
-### Uses TF V1 Provider
+### Juju provider version bounds
 
 **ID:** `uses_tf_v1_provider`\
-**Implementation:** `uses-tf-v1-provider/v2`\
+**Implementation:** `uses-tf-v1-provider/v3`\
 **Applies to:** charms\
-**What it measures:** every in-scope Terraform module explicitly bounds Juju provider versions at 1.0 or newer\
+**What it measures:** Juju provider version bounds across the entire source repository,
+independent of the charm subpath or module location. This is shared repository evidence
+for every tracked charm in that repository, not an assessment of each charm in isolation.\
 **Measurement**
 
-1. Parse HCL with `python-hcl2` and Terraform JSON with the standard JSON parser.
-2. Require an explicit `juju/juju` provider source and a `>= A, < B` range with
+1. Enumerate all `.tf` and `.tf.json` files on the repository's default branch, including
+   charm modules, product bundles, test setups, dependency modules, and documentation
+   examples. Do not follow remote module sources.
+2. Group files by directory and parse HCL with `python-hcl2` and Terraform JSON with the
+   standard JSON parser. Exclude a module only when its provider sources are explicitly
+   non-Juju, all its resources/data/provider blocks belong to those providers, and it
+   contains neither module calls nor Juju usage. Unclassified modules remain in scope;
+   no ownership inference or directory-name heuristics are used.
+3. Require an explicit `juju/juju` provider source and a `>= A, < B` range with
    `1.0 <= A < B` in every module, including test setup modules. For example,
    `>= 1.0, < 3.0` passes; `~> 1.2`, exact pins, and unbounded requirements fail.
-3. Return `false` for missing, wrong-source, older, or noncanonical requirements, with the path
+4. Return `false` for missing, wrong-source, older, or noncanonical requirements, with the path
    and declaration in the outcome reason. Unreadable declarations and empty intervals return
-   *insufficient data*.
-4. Return *not applicable* when the component has no Terraform modules.
+   *insufficient data* when no definite violation is found. Required acquisition failures
+   abort the scoring job; they never become absent modules.
+5. Return *not applicable* when the repository has no Juju or unclassified modules.
+
+Passing certifies provider bounds only. **Module locations, module existence, and overall
+Terraform correctness are not certified by this metric.** Location compliance is a
+separate future metric. A violation in a product bundle or sibling charm's module affects
+all tracked charms sharing this source repository; the evidence identifies the failing
+module rather than attributing it to a particular charm.
 
 **Accepted variations**
 
-- Tests may live at the repository root or inside a monorepo component.
+- Modules and tests may live anywhere in the repository. This permits measurement of
+  existing layouts; it does not endorse those layouts as compliant with team standards.
 - The provider's local name may differ from `juju`; the fully qualified source
   `registry.terraform.io/juju/juju` is equivalent to `juju/juju`.
 - The two version bounds may appear in either order.
+
+The previous component-scoped revision is no longer selected by any contract and has been
+removed. Revision `v3` runs through the existing V0 testing runner.
 
 ### Uses GitHub-hosted runners for unit tests
 

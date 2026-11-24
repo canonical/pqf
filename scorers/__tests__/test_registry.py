@@ -52,6 +52,30 @@ terraform {
     assert result["uses_tf_v1_provider"].value is True
 
 
+def test_v0_terraform_includes_product_bundle_outside_charm(monkeypatch):
+    monkeypatch.setattr(
+        "scorers.test_verification.evidence.acquire",
+        lambda unit, token: {
+            "charm/charmcraft.yaml": "name: example",
+            "terraform/product/versions.tf": """
+terraform {
+  required_providers {
+    juju = { source = "juju/juju", version = ">= 2.2.0" }
+  }
+}
+""",
+        },
+    )
+    result = registry.run_dimension(
+        replace(UNIT, subpath="charm"),
+        "test_verification",
+        _dimension_config("v0", "test_verification"),
+        registry.ScorerContext("token"),
+    )
+    assert result["uses_tf_v1_provider"].value is False
+    assert "terraform/product/versions.tf" in result["uses_tf_v1_provider"].reason
+
+
 def test_run_dimension_executes_shared_runner_once_and_filters_selected_outputs(monkeypatch):
     calls: list[tuple[EvaluationUnit, registry.ScorerContext]] = []
 

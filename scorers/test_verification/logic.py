@@ -1,7 +1,7 @@
 import requests
 
 from engine.metric_outcomes import MetricOutcome, insufficient_data, measured
-from engine.models import EvaluationUnit
+from engine.models import EvaluationUnit, ProductType
 
 # Reuse shared helpers for GitHub interactions
 from scorers.shared.github_signals import (
@@ -124,6 +124,8 @@ def compute_v0_metrics(
     from scorers.test_verification.evidence import UninterpretableRepository, acquire
     from scorers.test_verification.v0 import CHARM_METRICS, evaluate_files
 
+    if unit.product_type != ProductType.CHARM:
+        return evaluate_files(unit, {})
     try:
         files = acquire(unit, github_token)
     except UninterpretableRepository as exc:
