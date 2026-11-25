@@ -307,7 +307,7 @@ def test_model_failure_is_unavailable_without_exposing_error(mocker):
     docs_evidence(UNIT.repo, "docs", "Meaningful documentation content. " * 10)
     client = model_response(mocker, "")
     client.chat.completions.create.side_effect = APIError(
-        "sensitive provider detail", request=mocker.Mock(), body=None
+        "sensitive provider detail", request=mocker.Mock(headers={}), body=None
     )
     outcome = logic.compute_v0_metrics(UNIT, "", "key")["diataxis_coverage_ai"]
     assert outcome.state == MetricState.INSUFFICIENT_DATA
@@ -320,7 +320,7 @@ def test_model_failure_is_logged_for_operators(mocker, caplog):
     docs_evidence(UNIT.repo, "docs", "Meaningful documentation content. " * 10)
     client = model_response(mocker, "")
     client.chat.completions.create.side_effect = APIError(
-        "sensitive provider detail", request=mocker.Mock(), body=None
+        "sensitive provider detail", request=mocker.Mock(headers={}), body=None
     )
     logic.compute_v0_metrics(UNIT, "", "key")
     assert "APIError" in caplog.text

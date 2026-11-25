@@ -75,16 +75,18 @@ major-only track (`4/stable`) accepts any stable release in that line
   including aliases and comments. Juju requirements must explicitly identify
   `juju/juju` or `registry.terraform.io/juju/juju`; the local alias can be
   arbitrary. An omitted source defaults to `hashicorp/juju` and does not qualify.
-  Every Juju or unclassified module in the repository must use an explicit `>= A, < B` range with
-  `1.0 <= A < B`; bound order is irrelevant. Pessimistic (`~>`), exact, and
-  unbounded requirements are measured false. Dynamic/unreadable declarations
-  and empty intervals are insufficient; missing requirements are measured false;
+  Every Juju or unclassified module in the repository must exclude provider versions
+  below 1.0. Upper bounds are optional: `>= 1.0`, `~> 1.0`, and exact pins at 1.0
+  or newer pass. Constraints permitting versions below 1.0 are measured false.
+  Dynamic/unreadable declarations and empty intervals are insufficient;
+  missing requirements are measured false;
   no applicable modules is not applicable. Only explicitly non-Juju modules without
   module calls, Juju usage, or unclassified provider ownership are excluded.
   All tracked charms sharing a repository use the same Terraform evidence, independent
-  of their source subpaths. Passing certifies provider bounds, not module locations or
-  overall Terraform correctness. The unused component-scoped revision was removed;
-  `uses-tf-v1-provider/v3` uses the existing V0 runner and acquisition path.
+  of their source subpaths. Passing certifies the minimum provider version, not module
+  locations or overall Terraform correctness. The unused component-scoped revision was removed;
+  `uses-tf-v1-provider/v4` uses the existing V0 runner and acquisition path with no
+  legacy compatibility implementation.
 
 All eight charm-only metrics are not applicable to snaps. Missing required
 test/workflow/configuration evidence is measured false, rather than adoption by

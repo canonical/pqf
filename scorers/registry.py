@@ -321,7 +321,7 @@ METRIC_BINDINGS = MappingProxyType(
                         "uses_ops_testing": "uses-ops-testing/v1",
                         "uses_gh_runners_unit_testing": "uses-gh-runners-unit-testing/v1",
                         "uses_jubilant": "uses-jubilant/v2",
-                        "uses_tf_v1_provider": "uses-tf-v1-provider/v3",
+                        "uses_tf_v1_provider": "uses-tf-v1-provider/v4",
                         "uses_charm_ci": "uses-charm-ci/v1",
                         "supports_canonical_k8s": "supports-canonical-k8s/v1",
                         "supports_juju_4": "supports-juju-4/v2",

@@ -29,7 +29,7 @@ interface DistributionCounts {
 type MetricStatus = Result | 'measured'
 
 function valueCell(outcome: MetricOutcome) {
-  return <MetricEvidence outcome={outcome} plain />
+  return <MetricEvidence outcome={outcome} plain showReason={false} />
 }
 
 function metricStatus(row: MetricDistributionRow): MetricStatus {

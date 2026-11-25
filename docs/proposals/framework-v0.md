@@ -101,13 +101,14 @@ Any additional variation should be agreed as a supported practice before it is a
 
 - Tests may live at the repository root or inside a monorepo component.
 
-### Juju provider version bounds
+### Juju provider v1+
 
 **ID:** `uses_tf_v1_provider`\
-**Implementation:** `uses-tf-v1-provider/v3`\
+**Implementation:** `uses-tf-v1-provider/v4`\
 **Applies to:** charms\
-**What it measures:** Juju provider version bounds across the entire source repository,
-independent of the charm subpath or module location. This is shared repository evidence
+**What it measures:** whether every applicable Terraform module in the source repository
+excludes Juju provider versions below 1.0, independent of the charm subpath or module location.
+This is shared repository evidence
 for every tracked charm in that repository, not an assessment of each charm in isolation.\
 **Measurement**
 
@@ -119,17 +120,19 @@ for every tracked charm in that repository, not an assessment of each charm in i
    non-Juju, all its resources/data/provider blocks belong to those providers, and it
    contains neither module calls nor Juju usage. Unclassified modules remain in scope;
    no ownership inference or directory-name heuristics are used.
-3. Require an explicit `juju/juju` provider source and a `>= A, < B` range with
-   `1.0 <= A < B` in every module, including test setup modules. For example,
-   `>= 1.0, < 3.0` passes; `~> 1.2`, exact pins, and unbounded requirements fail.
-4. Return `false` for missing, wrong-source, older, or noncanonical requirements, with the path
-   and declaration in the outcome reason. Unreadable declarations and empty intervals return
+3. Require an explicit `juju/juju` provider source and a version constraint excluding
+   versions below 1.0 in every applicable module. Upper bounds are optional. For example,
+   `>= 1.0`, `>= 2.2.0`, `~> 1.2`, and exact pins at 1.0 or newer pass;
+   `~> 0.20` and `< 3.0` alone fail.
+4. Return `false` for missing requirements, wrong sources, or constraints permitting
+   versions below 1.0, with the path and declaration in the reason.
+   Unreadable declarations and empty intervals return
    *insufficient data* when no definite violation is found. Required acquisition failures
    abort the scoring job; they never become absent modules.
 5. Return *not applicable* when the repository has no Juju or unclassified modules.
 
-Passing certifies provider bounds only. **Module locations, module existence, and overall
-Terraform correctness are not certified by this metric.** Location compliance is a
+Passing certifies the minimum provider version only. **Module locations, module existence,
+and overall Terraform correctness are not certified by this metric.** Location compliance is a
 separate future metric. A violation in a product bundle or sibling charm's module affects
 all tracked charms sharing this source repository; the evidence identifies the failing
 module rather than attributing it to a particular charm.
@@ -140,10 +143,11 @@ module rather than attributing it to a particular charm.
   existing layouts; it does not endorse those layouts as compliant with team standards.
 - The provider's local name may differ from `juju`; the fully qualified source
   `registry.terraform.io/juju/juju` is equivalent to `juju/juju`.
-- The two version bounds may appear in either order.
+- Constraints may use `>=`, `>`, `~>`, or exact pins. Combined constraints are evaluated
+  together; optional upper bounds do not affect passing unless the range is empty.
 
-The previous component-scoped revision is no longer selected by any contract and has been
-removed. Revision `v3` runs through the existing V0 testing runner.
+Revision `v4` replaces the previous measurement in the existing V0 testing runner.
+Unused revisions are not retained as compatibility implementations.
 
 ### Uses GitHub-hosted runners for unit tests
 
