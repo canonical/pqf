@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-25T04:17:23.135851+00:00",
+  "generated_at": "2026-11-25T15:23:30.578915+00:00",
   "metric_schema_version": 1,
   "framework": {
     "id": "v0",
@@ -8,8 +8,8 @@
     "status": "active",
     "description": "The dependable minimum PQF quality baseline."
   },
-  "contract_digest": "c54a9101ff43849b603d088f7b08dad38cdbb441f87242c54c890875acfbdb99",
-  "source_revision": "a71883eca3be0599e296fe955d643b7a4fba34e7",
+  "contract_digest": "561a714624d118cd83959d426b1765f6f50145d7289a188b3985ea473e6ffd75",
+  "source_revision": "4d6937eca25768eaacfc5fb506130bd5fe9e49d3",
   "implementation_fingerprints": {
     "branch-protection-required-checks/v2": "58c4364c02b83704a87f5eafe939dcce78ee029d32519bbe4db15c3b354789ea",
     "contributing-present/v2": "26b4fd8f280cc1466eaf4c52fbce2b97a0914030464bb86a4c948ea36c2a89a0",
@@ -18,21 +18,21 @@
     "renovate-enabled/v2": "7f6efbcf7885c8cdeea9aed380819d5002f5ec12c9a490b618348c74d16ff5e7",
     "security-file-present/v2": "f98e9c672f13626f4e17d49fc8bd17c9e5544f1d142e699461ca81e2bdb03339",
     "signed-commits-required/v2": "8aa347e7cf83c279e526949bfcf9614f4740942b4dd9fe6bf19e829020d1b6ca",
-    "supports-canonical-k8s/v1": "2100676eb3d39c272e2a63ba6ca741f336a5c70e9b4f092877482eb0d7c74fa0",
-    "supports-juju-4/v2": "195ec6165376dcb788001b4a19081f81311e5d2cc34c94657b705f35defc0b05",
-    "supports-juju-lts/v1": "f1f2626c0597e19e30abc87bab66d2bad1b9c131d652d1502997a9f468aa1891",
-    "uses-charm-ci/v1": "84136b76b067e2fd0467583e606eec583ac1cc65912a4295473fdf3a63a19a2f",
-    "uses-gh-runners-unit-testing/v1": "59d3214be982e6686a5c17d722508af557dd5cae1c5940248f6fe542a9542799",
-    "uses-jubilant/v2": "54bf410902ac873a191ba64245078bd4fbc89a26f4420bd4f84bb5890e9c6caa",
-    "uses-ops-testing/v1": "1aea4b9e520a3030c1a8ec2ae2c342963d6ffedbfded03e9dcf606fe10cc53da",
+    "supports-canonical-k8s/v1": "3e18fe93e7e9e2ae86354376693ca7ca2df8df5ec3000c5e74f65e64200f60d5",
+    "supports-juju-4/v2": "b0a9a2a2b36d05229913e9bad613464b15b815569520b06f5bdf43d5fd2ea543",
+    "supports-juju-lts/v1": "06869fbe3852d666e2734b256ec66db75576db662d35e51931e63bf33292f03b",
+    "uses-charm-ci/v1": "33ca3a86eb591f959ca8d67843e08e3c5c6dd931d1684a3cae7f5e5d627f1282",
+    "uses-gh-runners-unit-testing/v1": "eab42889801724da5f685ef67cf552afc428d36d5ef1f4218d8fb6768271d0bb",
+    "uses-jubilant/v2": "d508f400b2eb4480fcce8b684e5be94d26b6eecfcefd49c931f6d1b6fe108c9b",
+    "uses-ops-testing/v1": "45fdb20c888f00b8e6b921f3ad40f0a03a5102208d13f82bd2913a84b35c0985",
     "uses-sphinx-stack/v1": "628e23c5149ee86096ce5bfea244083b444959cb8d84dd0576205e74f1ffe335",
-    "uses-tf-v1-provider/v3": "836d47084899c9f9181de2cd8b2571adc1dad0fec8a3a06e2031ac0103176cec"
+    "uses-tf-v1-provider/v4": "42e3d61abfc47e123fb9179b722882b02a617618a1ab5ea662f9477ae2ca3a9c"
   },
   "compliance_summary": {
     "total": 36,
-    "meeting_target": 4,
-    "below_target": 29,
-    "insufficient_data": 3
+    "meeting_target": 5,
+    "below_target": 27,
+    "insufficient_data": 4
   },
   "products": [
     {
@@ -223,18 +223,18 @@
       "parent_product_ids": [],
       "dimensions": {
         "test_verification": {
-          "medal": "bronze",
+          "medal": "silver",
           "target": "silver",
           "applicability": "scored",
-          "meets_target": false,
-          "result": "bronze",
+          "meets_target": true,
+          "result": "silver",
           "metrics": {},
           "composition": [
             {
               "product_id": "aproxy-charm",
               "repo": "canonical/aproxy-operator",
-              "medal": "bronze",
-              "result": "bronze",
+              "medal": "silver",
+              "result": "silver",
               "applicability": "scored",
               "metrics": {
                 "uses_ops_testing": {
@@ -251,8 +251,7 @@
                 },
                 "uses_tf_v1_provider": {
                   "state": "measured",
-                  "value": false,
-                  "reason": "terraform/charm/terraform.tf: juju/juju constraint '~> 2.0' must use >= A, < B with A >= 1.0.\nterraform/charm/tests/setup/main.tf: juju/juju constraint '~> 2.0' must use >= A, < B with A >= 1.0."
+                  "value": true
                 },
                 "uses_charm_ci": {
                   "state": "measured",
@@ -358,9 +357,9 @@
                   "value": ""
                 },
                 "diataxis_coverage_ai": {
-                  "state": "measured",
-                  "value": 4,
-                  "reason": "Tutorial: tutorial.md contains a complete step-by-step guided exercise deploying aproxy with ubuntu charm, testing configuration and connectivity. How-to: Multiple task-oriented guides present (configure.md with proxy settings, upgrade.md with refresh commands, back-up-restore.md with backup procedures). Reference: Technical specifications exist including actions.md, configurations.md, integrations.md describing interfaces, and charm-architecture.md with architectural diagrams and component descriptions. Explanation: security.md provides conceptual discussion of risks, privileged operations, and good practices; charm-architecture.md contains design rationale and system context explanations."
+                  "state": "insufficient_data",
+                  "value": null,
+                  "reason": "AI documentation assessment is unavailable."
                 }
               },
               "excluded_from_parent_medal": false
@@ -520,8 +519,7 @@
                 },
                 "uses_tf_v1_provider": {
                   "state": "measured",
-                  "value": false,
-                  "reason": "terraform/charm/backup_integrator/terraform.tf: juju/juju constraint '~> 1.0' must use >= A, < B with A >= 1.0.\nterraform/charm/backup_integrator/tests/setup/main.tf: juju/juju constraint '~> 1.0' must use >= A, < B with A >= 1.0.\nterraform/charm/bacula_fd/terraform.tf: juju/juju constraint '~> 1.0' must use >= A, < B with A >= 1.0.\nterraform/charm/bacula_fd/tests/setup/main.tf: juju/juju constraint '~> 1.0' must use >= A, < B with A >= 1.0.\nterraform/charm/bacula_server/terraform.tf: juju/juju constraint '~> 1.0' must use >= A, < B with A >= 1.0.\nterraform/charm/bacula_server/tests/setup/main.tf: juju/juju constraint '~> 1.0' must use >= A, < B with A >= 1.0.\nterraform/product/terraform.tf: juju/juju constraint '~> 1.0' must use >= A, < B with A >= 1.0.\nterraform/product/tests/setup/main.tf: juju/juju constraint '~> 1.0' must use >= A, < B with A >= 1.0."
+                  "value": true
                 },
                 "uses_charm_ci": {
                   "state": "measured",
@@ -564,8 +562,7 @@
                 },
                 "uses_tf_v1_provider": {
                   "state": "measured",
-                  "value": false,
-                  "reason": "terraform/charm/backup_integrator/terraform.tf: juju/juju constraint '~> 1.0' must use >= A, < B with A >= 1.0.\nterraform/charm/backup_integrator/tests/setup/main.tf: juju/juju constraint '~> 1.0' must use >= A, < B with A >= 1.0.\nterraform/charm/bacula_fd/terraform.tf: juju/juju constraint '~> 1.0' must use >= A, < B with A >= 1.0.\nterraform/charm/bacula_fd/tests/setup/main.tf: juju/juju constraint '~> 1.0' must use >= A, < B with A >= 1.0.\nterraform/charm/bacula_server/terraform.tf: juju/juju constraint '~> 1.0' must use >= A, < B with A >= 1.0.\nterraform/charm/bacula_server/tests/setup/main.tf: juju/juju constraint '~> 1.0' must use >= A, < B with A >= 1.0.\nterraform/product/terraform.tf: juju/juju constraint '~> 1.0' must use >= A, < B with A >= 1.0.\nterraform/product/tests/setup/main.tf: juju/juju constraint '~> 1.0' must use >= A, < B with A >= 1.0."
+                  "value": true
                 },
                 "uses_charm_ci": {
                   "state": "measured",
@@ -608,8 +605,7 @@
                 },
                 "uses_tf_v1_provider": {
                   "state": "measured",
-                  "value": false,
-                  "reason": "terraform/charm/backup_integrator/terraform.tf: juju/juju constraint '~> 1.0' must use >= A, < B with A >= 1.0.\nterraform/charm/backup_integrator/tests/setup/main.tf: juju/juju constraint '~> 1.0' must use >= A, < B with A >= 1.0.\nterraform/charm/bacula_fd/terraform.tf: juju/juju constraint '~> 1.0' must use >= A, < B with A >= 1.0.\nterraform/charm/bacula_fd/tests/setup/main.tf: juju/juju constraint '~> 1.0' must use >= A, < B with A >= 1.0.\nterraform/charm/bacula_server/terraform.tf: juju/juju constraint '~> 1.0' must use >= A, < B with A >= 1.0.\nterraform/charm/bacula_server/tests/setup/main.tf: juju/juju constraint '~> 1.0' must use >= A, < B with A >= 1.0.\nterraform/product/terraform.tf: juju/juju constraint '~> 1.0' must use >= A, < B with A >= 1.0.\nterraform/product/tests/setup/main.tf: juju/juju constraint '~> 1.0' must use >= A, < B with A >= 1.0."
+                  "value": true
                 },
                 "uses_charm_ci": {
                   "state": "measured",
@@ -715,9 +711,9 @@
                   "value": "2.0"
                 },
                 "diataxis_coverage_ai": {
-                  "state": "measured",
-                  "value": 4,
-                  "reason": "Tutorial: tutorial.md contains a complete step-by-step guided exercise deploying bacula-server with S3 and PostgreSQL, accessing Baculum, and cleanup. How-to: Multiple task-oriented guides exist including integrate-with-backup-integrator-charm.md (integration steps), use-baculum.md (performing backups/restores), and upgrade.md (upgrade procedures). Reference: Extensive factual documentation including actions.md, configurations.md, integrations.md (relation interfaces and commands), and architecture documents describing components, events, and code structure. Explanation: security.md provides conceptual discussion of security design choices and omitted protections in Bacula charms."
+                  "state": "insufficient_data",
+                  "value": null,
+                  "reason": "AI documentation assessment is unavailable."
                 }
               },
               "excluded_from_parent_medal": false
@@ -971,8 +967,7 @@
                 },
                 "uses_tf_v1_provider": {
                   "state": "measured",
-                  "value": false,
-                  "reason": "terraform/versions.tf: juju/juju constraint '>= 2.2.0' must use >= A, < B with A >= 1.0.\nterraform/product/versions.tf: juju/juju constraint '>= 2.2.0' must use >= A, < B with A >= 1.0.\nterraform/product/tests/setup/main.tf: juju/juju constraint '>= 2.2.0' must use >= A, < B with A >= 1.0.\nterraform/tests/setup/main.tf: juju/juju constraint '>= 2.2.0' must use >= A, < B with A >= 1.0."
+                  "value": true
                 },
                 "uses_charm_ci": {
                   "state": "measured",
@@ -1172,7 +1167,7 @@
                 "uses_tf_v1_provider": {
                   "state": "measured",
                   "value": false,
-                  "reason": "terraform/charm/versions.tf: juju/juju constraint '>= 0.17.1' must use >= A, < B with A >= 1.0."
+                  "reason": "terraform/charm/versions.tf: juju/juju constraint '>= 0.17.1' allows versions below 1.0."
                 },
                 "uses_charm_ci": {
                   "state": "measured",
@@ -1228,9 +1223,9 @@
                   "value": ""
                 },
                 "diataxis_coverage_ai": {
-                  "state": "measured",
-                  "value": 4,
-                  "reason": "Tutorial: getting-started.md provides a complete hands-on walkthrough with specific steps to deploy, configure, and test the Chrony charm. How-to: Multiple guides exist for specific tasks (enable-nts.md, setup-time-sources.md, upgrade.md) with actionable instructions. Reference: charm-architecture.md contains factual technical descriptions of the charm's structure, components, systemd service, ports, and code organization. Explanation: charm-architecture.md also explains concepts like how the charm operates as a machine charm, the relationship between components, and how NTS provides security enhancements over NTP."
+                  "state": "insufficient_data",
+                  "value": null,
+                  "reason": "AI documentation assessment is unavailable."
                 }
               },
               "excluded_from_parent_medal": false
@@ -1259,9 +1254,9 @@
                   "value": ""
                 },
                 "diataxis_coverage_ai": {
-                  "state": "measured",
-                  "value": 4,
-                  "reason": "Tutorial: docs/tutorial.md contains a complete learning-oriented walkthrough deploying the charm with prerequisites, step-by-step commands, and cleanup. How-to: docs/how-to/integrate-with-cos.md and upgrade.md provide task-oriented instructions for specific operations (COS integration and upgrading). Reference: docs/reference/ contains factual descriptions including metrics.md (list of metrics with definitions), configurations.md (links to configuration reference), integrations.md (interface specifications), and charm-architecture.md (technical architecture details, event descriptions, code structure). Explanation: docs/explanation/security.md discusses security concepts including risks and patch management approach."
+                  "state": "insufficient_data",
+                  "value": null,
+                  "reason": "AI documentation assessment is unavailable."
                 }
               },
               "excluded_from_parent_medal": false
@@ -1536,9 +1531,9 @@
                   "value": ""
                 },
                 "diataxis_coverage_ai": {
-                  "state": "measured",
-                  "value": 2,
-                  "reason": "How-to: The upgrade.md document provides task-oriented instructions for upgrading the cloudflared charm with specific commands and verification steps. Reference: The changelog.md provides factual version information tracking changes over time. No tutorial (no learning-oriented guided exercise for beginners), no explanation (no conceptual discussion or design rationale)."
+                  "state": "insufficient_data",
+                  "value": null,
+                  "reason": "AI documentation assessment is unavailable."
                 }
               },
               "excluded_from_parent_medal": false
@@ -1739,8 +1734,7 @@
                 },
                 "uses_tf_v1_provider": {
                   "state": "measured",
-                  "value": false,
-                  "reason": "terraform/charm/terraform.tf: juju/juju constraint '~> 2.0' must use >= A, < B with A >= 1.0.\nterraform/charm/tests/setup/main.tf: juju/juju constraint '~> 1.0' must use >= A, < B with A >= 1.0."
+                  "value": true
                 },
                 "uses_charm_ci": {
                   "state": "measured",
@@ -1795,9 +1789,9 @@
                   "value": "2.0"
                 },
                 "diataxis_coverage_ai": {
-                  "state": "measured",
-                  "value": 4,
-                  "reason": "Tutorial: getting-started.md contains a complete step-by-step guided exercise deploying content-cache-k8s with backend-app and nginx-ingress-integrator, including verification steps. How-to: Multiple task-oriented guides present including cache-content-with-openstack-swift.md (configuring Swift storage) and upgrade.md (refresh command). Reference: Extensive factual documentation including actions.md, configurations.md, integrations.md (detailed relation endpoints with interfaces and commands), charm-architecture.md (technical container descriptions, Pebble layers, event handling), and external-access.md. Explanation: security.md provides conceptual discussion of machine-in-the-middle attacks, TLS practices, and caching sensitive data with Cache-Control headers."
+                  "state": "insufficient_data",
+                  "value": null,
+                  "reason": "AI documentation assessment is unavailable."
                 }
               },
               "excluded_from_parent_medal": false
@@ -1895,8 +1889,7 @@
                 },
                 "uses_tf_v1_provider": {
                   "state": "measured",
-                  "value": false,
-                  "reason": "terraform/charm/content_cache/terraform.tf: juju/juju constraint '~> 2.0' must use >= A, < B with A >= 1.0.\nterraform/charm/content_cache/tests/integration/main.tf: juju/juju constraint '> 1.1.0' must use >= A, < B with A >= 1.0.\nterraform/charm/content_cache/tests/setup/main.tf: juju/juju constraint '> 1.1.0' must use >= A, < B with A >= 1.0.\nterraform/charm/content_cache_backends_config/terraform.tf: juju/juju constraint '~> 2.0' must use >= A, < B with A >= 1.0.\nterraform/charm/content_cache_backends_config/tests/integration/main.tf: juju/juju constraint '> 1.1.0' must use >= A, < B with A >= 1.0.\nterraform/charm/content_cache_backends_config/tests/setup/main.tf: juju/juju constraint '> 1.1.0' must use >= A, < B with A >= 1.0."
+                  "value": true
                 },
                 "uses_charm_ci": {
                   "state": "measured",
@@ -1939,8 +1932,7 @@
                 },
                 "uses_tf_v1_provider": {
                   "state": "measured",
-                  "value": false,
-                  "reason": "terraform/charm/content_cache/terraform.tf: juju/juju constraint '~> 2.0' must use >= A, < B with A >= 1.0.\nterraform/charm/content_cache/tests/integration/main.tf: juju/juju constraint '> 1.1.0' must use >= A, < B with A >= 1.0.\nterraform/charm/content_cache/tests/setup/main.tf: juju/juju constraint '> 1.1.0' must use >= A, < B with A >= 1.0.\nterraform/charm/content_cache_backends_config/terraform.tf: juju/juju constraint '~> 2.0' must use >= A, < B with A >= 1.0.\nterraform/charm/content_cache_backends_config/tests/integration/main.tf: juju/juju constraint '> 1.1.0' must use >= A, < B with A >= 1.0.\nterraform/charm/content_cache_backends_config/tests/setup/main.tf: juju/juju constraint '> 1.1.0' must use >= A, < B with A >= 1.0."
+                  "value": true
                 },
                 "uses_charm_ci": {
                   "state": "measured",
@@ -1996,9 +1988,9 @@
                   "value": "2.0"
                 },
                 "diataxis_coverage_ai": {
-                  "state": "measured",
-                  "value": 4,
-                  "reason": "Tutorial: The 'Deploy with Ingress configurator and HAProxy' page is a complete guided walkthrough with concrete steps for deploying the system. How-to: Multiple operational guides exist ('Enable COS', 'Enable HTTPS', 'Hash client IP addresses', 'Upgrade') providing task-oriented instructions. Reference: 'Components', 'Deployment architecture', and embedded configuration details throughout provide factual technical descriptions. Explanation: 'Caching behavior', 'Charm design', and 'Security' pages discuss concepts, design choices, and how things work under the hood."
+                  "state": "insufficient_data",
+                  "value": null,
+                  "reason": "AI documentation assessment is unavailable."
                 }
               },
               "excluded_from_parent_medal": false
@@ -2027,9 +2019,9 @@
                   "value": "2.0"
                 },
                 "diataxis_coverage_ai": {
-                  "state": "measured",
-                  "value": 4,
-                  "reason": "Tutorial: deploy-with-ingress-configurator-and-haproxy.md provides a complete step-by-step guided exercise deploying content-cache with ingress-configurator and haproxy, including setup, configuration, TLS termination, and verification steps. How-to: Multiple guides with task-oriented instructions including enable-https.md (connecting to HTTPS backends), enable-cos.md (enabling observability), hash-client-ip-addresses-in-logs.md (configuring IP hashing), and upgrade.md (upgrading the charm). Reference: components.md describes the charms in the system, deployment-architecture.md documents relations and architecture patterns with diagrams. Explanation: caching-behavior.md discusses cache miss/hit flow and eviction mechanisms, charm-design.md explains design decisions around static-only caching and port allocation, security.md covers TLS, authentication, and security design choices."
+                  "state": "insufficient_data",
+                  "value": null,
+                  "reason": "AI documentation assessment is unavailable."
                 }
               },
               "excluded_from_parent_medal": false
@@ -2145,8 +2137,7 @@
                 },
                 "uses_tf_v1_provider": {
                   "state": "measured",
-                  "value": false,
-                  "reason": "terraform/terraform.tf: juju/juju constraint '~> 1.0' must use >= A, < B with A >= 1.0.\nterraform/tests/setup/main.tf: juju/juju constraint '~> 1.0' must use >= A, < B with A >= 1.0."
+                  "value": true
                 },
                 "uses_charm_ci": {
                   "state": "measured",
@@ -2202,9 +2193,9 @@
                   "value": ""
                 },
                 "diataxis_coverage_ai": {
-                  "state": "measured",
-                  "value": 3,
-                  "reason": "Tutorial (1 point): getting-started.md provides a learning-oriented walkthrough of deploying the charm with setup steps and integration commands. How-to (1 point): Multiple how-to guides with task-oriented instructions for managing users (create, list, remove), configuring authentication type, upgrading, and contributing. Reference (0 points): No factual descriptions of configuration options, action parameters, or API interfaces are provided - only usage examples. Explanation (1 point): The index.md contains conceptual discussion explaining what the charm does, its relationship to Squid as a subordinate charm, and the authentication context (forward vs reverse proxy use case)."
+                  "state": "insufficient_data",
+                  "value": null,
+                  "reason": "AI documentation assessment is unavailable."
                 }
               },
               "excluded_from_parent_medal": false
@@ -2293,8 +2284,8 @@
             {
               "product_id": "discourse-k8s",
               "repo": "canonical/discourse-k8s-operator",
-              "medal": "bronze",
-              "result": "bronze",
+              "medal": "silver",
+              "result": "silver",
               "applicability": "scored",
               "metrics": {
                 "uses_ops_testing": {
@@ -2311,8 +2302,7 @@
                 },
                 "uses_tf_v1_provider": {
                   "state": "measured",
-                  "value": false,
-                  "reason": "terraform/versions.tf: juju/juju constraint '~> 2.0' must use >= A, < B with A >= 1.0.\nterraform/tests/setup/main.tf: juju/juju constraint '~> 2.0' must use >= A, < B with A >= 1.0."
+                  "value": true
                 },
                 "uses_charm_ci": {
                   "state": "measured",
@@ -2354,8 +2344,7 @@
                 },
                 "uses_tf_v1_provider": {
                   "state": "measured",
-                  "value": false,
-                  "reason": "terraform/versions.tf: juju/juju constraint '~> 1.0' must use >= A, < B with A >= 1.0.\nterraform/tests/setup/main.tf: juju/juju constraint '~> 1.0' must use >= A, < B with A >= 1.0."
+                  "value": true
                 },
                 "uses_charm_ci": {
                   "state": "measured",
@@ -2410,9 +2399,9 @@
                   "value": ""
                 },
                 "diataxis_coverage_ai": {
-                  "state": "measured",
-                  "value": 4,
-                  "reason": "Tutorial: docs/tutorial.md contains a complete guided exercise deploying Discourse with step-by-step instructions and requirements. How-to: Multiple task-oriented guides exist (configure-hostname.md, configure-s3.md, configure-smtp.md, configure-saml.md, backup-and-restore.md, upgrade.md, access-the-rails-console.md). Reference: Extensive factual documentation covers actions, configurations, integrations, plugins, charm architecture, versioning, and external access. Explanation: docs/explanation/security.md provides conceptual discussion on security risks and best practices with reasoning behind design choices."
+                  "state": "insufficient_data",
+                  "value": null,
+                  "reason": "AI documentation assessment is unavailable."
                 }
               },
               "excluded_from_parent_medal": false
@@ -2565,8 +2554,8 @@
             {
               "product_id": "bind",
               "repo": "canonical/dns-operators",
-              "medal": "bronze",
-              "result": "bronze",
+              "medal": "silver",
+              "result": "silver",
               "applicability": "scored",
               "metrics": {
                 "uses_ops_testing": {
@@ -2583,8 +2572,7 @@
                 },
                 "uses_tf_v1_provider": {
                   "state": "measured",
-                  "value": false,
-                  "reason": "bind-operator/terraform/terraform.tf: juju/juju constraint '>= 1.0.0' must use >= A, < B with A >= 1.0.\ndns-integrator-operator/terraform/terraform.tf: juju/juju constraint '>= 1.0.0' must use >= A, < B with A >= 1.0.\ndns-policy-operator/terraform/terraform.tf: juju/juju constraint '>= 1.0.0' must use >= A, < B with A >= 1.0.\ndns-resolver-operator/terraform/terraform.tf: juju/juju constraint '>= 1.0.0' must use >= A, < B with A >= 1.0.\ndns-secondary-operator/terraform/terraform.tf: juju/juju constraint '>= 1.0.0' must use >= A, < B with A >= 1.0.\ndocs/terraform/main.tf: juju/juju constraint '>= 1.0.0' must use >= A, < B with A >= 1.0.\nterraform/terraform.tf: juju/juju constraint '>= 1.0.0' must use >= A, < B with A >= 1.0."
+                  "value": true
                 },
                 "uses_charm_ci": {
                   "state": "measured",
@@ -2609,8 +2597,8 @@
             {
               "product_id": "dns-policy",
               "repo": "canonical/dns-operators",
-              "medal": "bronze",
-              "result": "bronze",
+              "medal": "silver",
+              "result": "silver",
               "applicability": "scored",
               "metrics": {
                 "uses_ops_testing": {
@@ -2627,8 +2615,7 @@
                 },
                 "uses_tf_v1_provider": {
                   "state": "measured",
-                  "value": false,
-                  "reason": "bind-operator/terraform/terraform.tf: juju/juju constraint '>= 1.0.0' must use >= A, < B with A >= 1.0.\ndns-integrator-operator/terraform/terraform.tf: juju/juju constraint '>= 1.0.0' must use >= A, < B with A >= 1.0.\ndns-policy-operator/terraform/terraform.tf: juju/juju constraint '>= 1.0.0' must use >= A, < B with A >= 1.0.\ndns-resolver-operator/terraform/terraform.tf: juju/juju constraint '>= 1.0.0' must use >= A, < B with A >= 1.0.\ndns-secondary-operator/terraform/terraform.tf: juju/juju constraint '>= 1.0.0' must use >= A, < B with A >= 1.0.\ndocs/terraform/main.tf: juju/juju constraint '>= 1.0.0' must use >= A, < B with A >= 1.0.\nterraform/terraform.tf: juju/juju constraint '>= 1.0.0' must use >= A, < B with A >= 1.0."
+                  "value": true
                 },
                 "uses_charm_ci": {
                   "state": "measured",
@@ -2671,8 +2658,7 @@
                 },
                 "uses_tf_v1_provider": {
                   "state": "measured",
-                  "value": false,
-                  "reason": "bind-operator/terraform/terraform.tf: juju/juju constraint '>= 1.0.0' must use >= A, < B with A >= 1.0.\ndns-integrator-operator/terraform/terraform.tf: juju/juju constraint '>= 1.0.0' must use >= A, < B with A >= 1.0.\ndns-policy-operator/terraform/terraform.tf: juju/juju constraint '>= 1.0.0' must use >= A, < B with A >= 1.0.\ndns-resolver-operator/terraform/terraform.tf: juju/juju constraint '>= 1.0.0' must use >= A, < B with A >= 1.0.\ndns-secondary-operator/terraform/terraform.tf: juju/juju constraint '>= 1.0.0' must use >= A, < B with A >= 1.0.\ndocs/terraform/main.tf: juju/juju constraint '>= 1.0.0' must use >= A, < B with A >= 1.0.\nterraform/terraform.tf: juju/juju constraint '>= 1.0.0' must use >= A, < B with A >= 1.0."
+                  "value": true
                 },
                 "uses_charm_ci": {
                   "state": "measured",
@@ -2716,8 +2702,7 @@
                 },
                 "uses_tf_v1_provider": {
                   "state": "measured",
-                  "value": false,
-                  "reason": "bind-operator/terraform/terraform.tf: juju/juju constraint '>= 1.0.0' must use >= A, < B with A >= 1.0.\ndns-integrator-operator/terraform/terraform.tf: juju/juju constraint '>= 1.0.0' must use >= A, < B with A >= 1.0.\ndns-policy-operator/terraform/terraform.tf: juju/juju constraint '>= 1.0.0' must use >= A, < B with A >= 1.0.\ndns-resolver-operator/terraform/terraform.tf: juju/juju constraint '>= 1.0.0' must use >= A, < B with A >= 1.0.\ndns-secondary-operator/terraform/terraform.tf: juju/juju constraint '>= 1.0.0' must use >= A, < B with A >= 1.0.\ndocs/terraform/main.tf: juju/juju constraint '>= 1.0.0' must use >= A, < B with A >= 1.0.\nterraform/terraform.tf: juju/juju constraint '>= 1.0.0' must use >= A, < B with A >= 1.0."
+                  "value": true
                 },
                 "uses_charm_ci": {
                   "state": "measured",
@@ -2742,8 +2727,8 @@
             {
               "product_id": "dns-secondary",
               "repo": "canonical/dns-operators",
-              "medal": "bronze",
-              "result": "bronze",
+              "medal": "silver",
+              "result": "silver",
               "applicability": "scored",
               "metrics": {
                 "uses_ops_testing": {
@@ -2760,8 +2745,7 @@
                 },
                 "uses_tf_v1_provider": {
                   "state": "measured",
-                  "value": false,
-                  "reason": "bind-operator/terraform/terraform.tf: juju/juju constraint '>= 1.0.0' must use >= A, < B with A >= 1.0.\ndns-integrator-operator/terraform/terraform.tf: juju/juju constraint '>= 1.0.0' must use >= A, < B with A >= 1.0.\ndns-policy-operator/terraform/terraform.tf: juju/juju constraint '>= 1.0.0' must use >= A, < B with A >= 1.0.\ndns-resolver-operator/terraform/terraform.tf: juju/juju constraint '>= 1.0.0' must use >= A, < B with A >= 1.0.\ndns-secondary-operator/terraform/terraform.tf: juju/juju constraint '>= 1.0.0' must use >= A, < B with A >= 1.0.\ndocs/terraform/main.tf: juju/juju constraint '>= 1.0.0' must use >= A, < B with A >= 1.0.\nterraform/terraform.tf: juju/juju constraint '>= 1.0.0' must use >= A, < B with A >= 1.0."
+                  "value": true
                 },
                 "uses_charm_ci": {
                   "state": "measured",
@@ -3286,11 +3270,11 @@
       "name": "Falco",
       "description": "Falco is an open-source runtime security tool for physical and virtual machines.\nIt detects anomalous activity and potential security threats in real time.\nThe Falco operators include a subordinate machine charm for Falco and a Kubernetes\ncharm for Falcosidekick, which connects Falco to external ecosystems.",
       "lifecycle": "stable",
-      "current_medal": "bronze",
+      "current_medal": "silver",
       "target_medal": "silver",
-      "current_result": "bronze",
+      "current_result": "silver",
       "target_result": "silver",
-      "meets_target": false,
+      "meets_target": true,
       "squad": "emea",
       "is_portfolio_entry": true,
       "documentation_url": "https://charmhub.io/falco",
@@ -3309,18 +3293,18 @@
       "parent_product_ids": [],
       "dimensions": {
         "test_verification": {
-          "medal": "bronze",
+          "medal": "silver",
           "target": "silver",
           "applicability": "scored",
-          "meets_target": false,
-          "result": "bronze",
+          "meets_target": true,
+          "result": "silver",
           "metrics": {},
           "composition": [
             {
               "product_id": "falco-charm",
               "repo": "canonical/falco-operators",
-              "medal": "bronze",
-              "result": "bronze",
+              "medal": "silver",
+              "result": "silver",
               "applicability": "scored",
               "metrics": {
                 "uses_ops_testing": {
@@ -3337,8 +3321,7 @@
                 },
                 "uses_tf_v1_provider": {
                   "state": "measured",
-                  "value": false,
-                  "reason": "falco-operator/terraform/terraform.tf: juju/juju constraint '~> 1.0' must use >= A, < B with A >= 1.0.\nfalco-operator/terraform/tests/setup/main.tf: juju/juju constraint '~> 1.0' must use >= A, < B with A >= 1.0.\nfalcosidekick-k8s-operator/terraform/terraform.tf: juju/juju constraint '~> 1.0' must use >= A, < B with A >= 1.0.\nfalcosidekick-k8s-operator/terraform/tests/setup/main.tf: juju/juju constraint '~> 1.0' must use >= A, < B with A >= 1.0."
+                  "value": true
                 },
                 "uses_charm_ci": {
                   "state": "measured",
@@ -3363,8 +3346,8 @@
             {
               "product_id": "falcosidekick-k8s",
               "repo": "canonical/falco-operators",
-              "medal": "bronze",
-              "result": "bronze",
+              "medal": "silver",
+              "result": "silver",
               "applicability": "scored",
               "metrics": {
                 "uses_ops_testing": {
@@ -3381,8 +3364,7 @@
                 },
                 "uses_tf_v1_provider": {
                   "state": "measured",
-                  "value": false,
-                  "reason": "falco-operator/terraform/terraform.tf: juju/juju constraint '~> 1.0' must use >= A, < B with A >= 1.0.\nfalco-operator/terraform/tests/setup/main.tf: juju/juju constraint '~> 1.0' must use >= A, < B with A >= 1.0.\nfalcosidekick-k8s-operator/terraform/terraform.tf: juju/juju constraint '~> 1.0' must use >= A, < B with A >= 1.0.\nfalcosidekick-k8s-operator/terraform/tests/setup/main.tf: juju/juju constraint '~> 1.0' must use >= A, < B with A >= 1.0."
+                  "value": true
                 },
                 "uses_charm_ci": {
                   "state": "measured",
@@ -3792,9 +3774,9 @@
                   "value": "2.0"
                 },
                 "diataxis_coverage_ai": {
-                  "state": "measured",
-                  "value": 4,
-                  "reason": "Tutorial: deploy-and-verify-on-kubernetes.rst provides a complete guided exercise deploying gopkg-k8s, configuring it, and fetching a module. How-to: Multiple guides under how-to/ provide task-oriented instructions (configure-ingress, integrate-with-cos, upgrade-the-charm, etc.). Reference: charm-configuration.rst, integrations.rst, and platforms-and-prerequisites.rst contain factual descriptions of options, endpoints, metrics, and requirements. Explanation: gopkg-service.rst and ingress.rst discuss concepts like why gopkg.in exists, how the service works, and how ingress routing functions."
+                  "state": "insufficient_data",
+                  "value": null,
+                  "reason": "AI documentation assessment is unavailable."
                 }
               },
               "excluded_from_parent_medal": false
@@ -3841,9 +3823,9 @@
       "name": "HAProxy",
       "description": "HAProxy is a TCP/HTTP reverse proxy which is particularly suited for high availability environments.\nIt features connection persistence through HTTP cookies, load balancing, header addition, modification, deletion both ways.\nIt has request blocking capabilities and provides interface to display server status.",
       "lifecycle": "stable",
-      "current_medal": "bronze",
+      "current_medal": "silver",
       "target_medal": "gold",
-      "current_result": "bronze",
+      "current_result": "silver",
       "target_result": "gold",
       "meets_target": false,
       "squad": "emea",
@@ -3872,18 +3854,18 @@
       "parent_product_ids": [],
       "dimensions": {
         "test_verification": {
-          "medal": "bronze",
+          "medal": "silver",
           "target": "gold",
           "applicability": "scored",
           "meets_target": false,
-          "result": "bronze",
+          "result": "silver",
           "metrics": {},
           "composition": [
             {
               "product_id": "haproxy-charm",
               "repo": "canonical/haproxy-operator",
-              "medal": "bronze",
-              "result": "bronze",
+              "medal": "silver",
+              "result": "silver",
               "applicability": "scored",
               "metrics": {
                 "uses_ops_testing": {
@@ -3900,8 +3882,7 @@
                 },
                 "uses_tf_v1_provider": {
                   "state": "measured",
-                  "value": false,
-                  "reason": "terraform/charm/haproxy/terraform.tf: juju/juju constraint '>= 1.0' must use >= A, < B with A >= 1.0.\nterraform/charm/haproxy_ddos_protection_configurator/terraform.tf: juju/juju constraint '>= 1.0' must use >= A, < B with A >= 1.0.\nterraform/charm/haproxy_spoe_auth/terraform.tf: juju/juju constraint '>= 1.0' must use >= A, < B with A >= 1.0.\nterraform/product/terraform.tf: juju/juju constraint '>= 1.0' must use >= A, < B with A >= 1.0.\nterraform/tests/setup/main.tf: juju/juju constraint '>= 1.0' must use >= A, < B with A >= 1.0."
+                  "value": true
                 },
                 "uses_charm_ci": {
                   "state": "measured",
@@ -3969,8 +3950,8 @@
             {
               "product_id": "haproxy-spoe-auth",
               "repo": "canonical/haproxy-operator",
-              "medal": "bronze",
-              "result": "bronze",
+              "medal": "silver",
+              "result": "silver",
               "applicability": "scored",
               "metrics": {
                 "uses_ops_testing": {
@@ -3987,8 +3968,7 @@
                 },
                 "uses_tf_v1_provider": {
                   "state": "measured",
-                  "value": false,
-                  "reason": "terraform/charm/haproxy/terraform.tf: juju/juju constraint '>= 1.0' must use >= A, < B with A >= 1.0.\nterraform/charm/haproxy_ddos_protection_configurator/terraform.tf: juju/juju constraint '>= 1.0' must use >= A, < B with A >= 1.0.\nterraform/charm/haproxy_spoe_auth/terraform.tf: juju/juju constraint '>= 1.0' must use >= A, < B with A >= 1.0.\nterraform/product/terraform.tf: juju/juju constraint '>= 1.0' must use >= A, < B with A >= 1.0.\nterraform/tests/setup/main.tf: juju/juju constraint '>= 1.0' must use >= A, < B with A >= 1.0."
+                  "value": true
                 },
                 "uses_charm_ci": {
                   "state": "measured",
@@ -4351,8 +4331,7 @@
                 },
                 "uses_tf_v1_provider": {
                   "state": "measured",
-                  "value": false,
-                  "reason": "terraform/charm/versions.tf: juju/juju constraint '~> 1.0' must use >= A, < B with A >= 1.0.\nterraform/charm/tests/setup/main.tf: juju/juju constraint '~> 1.0' must use >= A, < B with A >= 1.0.\nterraform/product/versions.tf: juju/juju constraint '~> 1.0' must use >= A, < B with A >= 1.0.\nterraform/product/modules/traefik-k8s/versions.tf: juju/juju constraint '~> 1.0' must use >= A, < B with A >= 1.0.\nterraform/product/tests/setup/main.tf: juju/juju constraint '~> 1.0' must use >= A, < B with A >= 1.0."
+                  "value": true
                 },
                 "uses_charm_ci": {
                   "state": "measured",
@@ -4515,8 +4494,7 @@
                 },
                 "uses_tf_v1_provider": {
                   "state": "measured",
-                  "value": false,
-                  "reason": "terraform/charm/http_proxy_configurator/terraform.tf: juju/juju constraint '~> 1.0' must use >= A, < B with A >= 1.0.\nterraform/charm/http_proxy_configurator/tests/setup/main.tf: juju/juju constraint '~> 1.0' must use >= A, < B with A >= 1.0.\nterraform/charm/http_proxy_policy/terraform.tf: juju/juju constraint '~> 1.0' must use >= A, < B with A >= 1.0.\nterraform/charm/http_proxy_policy/tests/setup/main.tf: juju/juju constraint '~> 1.0' must use >= A, < B with A >= 1.0.\nterraform/charm/squid_forward_proxy/terraform.tf: juju/juju constraint '~> 1.0' must use >= A, < B with A >= 1.0.\nterraform/charm/squid_forward_proxy/tests/setup/main.tf: juju/juju constraint '~> 1.0' must use >= A, < B with A >= 1.0."
+                  "value": true
                 },
                 "uses_charm_ci": {
                   "state": "measured",
@@ -4559,8 +4537,7 @@
                 },
                 "uses_tf_v1_provider": {
                   "state": "measured",
-                  "value": false,
-                  "reason": "terraform/charm/http_proxy_configurator/terraform.tf: juju/juju constraint '~> 1.0' must use >= A, < B with A >= 1.0.\nterraform/charm/http_proxy_configurator/tests/setup/main.tf: juju/juju constraint '~> 1.0' must use >= A, < B with A >= 1.0.\nterraform/charm/http_proxy_policy/terraform.tf: juju/juju constraint '~> 1.0' must use >= A, < B with A >= 1.0.\nterraform/charm/http_proxy_policy/tests/setup/main.tf: juju/juju constraint '~> 1.0' must use >= A, < B with A >= 1.0.\nterraform/charm/squid_forward_proxy/terraform.tf: juju/juju constraint '~> 1.0' must use >= A, < B with A >= 1.0.\nterraform/charm/squid_forward_proxy/tests/setup/main.tf: juju/juju constraint '~> 1.0' must use >= A, < B with A >= 1.0."
+                  "value": true
                 },
                 "uses_charm_ci": {
                   "state": "measured",
@@ -4585,8 +4562,8 @@
             {
               "product_id": "http-proxy-configurator",
               "repo": "canonical/http-proxy-operators",
-              "medal": "bronze",
-              "result": "bronze",
+              "medal": "silver",
+              "result": "silver",
               "applicability": "scored",
               "metrics": {
                 "uses_ops_testing": {
@@ -4603,8 +4580,7 @@
                 },
                 "uses_tf_v1_provider": {
                   "state": "measured",
-                  "value": false,
-                  "reason": "terraform/charm/http_proxy_configurator/terraform.tf: juju/juju constraint '~> 1.0' must use >= A, < B with A >= 1.0.\nterraform/charm/http_proxy_configurator/tests/setup/main.tf: juju/juju constraint '~> 1.0' must use >= A, < B with A >= 1.0.\nterraform/charm/http_proxy_policy/terraform.tf: juju/juju constraint '~> 1.0' must use >= A, < B with A >= 1.0.\nterraform/charm/http_proxy_policy/tests/setup/main.tf: juju/juju constraint '~> 1.0' must use >= A, < B with A >= 1.0.\nterraform/charm/squid_forward_proxy/terraform.tf: juju/juju constraint '~> 1.0' must use >= A, < B with A >= 1.0.\nterraform/charm/squid_forward_proxy/tests/setup/main.tf: juju/juju constraint '~> 1.0' must use >= A, < B with A >= 1.0."
+                  "value": true
                 },
                 "uses_charm_ci": {
                   "state": "measured",
@@ -4975,8 +4951,7 @@
                 },
                 "uses_tf_v1_provider": {
                   "state": "measured",
-                  "value": false,
-                  "reason": "terraform/charm/tests/setup/main.tf: juju/juju constraint '~> 1.0' must use >= A, < B with A >= 1.0."
+                  "value": true
                 },
                 "uses_charm_ci": {
                   "state": "measured",
@@ -5018,8 +4993,7 @@
                 },
                 "uses_tf_v1_provider": {
                   "state": "measured",
-                  "value": false,
-                  "reason": "terraform/versions.tf: juju/juju constraint '~> 1.0' must use >= A, < B with A >= 1.0.\nterraform/tests/setup/main.tf: juju/juju constraint '~> 1.0' must use >= A, < B with A >= 1.0."
+                  "value": true
                 },
                 "uses_charm_ci": {
                   "state": "measured",
@@ -5403,8 +5377,7 @@
                 },
                 "uses_tf_v1_provider": {
                   "state": "measured",
-                  "value": false,
-                  "reason": "terraform/charm/terraform.tf: juju/juju constraint '~> 2.0' must use >= A, < B with A >= 1.0.\nterraform/charm/tests/setup/main.tf: juju/juju constraint '~> 2.0' must use >= A, < B with A >= 1.0."
+                  "value": true
                 },
                 "uses_charm_ci": {
                   "state": "measured",
@@ -5446,8 +5419,7 @@
                 },
                 "uses_tf_v1_provider": {
                   "state": "measured",
-                  "value": false,
-                  "reason": "terraform/charm/terraform.tf: juju/juju constraint '~> 1.0' must use >= A, < B with A >= 1.0.\nterraform/charm/tests/setup/main.tf: juju/juju constraint '~> 1.0' must use >= A, < B with A >= 1.0."
+                  "value": true
                 },
                 "uses_charm_ci": {
                   "state": "measured",
@@ -5489,8 +5461,7 @@
                 },
                 "uses_tf_v1_provider": {
                   "state": "measured",
-                  "value": false,
-                  "reason": "terraform/charm/terraform.tf: juju/juju constraint '~> 2.0' must use >= A, < B with A >= 1.0.\nterraform/charm/tests/setup/main.tf: juju/juju constraint '~> 1.0' must use >= A, < B with A >= 1.0."
+                  "value": true
                 },
                 "uses_charm_ci": {
                   "state": "measured",
@@ -5701,9 +5672,9 @@
       "name": "Mailserver Operators",
       "description": "The Mailserver Operators product provides a suite of Juju charms for\ndeploying and managing a complete email server stack on machines. It consists of:\nDovecot (IMAP/POP3 mail delivery), Postfix relay (SMTP relay server),\nPostfix relay configurator (subordinate charm for additional relay configuration),\nand OpenDKIM (DKIM signing and verification milter).",
       "lifecycle": "stable",
-      "current_medal": "unrated",
+      "current_medal": "bronze",
       "target_medal": "silver",
-      "current_result": "below_minimum",
+      "current_result": "insufficient_data",
       "target_result": "silver",
       "meets_target": false,
       "squad": "emea",
@@ -5738,17 +5709,17 @@
         "test_verification": {
           "medal": "unrated",
           "target": "silver",
-          "applicability": "scored",
+          "applicability": "insufficient_data",
           "meets_target": false,
-          "result": "below_minimum",
+          "result": "insufficient_data",
           "metrics": {},
           "composition": [
             {
               "product_id": "dovecot",
               "repo": "canonical/mailserver-operators",
-              "medal": "bronze",
-              "result": "bronze",
-              "applicability": "scored",
+              "medal": "unrated",
+              "result": "insufficient_data",
+              "applicability": "insufficient_data",
               "metrics": {
                 "uses_ops_testing": {
                   "state": "measured",
@@ -5763,9 +5734,9 @@
                   "value": true
                 },
                 "uses_tf_v1_provider": {
-                  "state": "measured",
-                  "value": false,
-                  "reason": "dovecot-charm/terraform/terraform.tf: juju/juju constraint '> 1.0.0, < 2.0.0' must use >= A, < B with A >= 1.0.\nopendkim-operator/terraform/terraform.tf: juju/juju constraint '> 1.0.0, < 2.0.0' must use >= A, < B with A >= 1.0.\npostfix-relay-configurator-operator/terraform/terraform.tf: juju/juju constraint '> 1.0.0, < 2.0' must use >= A, < B with A >= 1.0.\npostfix-relay-operator/terraform/terraform.tf: juju/juju constraint '> 1.0.0, < 2.0.0' must use >= A, < B with A >= 1.0.\nterraform/dovecot/terraform.tf: juju/juju constraint '> 1.0.0, < 2.0.0' must use >= A, < B with A >= 1.0.\nterraform/postfix-relay/terraform.tf: juju/juju constraint '> 1.0.0, < 2.0.0' must use >= A, < B with A >= 1.0."
+                  "state": "insufficient_data",
+                  "value": null,
+                  "reason": "terraform/dovecot/variables.tf: cannot parse Terraform: Unexpected token Token('BINARY_OP', '||') at line 78, column 7.\nExpected one of: \n\t* RPAR\n\nterraform/postfix-relay/variables.tf: cannot parse Terraform: Unexpected token Token('BINARY_OP', '||') at line 85, column 7.\nExpected one of: \n\t* RPAR\n"
                 },
                 "uses_charm_ci": {
                   "state": "measured",
@@ -5791,8 +5762,8 @@
               "product_id": "postfix-relay",
               "repo": "canonical/mailserver-operators",
               "medal": "unrated",
-              "result": "below_minimum",
-              "applicability": "scored",
+              "result": "insufficient_data",
+              "applicability": "insufficient_data",
               "metrics": {
                 "uses_ops_testing": {
                   "state": "measured",
@@ -5807,9 +5778,9 @@
                   "value": true
                 },
                 "uses_tf_v1_provider": {
-                  "state": "measured",
-                  "value": false,
-                  "reason": "dovecot-charm/terraform/terraform.tf: juju/juju constraint '> 1.0.0, < 2.0.0' must use >= A, < B with A >= 1.0.\nopendkim-operator/terraform/terraform.tf: juju/juju constraint '> 1.0.0, < 2.0.0' must use >= A, < B with A >= 1.0.\npostfix-relay-configurator-operator/terraform/terraform.tf: juju/juju constraint '> 1.0.0, < 2.0' must use >= A, < B with A >= 1.0.\npostfix-relay-operator/terraform/terraform.tf: juju/juju constraint '> 1.0.0, < 2.0.0' must use >= A, < B with A >= 1.0.\nterraform/dovecot/terraform.tf: juju/juju constraint '> 1.0.0, < 2.0.0' must use >= A, < B with A >= 1.0.\nterraform/postfix-relay/terraform.tf: juju/juju constraint '> 1.0.0, < 2.0.0' must use >= A, < B with A >= 1.0."
+                  "state": "insufficient_data",
+                  "value": null,
+                  "reason": "terraform/dovecot/variables.tf: cannot parse Terraform: Unexpected token Token('BINARY_OP', '||') at line 78, column 7.\nExpected one of: \n\t* RPAR\n\nterraform/postfix-relay/variables.tf: cannot parse Terraform: Unexpected token Token('BINARY_OP', '||') at line 85, column 7.\nExpected one of: \n\t* RPAR\n"
                 },
                 "uses_charm_ci": {
                   "state": "measured",
@@ -5835,8 +5806,8 @@
               "product_id": "postfix-relay-configurator",
               "repo": "canonical/mailserver-operators",
               "medal": "unrated",
-              "result": "below_minimum",
-              "applicability": "scored",
+              "result": "insufficient_data",
+              "applicability": "insufficient_data",
               "metrics": {
                 "uses_ops_testing": {
                   "state": "measured",
@@ -5851,9 +5822,9 @@
                   "value": false
                 },
                 "uses_tf_v1_provider": {
-                  "state": "measured",
-                  "value": false,
-                  "reason": "dovecot-charm/terraform/terraform.tf: juju/juju constraint '> 1.0.0, < 2.0.0' must use >= A, < B with A >= 1.0.\nopendkim-operator/terraform/terraform.tf: juju/juju constraint '> 1.0.0, < 2.0.0' must use >= A, < B with A >= 1.0.\npostfix-relay-configurator-operator/terraform/terraform.tf: juju/juju constraint '> 1.0.0, < 2.0' must use >= A, < B with A >= 1.0.\npostfix-relay-operator/terraform/terraform.tf: juju/juju constraint '> 1.0.0, < 2.0.0' must use >= A, < B with A >= 1.0.\nterraform/dovecot/terraform.tf: juju/juju constraint '> 1.0.0, < 2.0.0' must use >= A, < B with A >= 1.0.\nterraform/postfix-relay/terraform.tf: juju/juju constraint '> 1.0.0, < 2.0.0' must use >= A, < B with A >= 1.0."
+                  "state": "insufficient_data",
+                  "value": null,
+                  "reason": "terraform/dovecot/variables.tf: cannot parse Terraform: Unexpected token Token('BINARY_OP', '||') at line 78, column 7.\nExpected one of: \n\t* RPAR\n\nterraform/postfix-relay/variables.tf: cannot parse Terraform: Unexpected token Token('BINARY_OP', '||') at line 85, column 7.\nExpected one of: \n\t* RPAR\n"
                 },
                 "uses_charm_ci": {
                   "state": "measured",
@@ -5879,8 +5850,8 @@
               "product_id": "opendkim",
               "repo": "canonical/mailserver-operators",
               "medal": "unrated",
-              "result": "below_minimum",
-              "applicability": "scored",
+              "result": "insufficient_data",
+              "applicability": "insufficient_data",
               "metrics": {
                 "uses_ops_testing": {
                   "state": "measured",
@@ -5895,9 +5866,9 @@
                   "value": true
                 },
                 "uses_tf_v1_provider": {
-                  "state": "measured",
-                  "value": false,
-                  "reason": "dovecot-charm/terraform/terraform.tf: juju/juju constraint '> 1.0.0, < 2.0.0' must use >= A, < B with A >= 1.0.\nopendkim-operator/terraform/terraform.tf: juju/juju constraint '> 1.0.0, < 2.0.0' must use >= A, < B with A >= 1.0.\npostfix-relay-configurator-operator/terraform/terraform.tf: juju/juju constraint '> 1.0.0, < 2.0' must use >= A, < B with A >= 1.0.\npostfix-relay-operator/terraform/terraform.tf: juju/juju constraint '> 1.0.0, < 2.0.0' must use >= A, < B with A >= 1.0.\nterraform/dovecot/terraform.tf: juju/juju constraint '> 1.0.0, < 2.0.0' must use >= A, < B with A >= 1.0.\nterraform/postfix-relay/terraform.tf: juju/juju constraint '> 1.0.0, < 2.0.0' must use >= A, < B with A >= 1.0."
+                  "state": "insufficient_data",
+                  "value": null,
+                  "reason": "terraform/dovecot/variables.tf: cannot parse Terraform: Unexpected token Token('BINARY_OP', '||') at line 78, column 7.\nExpected one of: \n\t* RPAR\n\nterraform/postfix-relay/variables.tf: cannot parse Terraform: Unexpected token Token('BINARY_OP', '||') at line 85, column 7.\nExpected one of: \n\t* RPAR\n"
                 },
                 "uses_charm_ci": {
                   "state": "measured",
@@ -6654,8 +6625,7 @@
                 },
                 "uses_tf_v1_provider": {
                   "state": "measured",
-                  "value": false,
-                  "reason": "terraform/charm/versions.tf: juju/juju constraint '~> 1.0' must use >= A, < B with A >= 1.0.\nterraform/charm/tests/setup/main.tf: juju/juju constraint '~> 1.0' must use >= A, < B with A >= 1.0.\nterraform/product/versions.tf: juju/juju constraint '~> 1.0' must use >= A, < B with A >= 1.0.\nterraform/product/tests/setup/main.tf: juju/juju constraint '~> 1.0' must use >= A, < B with A >= 1.0."
+                  "value": true
                 },
                 "uses_charm_ci": {
                   "state": "measured",
@@ -6699,7 +6669,7 @@
                 "uses_tf_v1_provider": {
                   "state": "measured",
                   "value": false,
-                  "reason": "terraform/versions.tf: juju/juju constraint '>= 0.22.0' must use >= A, < B with A >= 1.0."
+                  "reason": "terraform/versions.tf: juju/juju constraint '>= 0.22.0' allows versions below 1.0."
                 },
                 "uses_charm_ci": {
                   "state": "measured",
@@ -6741,8 +6711,7 @@
                 },
                 "uses_tf_v1_provider": {
                   "state": "measured",
-                  "value": false,
-                  "reason": "terraform/versions.tf: juju/juju constraint '~> 1.0' must use >= A, < B with A >= 1.0.\nterraform/tests/setup/main.tf: juju/juju constraint '~> 1.0' must use >= A, < B with A >= 1.0."
+                  "value": true
                 },
                 "uses_charm_ci": {
                   "state": "measured",
@@ -7329,7 +7298,7 @@
                 "uses_tf_v1_provider": {
                   "state": "measured",
                   "value": false,
-                  "reason": "terraform/versions.tf: juju/juju constraint '>= 0.20.0' must use >= A, < B with A >= 1.0.\nterraform/product/versions.tf: juju/juju constraint '~> 2.4.0' must use >= A, < B with A >= 1.0.\nterraform/product/tests/setup/main.tf: juju/juju constraint '>= 2.2.0' must use >= A, < B with A >= 1.0.\nterraform/tests/setup/main.tf: juju/juju constraint '>= 0.20.0' must use >= A, < B with A >= 1.0."
+                  "reason": "terraform/versions.tf: juju/juju constraint '>= 0.20.0' allows versions below 1.0.\nterraform/tests/setup/main.tf: juju/juju constraint '>= 0.20.0' allows versions below 1.0."
                 },
                 "uses_charm_ci": {
                   "state": "measured",
@@ -7452,18 +7421,18 @@
       "parent_product_ids": [],
       "dimensions": {
         "test_verification": {
-          "medal": "bronze",
+          "medal": "silver",
           "target": "bronze",
           "applicability": "scored",
           "meets_target": true,
-          "result": "bronze",
+          "result": "silver",
           "metrics": {},
           "composition": [
             {
               "product_id": "netbox-k8s",
               "repo": "canonical/netbox-k8s-operator",
-              "medal": "bronze",
-              "result": "bronze",
+              "medal": "silver",
+              "result": "silver",
               "applicability": "scored",
               "metrics": {
                 "uses_ops_testing": {
@@ -7480,8 +7449,7 @@
                 },
                 "uses_tf_v1_provider": {
                   "state": "measured",
-                  "value": false,
-                  "reason": "terraform/charm/versions.tf: juju/juju constraint '>= 2.2.1' must use >= A, < B with A >= 1.0.\nterraform/product/versions.tf: juju/juju constraint '>= 2.2.1' must use >= A, < B with A >= 1.0.\nterraform/product/modules/oauth-external-idp-integrator/versions.tf: juju/juju constraint '>= 2.2.1' must use >= A, < B with A >= 1.0.\nterraform/product/modules/s3-integrator/versions.tf: juju/juju constraint '>= 2.2.1' must use >= A, < B with A >= 1.0.\nterraform/tests/setup/main.tf: juju/juju constraint '>= 2.2.1' must use >= A, < B with A >= 1.0."
+                  "value": true
                 },
                 "uses_charm_ci": {
                   "state": "measured",
@@ -7625,8 +7593,7 @@
             },
             "uses_tf_v1_provider": {
               "state": "measured",
-              "value": false,
-              "reason": "terraform/versions.tf: juju/juju constraint '~> 1.0' must use >= A, < B with A >= 1.0.\nterraform/tests/setup/main.tf: juju/juju constraint '~> 1.0' must use >= A, < B with A >= 1.0."
+              "value": true
             },
             "uses_charm_ci": {
               "state": "measured",
@@ -7760,8 +7727,7 @@
                 },
                 "uses_tf_v1_provider": {
                   "state": "measured",
-                  "value": false,
-                  "reason": "terraform/charm/terraform.tf: juju/juju constraint '~> 2.0' must use >= A, < B with A >= 1.0.\nterraform/charm/tests/setup/main.tf: juju/juju constraint '~> 2.0' must use >= A, < B with A >= 1.0.\nterraform/product/terraform.tf: juju/juju constraint '~> 2.0' must use >= A, < B with A >= 1.0.\nterraform/product/modules/rabbitmq-server/terraform.tf: juju/juju constraint '~> 2.0' must use >= A, < B with A >= 1.0.\nterraform/product/modules/s3-integrator/terraform.tf: juju/juju constraint '~> 2.0' must use >= A, < B with A >= 1.0.\nterraform/product/tests/setup/main.tf: juju/juju constraint '~> 2.0' must use >= A, < B with A >= 1.0."
+                  "value": true
                 },
                 "uses_charm_ci": {
                   "state": "measured",
@@ -7865,9 +7831,9 @@
       "name": "Penpot",
       "description": "Penpot is a web-based, open-source design and prototyping tool that enables designers\nand teams to collaborate on UI/UX projects. The penpot charm deploys Penpot on Kubernetes,\nproviding a scalable design collaboration platform.",
       "lifecycle": "stable",
-      "current_medal": "bronze",
+      "current_medal": "silver",
       "target_medal": "bronze",
-      "current_result": "bronze",
+      "current_result": "silver",
       "target_result": "bronze",
       "meets_target": true,
       "squad": "emea",
@@ -7884,18 +7850,18 @@
       "parent_product_ids": [],
       "dimensions": {
         "test_verification": {
-          "medal": "bronze",
+          "medal": "gold",
           "target": "bronze",
           "applicability": "scored",
           "meets_target": true,
-          "result": "bronze",
+          "result": "gold",
           "metrics": {},
           "composition": [
             {
               "product_id": "penpot-charm",
               "repo": "canonical/penpot-operator",
-              "medal": "bronze",
-              "result": "bronze",
+              "medal": "gold",
+              "result": "gold",
               "applicability": "scored",
               "metrics": {
                 "uses_ops_testing": {
@@ -7912,8 +7878,7 @@
                 },
                 "uses_tf_v1_provider": {
                   "state": "measured",
-                  "value": false,
-                  "reason": "terraform/charm/terraform.tf: juju/juju constraint '~> 2.0' must use >= A, < B with A >= 1.0.\nterraform/charm/tests/setup/main.tf: juju/juju constraint '>= 1.0' must use >= A, < B with A >= 1.0.\nterraform/product/terraform.tf: juju/juju constraint '~> 2.0' must use >= A, < B with A >= 1.0.\nterraform/product/tests/setup/main.tf: juju/juju constraint '>= 1.0' must use >= A, < B with A >= 1.0."
+                  "value": true
                 },
                 "uses_charm_ci": {
                   "state": "measured",
@@ -8064,8 +8029,7 @@
                 },
                 "uses_tf_v1_provider": {
                   "state": "measured",
-                  "value": false,
-                  "reason": "terraform/charm/terraform.tf: juju/juju constraint '~> 1.0' must use >= A, < B with A >= 1.0.\nterraform/charm/tests/setup/main.tf: juju/juju constraint '~> 1.0' must use >= A, < B with A >= 1.0."
+                  "value": true
                 },
                 "uses_charm_ci": {
                   "state": "measured",
@@ -8209,8 +8173,7 @@
             },
             "uses_tf_v1_provider": {
               "state": "measured",
-              "value": false,
-              "reason": "terraform/charm/versions.tf: juju/juju constraint '~> 1.0' must use >= A, < B with A >= 1.0.\nterraform/charm/tests/setup/main.tf: juju/juju constraint '~> 1.0' must use >= A, < B with A >= 1.0.\nterraform/product/versions.tf: juju/juju constraint '~> 1.0' must use >= A, < B with A >= 1.0.\nterraform/product/tests/setup/main.tf: juju/juju constraint '~> 1.0' must use >= A, < B with A >= 1.0."
+              "value": true
             },
             "uses_charm_ci": {
               "state": "measured",
@@ -8374,7 +8337,7 @@
                 "uses_tf_v1_provider": {
                   "state": "measured",
                   "value": false,
-                  "reason": "terraform/charm/versions.tf: juju/juju constraint '< 2.1' must use >= A, < B with A >= 1.0.\nterraform/charm/tests/main.tf: juju/juju constraint '< 2.1' must use >= A, < B with A >= 1.0.\nterraform/product/version.tf: juju/juju constraint '< 3.0.0' must use >= A, < B with A >= 1.0."
+                  "reason": "terraform/charm/versions.tf: juju/juju constraint '< 2.1' allows versions below 1.0.\nterraform/charm/tests/main.tf: juju/juju constraint '< 2.1' allows versions below 1.0.\nterraform/product/version.tf: juju/juju constraint '< 3.0.0' allows versions below 1.0."
                 },
                 "uses_charm_ci": {
                   "state": "measured",
@@ -8418,7 +8381,7 @@
                 "uses_tf_v1_provider": {
                   "state": "measured",
                   "value": false,
-                  "reason": "terraform/charm/versions.tf: juju/juju constraint '< 2.5' must use >= A, < B with A >= 1.0."
+                  "reason": "terraform/charm/versions.tf: juju/juju constraint '< 2.5' allows versions below 1.0."
                 },
                 "uses_charm_ci": {
                   "state": "measured",
@@ -8504,8 +8467,7 @@
                 },
                 "uses_tf_v1_provider": {
                   "state": "measured",
-                  "value": false,
-                  "reason": "terraform/charm/terraform.tf: juju/juju constraint '~> 1.0' must use >= A, < B with A >= 1.0.\nterraform/charm/tests/setup/main.tf: juju/juju constraint '~> 1.0' must use >= A, < B with A >= 1.0."
+                  "value": true
                 },
                 "uses_charm_ci": {
                   "state": "measured",
@@ -8591,8 +8553,7 @@
                 },
                 "uses_tf_v1_provider": {
                   "state": "measured",
-                  "value": false,
-                  "reason": "charms/garm-configurator/terraform/versions.tf: juju/juju constraint '>= 1.0.0' must use >= A, < B with A >= 1.0.\ncharms/garm-configurator/terraform/tests/main.tf: juju/juju constraint '>= 1.0.0' must use >= A, < B with A >= 1.0.\ncharms/garm/terraform/versions.tf: juju/juju constraint '>= 1.0.0' must use >= A, < B with A >= 1.0.\ncharms/planner-operator/terraform/versions.tf: juju/juju constraint '>= 1.0.0' must use >= A, < B with A >= 1.0.\ncharms/planner-operator/terraform/tests/main.tf: juju/juju constraint '>= 1.0.0' must use >= A, < B with A >= 1.0.\ncharms/webhook-gateway-operator/terraform/versions.tf: juju/juju constraint '>= 1.0.0' must use >= A, < B with A >= 1.0.\ncharms/webhook-gateway-operator/terraform/tests/main.tf: juju/juju constraint '>= 1.0.0' must use >= A, < B with A >= 1.0."
+                  "value": true
                 },
                 "uses_charm_ci": {
                   "state": "measured",
@@ -8634,8 +8595,7 @@
                 },
                 "uses_tf_v1_provider": {
                   "state": "measured",
-                  "value": false,
-                  "reason": "charms/garm-configurator/terraform/versions.tf: juju/juju constraint '>= 1.0.0' must use >= A, < B with A >= 1.0.\ncharms/garm-configurator/terraform/tests/main.tf: juju/juju constraint '>= 1.0.0' must use >= A, < B with A >= 1.0.\ncharms/garm/terraform/versions.tf: juju/juju constraint '>= 1.0.0' must use >= A, < B with A >= 1.0.\ncharms/planner-operator/terraform/versions.tf: juju/juju constraint '>= 1.0.0' must use >= A, < B with A >= 1.0.\ncharms/planner-operator/terraform/tests/main.tf: juju/juju constraint '>= 1.0.0' must use >= A, < B with A >= 1.0.\ncharms/webhook-gateway-operator/terraform/versions.tf: juju/juju constraint '>= 1.0.0' must use >= A, < B with A >= 1.0.\ncharms/webhook-gateway-operator/terraform/tests/main.tf: juju/juju constraint '>= 1.0.0' must use >= A, < B with A >= 1.0."
+                  "value": true
                 },
                 "uses_charm_ci": {
                   "state": "measured",
@@ -9104,8 +9064,7 @@
                 },
                 "uses_tf_v1_provider": {
                   "state": "measured",
-                  "value": false,
-                  "reason": "terraform/terraform.tf: juju/juju constraint '~> 1.0' must use >= A, < B with A >= 1.0.\nterraform/tests/setup/main.tf: juju/juju constraint '~> 1.0' must use >= A, < B with A >= 1.0."
+                  "value": true
                 },
                 "uses_charm_ci": {
                   "state": "measured",
@@ -9415,8 +9374,7 @@
                 },
                 "uses_tf_v1_provider": {
                   "state": "measured",
-                  "value": false,
-                  "reason": "terraform/versions.tf: juju/juju constraint '~> 1.0' must use >= A, < B with A >= 1.0.\nterraform-product/versions.tf: juju/juju constraint '~> 1.0' must use >= A, < B with A >= 1.0.\nterraform-product/tests/setup/main.tf: juju/juju constraint '~> 1.0' must use >= A, < B with A >= 1.0.\nterraform/tests/setup/main.tf: juju/juju constraint '~> 1.0' must use >= A, < B with A >= 1.0."
+                  "value": true
                 },
                 "uses_charm_ci": {
                   "state": "measured",
@@ -9579,8 +9537,7 @@
                 },
                 "uses_tf_v1_provider": {
                   "state": "measured",
-                  "value": false,
-                  "reason": "terraform/charm/versions.tf: juju/juju constraint '~> 1.0' must use >= A, < B with A >= 1.0.\nterraform/charm/tests/setup/main.tf: juju/juju constraint '~> 1.0' must use >= A, < B with A >= 1.0.\nterraform/product/versions.tf: juju/juju constraint '~> 1.0' must use >= A, < B with A >= 1.0.\nterraform/product/modules/s3-integrator/versions.tf: juju/juju constraint '~> 1.0' must use >= A, < B with A >= 1.0.\nterraform/product/tests/setup/main.tf: juju/juju constraint '~> 1.0' must use >= A, < B with A >= 1.0.\nterraform/product/tests/wait_for_active/main.tf: juju/juju constraint '~> 1.0' must use >= A, < B with A >= 1.0."
+                  "value": true
                 },
                 "uses_charm_ci": {
                   "state": "measured",
@@ -9622,8 +9579,7 @@
                 },
                 "uses_tf_v1_provider": {
                   "state": "measured",
-                  "value": false,
-                  "reason": "terraform/charm/versions.tf: juju/juju constraint '~> 1.0' must use >= A, < B with A >= 1.0.\nterraform/charm/large_deployment/versions.tf: juju/juju constraint '~> 1.0' must use >= A, < B with A >= 1.0.\nterraform/charm/simple_deployment/versions.tf: juju/juju constraint '~> 1.0' must use >= A, < B with A >= 1.0.\nterraform/product/versions.tf: juju/juju constraint '~> 1.0' must use >= A, < B with A >= 1.0.\nterraform/product/large_deployment/versions.tf: juju/juju constraint '~> 1.0' must use >= A, < B with A >= 1.0.\nterraform/product/simple_deployment/versions.tf: juju/juju constraint '~> 1.0' must use >= A, < B with A >= 1.0."
+                  "value": true
                 },
                 "uses_charm_ci": {
                   "state": "measured",
@@ -9666,8 +9622,7 @@
                 },
                 "uses_tf_v1_provider": {
                   "state": "measured",
-                  "value": false,
-                  "reason": "terraform/versions.tf: juju/juju constraint '~> 1.0' must use >= A, < B with A >= 1.0.\nterraform/charm/versions.tf: juju/juju constraint '~> 1.0' must use >= A, < B with A >= 1.0.\nterraform/product/versions.tf: juju/juju constraint '~> 1.0' must use >= A, < B with A >= 1.0."
+                  "value": true
                 },
                 "uses_charm_ci": {
                   "state": "measured",
@@ -9851,7 +9806,7 @@
               "metrics": {
                 "renovate_enabled": {
                   "state": "measured",
-                  "value": false
+                  "value": true
                 },
                 "branch_protection_required_checks": {
                   "state": "measured",
@@ -9905,9 +9860,9 @@
       "name": "WireGuard gateway",
       "description": "WireGuard gateway is a machine charm that deploys a highly available site-to-site VPN solution based on WireGuard.\nIt features automatic key exchange, OSPF-based route fault tolerance, and VRRP-based virtual redundant routing for\nenterprise-grade VPN deployments.",
       "lifecycle": "stable",
-      "current_medal": "bronze",
+      "current_medal": "silver",
       "target_medal": "gold",
-      "current_result": "bronze",
+      "current_result": "silver",
       "target_result": "gold",
       "meets_target": false,
       "squad": "apac",
@@ -9924,18 +9879,18 @@
       "parent_product_ids": [],
       "dimensions": {
         "test_verification": {
-          "medal": "bronze",
+          "medal": "silver",
           "target": "gold",
           "applicability": "scored",
           "meets_target": false,
-          "result": "bronze",
+          "result": "silver",
           "metrics": {},
           "composition": [
             {
               "product_id": "wireguard-gateway",
               "repo": "canonical/wireguard-gateway-operator",
-              "medal": "bronze",
-              "result": "bronze",
+              "medal": "silver",
+              "result": "silver",
               "applicability": "scored",
               "metrics": {
                 "uses_ops_testing": {
@@ -9952,8 +9907,7 @@
                 },
                 "uses_tf_v1_provider": {
                   "state": "measured",
-                  "value": false,
-                  "reason": "terraform/versions.tf: juju/juju constraint '> 1.1.0' must use >= A, < B with A >= 1.0.\nterraform/tests/main.tf: juju/juju constraint '> 1.1.0' must use >= A, < B with A >= 1.0."
+                  "value": true
                 },
                 "uses_charm_ci": {
                   "state": "measured",
@@ -10118,8 +10072,7 @@
                 },
                 "uses_tf_v1_provider": {
                   "state": "measured",
-                  "value": false,
-                  "reason": "terraform/charm/terraform.tf: juju/juju constraint '~> 2.0' must use >= A, < B with A >= 1.0.\nterraform/charm/tests/setup/main.tf: juju/juju constraint '~> 1.0' must use >= A, < B with A >= 1.0.\nterraform/product/terraform.tf: juju/juju constraint '~> 2.0' must use >= A, < B with A >= 1.0.\nterraform/product/tests/setup/main.tf: juju/juju constraint '~> 1.0' must use >= A, < B with A >= 1.0."
+                  "value": true
                 },
                 "uses_charm_ci": {
                   "state": "measured",
@@ -10352,11 +10305,11 @@
       "name": "aproxy-charm",
       "description": "",
       "lifecycle": "stable",
-      "current_medal": "bronze",
+      "current_medal": "silver",
       "target_medal": "silver",
-      "current_result": "bronze",
+      "current_result": "silver",
       "target_result": "silver",
-      "meets_target": false,
+      "meets_target": true,
       "squad": "",
       "is_portfolio_entry": false,
       "documentation_url": "",
@@ -10371,11 +10324,11 @@
       ],
       "dimensions": {
         "test_verification": {
-          "medal": "bronze",
+          "medal": "silver",
           "target": "silver",
           "applicability": "scored",
-          "meets_target": false,
-          "result": "bronze",
+          "meets_target": true,
+          "result": "silver",
           "metrics": {
             "uses_ops_testing": {
               "state": "measured",
@@ -10391,8 +10344,7 @@
             },
             "uses_tf_v1_provider": {
               "state": "measured",
-              "value": false,
-              "reason": "terraform/charm/terraform.tf: juju/juju constraint '~> 2.0' must use >= A, < B with A >= 1.0.\nterraform/charm/tests/setup/main.tf: juju/juju constraint '~> 2.0' must use >= A, < B with A >= 1.0."
+              "value": true
             },
             "uses_charm_ci": {
               "state": "measured",
@@ -10438,9 +10390,9 @@
               "value": ""
             },
             "diataxis_coverage_ai": {
-              "state": "measured",
-              "value": 4,
-              "reason": "Tutorial: tutorial.md contains a complete step-by-step guided exercise deploying aproxy with ubuntu charm, testing configuration and connectivity. How-to: Multiple task-oriented guides present (configure.md with proxy settings, upgrade.md with refresh commands, back-up-restore.md with backup procedures). Reference: Technical specifications exist including actions.md, configurations.md, integrations.md describing interfaces, and charm-architecture.md with architectural diagrams and component descriptions. Explanation: security.md provides conceptual discussion of risks, privileged operations, and good practices; charm-architecture.md contains design rationale and system context explanations."
+              "state": "insufficient_data",
+              "value": null,
+              "reason": "AI documentation assessment is unavailable."
             }
           },
           "composition": null
@@ -10644,8 +10596,7 @@
             },
             "uses_tf_v1_provider": {
               "state": "measured",
-              "value": false,
-              "reason": "terraform/charm/backup_integrator/terraform.tf: juju/juju constraint '~> 1.0' must use >= A, < B with A >= 1.0.\nterraform/charm/backup_integrator/tests/setup/main.tf: juju/juju constraint '~> 1.0' must use >= A, < B with A >= 1.0.\nterraform/charm/bacula_fd/terraform.tf: juju/juju constraint '~> 1.0' must use >= A, < B with A >= 1.0.\nterraform/charm/bacula_fd/tests/setup/main.tf: juju/juju constraint '~> 1.0' must use >= A, < B with A >= 1.0.\nterraform/charm/bacula_server/terraform.tf: juju/juju constraint '~> 1.0' must use >= A, < B with A >= 1.0.\nterraform/charm/bacula_server/tests/setup/main.tf: juju/juju constraint '~> 1.0' must use >= A, < B with A >= 1.0.\nterraform/product/terraform.tf: juju/juju constraint '~> 1.0' must use >= A, < B with A >= 1.0.\nterraform/product/tests/setup/main.tf: juju/juju constraint '~> 1.0' must use >= A, < B with A >= 1.0."
+              "value": true
             },
             "uses_charm_ci": {
               "state": "measured",
@@ -10691,9 +10642,9 @@
               "value": "2.0"
             },
             "diataxis_coverage_ai": {
-              "state": "measured",
-              "value": 4,
-              "reason": "Tutorial: tutorial.md contains a complete step-by-step guided exercise deploying bacula-server with S3 and PostgreSQL, accessing Baculum, and cleanup. How-to: Multiple task-oriented guides exist including integrate-with-backup-integrator-charm.md (integration steps), use-baculum.md (performing backups/restores), and upgrade.md (upgrade procedures). Reference: Extensive factual documentation including actions.md, configurations.md, integrations.md (relation interfaces and commands), and architecture documents describing components, events, and code structure. Explanation: security.md provides conceptual discussion of security design choices and omitted protections in Bacula charms."
+              "state": "insufficient_data",
+              "value": null,
+              "reason": "AI documentation assessment is unavailable."
             }
           },
           "composition": null
@@ -10767,8 +10718,7 @@
             },
             "uses_tf_v1_provider": {
               "state": "measured",
-              "value": false,
-              "reason": "terraform/charm/backup_integrator/terraform.tf: juju/juju constraint '~> 1.0' must use >= A, < B with A >= 1.0.\nterraform/charm/backup_integrator/tests/setup/main.tf: juju/juju constraint '~> 1.0' must use >= A, < B with A >= 1.0.\nterraform/charm/bacula_fd/terraform.tf: juju/juju constraint '~> 1.0' must use >= A, < B with A >= 1.0.\nterraform/charm/bacula_fd/tests/setup/main.tf: juju/juju constraint '~> 1.0' must use >= A, < B with A >= 1.0.\nterraform/charm/bacula_server/terraform.tf: juju/juju constraint '~> 1.0' must use >= A, < B with A >= 1.0.\nterraform/charm/bacula_server/tests/setup/main.tf: juju/juju constraint '~> 1.0' must use >= A, < B with A >= 1.0.\nterraform/product/terraform.tf: juju/juju constraint '~> 1.0' must use >= A, < B with A >= 1.0.\nterraform/product/tests/setup/main.tf: juju/juju constraint '~> 1.0' must use >= A, < B with A >= 1.0."
+              "value": true
             },
             "uses_charm_ci": {
               "state": "measured",
@@ -10890,8 +10840,7 @@
             },
             "uses_tf_v1_provider": {
               "state": "measured",
-              "value": false,
-              "reason": "terraform/charm/backup_integrator/terraform.tf: juju/juju constraint '~> 1.0' must use >= A, < B with A >= 1.0.\nterraform/charm/backup_integrator/tests/setup/main.tf: juju/juju constraint '~> 1.0' must use >= A, < B with A >= 1.0.\nterraform/charm/bacula_fd/terraform.tf: juju/juju constraint '~> 1.0' must use >= A, < B with A >= 1.0.\nterraform/charm/bacula_fd/tests/setup/main.tf: juju/juju constraint '~> 1.0' must use >= A, < B with A >= 1.0.\nterraform/charm/bacula_server/terraform.tf: juju/juju constraint '~> 1.0' must use >= A, < B with A >= 1.0.\nterraform/charm/bacula_server/tests/setup/main.tf: juju/juju constraint '~> 1.0' must use >= A, < B with A >= 1.0.\nterraform/product/terraform.tf: juju/juju constraint '~> 1.0' must use >= A, < B with A >= 1.0.\nterraform/product/tests/setup/main.tf: juju/juju constraint '~> 1.0' must use >= A, < B with A >= 1.0."
+              "value": true
             },
             "uses_charm_ci": {
               "state": "measured",
@@ -11143,8 +11092,7 @@
             },
             "uses_tf_v1_provider": {
               "state": "measured",
-              "value": false,
-              "reason": "terraform/versions.tf: juju/juju constraint '>= 2.2.0' must use >= A, < B with A >= 1.0.\nterraform/product/versions.tf: juju/juju constraint '>= 2.2.0' must use >= A, < B with A >= 1.0.\nterraform/product/tests/setup/main.tf: juju/juju constraint '>= 2.2.0' must use >= A, < B with A >= 1.0.\nterraform/tests/setup/main.tf: juju/juju constraint '>= 2.2.0' must use >= A, < B with A >= 1.0."
+              "value": true
             },
             "uses_charm_ci": {
               "state": "measured",
@@ -11312,9 +11260,9 @@
               "value": ""
             },
             "diataxis_coverage_ai": {
-              "state": "measured",
-              "value": 4,
-              "reason": "Tutorial: getting-started.md provides a complete hands-on walkthrough with specific steps to deploy, configure, and test the Chrony charm. How-to: Multiple guides exist for specific tasks (enable-nts.md, setup-time-sources.md, upgrade.md) with actionable instructions. Reference: charm-architecture.md contains factual technical descriptions of the charm's structure, components, systemd service, ports, and code organization. Explanation: charm-architecture.md also explains concepts like how the charm operates as a machine charm, the relationship between components, and how NTS provides security enhancements over NTP."
+              "state": "insufficient_data",
+              "value": null,
+              "reason": "AI documentation assessment is unavailable."
             }
           },
           "composition": null
@@ -11389,7 +11337,7 @@
             "uses_tf_v1_provider": {
               "state": "measured",
               "value": false,
-              "reason": "terraform/charm/versions.tf: juju/juju constraint '>= 0.17.1' must use >= A, < B with A >= 1.0."
+              "reason": "terraform/charm/versions.tf: juju/juju constraint '>= 0.17.1' allows versions below 1.0."
             },
             "uses_charm_ci": {
               "state": "measured",
@@ -11435,9 +11383,9 @@
               "value": ""
             },
             "diataxis_coverage_ai": {
-              "state": "measured",
-              "value": 4,
-              "reason": "Tutorial: docs/tutorial.md contains a complete learning-oriented walkthrough deploying the charm with prerequisites, step-by-step commands, and cleanup. How-to: docs/how-to/integrate-with-cos.md and upgrade.md provide task-oriented instructions for specific operations (COS integration and upgrading). Reference: docs/reference/ contains factual descriptions including metrics.md (list of metrics with definitions), configurations.md (links to configuration reference), integrations.md (interface specifications), and charm-architecture.md (technical architecture details, event descriptions, code structure). Explanation: docs/explanation/security.md discusses security concepts including risks and patch management approach."
+              "state": "insufficient_data",
+              "value": null,
+              "reason": "AI documentation assessment is unavailable."
             }
           },
           "composition": null
@@ -11558,9 +11506,9 @@
               "value": ""
             },
             "diataxis_coverage_ai": {
-              "state": "measured",
-              "value": 2,
-              "reason": "How-to: The upgrade.md document provides task-oriented instructions for upgrading the cloudflared charm with specific commands and verification steps. Reference: The changelog.md provides factual version information tracking changes over time. No tutorial (no learning-oriented guided exercise for beginners), no explanation (no conceptual discussion or design rationale)."
+              "state": "insufficient_data",
+              "value": null,
+              "reason": "AI documentation assessment is unavailable."
             }
           },
           "composition": null
@@ -11887,8 +11835,7 @@
             },
             "uses_tf_v1_provider": {
               "state": "measured",
-              "value": false,
-              "reason": "terraform/charm/terraform.tf: juju/juju constraint '~> 2.0' must use >= A, < B with A >= 1.0.\nterraform/charm/tests/setup/main.tf: juju/juju constraint '~> 1.0' must use >= A, < B with A >= 1.0."
+              "value": true
             },
             "uses_charm_ci": {
               "state": "measured",
@@ -11933,9 +11880,9 @@
               "value": "2.0"
             },
             "diataxis_coverage_ai": {
-              "state": "measured",
-              "value": 4,
-              "reason": "Tutorial: getting-started.md contains a complete step-by-step guided exercise deploying content-cache-k8s with backend-app and nginx-ingress-integrator, including verification steps. How-to: Multiple task-oriented guides present including cache-content-with-openstack-swift.md (configuring Swift storage) and upgrade.md (refresh command). Reference: Extensive factual documentation including actions.md, configurations.md, integrations.md (detailed relation endpoints with interfaces and commands), charm-architecture.md (technical container descriptions, Pebble layers, event handling), and external-access.md. Explanation: security.md provides conceptual discussion of machine-in-the-middle attacks, TLS practices, and caching sensitive data with Cache-Control headers."
+              "state": "insufficient_data",
+              "value": null,
+              "reason": "AI documentation assessment is unavailable."
             }
           },
           "composition": null
@@ -12009,8 +11956,7 @@
             },
             "uses_tf_v1_provider": {
               "state": "measured",
-              "value": false,
-              "reason": "terraform/charm/content_cache/terraform.tf: juju/juju constraint '~> 2.0' must use >= A, < B with A >= 1.0.\nterraform/charm/content_cache/tests/integration/main.tf: juju/juju constraint '> 1.1.0' must use >= A, < B with A >= 1.0.\nterraform/charm/content_cache/tests/setup/main.tf: juju/juju constraint '> 1.1.0' must use >= A, < B with A >= 1.0.\nterraform/charm/content_cache_backends_config/terraform.tf: juju/juju constraint '~> 2.0' must use >= A, < B with A >= 1.0.\nterraform/charm/content_cache_backends_config/tests/integration/main.tf: juju/juju constraint '> 1.1.0' must use >= A, < B with A >= 1.0.\nterraform/charm/content_cache_backends_config/tests/setup/main.tf: juju/juju constraint '> 1.1.0' must use >= A, < B with A >= 1.0."
+              "value": true
             },
             "uses_charm_ci": {
               "state": "measured",
@@ -12056,9 +12002,9 @@
               "value": "2.0"
             },
             "diataxis_coverage_ai": {
-              "state": "measured",
-              "value": 4,
-              "reason": "Tutorial: The 'Deploy with Ingress configurator and HAProxy' page is a complete guided walkthrough with concrete steps for deploying the system. How-to: Multiple operational guides exist ('Enable COS', 'Enable HTTPS', 'Hash client IP addresses', 'Upgrade') providing task-oriented instructions. Reference: 'Components', 'Deployment architecture', and embedded configuration details throughout provide factual technical descriptions. Explanation: 'Caching behavior', 'Charm design', and 'Security' pages discuss concepts, design choices, and how things work under the hood."
+              "state": "insufficient_data",
+              "value": null,
+              "reason": "AI documentation assessment is unavailable."
             }
           },
           "composition": null
@@ -12132,8 +12078,7 @@
             },
             "uses_tf_v1_provider": {
               "state": "measured",
-              "value": false,
-              "reason": "terraform/charm/content_cache/terraform.tf: juju/juju constraint '~> 2.0' must use >= A, < B with A >= 1.0.\nterraform/charm/content_cache/tests/integration/main.tf: juju/juju constraint '> 1.1.0' must use >= A, < B with A >= 1.0.\nterraform/charm/content_cache/tests/setup/main.tf: juju/juju constraint '> 1.1.0' must use >= A, < B with A >= 1.0.\nterraform/charm/content_cache_backends_config/terraform.tf: juju/juju constraint '~> 2.0' must use >= A, < B with A >= 1.0.\nterraform/charm/content_cache_backends_config/tests/integration/main.tf: juju/juju constraint '> 1.1.0' must use >= A, < B with A >= 1.0.\nterraform/charm/content_cache_backends_config/tests/setup/main.tf: juju/juju constraint '> 1.1.0' must use >= A, < B with A >= 1.0."
+              "value": true
             },
             "uses_charm_ci": {
               "state": "measured",
@@ -12179,9 +12124,9 @@
               "value": "2.0"
             },
             "diataxis_coverage_ai": {
-              "state": "measured",
-              "value": 4,
-              "reason": "Tutorial: deploy-with-ingress-configurator-and-haproxy.md provides a complete step-by-step guided exercise deploying content-cache with ingress-configurator and haproxy, including setup, configuration, TLS termination, and verification steps. How-to: Multiple guides with task-oriented instructions including enable-https.md (connecting to HTTPS backends), enable-cos.md (enabling observability), hash-client-ip-addresses-in-logs.md (configuring IP hashing), and upgrade.md (upgrading the charm). Reference: components.md describes the charms in the system, deployment-architecture.md documents relations and architecture patterns with diagrams. Explanation: caching-behavior.md discusses cache miss/hit flow and eviction mechanisms, charm-design.md explains design decisions around static-only caching and port allocation, security.md covers TLS, authentication, and security design choices."
+              "state": "insufficient_data",
+              "value": null,
+              "reason": "AI documentation assessment is unavailable."
             }
           },
           "composition": null
@@ -12255,8 +12200,7 @@
             },
             "uses_tf_v1_provider": {
               "state": "measured",
-              "value": false,
-              "reason": "terraform/terraform.tf: juju/juju constraint '~> 1.0' must use >= A, < B with A >= 1.0.\nterraform/tests/setup/main.tf: juju/juju constraint '~> 1.0' must use >= A, < B with A >= 1.0."
+              "value": true
             },
             "uses_charm_ci": {
               "state": "measured",
@@ -12302,9 +12246,9 @@
               "value": ""
             },
             "diataxis_coverage_ai": {
-              "state": "measured",
-              "value": 3,
-              "reason": "Tutorial (1 point): getting-started.md provides a learning-oriented walkthrough of deploying the charm with setup steps and integration commands. How-to (1 point): Multiple how-to guides with task-oriented instructions for managing users (create, list, remove), configuring authentication type, upgrading, and contributing. Reference (0 points): No factual descriptions of configuration options, action parameters, or API interfaces are provided - only usage examples. Explanation (1 point): The index.md contains conceptual discussion explaining what the charm does, its relationship to Squid as a subordinate charm, and the authentication context (forward vs reverse proxy use case)."
+              "state": "insufficient_data",
+              "value": null,
+              "reason": "AI documentation assessment is unavailable."
             }
           },
           "composition": null
@@ -12339,11 +12283,11 @@
       "name": "discourse-k8s",
       "description": "",
       "lifecycle": "stable",
-      "current_medal": "bronze",
+      "current_medal": "silver",
       "target_medal": "silver",
-      "current_result": "bronze",
+      "current_result": "silver",
       "target_result": "silver",
-      "meets_target": false,
+      "meets_target": true,
       "squad": "",
       "is_portfolio_entry": false,
       "documentation_url": "",
@@ -12358,11 +12302,11 @@
       ],
       "dimensions": {
         "test_verification": {
-          "medal": "bronze",
+          "medal": "silver",
           "target": "silver",
           "applicability": "scored",
-          "meets_target": false,
-          "result": "bronze",
+          "meets_target": true,
+          "result": "silver",
           "metrics": {
             "uses_ops_testing": {
               "state": "measured",
@@ -12378,8 +12322,7 @@
             },
             "uses_tf_v1_provider": {
               "state": "measured",
-              "value": false,
-              "reason": "terraform/versions.tf: juju/juju constraint '~> 2.0' must use >= A, < B with A >= 1.0.\nterraform/tests/setup/main.tf: juju/juju constraint '~> 2.0' must use >= A, < B with A >= 1.0."
+              "value": true
             },
             "uses_charm_ci": {
               "state": "measured",
@@ -12424,9 +12367,9 @@
               "value": ""
             },
             "diataxis_coverage_ai": {
-              "state": "measured",
-              "value": 4,
-              "reason": "Tutorial: docs/tutorial.md contains a complete guided exercise deploying Discourse with step-by-step instructions and requirements. How-to: Multiple task-oriented guides exist (configure-hostname.md, configure-s3.md, configure-smtp.md, configure-saml.md, backup-and-restore.md, upgrade.md, access-the-rails-console.md). Reference: Extensive factual documentation covers actions, configurations, integrations, plugins, charm architecture, versioning, and external access. Explanation: docs/explanation/security.md provides conceptual discussion on security risks and best practices with reasoning behind design choices."
+              "state": "insufficient_data",
+              "value": null,
+              "reason": "AI documentation assessment is unavailable."
             }
           },
           "composition": null
@@ -12461,9 +12404,9 @@
       "name": "bind",
       "description": "",
       "lifecycle": "stable",
-      "current_medal": "bronze",
+      "current_medal": "silver",
       "target_medal": "bronze",
-      "current_result": "bronze",
+      "current_result": "silver",
       "target_result": "bronze",
       "meets_target": true,
       "squad": "",
@@ -12480,11 +12423,11 @@
       ],
       "dimensions": {
         "test_verification": {
-          "medal": "bronze",
+          "medal": "silver",
           "target": "bronze",
           "applicability": "scored",
           "meets_target": true,
-          "result": "bronze",
+          "result": "silver",
           "metrics": {
             "uses_ops_testing": {
               "state": "measured",
@@ -12500,8 +12443,7 @@
             },
             "uses_tf_v1_provider": {
               "state": "measured",
-              "value": false,
-              "reason": "bind-operator/terraform/terraform.tf: juju/juju constraint '>= 1.0.0' must use >= A, < B with A >= 1.0.\ndns-integrator-operator/terraform/terraform.tf: juju/juju constraint '>= 1.0.0' must use >= A, < B with A >= 1.0.\ndns-policy-operator/terraform/terraform.tf: juju/juju constraint '>= 1.0.0' must use >= A, < B with A >= 1.0.\ndns-resolver-operator/terraform/terraform.tf: juju/juju constraint '>= 1.0.0' must use >= A, < B with A >= 1.0.\ndns-secondary-operator/terraform/terraform.tf: juju/juju constraint '>= 1.0.0' must use >= A, < B with A >= 1.0.\ndocs/terraform/main.tf: juju/juju constraint '>= 1.0.0' must use >= A, < B with A >= 1.0.\nterraform/terraform.tf: juju/juju constraint '>= 1.0.0' must use >= A, < B with A >= 1.0."
+              "value": true
             },
             "uses_charm_ci": {
               "state": "measured",
@@ -12584,9 +12526,9 @@
       "name": "dns-policy",
       "description": "",
       "lifecycle": "stable",
-      "current_medal": "bronze",
+      "current_medal": "silver",
       "target_medal": "bronze",
-      "current_result": "bronze",
+      "current_result": "silver",
       "target_result": "bronze",
       "meets_target": true,
       "squad": "",
@@ -12603,11 +12545,11 @@
       ],
       "dimensions": {
         "test_verification": {
-          "medal": "bronze",
+          "medal": "silver",
           "target": "bronze",
           "applicability": "scored",
           "meets_target": true,
-          "result": "bronze",
+          "result": "silver",
           "metrics": {
             "uses_ops_testing": {
               "state": "measured",
@@ -12623,8 +12565,7 @@
             },
             "uses_tf_v1_provider": {
               "state": "measured",
-              "value": false,
-              "reason": "bind-operator/terraform/terraform.tf: juju/juju constraint '>= 1.0.0' must use >= A, < B with A >= 1.0.\ndns-integrator-operator/terraform/terraform.tf: juju/juju constraint '>= 1.0.0' must use >= A, < B with A >= 1.0.\ndns-policy-operator/terraform/terraform.tf: juju/juju constraint '>= 1.0.0' must use >= A, < B with A >= 1.0.\ndns-resolver-operator/terraform/terraform.tf: juju/juju constraint '>= 1.0.0' must use >= A, < B with A >= 1.0.\ndns-secondary-operator/terraform/terraform.tf: juju/juju constraint '>= 1.0.0' must use >= A, < B with A >= 1.0.\ndocs/terraform/main.tf: juju/juju constraint '>= 1.0.0' must use >= A, < B with A >= 1.0.\nterraform/terraform.tf: juju/juju constraint '>= 1.0.0' must use >= A, < B with A >= 1.0."
+              "value": true
             },
             "uses_charm_ci": {
               "state": "measured",
@@ -12746,8 +12687,7 @@
             },
             "uses_tf_v1_provider": {
               "state": "measured",
-              "value": false,
-              "reason": "bind-operator/terraform/terraform.tf: juju/juju constraint '>= 1.0.0' must use >= A, < B with A >= 1.0.\ndns-integrator-operator/terraform/terraform.tf: juju/juju constraint '>= 1.0.0' must use >= A, < B with A >= 1.0.\ndns-policy-operator/terraform/terraform.tf: juju/juju constraint '>= 1.0.0' must use >= A, < B with A >= 1.0.\ndns-resolver-operator/terraform/terraform.tf: juju/juju constraint '>= 1.0.0' must use >= A, < B with A >= 1.0.\ndns-secondary-operator/terraform/terraform.tf: juju/juju constraint '>= 1.0.0' must use >= A, < B with A >= 1.0.\ndocs/terraform/main.tf: juju/juju constraint '>= 1.0.0' must use >= A, < B with A >= 1.0.\nterraform/terraform.tf: juju/juju constraint '>= 1.0.0' must use >= A, < B with A >= 1.0."
+              "value": true
             },
             "uses_charm_ci": {
               "state": "measured",
@@ -12870,8 +12810,7 @@
             },
             "uses_tf_v1_provider": {
               "state": "measured",
-              "value": false,
-              "reason": "bind-operator/terraform/terraform.tf: juju/juju constraint '>= 1.0.0' must use >= A, < B with A >= 1.0.\ndns-integrator-operator/terraform/terraform.tf: juju/juju constraint '>= 1.0.0' must use >= A, < B with A >= 1.0.\ndns-policy-operator/terraform/terraform.tf: juju/juju constraint '>= 1.0.0' must use >= A, < B with A >= 1.0.\ndns-resolver-operator/terraform/terraform.tf: juju/juju constraint '>= 1.0.0' must use >= A, < B with A >= 1.0.\ndns-secondary-operator/terraform/terraform.tf: juju/juju constraint '>= 1.0.0' must use >= A, < B with A >= 1.0.\ndocs/terraform/main.tf: juju/juju constraint '>= 1.0.0' must use >= A, < B with A >= 1.0.\nterraform/terraform.tf: juju/juju constraint '>= 1.0.0' must use >= A, < B with A >= 1.0."
+              "value": true
             },
             "uses_charm_ci": {
               "state": "measured",
@@ -12954,9 +12893,9 @@
       "name": "dns-secondary",
       "description": "",
       "lifecycle": "stable",
-      "current_medal": "bronze",
+      "current_medal": "silver",
       "target_medal": "bronze",
-      "current_result": "bronze",
+      "current_result": "silver",
       "target_result": "bronze",
       "meets_target": true,
       "squad": "",
@@ -12973,11 +12912,11 @@
       ],
       "dimensions": {
         "test_verification": {
-          "medal": "bronze",
+          "medal": "silver",
           "target": "bronze",
           "applicability": "scored",
           "meets_target": true,
-          "result": "bronze",
+          "result": "silver",
           "metrics": {
             "uses_ops_testing": {
               "state": "measured",
@@ -12993,8 +12932,7 @@
             },
             "uses_tf_v1_provider": {
               "state": "measured",
-              "value": false,
-              "reason": "bind-operator/terraform/terraform.tf: juju/juju constraint '>= 1.0.0' must use >= A, < B with A >= 1.0.\ndns-integrator-operator/terraform/terraform.tf: juju/juju constraint '>= 1.0.0' must use >= A, < B with A >= 1.0.\ndns-policy-operator/terraform/terraform.tf: juju/juju constraint '>= 1.0.0' must use >= A, < B with A >= 1.0.\ndns-resolver-operator/terraform/terraform.tf: juju/juju constraint '>= 1.0.0' must use >= A, < B with A >= 1.0.\ndns-secondary-operator/terraform/terraform.tf: juju/juju constraint '>= 1.0.0' must use >= A, < B with A >= 1.0.\ndocs/terraform/main.tf: juju/juju constraint '>= 1.0.0' must use >= A, < B with A >= 1.0.\nterraform/terraform.tf: juju/juju constraint '>= 1.0.0' must use >= A, < B with A >= 1.0."
+              "value": true
             },
             "uses_charm_ci": {
               "state": "measured",
@@ -13337,11 +13275,11 @@
       "name": "falco-charm",
       "description": "",
       "lifecycle": "stable",
-      "current_medal": "bronze",
+      "current_medal": "silver",
       "target_medal": "silver",
-      "current_result": "bronze",
+      "current_result": "silver",
       "target_result": "silver",
-      "meets_target": false,
+      "meets_target": true,
       "squad": "",
       "is_portfolio_entry": false,
       "documentation_url": "",
@@ -13356,11 +13294,11 @@
       ],
       "dimensions": {
         "test_verification": {
-          "medal": "bronze",
+          "medal": "silver",
           "target": "silver",
           "applicability": "scored",
-          "meets_target": false,
-          "result": "bronze",
+          "meets_target": true,
+          "result": "silver",
           "metrics": {
             "uses_ops_testing": {
               "state": "measured",
@@ -13376,8 +13314,7 @@
             },
             "uses_tf_v1_provider": {
               "state": "measured",
-              "value": false,
-              "reason": "falco-operator/terraform/terraform.tf: juju/juju constraint '~> 1.0' must use >= A, < B with A >= 1.0.\nfalco-operator/terraform/tests/setup/main.tf: juju/juju constraint '~> 1.0' must use >= A, < B with A >= 1.0.\nfalcosidekick-k8s-operator/terraform/terraform.tf: juju/juju constraint '~> 1.0' must use >= A, < B with A >= 1.0.\nfalcosidekick-k8s-operator/terraform/tests/setup/main.tf: juju/juju constraint '~> 1.0' must use >= A, < B with A >= 1.0."
+              "value": true
             },
             "uses_charm_ci": {
               "state": "measured",
@@ -13460,11 +13397,11 @@
       "name": "falcosidekick-k8s",
       "description": "",
       "lifecycle": "stable",
-      "current_medal": "bronze",
+      "current_medal": "silver",
       "target_medal": "silver",
-      "current_result": "bronze",
+      "current_result": "silver",
       "target_result": "silver",
-      "meets_target": false,
+      "meets_target": true,
       "squad": "",
       "is_portfolio_entry": false,
       "documentation_url": "",
@@ -13479,11 +13416,11 @@
       ],
       "dimensions": {
         "test_verification": {
-          "medal": "bronze",
+          "medal": "silver",
           "target": "silver",
           "applicability": "scored",
-          "meets_target": false,
-          "result": "bronze",
+          "meets_target": true,
+          "result": "silver",
           "metrics": {
             "uses_ops_testing": {
               "state": "measured",
@@ -13499,8 +13436,7 @@
             },
             "uses_tf_v1_provider": {
               "state": "measured",
-              "value": false,
-              "reason": "falco-operator/terraform/terraform.tf: juju/juju constraint '~> 1.0' must use >= A, < B with A >= 1.0.\nfalco-operator/terraform/tests/setup/main.tf: juju/juju constraint '~> 1.0' must use >= A, < B with A >= 1.0.\nfalcosidekick-k8s-operator/terraform/terraform.tf: juju/juju constraint '~> 1.0' must use >= A, < B with A >= 1.0.\nfalcosidekick-k8s-operator/terraform/tests/setup/main.tf: juju/juju constraint '~> 1.0' must use >= A, < B with A >= 1.0."
+              "value": true
             },
             "uses_charm_ci": {
               "state": "measured",
@@ -13787,9 +13723,9 @@
               "value": "2.0"
             },
             "diataxis_coverage_ai": {
-              "state": "measured",
-              "value": 4,
-              "reason": "Tutorial: deploy-and-verify-on-kubernetes.rst provides a complete guided exercise deploying gopkg-k8s, configuring it, and fetching a module. How-to: Multiple guides under how-to/ provide task-oriented instructions (configure-ingress, integrate-with-cos, upgrade-the-charm, etc.). Reference: charm-configuration.rst, integrations.rst, and platforms-and-prerequisites.rst contain factual descriptions of options, endpoints, metrics, and requirements. Explanation: gopkg-service.rst and ingress.rst discuss concepts like why gopkg.in exists, how the service works, and how ingress routing functions."
+              "state": "insufficient_data",
+              "value": null,
+              "reason": "AI documentation assessment is unavailable."
             }
           },
           "composition": null
@@ -13824,9 +13760,9 @@
       "name": "haproxy-charm",
       "description": "",
       "lifecycle": "stable",
-      "current_medal": "bronze",
+      "current_medal": "silver",
       "target_medal": "gold",
-      "current_result": "bronze",
+      "current_result": "silver",
       "target_result": "gold",
       "meets_target": false,
       "squad": "",
@@ -13843,11 +13779,11 @@
       ],
       "dimensions": {
         "test_verification": {
-          "medal": "bronze",
+          "medal": "silver",
           "target": "gold",
           "applicability": "scored",
           "meets_target": false,
-          "result": "bronze",
+          "result": "silver",
           "metrics": {
             "uses_ops_testing": {
               "state": "measured",
@@ -13863,8 +13799,7 @@
             },
             "uses_tf_v1_provider": {
               "state": "measured",
-              "value": false,
-              "reason": "terraform/charm/haproxy/terraform.tf: juju/juju constraint '>= 1.0' must use >= A, < B with A >= 1.0.\nterraform/charm/haproxy_ddos_protection_configurator/terraform.tf: juju/juju constraint '>= 1.0' must use >= A, < B with A >= 1.0.\nterraform/charm/haproxy_spoe_auth/terraform.tf: juju/juju constraint '>= 1.0' must use >= A, < B with A >= 1.0.\nterraform/product/terraform.tf: juju/juju constraint '>= 1.0' must use >= A, < B with A >= 1.0.\nterraform/tests/setup/main.tf: juju/juju constraint '>= 1.0' must use >= A, < B with A >= 1.0."
+              "value": true
             },
             "uses_charm_ci": {
               "state": "measured",
@@ -14069,9 +14004,9 @@
       "name": "haproxy-spoe-auth",
       "description": "",
       "lifecycle": "stable",
-      "current_medal": "bronze",
+      "current_medal": "silver",
       "target_medal": "gold",
-      "current_result": "bronze",
+      "current_result": "silver",
       "target_result": "gold",
       "meets_target": false,
       "squad": "",
@@ -14088,11 +14023,11 @@
       ],
       "dimensions": {
         "test_verification": {
-          "medal": "bronze",
+          "medal": "silver",
           "target": "gold",
           "applicability": "scored",
           "meets_target": false,
-          "result": "bronze",
+          "result": "silver",
           "metrics": {
             "uses_ops_testing": {
               "state": "measured",
@@ -14108,8 +14043,7 @@
             },
             "uses_tf_v1_provider": {
               "state": "measured",
-              "value": false,
-              "reason": "terraform/charm/haproxy/terraform.tf: juju/juju constraint '>= 1.0' must use >= A, < B with A >= 1.0.\nterraform/charm/haproxy_ddos_protection_configurator/terraform.tf: juju/juju constraint '>= 1.0' must use >= A, < B with A >= 1.0.\nterraform/charm/haproxy_spoe_auth/terraform.tf: juju/juju constraint '>= 1.0' must use >= A, < B with A >= 1.0.\nterraform/product/terraform.tf: juju/juju constraint '>= 1.0' must use >= A, < B with A >= 1.0.\nterraform/tests/setup/main.tf: juju/juju constraint '>= 1.0' must use >= A, < B with A >= 1.0."
+              "value": true
             },
             "uses_charm_ci": {
               "state": "measured",
@@ -14362,8 +14296,7 @@
             },
             "uses_tf_v1_provider": {
               "state": "measured",
-              "value": false,
-              "reason": "terraform/charm/versions.tf: juju/juju constraint '~> 1.0' must use >= A, < B with A >= 1.0.\nterraform/charm/tests/setup/main.tf: juju/juju constraint '~> 1.0' must use >= A, < B with A >= 1.0.\nterraform/product/versions.tf: juju/juju constraint '~> 1.0' must use >= A, < B with A >= 1.0.\nterraform/product/modules/traefik-k8s/versions.tf: juju/juju constraint '~> 1.0' must use >= A, < B with A >= 1.0.\nterraform/product/tests/setup/main.tf: juju/juju constraint '~> 1.0' must use >= A, < B with A >= 1.0."
+              "value": true
             },
             "uses_charm_ci": {
               "state": "measured",
@@ -14484,8 +14417,7 @@
             },
             "uses_tf_v1_provider": {
               "state": "measured",
-              "value": false,
-              "reason": "terraform/charm/http_proxy_configurator/terraform.tf: juju/juju constraint '~> 1.0' must use >= A, < B with A >= 1.0.\nterraform/charm/http_proxy_configurator/tests/setup/main.tf: juju/juju constraint '~> 1.0' must use >= A, < B with A >= 1.0.\nterraform/charm/http_proxy_policy/terraform.tf: juju/juju constraint '~> 1.0' must use >= A, < B with A >= 1.0.\nterraform/charm/http_proxy_policy/tests/setup/main.tf: juju/juju constraint '~> 1.0' must use >= A, < B with A >= 1.0.\nterraform/charm/squid_forward_proxy/terraform.tf: juju/juju constraint '~> 1.0' must use >= A, < B with A >= 1.0.\nterraform/charm/squid_forward_proxy/tests/setup/main.tf: juju/juju constraint '~> 1.0' must use >= A, < B with A >= 1.0."
+              "value": true
             },
             "uses_charm_ci": {
               "state": "measured",
@@ -14607,8 +14539,7 @@
             },
             "uses_tf_v1_provider": {
               "state": "measured",
-              "value": false,
-              "reason": "terraform/charm/http_proxy_configurator/terraform.tf: juju/juju constraint '~> 1.0' must use >= A, < B with A >= 1.0.\nterraform/charm/http_proxy_configurator/tests/setup/main.tf: juju/juju constraint '~> 1.0' must use >= A, < B with A >= 1.0.\nterraform/charm/http_proxy_policy/terraform.tf: juju/juju constraint '~> 1.0' must use >= A, < B with A >= 1.0.\nterraform/charm/http_proxy_policy/tests/setup/main.tf: juju/juju constraint '~> 1.0' must use >= A, < B with A >= 1.0.\nterraform/charm/squid_forward_proxy/terraform.tf: juju/juju constraint '~> 1.0' must use >= A, < B with A >= 1.0.\nterraform/charm/squid_forward_proxy/tests/setup/main.tf: juju/juju constraint '~> 1.0' must use >= A, < B with A >= 1.0."
+              "value": true
             },
             "uses_charm_ci": {
               "state": "measured",
@@ -14710,11 +14641,11 @@
       ],
       "dimensions": {
         "test_verification": {
-          "medal": "bronze",
+          "medal": "silver",
           "target": "silver",
           "applicability": "scored",
-          "meets_target": false,
-          "result": "bronze",
+          "meets_target": true,
+          "result": "silver",
           "metrics": {
             "uses_ops_testing": {
               "state": "measured",
@@ -14730,8 +14661,7 @@
             },
             "uses_tf_v1_provider": {
               "state": "measured",
-              "value": false,
-              "reason": "terraform/charm/http_proxy_configurator/terraform.tf: juju/juju constraint '~> 1.0' must use >= A, < B with A >= 1.0.\nterraform/charm/http_proxy_configurator/tests/setup/main.tf: juju/juju constraint '~> 1.0' must use >= A, < B with A >= 1.0.\nterraform/charm/http_proxy_policy/terraform.tf: juju/juju constraint '~> 1.0' must use >= A, < B with A >= 1.0.\nterraform/charm/http_proxy_policy/tests/setup/main.tf: juju/juju constraint '~> 1.0' must use >= A, < B with A >= 1.0.\nterraform/charm/squid_forward_proxy/terraform.tf: juju/juju constraint '~> 1.0' must use >= A, < B with A >= 1.0.\nterraform/charm/squid_forward_proxy/tests/setup/main.tf: juju/juju constraint '~> 1.0' must use >= A, < B with A >= 1.0."
+              "value": true
             },
             "uses_charm_ci": {
               "state": "measured",
@@ -14983,8 +14913,7 @@
             },
             "uses_tf_v1_provider": {
               "state": "measured",
-              "value": false,
-              "reason": "terraform/charm/tests/setup/main.tf: juju/juju constraint '~> 1.0' must use >= A, < B with A >= 1.0."
+              "value": true
             },
             "uses_charm_ci": {
               "state": "measured",
@@ -15226,8 +15155,7 @@
             },
             "uses_tf_v1_provider": {
               "state": "measured",
-              "value": false,
-              "reason": "terraform/charm/terraform.tf: juju/juju constraint '~> 2.0' must use >= A, < B with A >= 1.0.\nterraform/charm/tests/setup/main.tf: juju/juju constraint '~> 2.0' must use >= A, < B with A >= 1.0."
+              "value": true
             },
             "uses_charm_ci": {
               "state": "measured",
@@ -15348,8 +15276,7 @@
             },
             "uses_tf_v1_provider": {
               "state": "measured",
-              "value": false,
-              "reason": "terraform/charm/terraform.tf: juju/juju constraint '~> 1.0' must use >= A, < B with A >= 1.0.\nterraform/charm/tests/setup/main.tf: juju/juju constraint '~> 1.0' must use >= A, < B with A >= 1.0."
+              "value": true
             },
             "uses_charm_ci": {
               "state": "measured",
@@ -15470,8 +15397,7 @@
             },
             "uses_tf_v1_provider": {
               "state": "measured",
-              "value": false,
-              "reason": "terraform/charm/terraform.tf: juju/juju constraint '~> 2.0' must use >= A, < B with A >= 1.0.\nterraform/charm/tests/setup/main.tf: juju/juju constraint '~> 1.0' must use >= A, < B with A >= 1.0."
+              "value": true
             },
             "uses_charm_ci": {
               "state": "measured",
@@ -15556,7 +15482,7 @@
       "lifecycle": "stable",
       "current_medal": "bronze",
       "target_medal": "silver",
-      "current_result": "bronze",
+      "current_result": "insufficient_data",
       "target_result": "silver",
       "meets_target": false,
       "squad": "",
@@ -15573,11 +15499,11 @@
       ],
       "dimensions": {
         "test_verification": {
-          "medal": "bronze",
+          "medal": "unrated",
           "target": "silver",
-          "applicability": "scored",
+          "applicability": "insufficient_data",
           "meets_target": false,
-          "result": "bronze",
+          "result": "insufficient_data",
           "metrics": {
             "uses_ops_testing": {
               "state": "measured",
@@ -15592,9 +15518,9 @@
               "value": true
             },
             "uses_tf_v1_provider": {
-              "state": "measured",
-              "value": false,
-              "reason": "dovecot-charm/terraform/terraform.tf: juju/juju constraint '> 1.0.0, < 2.0.0' must use >= A, < B with A >= 1.0.\nopendkim-operator/terraform/terraform.tf: juju/juju constraint '> 1.0.0, < 2.0.0' must use >= A, < B with A >= 1.0.\npostfix-relay-configurator-operator/terraform/terraform.tf: juju/juju constraint '> 1.0.0, < 2.0' must use >= A, < B with A >= 1.0.\npostfix-relay-operator/terraform/terraform.tf: juju/juju constraint '> 1.0.0, < 2.0.0' must use >= A, < B with A >= 1.0.\nterraform/dovecot/terraform.tf: juju/juju constraint '> 1.0.0, < 2.0.0' must use >= A, < B with A >= 1.0.\nterraform/postfix-relay/terraform.tf: juju/juju constraint '> 1.0.0, < 2.0.0' must use >= A, < B with A >= 1.0."
+              "state": "insufficient_data",
+              "value": null,
+              "reason": "terraform/dovecot/variables.tf: cannot parse Terraform: Unexpected token Token('BINARY_OP', '||') at line 78, column 7.\nExpected one of: \n\t* RPAR\n\nterraform/postfix-relay/variables.tf: cannot parse Terraform: Unexpected token Token('BINARY_OP', '||') at line 85, column 7.\nExpected one of: \n\t* RPAR\n"
             },
             "uses_charm_ci": {
               "state": "measured",
@@ -15677,9 +15603,9 @@
       "name": "postfix-relay",
       "description": "",
       "lifecycle": "stable",
-      "current_medal": "unrated",
+      "current_medal": "bronze",
       "target_medal": "silver",
-      "current_result": "below_minimum",
+      "current_result": "insufficient_data",
       "target_result": "silver",
       "meets_target": false,
       "squad": "",
@@ -15698,9 +15624,9 @@
         "test_verification": {
           "medal": "unrated",
           "target": "silver",
-          "applicability": "scored",
+          "applicability": "insufficient_data",
           "meets_target": false,
-          "result": "below_minimum",
+          "result": "insufficient_data",
           "metrics": {
             "uses_ops_testing": {
               "state": "measured",
@@ -15715,9 +15641,9 @@
               "value": true
             },
             "uses_tf_v1_provider": {
-              "state": "measured",
-              "value": false,
-              "reason": "dovecot-charm/terraform/terraform.tf: juju/juju constraint '> 1.0.0, < 2.0.0' must use >= A, < B with A >= 1.0.\nopendkim-operator/terraform/terraform.tf: juju/juju constraint '> 1.0.0, < 2.0.0' must use >= A, < B with A >= 1.0.\npostfix-relay-configurator-operator/terraform/terraform.tf: juju/juju constraint '> 1.0.0, < 2.0' must use >= A, < B with A >= 1.0.\npostfix-relay-operator/terraform/terraform.tf: juju/juju constraint '> 1.0.0, < 2.0.0' must use >= A, < B with A >= 1.0.\nterraform/dovecot/terraform.tf: juju/juju constraint '> 1.0.0, < 2.0.0' must use >= A, < B with A >= 1.0.\nterraform/postfix-relay/terraform.tf: juju/juju constraint '> 1.0.0, < 2.0.0' must use >= A, < B with A >= 1.0."
+              "state": "insufficient_data",
+              "value": null,
+              "reason": "terraform/dovecot/variables.tf: cannot parse Terraform: Unexpected token Token('BINARY_OP', '||') at line 78, column 7.\nExpected one of: \n\t* RPAR\n\nterraform/postfix-relay/variables.tf: cannot parse Terraform: Unexpected token Token('BINARY_OP', '||') at line 85, column 7.\nExpected one of: \n\t* RPAR\n"
             },
             "uses_charm_ci": {
               "state": "measured",
@@ -15800,9 +15726,9 @@
       "name": "postfix-relay-configurator",
       "description": "",
       "lifecycle": "stable",
-      "current_medal": "unrated",
+      "current_medal": "bronze",
       "target_medal": "silver",
-      "current_result": "below_minimum",
+      "current_result": "insufficient_data",
       "target_result": "silver",
       "meets_target": false,
       "squad": "",
@@ -15821,9 +15747,9 @@
         "test_verification": {
           "medal": "unrated",
           "target": "silver",
-          "applicability": "scored",
+          "applicability": "insufficient_data",
           "meets_target": false,
-          "result": "below_minimum",
+          "result": "insufficient_data",
           "metrics": {
             "uses_ops_testing": {
               "state": "measured",
@@ -15838,9 +15764,9 @@
               "value": false
             },
             "uses_tf_v1_provider": {
-              "state": "measured",
-              "value": false,
-              "reason": "dovecot-charm/terraform/terraform.tf: juju/juju constraint '> 1.0.0, < 2.0.0' must use >= A, < B with A >= 1.0.\nopendkim-operator/terraform/terraform.tf: juju/juju constraint '> 1.0.0, < 2.0.0' must use >= A, < B with A >= 1.0.\npostfix-relay-configurator-operator/terraform/terraform.tf: juju/juju constraint '> 1.0.0, < 2.0' must use >= A, < B with A >= 1.0.\npostfix-relay-operator/terraform/terraform.tf: juju/juju constraint '> 1.0.0, < 2.0.0' must use >= A, < B with A >= 1.0.\nterraform/dovecot/terraform.tf: juju/juju constraint '> 1.0.0, < 2.0.0' must use >= A, < B with A >= 1.0.\nterraform/postfix-relay/terraform.tf: juju/juju constraint '> 1.0.0, < 2.0.0' must use >= A, < B with A >= 1.0."
+              "state": "insufficient_data",
+              "value": null,
+              "reason": "terraform/dovecot/variables.tf: cannot parse Terraform: Unexpected token Token('BINARY_OP', '||') at line 78, column 7.\nExpected one of: \n\t* RPAR\n\nterraform/postfix-relay/variables.tf: cannot parse Terraform: Unexpected token Token('BINARY_OP', '||') at line 85, column 7.\nExpected one of: \n\t* RPAR\n"
             },
             "uses_charm_ci": {
               "state": "measured",
@@ -15923,9 +15849,9 @@
       "name": "opendkim",
       "description": "",
       "lifecycle": "stable",
-      "current_medal": "unrated",
+      "current_medal": "bronze",
       "target_medal": "silver",
-      "current_result": "below_minimum",
+      "current_result": "insufficient_data",
       "target_result": "silver",
       "meets_target": false,
       "squad": "",
@@ -15944,9 +15870,9 @@
         "test_verification": {
           "medal": "unrated",
           "target": "silver",
-          "applicability": "scored",
+          "applicability": "insufficient_data",
           "meets_target": false,
-          "result": "below_minimum",
+          "result": "insufficient_data",
           "metrics": {
             "uses_ops_testing": {
               "state": "measured",
@@ -15961,9 +15887,9 @@
               "value": true
             },
             "uses_tf_v1_provider": {
-              "state": "measured",
-              "value": false,
-              "reason": "dovecot-charm/terraform/terraform.tf: juju/juju constraint '> 1.0.0, < 2.0.0' must use >= A, < B with A >= 1.0.\nopendkim-operator/terraform/terraform.tf: juju/juju constraint '> 1.0.0, < 2.0.0' must use >= A, < B with A >= 1.0.\npostfix-relay-configurator-operator/terraform/terraform.tf: juju/juju constraint '> 1.0.0, < 2.0' must use >= A, < B with A >= 1.0.\npostfix-relay-operator/terraform/terraform.tf: juju/juju constraint '> 1.0.0, < 2.0.0' must use >= A, < B with A >= 1.0.\nterraform/dovecot/terraform.tf: juju/juju constraint '> 1.0.0, < 2.0.0' must use >= A, < B with A >= 1.0.\nterraform/postfix-relay/terraform.tf: juju/juju constraint '> 1.0.0, < 2.0.0' must use >= A, < B with A >= 1.0."
+              "state": "insufficient_data",
+              "value": null,
+              "reason": "terraform/dovecot/variables.tf: cannot parse Terraform: Unexpected token Token('BINARY_OP', '||') at line 78, column 7.\nExpected one of: \n\t* RPAR\n\nterraform/postfix-relay/variables.tf: cannot parse Terraform: Unexpected token Token('BINARY_OP', '||') at line 85, column 7.\nExpected one of: \n\t* RPAR\n"
             },
             "uses_charm_ci": {
               "state": "measured",
@@ -16988,7 +16914,7 @@
             "uses_tf_v1_provider": {
               "state": "measured",
               "value": false,
-              "reason": "terraform/versions.tf: juju/juju constraint '>= 0.22.0' must use >= A, < B with A >= 1.0."
+              "reason": "terraform/versions.tf: juju/juju constraint '>= 0.22.0' allows versions below 1.0."
             },
             "uses_charm_ci": {
               "state": "measured",
@@ -17109,8 +17035,7 @@
             },
             "uses_tf_v1_provider": {
               "state": "measured",
-              "value": false,
-              "reason": "terraform/versions.tf: juju/juju constraint '~> 1.0' must use >= A, < B with A >= 1.0.\nterraform/tests/setup/main.tf: juju/juju constraint '~> 1.0' must use >= A, < B with A >= 1.0."
+              "value": true
             },
             "uses_charm_ci": {
               "state": "measured",
@@ -17233,7 +17158,7 @@
             "uses_tf_v1_provider": {
               "state": "measured",
               "value": false,
-              "reason": "terraform/versions.tf: juju/juju constraint '>= 0.20.0' must use >= A, < B with A >= 1.0.\nterraform/product/versions.tf: juju/juju constraint '~> 2.4.0' must use >= A, < B with A >= 1.0.\nterraform/product/tests/setup/main.tf: juju/juju constraint '>= 2.2.0' must use >= A, < B with A >= 1.0.\nterraform/tests/setup/main.tf: juju/juju constraint '>= 0.20.0' must use >= A, < B with A >= 1.0."
+              "reason": "terraform/versions.tf: juju/juju constraint '>= 0.20.0' allows versions below 1.0.\nterraform/tests/setup/main.tf: juju/juju constraint '>= 0.20.0' allows versions below 1.0."
             },
             "uses_charm_ci": {
               "state": "measured",
@@ -17334,11 +17259,11 @@
       ],
       "dimensions": {
         "test_verification": {
-          "medal": "bronze",
+          "medal": "silver",
           "target": "bronze",
           "applicability": "scored",
           "meets_target": true,
-          "result": "bronze",
+          "result": "silver",
           "metrics": {
             "uses_ops_testing": {
               "state": "measured",
@@ -17354,8 +17279,7 @@
             },
             "uses_tf_v1_provider": {
               "state": "measured",
-              "value": false,
-              "reason": "terraform/charm/versions.tf: juju/juju constraint '>= 2.2.1' must use >= A, < B with A >= 1.0.\nterraform/product/versions.tf: juju/juju constraint '>= 2.2.1' must use >= A, < B with A >= 1.0.\nterraform/product/modules/oauth-external-idp-integrator/versions.tf: juju/juju constraint '>= 2.2.1' must use >= A, < B with A >= 1.0.\nterraform/product/modules/s3-integrator/versions.tf: juju/juju constraint '>= 2.2.1' must use >= A, < B with A >= 1.0.\nterraform/tests/setup/main.tf: juju/juju constraint '>= 2.2.1' must use >= A, < B with A >= 1.0."
+              "value": true
             },
             "uses_charm_ci": {
               "state": "measured",
@@ -17476,8 +17400,7 @@
             },
             "uses_tf_v1_provider": {
               "state": "measured",
-              "value": false,
-              "reason": "terraform/charm/terraform.tf: juju/juju constraint '~> 2.0' must use >= A, < B with A >= 1.0.\nterraform/charm/tests/setup/main.tf: juju/juju constraint '~> 2.0' must use >= A, < B with A >= 1.0.\nterraform/product/terraform.tf: juju/juju constraint '~> 2.0' must use >= A, < B with A >= 1.0.\nterraform/product/modules/rabbitmq-server/terraform.tf: juju/juju constraint '~> 2.0' must use >= A, < B with A >= 1.0.\nterraform/product/modules/s3-integrator/terraform.tf: juju/juju constraint '~> 2.0' must use >= A, < B with A >= 1.0.\nterraform/product/tests/setup/main.tf: juju/juju constraint '~> 2.0' must use >= A, < B with A >= 1.0."
+              "value": true
             },
             "uses_charm_ci": {
               "state": "measured",
@@ -17559,9 +17482,9 @@
       "name": "penpot-charm",
       "description": "",
       "lifecycle": "stable",
-      "current_medal": "bronze",
+      "current_medal": "silver",
       "target_medal": "bronze",
-      "current_result": "bronze",
+      "current_result": "silver",
       "target_result": "bronze",
       "meets_target": true,
       "squad": "",
@@ -17578,11 +17501,11 @@
       ],
       "dimensions": {
         "test_verification": {
-          "medal": "bronze",
+          "medal": "gold",
           "target": "bronze",
           "applicability": "scored",
           "meets_target": true,
-          "result": "bronze",
+          "result": "gold",
           "metrics": {
             "uses_ops_testing": {
               "state": "measured",
@@ -17598,8 +17521,7 @@
             },
             "uses_tf_v1_provider": {
               "state": "measured",
-              "value": false,
-              "reason": "terraform/charm/terraform.tf: juju/juju constraint '~> 2.0' must use >= A, < B with A >= 1.0.\nterraform/charm/tests/setup/main.tf: juju/juju constraint '>= 1.0' must use >= A, < B with A >= 1.0.\nterraform/product/terraform.tf: juju/juju constraint '~> 2.0' must use >= A, < B with A >= 1.0.\nterraform/product/tests/setup/main.tf: juju/juju constraint '>= 1.0' must use >= A, < B with A >= 1.0."
+              "value": true
             },
             "uses_charm_ci": {
               "state": "measured",
@@ -17720,8 +17642,7 @@
             },
             "uses_tf_v1_provider": {
               "state": "measured",
-              "value": false,
-              "reason": "terraform/charm/terraform.tf: juju/juju constraint '~> 1.0' must use >= A, < B with A >= 1.0.\nterraform/charm/tests/setup/main.tf: juju/juju constraint '~> 1.0' must use >= A, < B with A >= 1.0."
+              "value": true
             },
             "uses_charm_ci": {
               "state": "measured",
@@ -17844,7 +17765,7 @@
             "uses_tf_v1_provider": {
               "state": "measured",
               "value": false,
-              "reason": "terraform/charm/versions.tf: juju/juju constraint '< 2.1' must use >= A, < B with A >= 1.0.\nterraform/charm/tests/main.tf: juju/juju constraint '< 2.1' must use >= A, < B with A >= 1.0.\nterraform/product/version.tf: juju/juju constraint '< 3.0.0' must use >= A, < B with A >= 1.0."
+              "reason": "terraform/charm/versions.tf: juju/juju constraint '< 2.1' allows versions below 1.0.\nterraform/charm/tests/main.tf: juju/juju constraint '< 2.1' allows versions below 1.0.\nterraform/product/version.tf: juju/juju constraint '< 3.0.0' allows versions below 1.0."
             },
             "uses_charm_ci": {
               "state": "measured",
@@ -17967,7 +17888,7 @@
             "uses_tf_v1_provider": {
               "state": "measured",
               "value": false,
-              "reason": "terraform/charm/versions.tf: juju/juju constraint '< 2.5' must use >= A, < B with A >= 1.0."
+              "reason": "terraform/charm/versions.tf: juju/juju constraint '< 2.5' allows versions below 1.0."
             },
             "uses_charm_ci": {
               "state": "measured",
@@ -18211,8 +18132,7 @@
             },
             "uses_tf_v1_provider": {
               "state": "measured",
-              "value": false,
-              "reason": "terraform/charm/terraform.tf: juju/juju constraint '~> 1.0' must use >= A, < B with A >= 1.0.\nterraform/charm/tests/setup/main.tf: juju/juju constraint '~> 1.0' must use >= A, < B with A >= 1.0."
+              "value": true
             },
             "uses_charm_ci": {
               "state": "measured",
@@ -18456,8 +18376,7 @@
             },
             "uses_tf_v1_provider": {
               "state": "measured",
-              "value": false,
-              "reason": "charms/garm-configurator/terraform/versions.tf: juju/juju constraint '>= 1.0.0' must use >= A, < B with A >= 1.0.\ncharms/garm-configurator/terraform/tests/main.tf: juju/juju constraint '>= 1.0.0' must use >= A, < B with A >= 1.0.\ncharms/garm/terraform/versions.tf: juju/juju constraint '>= 1.0.0' must use >= A, < B with A >= 1.0.\ncharms/planner-operator/terraform/versions.tf: juju/juju constraint '>= 1.0.0' must use >= A, < B with A >= 1.0.\ncharms/planner-operator/terraform/tests/main.tf: juju/juju constraint '>= 1.0.0' must use >= A, < B with A >= 1.0.\ncharms/webhook-gateway-operator/terraform/versions.tf: juju/juju constraint '>= 1.0.0' must use >= A, < B with A >= 1.0.\ncharms/webhook-gateway-operator/terraform/tests/main.tf: juju/juju constraint '>= 1.0.0' must use >= A, < B with A >= 1.0."
+              "value": true
             },
             "uses_charm_ci": {
               "state": "measured",
@@ -18578,8 +18497,7 @@
             },
             "uses_tf_v1_provider": {
               "state": "measured",
-              "value": false,
-              "reason": "charms/garm-configurator/terraform/versions.tf: juju/juju constraint '>= 1.0.0' must use >= A, < B with A >= 1.0.\ncharms/garm-configurator/terraform/tests/main.tf: juju/juju constraint '>= 1.0.0' must use >= A, < B with A >= 1.0.\ncharms/garm/terraform/versions.tf: juju/juju constraint '>= 1.0.0' must use >= A, < B with A >= 1.0.\ncharms/planner-operator/terraform/versions.tf: juju/juju constraint '>= 1.0.0' must use >= A, < B with A >= 1.0.\ncharms/planner-operator/terraform/tests/main.tf: juju/juju constraint '>= 1.0.0' must use >= A, < B with A >= 1.0.\ncharms/webhook-gateway-operator/terraform/versions.tf: juju/juju constraint '>= 1.0.0' must use >= A, < B with A >= 1.0.\ncharms/webhook-gateway-operator/terraform/tests/main.tf: juju/juju constraint '>= 1.0.0' must use >= A, < B with A >= 1.0."
+              "value": true
             },
             "uses_charm_ci": {
               "state": "measured",
@@ -18700,8 +18618,7 @@
             },
             "uses_tf_v1_provider": {
               "state": "measured",
-              "value": false,
-              "reason": "terraform/terraform.tf: juju/juju constraint '~> 1.0' must use >= A, < B with A >= 1.0.\nterraform/tests/setup/main.tf: juju/juju constraint '~> 1.0' must use >= A, < B with A >= 1.0."
+              "value": true
             },
             "uses_charm_ci": {
               "state": "measured",
@@ -18944,8 +18861,7 @@
             },
             "uses_tf_v1_provider": {
               "state": "measured",
-              "value": false,
-              "reason": "terraform/versions.tf: juju/juju constraint '~> 1.0' must use >= A, < B with A >= 1.0.\nterraform-product/versions.tf: juju/juju constraint '~> 1.0' must use >= A, < B with A >= 1.0.\nterraform-product/tests/setup/main.tf: juju/juju constraint '~> 1.0' must use >= A, < B with A >= 1.0.\nterraform/tests/setup/main.tf: juju/juju constraint '~> 1.0' must use >= A, < B with A >= 1.0."
+              "value": true
             },
             "uses_charm_ci": {
               "state": "measured",
@@ -19066,8 +18982,7 @@
             },
             "uses_tf_v1_provider": {
               "state": "measured",
-              "value": false,
-              "reason": "terraform/charm/versions.tf: juju/juju constraint '~> 1.0' must use >= A, < B with A >= 1.0.\nterraform/charm/tests/setup/main.tf: juju/juju constraint '~> 1.0' must use >= A, < B with A >= 1.0.\nterraform/product/versions.tf: juju/juju constraint '~> 1.0' must use >= A, < B with A >= 1.0.\nterraform/product/modules/s3-integrator/versions.tf: juju/juju constraint '~> 1.0' must use >= A, < B with A >= 1.0.\nterraform/product/tests/setup/main.tf: juju/juju constraint '~> 1.0' must use >= A, < B with A >= 1.0.\nterraform/product/tests/wait_for_active/main.tf: juju/juju constraint '~> 1.0' must use >= A, < B with A >= 1.0."
+              "value": true
             },
             "uses_charm_ci": {
               "state": "measured",
@@ -19188,8 +19103,7 @@
             },
             "uses_tf_v1_provider": {
               "state": "measured",
-              "value": false,
-              "reason": "terraform/charm/versions.tf: juju/juju constraint '~> 1.0' must use >= A, < B with A >= 1.0.\nterraform/charm/large_deployment/versions.tf: juju/juju constraint '~> 1.0' must use >= A, < B with A >= 1.0.\nterraform/charm/simple_deployment/versions.tf: juju/juju constraint '~> 1.0' must use >= A, < B with A >= 1.0.\nterraform/product/versions.tf: juju/juju constraint '~> 1.0' must use >= A, < B with A >= 1.0.\nterraform/product/large_deployment/versions.tf: juju/juju constraint '~> 1.0' must use >= A, < B with A >= 1.0.\nterraform/product/simple_deployment/versions.tf: juju/juju constraint '~> 1.0' must use >= A, < B with A >= 1.0."
+              "value": true
             },
             "uses_charm_ci": {
               "state": "measured",
@@ -19251,7 +19165,7 @@
           "metrics": {
             "renovate_enabled": {
               "state": "measured",
-              "value": false
+              "value": true
             },
             "branch_protection_required_checks": {
               "state": "measured",
@@ -19311,8 +19225,7 @@
             },
             "uses_tf_v1_provider": {
               "state": "measured",
-              "value": false,
-              "reason": "terraform/versions.tf: juju/juju constraint '~> 1.0' must use >= A, < B with A >= 1.0.\nterraform/charm/versions.tf: juju/juju constraint '~> 1.0' must use >= A, < B with A >= 1.0.\nterraform/product/versions.tf: juju/juju constraint '~> 1.0' must use >= A, < B with A >= 1.0."
+              "value": true
             },
             "uses_charm_ci": {
               "state": "measured",
@@ -19395,9 +19308,9 @@
       "name": "wireguard-gateway",
       "description": "",
       "lifecycle": "stable",
-      "current_medal": "bronze",
+      "current_medal": "silver",
       "target_medal": "gold",
-      "current_result": "bronze",
+      "current_result": "silver",
       "target_result": "gold",
       "meets_target": false,
       "squad": "",
@@ -19414,11 +19327,11 @@
       ],
       "dimensions": {
         "test_verification": {
-          "medal": "bronze",
+          "medal": "silver",
           "target": "gold",
           "applicability": "scored",
           "meets_target": false,
-          "result": "bronze",
+          "result": "silver",
           "metrics": {
             "uses_ops_testing": {
               "state": "measured",
@@ -19434,8 +19347,7 @@
             },
             "uses_tf_v1_provider": {
               "state": "measured",
-              "value": false,
-              "reason": "terraform/versions.tf: juju/juju constraint '> 1.1.0' must use >= A, < B with A >= 1.0.\nterraform/tests/main.tf: juju/juju constraint '> 1.1.0' must use >= A, < B with A >= 1.0."
+              "value": true
             },
             "uses_charm_ci": {
               "state": "measured",
@@ -19557,8 +19469,7 @@
             },
             "uses_tf_v1_provider": {
               "state": "measured",
-              "value": false,
-              "reason": "terraform/charm/terraform.tf: juju/juju constraint '~> 2.0' must use >= A, < B with A >= 1.0.\nterraform/charm/tests/setup/main.tf: juju/juju constraint '~> 1.0' must use >= A, < B with A >= 1.0.\nterraform/product/terraform.tf: juju/juju constraint '~> 2.0' must use >= A, < B with A >= 1.0.\nterraform/product/tests/setup/main.tf: juju/juju constraint '~> 1.0' must use >= A, < B with A >= 1.0."
+              "value": true
             },
             "uses_charm_ci": {
               "state": "measured",
@@ -19670,8 +19581,8 @@
           "informational": false
         },
         "uses_tf_v1_provider": {
-          "label": "Juju provider version bounds",
-          "description": "Checks Terraform across the entire source repository, regardless of the charm subpath or module location, including charm modules, product bundles, test setups, and examples. Every Juju or unclassified module must explicitly declare juju/juju with >= A, < B, where 1.0 <= A < B. Pessimistic constraints, exact pins, missing requirements, and unbounded requirements fail. Only explicitly non-Juju modules without module calls or Juju usage are excluded. Unreadable declarations are insufficient data; no applicable modules is not applicable. Evidence is shared by all tracked charms in that repository. Passing certifies provider bounds only, not module locations or overall Terraform correctness.",
+          "label": "Juju provider v1+",
+          "description": "Checks every Terraform module in the source repository, including bundles, tests, examples, and sibling charms. Juju or unclassified modules must explicitly require juju/juju versions 1.0 or newer; >= 1.0, ~> 1.0, and v1+ pins pass. Upper bounds are optional. Proven non-Juju utilities are excluded. Missing requirements or constraints allowing older versions fail; unreadable or empty constraints are insufficient data. No applicable modules is not applicable. Shared across charms in the same repository; does not certify layout or overall Terraform correctness.",
           "type": "boolean",
           "range": "",
           "ai_assisted": false,
