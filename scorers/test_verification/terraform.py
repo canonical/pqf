@@ -1,6 +1,6 @@
-"""Repository-wide Juju provider bounds, excluding explicit non-Juju utilities.
+"""Repository-wide Juju provider v1+ compliance, excluding non-Juju utilities.
 
-Newer major versions are allowed. Missing/noncanonical requirements fail; unreadable
+Requirements allowing versions below 1.0 fail; unreadable
 declarations are unknown. HCL syntax is parsed by python-hcl2, never by regex.
 """
 
@@ -26,25 +26,37 @@ _CLAUSE = re.compile(r"(~>|>=|<=|!=|>|<|=)?\s*(\d+(?:\.\d+){0,2})")
 _PROVIDER_SOURCE = re.compile(r"(?:[A-Za-z0-9.-]+(?::[0-9]+)?/)?[A-Za-z0-9_-]+/[A-Za-z0-9_-]+")
 
 
-def requires_explicit_provider_range(constraint: str) -> bool:
-    """Require one >= lower and one < upper bound, with lower >= 1.0.
-
-    Unreadable numeric constraints and empty intervals raise ValueError.
-    """
-    bounds = {}
+def requires_provider_v1_or_newer(constraint: str) -> bool:
+    """Check the effective version floor; unreadable or empty ranges are unknown."""
+    lower_bounds = []
+    upper_bounds = []
+    excluded = set()
     for clause in constraint.split(","):
         match = _CLAUSE.fullmatch(clause.strip())
         if not match:
             raise ValueError("Expected a literal numeric Terraform version constraint.")
         operator, number = match.groups()
-        if operator not in {">=", "<"} or operator in bounds:
-            return False
-        bounds[operator] = Version(number)
-    if set(bounds) != {">=", "<"}:
+        operator = operator or "="
+        version = Version(number)
+        if operator in {">=", ">", "=", "~>"}:
+            lower_bounds.append((version, operator == ">"))
+        if operator in {"<", "<=", "="}:
+            upper_bounds.append((version, operator != "<"))
+        if operator == "~>":
+            parts = [int(part) for part in number.split(".")]
+            upper = f"{parts[0]}.{parts[1] + 1}" if len(parts) == 3 else str(parts[0] + 1)
+            upper_bounds.append((Version(upper), False))
+        if operator == "!=":
+            excluded.add(version)
+    if not lower_bounds:
         return False
-    lower, upper = bounds[">="], bounds["<"]
-    if lower >= upper:
-        raise ValueError("The provider version range is empty.")
+    lower, lower_exclusive = max(lower_bounds)
+    if upper_bounds:
+        upper, upper_inclusive = min(upper_bounds)
+        if lower > upper or (
+            lower == upper and (lower_exclusive or not upper_inclusive or lower in excluded)
+        ):
+            raise ValueError("The provider version range is empty.")
     return lower >= Version("1.0")
 
 
@@ -116,19 +128,19 @@ def _provider_outcome(path: str, name: str, requirement: Any) -> MetricOutcome |
         return MetricOutcome(
             MetricState.MEASURED,
             False,
-            f"{path}: juju/juju has no version constraint; expected >= A, < B with A >= 1.0.",
+            f"{path}: juju/juju has no version constraint; versions below 1.0 must be excluded.",
         )
     try:
         if not isinstance(constraint, str):
             raise ValueError("Expected a literal version constraint string.")
-        if requires_explicit_provider_range(constraint):
+        if requires_provider_v1_or_newer(constraint):
             return measured(True)
     except ValueError as exc:
         return insufficient_data(f"{path}: juju/juju constraint {constraint!r}: {exc}")
     return MetricOutcome(
         MetricState.MEASURED,
         False,
-        f"{path}: juju/juju constraint {constraint!r} must use >= A, < B with A >= 1.0.",
+        f"{path}: juju/juju constraint {constraint!r} allows versions below 1.0.",
     )
 
 
@@ -177,7 +189,7 @@ def terraform_outcome(files: dict[str, str]) -> MetricOutcome:
                     MetricState.MEASURED,
                     False,
                     f"{directory}: no explicit juju/juju provider requirement; "
-                    "expected >= A, < B with A >= 1.0.",
+                    "versions below 1.0 must be excluded.",
                 )
             )
         outcomes.extend(module_outcomes)

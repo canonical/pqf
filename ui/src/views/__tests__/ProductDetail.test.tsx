@@ -287,10 +287,16 @@ describe('ProductDetail', () => {
   })
 
   it('leaf product evidence column shows threshold-colored metrics', () => {
+    const portfolio = structuredClone(mockPortfolio)
+    const metrics = portfolio.products.find(product => product.id === 'synapse')!.dimensions.test_verification.metrics
+    metrics.coverage_pct = { ...metrics.coverage_pct, reason: 'Coverage is below target.' }
+    mockWith(portfolio)
     wrap('synapse')
     const row = screen.getByRole('link', { name: 'test verification' }).closest('tr')!
     // coverage_pct=65, gold threshold=90 → shows "65 / 90"
     expect(row).toHaveTextContent('65 / 90')
+    expect(within(row).getByText('Coverage is below target.')).toBeVisible()
+    expect(within(row).getByText('65')).toHaveAccessibleDescription('Coverage is below target.')
   })
 
   it('renders squad as a linked GitHub team badge', () => {

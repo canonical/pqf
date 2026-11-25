@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from '@testing-library/react'
+import { fireEvent, render, screen, within } from '@testing-library/react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { describe, expect, it, vi } from 'vitest'
 import App from '../../App'
@@ -276,6 +276,36 @@ function wrap(path: string, portfolio = mockPortfolio) {
 }
 
 describe('MetricDistribution route', () => {
+  it('shows values without verbose reasons in the comparison table', async () => {
+    const portfolio = structuredClone(mockPortfolio)
+    const product = portfolio.products[6]
+    portfolio.products = [
+      { state: 'measured' as const, value: false, reason: 'terraform/product/versions.tf: provider below 1.0.\nterraform/tests/setup/main.tf: provider below 1.0.' },
+      { state: 'measured' as const, value: true, reason: 'All repository modules exclude versions below 1.0.' },
+      { state: 'not_applicable' as const, value: null, reason: 'There are no applicable Terraform modules.' },
+      { state: 'insufficient_data' as const, value: null, reason: 'The provider version constraint could not be parsed.' },
+    ].map((outcome, index) => ({
+      ...structuredClone(product), id: `product-${index}`, name: `Product ${index}`,
+      parent_product_ids: [],
+      dimensions: { test_verification: {
+        ...product.dimensions.test_verification,
+        metrics: { latest_build_passing: outcome },
+      } },
+    }))
+    wrap('/dimensions/test_verification/metrics/latest_build_passing', portfolio)
+    await screen.findByRole('heading', { name: /Latest build passing/i })
+    const table = within(screen.getByRole('table'))
+    const values = ['false', 'true', 'N/A', 'Insufficient data']
+    for (const [index, value] of values.entries()) {
+      const row = table.getByRole('link', { name: `Product ${index}` }).closest('tr')!
+      expect(row.querySelectorAll('td')[3].textContent).toBe(value)
+    }
+    for (const product of portfolio.products) {
+      const outcome = product.dimensions.test_verification.metrics.latest_build_passing
+      expect(table.queryByText(outcome.reason!)).not.toBeInTheDocument()
+    }
+  })
+
   it('reports informational measurements without marking them insufficient', async () => {
     wrap('/dimensions/test_verification/metrics/latest_build_passing')
     await screen.findByRole('heading', { name: /Latest build passing/i })
@@ -300,8 +330,10 @@ describe('MetricDistribution route', () => {
     expect(screen.getByText('N/A', { selector: 'strong' }).parentElement).toHaveTextContent('1 (excluded from distribution)')
     expect(screen.getAllByText('Gold', { selector: 'strong' })[0].parentElement).toHaveTextContent('1')
     expect(screen.getByTitle('Gold: 1')).toHaveStyle({ width: '50%' })
-    expect(screen.getByText('N/A', { selector: '[aria-describedby]' })).toHaveAccessibleDescription('Snap product')
-    expect(screen.getByText('Insufficient data', { selector: '[aria-describedby]' })).toHaveAccessibleDescription('Report missing')
+    expect(screen.getAllByRole('cell', { name: 'N/A' }).length).toBeGreaterThan(0)
+    expect(screen.getAllByRole('cell', { name: 'Insufficient data' }).length).toBeGreaterThan(0)
+    expect(screen.queryByText('Snap product')).not.toBeInTheDocument()
+    expect(screen.queryByText('Report missing')).not.toBeInTheDocument()
     fireEvent.click(screen.getByRole('checkbox', { name: 'Show failures only' }))
     expect(screen.queryByRole('link', { name: 'na' })).not.toBeInTheDocument()
     expect(screen.queryByRole('link', { name: 'unknown' })).not.toBeInTheDocument()

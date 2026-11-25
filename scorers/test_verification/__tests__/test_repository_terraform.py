@@ -20,11 +20,11 @@ UNIT = EvaluationUnit("example", ProductType.CHARM, "canonical/example", subpath
 VALID = """
 terraform {
   required_providers {
-    juju = { source = "juju/juju", version = ">= 2.2.0, < 3.0" }
+    juju = { source = "juju/juju", version = ">= 2.2.0" }
   }
 }
 """
-INVALID = VALID.replace(">= 2.2.0, < 3.0", ">= 2.2.0")
+INVALID = VALID.replace(">= 2.2.0", "~> 0.20")
 NON_JUJU = """
 terraform {
   required_providers {

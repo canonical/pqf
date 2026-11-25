@@ -60,7 +60,7 @@ def test_v0_terraform_includes_product_bundle_outside_charm(monkeypatch):
             "terraform/product/versions.tf": """
 terraform {
   required_providers {
-    juju = { source = "juju/juju", version = ">= 2.2.0" }
+    juju = { source = "juju/juju", version = "~> 0.20" }
   }
 }
 """,
