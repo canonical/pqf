@@ -36,10 +36,41 @@ integration-suites:
 
 def test_empty_tests_do_not_adopt_jubilant_or_unit_runners():
     result = evaluate_files(UNIT, files())
-    assert result["uses_ops_testing"] == measured(False)
+    assert result["uses_ops_testing"].value is False
     assert result["uses_jubilant"] == measured(False)
     assert result["uses_gh_runners_unit_testing"] == measured(False)
     assert result["uses_tf_v1_provider"].state == MetricState.NOT_APPLICABLE
+
+
+def test_ops_testing_failure_explains_missing_import():
+    outcome = evaluate_files(UNIT, files({"charm/tests/unit/test_app.py": "import unittest"}))[
+        "uses_ops_testing"
+    ]
+    assert outcome.state == MetricState.MEASURED
+    assert outcome.value is False
+    assert outcome.reason == "No ops.testing import found in scoped unit tests."
+
+
+def test_ops_testing_failure_identifies_harness_files():
+    outcome = evaluate_files(
+        UNIT,
+        files(
+            {
+                "charm/tests/unit/test_z.py": "from ops.testing import Harness",
+                "charm/tests/unit/test_a.py": (
+                    "import ops.testing as testing\ntesting.Harness(None)"
+                ),
+                "charm/tests/unit/test_current.py": "from ops.testing import Context",
+            }
+        ),
+    )["uses_ops_testing"]
+    assert outcome.state == MetricState.MEASURED
+    assert outcome.value is False
+    assert outcome.reason == (
+        "Legacy ops.testing.Harness reference or wildcard import found in:\n"
+        "charm/tests/unit/test_a.py\n"
+        "charm/tests/unit/test_z.py"
+    )
 
 
 @pytest.mark.parametrize(
@@ -73,7 +104,7 @@ def test_jubilant_accepts_valid_imports_only_in_component_integration_tests(sour
 )
 def test_harness_ast_references_are_deprecated(source):
     result = evaluate_files(UNIT, files({"charm/tests/unit/test_app.py": source}))
-    assert result["uses_ops_testing"] == measured(False)
+    assert result["uses_ops_testing"].value is False
 
 
 def test_harness_mentions_and_other_component_do_not_fail():
@@ -108,15 +139,18 @@ def test_ops_testing_requires_positive_scoped_import(source):
             }
         ),
     )["uses_ops_testing"] == measured(True)
-    assert evaluate_files(
-        UNIT,
-        files(
-            {
-                "charm/tests/unit/test_app.py": 'text = "ops.testing"\n',
-                "other/tests/unit/test_app.py": source,
-            }
-        ),
-    )["uses_ops_testing"] == measured(False)
+    assert (
+        evaluate_files(
+            UNIT,
+            files(
+                {
+                    "charm/tests/unit/test_app.py": 'text = "ops.testing"\n',
+                    "other/tests/unit/test_app.py": source,
+                }
+            ),
+        )["uses_ops_testing"].value
+        is False
+    )
 
 
 def test_parse_errors_are_insufficient():
@@ -128,7 +162,7 @@ def test_integration_context_does_not_satisfy_ops_unit_testing():
     result = evaluate_files(
         UNIT, files({"charm/tests/integration/test_app.py": "from ops.testing import Context"})
     )
-    assert result["uses_ops_testing"] == measured(False)
+    assert result["uses_ops_testing"].value is False
 
 
 def test_integration_harness_does_not_fail_ops_unit_testing():
@@ -504,7 +538,7 @@ def test_nested_charm_tests_do_not_satisfy_root_charm():
         },
     )
     assert result["uses_jubilant"] == measured(False)
-    assert result["uses_ops_testing"] == measured(False)
+    assert result["uses_ops_testing"].value is False
 
 
 def test_literal_matrix_expansion_and_disabled_provider():
@@ -1100,7 +1134,8 @@ integration-suites:
     kubernetes = evaluate_files(EvaluationUnit("k8s", ProductType.CHARM, "a/b", "k8s"), source)
     assert machine["supports_canonical_k8s"].state == MetricState.NOT_APPLICABLE
     for key in ("uses_ops_testing", "uses_jubilant", "uses_charm_ci", "supports_juju_4"):
-        assert machine[key] == measured(False)
+        assert machine[key].state == MetricState.MEASURED
+        assert machine[key].value is False
         assert kubernetes[key] == measured(True)
     assert kubernetes["supports_canonical_k8s"] == measured(True)
 
