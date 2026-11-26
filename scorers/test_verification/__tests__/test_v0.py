@@ -51,7 +51,7 @@ def test_ops_testing_failure_explains_missing_import():
     assert outcome.reason == "No ops.testing import found in scoped unit tests."
 
 
-def test_ops_testing_failure_identifies_harness_files():
+def test_ops_testing_failure_reports_harness_without_listing_files():
     outcome = evaluate_files(
         UNIT,
         files(
@@ -66,11 +66,7 @@ def test_ops_testing_failure_identifies_harness_files():
     )["uses_ops_testing"]
     assert outcome.state == MetricState.MEASURED
     assert outcome.value is False
-    assert outcome.reason == (
-        "Legacy ops.testing.Harness reference or wildcard import found in:\n"
-        "charm/tests/unit/test_a.py\n"
-        "charm/tests/unit/test_z.py"
-    )
+    assert outcome.reason == "Legacy Harness reference or wildcard import found."
 
 
 @pytest.mark.parametrize(
