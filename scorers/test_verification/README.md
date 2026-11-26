@@ -92,7 +92,8 @@ All eight charm-only metrics are not applicable to snaps. Missing required
 test/workflow/configuration evidence is measured false, rather than adoption by
 empty iteration. Ops Testing requires a positive scoped `ops.testing` import
 and absence of deprecated Harness references. Missing tests or imports returns
-false. No integration tests means Jubilant is false.
+false. Failures explain whether scoped imports are missing or list files with
+legacy Harness references or wildcard imports. No integration tests means Jubilant is false.
 
 Runner source fingerprints must include `logic.py`, `evidence.py`, `v0.py`,
 `terraform.py`, and the imported shared GitHub helper source, plus the engine

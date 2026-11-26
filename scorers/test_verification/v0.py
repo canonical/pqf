@@ -10,7 +10,13 @@ from typing import Any
 
 import yaml
 
-from engine.metric_outcomes import MetricOutcome, insufficient_data, measured, not_applicable
+from engine.metric_outcomes import (
+    MetricOutcome,
+    MetricState,
+    insufficient_data,
+    measured,
+    not_applicable,
+)
 from engine.models import EvaluationUnit, ProductType
 from scorers.test_verification.terraform import terraform_outcome
 
@@ -58,6 +64,7 @@ def _yaml(text: str) -> dict[str, Any]:
 def _python_outcome(files: dict[str, str], *, jubilant: bool) -> MetricOutcome:
     unknown = False
     ops_import = False
+    harness_paths = set()
     for path, text in files.items():
         parts = path.split("/")
         if not path.endswith(".py") or "tests" not in parts:
@@ -95,7 +102,7 @@ def _python_outcome(files: dict[str, str], *, jubilant: bool) -> MetricOutcome:
                         ops_import = True
                     aliases[alias.asname or alias.name] = qualified
                     if not jubilant and qualified in {"ops.testing.Harness", "ops.testing.*"}:
-                        return measured(False)
+                        harness_paths.add(path)
         if not jubilant:
             for node in ast.walk(tree):
                 parts = []
@@ -105,9 +112,20 @@ def _python_outcome(files: dict[str, str], *, jubilant: bool) -> MetricOutcome:
                 if isinstance(node, ast.Name):
                     qualified = ".".join([aliases.get(node.id, node.id), *parts])
                     if qualified == "ops.testing.Harness":
-                        return measured(False)
+                        harness_paths.add(path)
+    if harness_paths:
+        return MetricOutcome(
+            MetricState.MEASURED,
+            False,
+            "Legacy ops.testing.Harness reference or wildcard import found in:\n"
+            + "\n".join(sorted(harness_paths)),
+        )
     if unknown:
         return insufficient_data("Cannot parse scoped Python tests.")
+    if not jubilant and not ops_import:
+        return MetricOutcome(
+            MetricState.MEASURED, False, "No ops.testing import found in scoped unit tests."
+        )
     return measured(ops_import if not jubilant else False)
 
 
