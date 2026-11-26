@@ -64,7 +64,7 @@ def _yaml(text: str) -> dict[str, Any]:
 def _python_outcome(files: dict[str, str], *, jubilant: bool) -> MetricOutcome:
     unknown = False
     ops_import = False
-    harness_paths = set()
+    harness_found = False
     for path, text in files.items():
         parts = path.split("/")
         if not path.endswith(".py") or "tests" not in parts:
@@ -102,7 +102,7 @@ def _python_outcome(files: dict[str, str], *, jubilant: bool) -> MetricOutcome:
                         ops_import = True
                     aliases[alias.asname or alias.name] = qualified
                     if not jubilant and qualified in {"ops.testing.Harness", "ops.testing.*"}:
-                        harness_paths.add(path)
+                        harness_found = True
         if not jubilant:
             for node in ast.walk(tree):
                 parts = []
@@ -112,13 +112,12 @@ def _python_outcome(files: dict[str, str], *, jubilant: bool) -> MetricOutcome:
                 if isinstance(node, ast.Name):
                     qualified = ".".join([aliases.get(node.id, node.id), *parts])
                     if qualified == "ops.testing.Harness":
-                        harness_paths.add(path)
-    if harness_paths:
+                        harness_found = True
+    if harness_found:
         return MetricOutcome(
             MetricState.MEASURED,
             False,
-            "Legacy ops.testing.Harness reference or wildcard import found in:\n"
-            + "\n".join(sorted(harness_paths)),
+            "Legacy Harness reference or wildcard import found.",
         )
     if unknown:
         return insufficient_data("Cannot parse scoped Python tests.")
