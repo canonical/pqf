@@ -23,42 +23,42 @@ dimensions:
         implementation: "uses-ops-testing/v1"
         type: boolean
         label: "Uses Ops Testing"
-        description: "The charm's unit tests use the current ops.testing framework and no longer use the legacy Harness."
+        description: "Checks Python files in tests/unit directories under the charm for an ops.testing import and no legacy Harness references or ops.testing wildcard imports. Unparseable tests can give insufficient data."
       uses_gh_runners_unit_testing:
         implementation: "uses-gh-runners-unit-testing/v1"
         type: boolean
         label: "GitHub-hosted unit testing"
-        description: "Every CI job that runs the charm's unit tests uses a GitHub-hosted runner (for example ubuntu-latest). Any self-hosted unit-test job, including coverage jobs, fails this check."
+        description: "Checks recognized unit-test jobs, including tox -e unit and pytest tests/unit: all must use GitHub-hosted runners. No recognized job or a self-hosted runner fails; unresolved runners give insufficient data."
       uses_jubilant:
         implementation: "uses-jubilant/v2"
         type: boolean
         label: "Uses Jubilant"
-        description: "The charm's integration tests use Jubilant to drive Juju."
+        description: "Checks Python files in tests/integration directories under the charm for a Jubilant import. Imports elsewhere do not count; unparseable tests can give insufficient data."
       uses_tf_v1_provider:
         implementation: "uses-tf-v1-provider/v4"
         type: boolean
         label: "Juju provider v1+"
-        description: "Checks every Terraform module in the source repository, including bundles, tests, examples, and sibling charms. Juju or unclassified modules must explicitly require juju/juju versions 1.0 or newer; >= 1.0, ~> 1.0, and v1+ pins pass. Upper bounds are optional. Proven non-Juju utilities are excluded. Missing requirements or constraints allowing older versions fail; unreadable or empty constraints are insufficient data. No applicable modules is not applicable. Shared across charms in the same repository; does not certify layout or overall Terraform correctness."
+        description: "Checks every Terraform module in the repository, including examples, tests, and sibling charms. Juju or unclassified modules must explicitly require juju/juju version 1.0 or newer; proven non-Juju modules are excluded. Missing requirements or older allowed versions fail; unreadable constraints give insufficient data. No applicable modules is not applicable."
       uses_charm_ci:
         implementation: "uses-charm-ci/v1"
         type: boolean
         label: "Uses charm-ci"
-        description: "Integration tests run in CI through Canonical's charm-ci workflows rather than operator-workflows."
+        description: "Checks GitHub workflows for a canonical/charm-ci integration-test workflow that applies to the charm. This checks configuration, not whether the tests ran or passed."
       supports_canonical_k8s:
         implementation: "supports-canonical-k8s/v1"
         type: boolean
         label: "Canonical Kubernetes configured"
-        description: "Kubernetes charms run their charm-ci integration tests on Canonical Kubernetes. Not applicable to machine charms."
+        description: "For Kubernetes charms, checks whether a charm-ci integration suite's linked Concierge configuration enables and bootstraps the k8s provider. Missing configuration does not count; dynamic or uninterpretable configuration can give insufficient data. Machine charms are not applicable."
       supports_juju_4:
         implementation: "supports-juju-4/v2"
         type: boolean
         label: "Juju 4 configured"
-        description: "charm-ci integration tests run against Juju 4 (the stable track set for the cycle)."
+        description: "Checks whether a charm-ci integration suite's linked Concierge configuration specifies a Juju 4 stable channel. This checks configuration, not whether tests ran or passed."
       supports_juju_lts:
         implementation: "supports-juju-lts/v1"
         type: boolean
         label: "Juju LTS configured"
-        description: "charm-ci integration tests run against the current Juju LTS (the stable track set for the cycle)."
+        description: "Checks whether a charm-ci integration suite's linked Concierge configuration specifies the cycle's Juju LTS channel (3.6/stable). This checks configuration, not whether tests ran or passed."
     medals:
       bronze:
         - "uses_ops_testing == true"
@@ -95,28 +95,28 @@ dimensions:
         implementation: "readme-present/v2"
         type: boolean
         label: "README customized"
-        description: "README.md exists at the repository root and has real content, not just headings or the unchanged charm template."
+        description: "Checks root README.md for content beyond headings and comments, and rejects an unchanged copy of the pinned charm template."
       contributing_present:
         implementation: "contributing-present/v2"
         type: boolean
         label: "CONTRIBUTING customized"
-        description: "CONTRIBUTING.md exists at the repository root and has real content, not just headings or the unchanged charm template."
+        description: "Checks root CONTRIBUTING.md for content beyond headings and comments, and rejects an unchanged copy of the pinned charm template."
       has_security:
         implementation: "security-file-present/v2"
         type: boolean
         label: "SECURITY customized"
-        description: "SECURITY.md exists at the repository root and has real content. The standard PFE security policy template counts."
+        description: "Checks root SECURITY.md for content beyond headings and comments. The standard PFE security policy template counts."
       uses_sphinx_stack:
         implementation: "uses-sphinx-stack/v1"
         type: string
         label: "Sphinx Stack version"
-        description: "Version of the Canonical Sphinx Stack used for the documentation; blank means it is not used. Not applicable to snaps or to products whose documentation is maintained upstream."
+        description: "Reads a valid version from <documentation path>/_dev/version in the product repository. A missing or invalid version is blank; snaps and products with a documentation exemption or no user-facing docs are not applicable."
       diataxis_coverage_ai:
         implementation: "diataxis-coverage-ai/v2"
         type: number
         range: "0-4"
         label: "Diataxis coverage (AI)"
-        description: "AI estimate (0-4) of how many Diataxis modes (tutorial, how-to, reference, explanation) the documentation covers. Informational only; does not affect medals."
+        description: "AI counts Diataxis modes (tutorial, how-to, reference, explanation) with meaningful content in Markdown and reStructuredText under the configured docs path, excluding hidden and underscore-prefixed directories. Too little documentation, traversal limits, or unavailable AI give insufficient data. Informational only."
         informational: true
         ai_assisted: true
     medals:
@@ -144,17 +144,17 @@ dimensions:
         implementation: "renovate-enabled/v2"
         type: boolean
         label: "Renovate onboarded"
-        description: "Renovate is set up and active: the repository has a Renovate configuration and an open Dependency Dashboard issue created by the Renovate bot. A configuration file alone does not count."
+        description: "Checks for an enabled Renovate configuration and an open Dependency Dashboard issue created by renovate[bot]. Missing or disabled configuration or dashboard fails; unsupported configuration gives insufficient data."
       branch_protection_required_checks:
         implementation: "branch-protection-required-checks/v2"
         type: boolean
         label: "Required checks enforced"
-        description: "The default branch requires status checks to pass before merging, set through branch protection or an active repository or organization ruleset. Protection without required checks, or rulesets in Evaluate mode, do not count."
+        description: "Checks the default branch for at least one required status check in classic protection or an active applicable ruleset without bypass actors. Evaluate-mode rulesets and protection without checks do not count."
       signed_commits_required:
         implementation: "signed-commits-required/v2"
         type: boolean
         label: "Signed commits required"
-        description: "The default branch requires signed commits, set through branch protection or an active repository or organization ruleset. Rulesets in Evaluate mode do not count."
+        description: "Checks whether classic protection or an active applicable ruleset without bypass actors requires signed commits on the default branch. Evaluate-mode rulesets do not count."
     # The team chose one security baseline, without artificial intermediate tiers.
     medals:
       bronze: ["renovate_enabled == true", "branch_protection_required_checks == true", "signed_commits_required == true"]
